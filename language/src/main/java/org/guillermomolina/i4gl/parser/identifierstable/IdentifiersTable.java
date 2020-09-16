@@ -71,12 +71,11 @@ public class IdentifiersTable {
     }
 
     private void addBuiltinConstants() {
-        // TODO
-        /*try {
+        try {
             this.registerNewIdentifier("nil", new NilPointerDescriptor());
         } catch (LexicalException e) {
             throw new I4GLRuntimeException("Could not initialize builtin constants");
-        }*/
+        }
     }
 
     protected void addBuiltinFunctions() {

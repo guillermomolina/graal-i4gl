@@ -62,9 +62,12 @@ import org.guillermomolina.i4gl.parser.utils.FormalParameter;
 public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     /**
-     * Lambda interface used in {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function. The function
-     * looks up specified identifier and calls {@link GlobalObjectLookup#onFound(LexicalScope, String)} function  with
-     * the found identifier and lexical sccope in which it was found.
+     * Lambda interface used in
+     * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function.
+     * The function looks up specified identifier and calls
+     * {@link GlobalObjectLookup#onFound(LexicalScope, String)} function with the
+     * found identifier and lexical sccope in which it was found.
+     * 
      * @param <T>
      */
     private interface GlobalObjectLookup<T> {
@@ -72,7 +75,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     }
 
     /* State while parsing a source unit. */
-    //private final Source source;
+    // private final Source source;
     private RootNode mainRootNode;
 
     /* State while parsing a block. */
@@ -83,7 +86,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     public I4GLVisitorImpl(final I4GLLanguage language, final Source source) {
         this.language = language;
-        //this.source = source;
+        // this.source = source;
         this.currentLexicalScope = new LexicalScope(null, "GLOBAL", false);
         this.errorList = new ArrayList<>();
     }
@@ -201,35 +204,33 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         final String identifier = "MAIN";
         List<StatementNode> blockNodes = new ArrayList<>();
         try {
-            /*final FunctionDescriptor functionDescriptor = */currentLexicalScope.registerFunction(identifier);
+            final FunctionDescriptor functionDescriptor = currentLexicalScope.registerFunction(identifier);
 
             currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
             if (ctx.typeDeclarations() != null) {
                 BlockNode initializationNode = (BlockNode) visit(ctx.typeDeclarations());
-                if(initializationNode != null) {
+                if (initializationNode != null) {
                     blockNodes.addAll(initializationNode.getStatements());
                 }
             }
-            /*final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
+            final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
             currentLexicalScope.registerReturnVariable(returnTypeDescriptor);
-            functionDescriptor.setReturnDescriptor(returnTypeDescriptor);*/
-        }
-        catch(LexicalException/* | UnknownIdentifierException*/ e) {
+            functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
+        } catch (LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
             currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
-
         }
 
         if (ctx.mainStatements() != null) {
             BlockNode bodyNode = (BlockNode) visit(ctx.mainStatements());
-            if(bodyNode != null) {
+            if (bodyNode != null) {
                 List<StatementNode> statements = bodyNode.getStatements();
                 blockNodes.addAll(statements);
             }
         }
 
         BlockNode blockNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
-        mainRootNode = finishFunctionImplementation(blockNode);            
+        mainRootNode = finishFunctionImplementation(blockNode);
         return mainRootNode;
     }
 
@@ -245,11 +246,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitMainStatements(final I4GLParser.MainStatementsContext ctx) {
-        final List<StatementNode> bodyNodes = new ArrayList<>(ctx.children.size());
+        final List<StatementNode> statementNodes = new ArrayList<>(ctx.children.size());
         for (final ParseTree child : ctx.children) {
-            bodyNodes.add((StatementNode) visit(child));
+            StatementNode statementNode = (StatementNode) visit(child);
+            if (statementNode != null) {
+                statementNodes.add(statementNode);
+            }
         }
-        return new BlockNode(bodyNodes.toArray(new StatementNode[bodyNodes.size()]));
+        return new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
     }
 
     @Override
@@ -287,9 +291,11 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 this.currentLexicalScope.addScopeInitializationNode(assignment);
             }
             functionDescriptor.setFormalParameters(formalParameters);
-            /*final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
-            currentLexicalScope.registerReturnVariable(returnTypeDescriptor);
-            functionDescriptor.setReturnDescriptor(returnTypeDescriptor);*/
+            /*
+             * final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
+             * currentLexicalScope.registerReturnVariable(returnTypeDescriptor);
+             * functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
+             */
         } catch (final LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
             currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
@@ -321,14 +327,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      * Checks whether the two types are compatible. The operation is not symmetric.
      */
     private boolean checkTypesAreCompatible(final TypeDescriptor leftType, final TypeDescriptor rightType) {
-        if ((leftType != rightType) && !leftType.convertibleTo(rightType)) {
-            if ((rightType instanceof FunctionDescriptor) && !this.checkTypesAreCompatible(leftType,
-                    ((FunctionDescriptor) rightType).getReturnDescriptor())) {
+        if ((leftType != rightType) && 
+            (!leftType.convertibleTo(rightType)) && 
+            (rightType instanceof FunctionDescriptor) 
+            && (!this.checkTypesAreCompatible(leftType, ((FunctionDescriptor)rightType).getReturnDescriptor()))) {
                 reportError("Type mismatch");
                 return false;
-            }
         }
-
         return true;
     }
 
@@ -336,7 +341,10 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitCodeBlock(final I4GLParser.CodeBlockContext ctx) {
         final List<StatementNode> statementNodes = new ArrayList<>(ctx.children.size());
         for (final ParseTree child : ctx.children) {
-            statementNodes.add((StatementNode) visit(child));
+            StatementNode statementNode = (StatementNode) visit(child);
+            if (statementNode != null) {
+                statementNodes.add(statementNode);
+            }
         }
         return new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
     }
@@ -398,13 +406,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     private ExpressionNode createInvokeNode(final String identifier, final SubroutineDescriptor descriptor,
             final LexicalScope subroutineScope, final List<ExpressionNode> argumentNodes) {
         final ExpressionNode[] arguments = argumentNodes.toArray(new ExpressionNode[argumentNodes.size()]);
-        /*final TypeDescriptor returnType = (descriptor instanceof FunctionDescriptor)
-                ? ((FunctionDescriptor) descriptor).getReturnDescriptor()
-                : null;*/
+        /*
+         * final TypeDescriptor returnType = (descriptor instanceof FunctionDescriptor)
+         * ? ((FunctionDescriptor) descriptor).getReturnDescriptor() : null;
+         */
 
         try {
-            final TypeDescriptor  returnType = getTypeDescriptor("INTEGER");
-            //final FrameSlot subroutineSlot = subroutineScope.getLocalSlot(identifier);
+            final TypeDescriptor returnType = getTypeDescriptor("INTEGER");
+            // final FrameSlot subroutineSlot = subroutineScope.getLocalSlot(identifier);
             return InvokeNodeGen.create(language, identifier, arguments, returnType);
         } catch (UnknownIdentifierException e) {
             reportError(e.getMessage());
@@ -415,13 +424,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitReturnStatement(final I4GLParser.ReturnStatementContext ctx) {
         final List<ExpressionNode> parameterNodes = new ArrayList<>();
-        if(ctx.variableOrConstantList() != null) {
+        if (ctx.variableOrConstantList() != null) {
             final List<I4GLParser.ExpressionContext> parameterListCtx = ctx.variableOrConstantList().expression();
             for (final I4GLParser.ExpressionContext parameterCtx : parameterListCtx) {
                 parameterNodes.add((ExpressionNode) visit(parameterCtx));
-            }    
-        }
-        else {
+            }
+        } else {
             parameterNodes.add(IntLiteralNodeGen.create(0));
         }
         return new ReturnNode(parameterNodes.get(0));
@@ -443,21 +451,22 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             ExpressionNode stepValue = null;
             if (ctx.numericConstant() != null) {
                 stepValue = (ExpressionNode) visit(ctx.numericConstant());
-            } 
-            else {
+            } else {
                 stepValue = IntLiteralNodeGen.create(1);
             }
             StatementNode loopBody = (StatementNode) visit(ctx.codeBlock());
             FrameSlot controlSlot = this.doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
-            if (startValue.getType() != finalValue.getType() && !startValue.getType().convertibleTo(finalValue.getType())) {
+            if (startValue.getType() != finalValue.getType()
+                    && !startValue.getType().convertibleTo(finalValue.getType())) {
                 reportError("Type mismatch in beginning and last value of for loop.");
             }
             SimpleAssignmentNode initialAssignment = createAssignmentNode(iteratingIdentifier, startValue);
             ExpressionNode readControlVariableNode = createReadVariableNode(iteratingIdentifier);
-            SimpleAssignmentNode stepNode = createAssignmentNode(iteratingIdentifier, AddNodeGen.create(readControlVariableNode, stepValue));
-            return new ForNode(initialAssignment, controlSlot, startValue, finalValue, stepNode, readControlVariableNode, loopBody);
-        }
-        catch(final UnknownIdentifierException e) {
+            SimpleAssignmentNode stepNode = createAssignmentNode(iteratingIdentifier,
+                    AddNodeGen.create(readControlVariableNode, stepValue));
+            return new ForNode(initialAssignment, controlSlot, startValue, finalValue, stepNode,
+                    readControlVariableNode, loopBody);
+        } catch (final UnknownIdentifierException e) {
             reportError(e.getMessage());
             return null;
         }
@@ -466,10 +475,10 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitIfStatement(final I4GLParser.IfStatementContext ctx) {
         ExpressionNode condition = (ExpressionNode) visit(ctx.ifCondition());
-        StatementNode thenNode = (StatementNode)visit(ctx.codeBlock(0));
+        StatementNode thenNode = (StatementNode) visit(ctx.codeBlock(0));
         StatementNode elseNode = null;
-        if(ctx.codeBlock().size() == 2) {
-            elseNode = (StatementNode)visit(ctx.codeBlock(1));
+        if (ctx.codeBlock().size() == 2) {
+            elseNode = (StatementNode) visit(ctx.codeBlock(1));
         }
         return new IfNode(condition, thenNode, elseNode);
     }
@@ -481,15 +490,15 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         ExpressionNode caseExpression = (ExpressionNode) visit(ctx.expression(expressionIndex++));
         final int whenCount = ctx.WHEN().size();
         List<ExpressionNode> indexNodes = new ArrayList<>(whenCount);
-        List<StatementNode> statementNodes = new ArrayList<>(whenCount);        
-        for(int whenIndex = 0; whenIndex < whenCount; whenIndex++) {
+        List<StatementNode> statementNodes = new ArrayList<>(whenCount);
+        for (int whenIndex = 0; whenIndex < whenCount; whenIndex++) {
             indexNodes.add((ExpressionNode) visit(ctx.expression(expressionIndex++)));
             statementNodes.add((StatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
         }
         ExpressionNode[] indexes = indexNodes.toArray(new ExpressionNode[indexNodes.size()]);
         StatementNode[] statements = statementNodes.toArray(new StatementNode[statementNodes.size()]);
         StatementNode otherwiseNode = null;
-        if(ctx.OTHERWISE() != null) {
+        if (ctx.OTHERWISE() != null) {
             otherwiseNode = (StatementNode) visit(ctx.codeBlock(codeBlockIndex));
         }
         return new CaseNode(caseExpression, indexes, statements, otherwiseNode);
@@ -501,15 +510,15 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         List<ExpressionNode> conditionNodes = new ArrayList<>(whenCount);
         List<StatementNode> statementNodes = new ArrayList<>(whenCount);
         int codeBlockIndex = 0;
-        for(I4GLParser.IfConditionContext conditionCtx: ctx.ifCondition()) {
+        for (I4GLParser.IfConditionContext conditionCtx : ctx.ifCondition()) {
             conditionNodes.add((ExpressionNode) visit(conditionCtx));
             statementNodes.add((StatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
         }
         StatementNode elseNode = null;
-        if(ctx.OTHERWISE() != null) {
+        if (ctx.OTHERWISE() != null) {
             elseNode = (StatementNode) visit(ctx.codeBlock(codeBlockIndex));
         }
-        for(int whenIndex = whenCount-1; whenIndex >= 0; whenIndex--) {
+        for (int whenIndex = whenCount - 1; whenIndex >= 0; whenIndex--) {
             ExpressionNode condition = conditionNodes.get(whenIndex);
             StatementNode thenNode = statementNodes.get(whenIndex);
             elseNode = new IfNode(condition, thenNode, elseNode);
@@ -519,14 +528,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitIfCondition(final I4GLParser.IfConditionContext ctx) {
-        if(ctx.TRUE() != null) {
-            return LogicLiteralNodeGen.create(true);        
+        if (ctx.TRUE() != null) {
+            return LogicLiteralNodeGen.create(true);
         }
-        if(ctx.FALSE() != null) {
-            return LogicLiteralNodeGen.create(false);        
+        if (ctx.FALSE() != null) {
+            return LogicLiteralNodeGen.create(false);
         }
         ExpressionNode leftNode = (ExpressionNode) visit(ctx.ifCondition2(0));
-        final I4GLParser.RelationalOperatorContext operatorCtx = ctx.relationalOperator(); 
+        final I4GLParser.RelationalOperatorContext operatorCtx = ctx.relationalOperator();
         if (operatorCtx != null) {
             ExpressionNode rightNode = (ExpressionNode) visit(ctx.ifCondition2(1));
             if (operatorCtx.EQUAL() != null) {
@@ -545,14 +554,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 leftNode = DivideIntegerNodeGen.create(leftNode, rightNode);
             } else /* operatorCtx.MATCHES() != null */ {
                 throw new NotImplementedException();
-                /*leftNode = MatchesNodeGen.create(leftNode, rightNode);
-                if(operatorCtx.NOT() != null) {
-                    leftNode = NotNodeGen.create(leftNode);
-                }*/
+                /*
+                 * leftNode = MatchesNodeGen.create(leftNode, rightNode); if(operatorCtx.NOT()
+                 * != null) { leftNode = NotNodeGen.create(leftNode); }
+                 */
             }
         }
         if (leftNode.getType() != BooleanDescriptor.getInstance()) {
-            leftNode =  NotNodeGen.create(EqualsNodeGen.create(leftNode, IntLiteralNodeGen.create(0)));
+            leftNode = NotNodeGen.create(EqualsNodeGen.create(leftNode, IntLiteralNodeGen.create(0)));
         }
         return leftNode;
     }
@@ -560,9 +569,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitIfCondition2(final I4GLParser.IfCondition2Context ctx) {
         ExpressionNode leftNode = null;
-        for(final I4GLParser.IfLogicalTermContext context: ctx.ifLogicalTerm()) {
+        for (final I4GLParser.IfLogicalTermContext context : ctx.ifLogicalTerm()) {
             final ExpressionNode rightNode = (ExpressionNode) visit(context);
-            leftNode = leftNode == null? rightNode : OrNodeGen.create(leftNode, rightNode);
+            leftNode = leftNode == null ? rightNode : OrNodeGen.create(leftNode, rightNode);
         }
         return leftNode;
     }
@@ -570,19 +579,19 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitIfLogicalTerm(final I4GLParser.IfLogicalTermContext ctx) {
         ExpressionNode leftNode = null;
-        for(final I4GLParser.IfLogicalFactorContext context: ctx.ifLogicalFactor()) {
+        for (final I4GLParser.IfLogicalFactorContext context : ctx.ifLogicalFactor()) {
             final ExpressionNode rightNode = (ExpressionNode) visit(context);
-            leftNode = leftNode == null? rightNode : AndNodeGen.create(leftNode, rightNode);
+            leftNode = leftNode == null ? rightNode : AndNodeGen.create(leftNode, rightNode);
         }
         return leftNode;
     }
 
     @Override
     public Node visitIfLogicalFactor(final I4GLParser.IfLogicalFactorContext ctx) {
-        if(ctx.LPAREN() != null) {
+        if (ctx.LPAREN() != null) {
             return visit(ctx.ifCondition());
         }
-        if(ctx.NOT() != null) {
+        if (ctx.NOT() != null) {
             return NotNodeGen.create((ExpressionNode) visit(ctx.ifCondition()));
         }
         return visit(ctx.simpleExpression());
@@ -592,15 +601,16 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitSimpleExpression(final I4GLParser.SimpleExpressionContext ctx) {
         ExpressionNode leftNode = null;
         int index = 0;
-        for(final I4GLParser.TermContext termCtx: ctx.term()) {
+        for (final I4GLParser.TermContext termCtx : ctx.term()) {
             final ExpressionNode rightNode = (ExpressionNode) visit(termCtx);
             if (leftNode == null) {
                 leftNode = rightNode;
-                /*if(ctx.MINUS() != null) {
-                    leftNode = SubtractNodeGen.create(IntLiteralNodeGen.create(0), rightNode);
-                }*/
+                /*
+                 * if(ctx.MINUS() != null) { leftNode =
+                 * SubtractNodeGen.create(IntLiteralNodeGen.create(0), rightNode); }
+                 */
             } else {
-                final I4GLParser.AddingOperatorContext operatorCtx = ctx.addingOperator(index++); 
+                final I4GLParser.AddingOperatorContext operatorCtx = ctx.addingOperator(index++);
                 if (operatorCtx.PLUS() != null) {
                     leftNode = AddNodeGen.create(leftNode, rightNode);
                 } else /* operatorCtx.MINUS() != null */ {
@@ -615,12 +625,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitTerm(final I4GLParser.TermContext ctx) {
         ExpressionNode leftNode = null;
         int index = 0;
-        for(final I4GLParser.FactorContext factorCtx: ctx.factor()) {
+        for (final I4GLParser.FactorContext factorCtx : ctx.factor()) {
             final ExpressionNode rightNode = (ExpressionNode) visit(factorCtx);
             if (leftNode == null) {
                 leftNode = rightNode;
             } else {
-                final I4GLParser.MultiplyingOperatorContext operatorCtx = ctx.multiplyingOperator(index++); 
+                final I4GLParser.MultiplyingOperatorContext operatorCtx = ctx.multiplyingOperator(index++);
                 if (operatorCtx.STAR() != null) {
                     leftNode = MultiplyNodeGen.create(leftNode, rightNode);
                 } else if (operatorCtx.SLASH() != null) {
@@ -647,7 +657,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         } else /* ctx.factor() != null */ {
             factor = NotNodeGen.create((ExpressionNode) visit(ctx.factor()));
         }
-        if(ctx.unitType() != null) {
+        if (ctx.unitType() != null) {
             throw new NotImplementedException();
         }
         return factor;
@@ -666,9 +676,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitTypeDeclarations(final I4GLParser.TypeDeclarationsContext ctx) {
         List<StatementNode> flattenedNodes = new ArrayList<>();
-        for(I4GLParser.TypeDeclarationContext typeDeclarationCtx: ctx.typeDeclaration()) {
+        for (I4GLParser.TypeDeclarationContext typeDeclarationCtx : ctx.typeDeclaration()) {
             BlockNode blockNode = (BlockNode) visit(typeDeclarationCtx);
-            if(blockNode != null) {
+            if (blockNode != null) {
                 flattenedNodes.addAll(blockNode.getStatements());
             }
         }
@@ -678,9 +688,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitTypeDeclaration(final I4GLParser.TypeDeclarationContext ctx) {
         List<StatementNode> flattenedNodes = new ArrayList<>();
-        for(I4GLParser.VariableDeclarationContext variableDeclarationCtx: ctx.variableDeclaration()) {
+        for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
             BlockNode blockNode = (BlockNode) visit(variableDeclarationCtx);
-            if(blockNode != null) {
+            if (blockNode != null) {
                 flattenedNodes.addAll(blockNode.getStatements());
             }
         }
@@ -701,12 +711,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             for (final String identifier : identifierList) {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
 
-                StatementNode initializationNode = currentLexicalScope.createInitializationNode(identifier, typeDescriptor, null);
+                StatementNode initializationNode = currentLexicalScope.createInitializationNode(identifier,
+                        typeDescriptor, null);
                 if (initializationNode != null) {
                     initializationNodes.add(initializationNode);
                 }
             }
-        } catch (final UnknownIdentifierException | LexicalException  e) {
+        } catch (final UnknownIdentifierException | LexicalException e) {
             reportError(e.getMessage());
         }
 
@@ -715,8 +726,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     public TypeDescriptor getTypeDescriptor(I4GLParser.TypeContext ctx) {
         throw new NotImplementedException();
-        /*ctx.typeIdentifier().numberType();
-        return null;*/
+        /*
+         * ctx.typeIdentifier().numberType(); return null;
+         */
     }
 
     @Override

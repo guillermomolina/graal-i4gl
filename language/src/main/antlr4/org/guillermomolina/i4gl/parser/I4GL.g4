@@ -65,7 +65,7 @@ mainBlock
    ;
 
 mainStatements
-   : (deferStatement| codeBlock )+
+   : (databaseDeclaration | deferStatement| statement )+
    ;
 
 deferStatement

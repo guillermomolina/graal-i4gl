@@ -98,7 +98,7 @@ public abstract class FunctionBodyNode extends ExpressionNode {
          */
         nullTaken.enter();
         /* Return the default null value. */
-        return frame.getValue(getSlot());
+        return frame.getValue(getSlot()); 
     }
 
     @Override
