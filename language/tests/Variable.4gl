@@ -1,0 +1,5 @@
+MAIN
+    DEFINE var INTEGER
+    LET var = 1
+    DISPLAY var
+END MAIN

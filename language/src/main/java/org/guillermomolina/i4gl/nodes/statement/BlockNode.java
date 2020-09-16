@@ -1,5 +1,9 @@
 package org.guillermomolina.i4gl.nodes.statement;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
@@ -29,4 +33,10 @@ public class BlockNode extends StatementNode {
         }
     }
 
+    public List<StatementNode> getStatements() {
+        if (bodyNodes == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(Arrays.asList(bodyNodes));
+    }
 }
