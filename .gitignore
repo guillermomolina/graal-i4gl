@@ -1,0 +1,39 @@
+/bin/
+component/i4gl-component.jar
+language/dependency-reduced-pom.xml
+native/i4glnative
+.antlr/
+
+# Maven
+deploy/
+target/
+
+# Eclipse
+.classpath
+.project
+.settings/
+/.externalToolBuilders
+/build
+
+# IntelliJ
+*.cfg
+*.iml
+*.ipr
+*.iws
+/.idea/
+out/
+
+# vscode
+.vscode
+.factorypath
+
+# npm
+node_install/
+node_modules/
+jsdoc/
+
+#mac
+.DS_Store
+
+# FE local build dir
+dist/

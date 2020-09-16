@@ -1,0 +1,32 @@
+MAIN
+    CALL f1()
+    CALL f2()
+    CALL f3()
+END MAIN
+
+FUNCTION f1()
+    DEFINE var INTEGER
+    DISPLAY "1 TO 10"
+    FOR var = 1 TO 10
+        DISPLAY var
+    END FOR
+    DISPLAY ""
+END FUNCTION
+
+FUNCTION f2()
+    DEFINE var INTEGER
+    DISPLAY "1 TO 10 STEP 2"
+    FOR var = 1 TO 10 STEP 2
+        DISPLAY var
+    END FOR
+    DISPLAY ""
+END FUNCTION
+
+FUNCTION f3()
+    DEFINE var INTEGER
+    DISPLAY "10 TO 1 STEP -1"
+    FOR var = 10 TO 1 STEP -1
+        DISPLAY var
+    END FOR
+    DISPLAY ""
+END FUNCTION

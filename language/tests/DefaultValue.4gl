@@ -1,0 +1,7 @@
+MAIN
+  DEFINE an_int INTEGER
+  DEFINE a_char_10 TEXT
+
+  DISPLAY an_int 
+  DISPLAY a_char_10
+END MAIN 
