@@ -40,7 +40,6 @@ import org.guillermomolina.i4gl.nodes.logic.LessThanOrEqualNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.NotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.BlockNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
@@ -79,13 +78,15 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     /* State while parsing a block. */
     private final I4GLLanguage language;
     private LexicalScope currentLexicalScope;
+    private LexicalScope globalScope;
 
     private final List<String> errorList;
 
     public I4GLVisitorImpl(final I4GLLanguage language, final Source source) {
         this.language = language;
         //this.source = source;
-        this.currentLexicalScope = new LexicalScope(null, "GLOBAL", false);
+        this.currentLexicalScope = new LexicalScope(null);
+        this.globalScope = currentLexicalScope;
         this.errorList = new ArrayList<>();
     }
 
@@ -99,92 +100,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     public List<String> getErrorList() {
         return errorList;
-    }
-
-    /**
-     * Looks up the specified identifier (in current scope and its parent scope up
-     * to the topmost scope. If the identifier is found it calls the
-     * {@link GlobalObjectLookup#onFound(LexicalScope, String)} function with the
-     * found identifier and lexical scope in which it was found as arguments. It
-     * firstly looks ups to the topmost lexical scope and if the identifier is not
-     * found then it looks up in the unit scopes.
-     * 
-     * @param identifier     identifier to be looked up
-     * @param lookupFunction the function to be called when the identifier is found
-     * @param withReturnType flag whether to also lookup for functions' return
-     *                       variable which are write-only
-     * @param <T>            type of the returned object
-     * @return the value return from the
-     *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
-     */
-    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction,
-            final boolean withReturnType) throws UnknownIdentifierException {
-        try {
-            T result = lookupToParentScope(this.currentLexicalScope, identifier, lookupFunction, withReturnType, false);
-            if (result == null) {
-                throw new UnknownIdentifierException(identifier);
-            }
-            return result;
-        } catch (final LexicalException e) {
-            reportError(e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Overload of
-     * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)}.
-     */
-    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction)
-            throws UnknownIdentifierException {
-        return this.doLookup(identifier, lookupFunction, false);
-    }
-
-    /**
-     * Helper function for
-     * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)}. Does the
-     * looking up to the topmost lexical scope.
-     * 
-     * @param scope          scope to begin the lookup in
-     * @param identifier     the identifier to lookup
-     * @param lookupFunction function that is called when the identifier is found
-     * @param <T>            type of the returned object
-     * @return the value return from the
-     *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
-     */
-    private <T> T lookupToParentScope(LexicalScope scope, final String identifier,
-            final GlobalObjectLookup<T> lookupFunction, boolean withReturnType, final boolean onlyPublic)
-            throws LexicalException {
-        while (scope != null) {
-            if ((onlyPublic) ? scope.containsPublicIdentifier(identifier) : scope.containsLocalIdentifier(identifier)) {
-                return lookupFunction.onFound(scope, identifier);
-            } else if (withReturnType && currentLexicalScope.containsReturnType(identifier, onlyPublic)) {
-                return lookupFunction.onFound(currentLexicalScope, identifier);
-            } else {
-                scope = scope.getOuterScope();
-            }
-            withReturnType = false; // NOTE: return variable may be only in current scope
-        }
-
-        return null;
-    }
-
-    public TypeDescriptor getTypeDescriptor(final String identifier) throws UnknownIdentifierException {
-        return this.doLookup(identifier, LexicalScope::getTypeDescriptor);
-    }
-
-    /**
-     * Registers new variables to the current lexical scope with the specified
-     * identifiers and their type.
-     */
-    public void registerVariables(final List<String> identifiers, final TypeDescriptor typeDescriptor) {
-        for (final String identifier : identifiers) {
-            try {
-                currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
-            } catch (final LexicalException e) {
-                reportError(e.getMessage());
-            }
-        }
     }
 
     private StatementNode createSubroutineNode(final StatementNode bodyNode) {
@@ -201,9 +116,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         assert mainRootNode == null;
         final String identifier = "MAIN";
         try {
-            final FunctionDescriptor functionDescriptor = currentLexicalScope.registerFunction(identifier);
+            final FunctionDescriptor functionDescriptor = globalScope.registerFunction(identifier);
 
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            currentLexicalScope = new LexicalScope(currentLexicalScope);
             if (ctx.typeDeclarations() != null) {
                 visit(ctx.typeDeclarations());
             }
@@ -213,7 +128,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
         catch(LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            currentLexicalScope = new LexicalScope(currentLexicalScope);
 
         }
         BlockNode blockNode;
@@ -248,7 +163,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
         try {
             final FunctionDescriptor functionDescriptor = currentLexicalScope.registerFunction(identifier);
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            currentLexicalScope = new LexicalScope(currentLexicalScope);
             if (ctx.typeDeclarations() != null) {
                 visit(ctx.typeDeclarations());
             }
@@ -275,7 +190,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
         } catch (final LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            currentLexicalScope = new LexicalScope(currentLexicalScope);
         }
         return finishFunctionImplementation((StatementNode) visit(ctx.codeBlock()));
     }

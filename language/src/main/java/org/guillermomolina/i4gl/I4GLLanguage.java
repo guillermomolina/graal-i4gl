@@ -55,8 +55,8 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
     }
 
     @Override
-    protected Object getLanguageGlobal(I4GLState pascalState) {
-        return pascalState;
+    protected Object getLanguageGlobal(I4GLState i4glState) {
+        return i4glState;
     }
 
     @Override

@@ -10,6 +10,9 @@ import org.guillermomolina.i4gl.nodes.statement.StatementNode;
  */
 public class InitializationNodeFactory {
 
+    private InitializationNodeFactory() {
+    }
+
 	public static StatementNode create(FrameSlot frameSlot, Object value, VirtualFrame frame) {
 	    // TODO: this is a duplicity
         switch (frameSlot.getKind()) {

@@ -15,8 +15,8 @@ public class I4GLString implements I4GLArray {
         this.value = value;
     }
 
-    private I4GLString(I4GLString pascalString) {
-        this.value = pascalString.value;
+    private I4GLString(I4GLString i4glString) {
+        this.value = i4glString.value;
     }
 
     @Override
