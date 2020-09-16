@@ -237,22 +237,6 @@ public class IdentifiersTable {
         return new SetDescriptor(base);
     }
 
-    public void addProcedureInterfaceIfNotForwarded(String identifier, List<FormalParameter> formalParameters) throws LexicalException {
-        TypeDescriptor descriptor = this.identifiersMap.get(identifier);
-        if (descriptor != null) {
-            if (!(descriptor instanceof ProcedureDescriptor)) {
-                throw new LexicalException("Not a subroutine");
-            } else {
-                if (!SubroutineDescriptor.compareFormalParametersExact(((SubroutineDescriptor) descriptor).getFormalParameters(), formalParameters)) {
-                    throw new LexicalException("Argument types mismatch");
-                }
-            }
-            return;
-        }
-
-        this.forwardProcedure(identifier, formalParameters);
-    }
-
     public void addFunctionInterfaceIfNotForwarded(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnType) throws LexicalException {
         TypeDescriptor descriptor = this.identifiersMap.get(identifier);
         if (descriptor != null) {
@@ -266,11 +250,6 @@ public class IdentifiersTable {
             return;
         }
         this.forwardFunction(identifier, formalParameters, returnType);
-    }
-
-    public void forwardProcedure(String identifier, List<FormalParameter> formalParameters) throws LexicalException {
-        TypeDescriptor typeDescriptor = new ProcedureDescriptor(formalParameters);
-        this.registerNewIdentifier(identifier, typeDescriptor);
     }
 
     public void forwardFunction(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnTypeDescriptor) throws LexicalException {

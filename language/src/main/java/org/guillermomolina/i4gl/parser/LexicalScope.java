@@ -239,16 +239,8 @@ public class LexicalScope {
         this.localIdentifiers.initializeAllUninitializedPointerDescriptors();
     }
 
-    void registerProcedureInterfaceIfNotForwarded(String identifier, List<FormalParameter> formalParameters) throws LexicalException {
-        this.localIdentifiers.addProcedureInterfaceIfNotForwarded(identifier, formalParameters);
-    }
-
     void registerFunctionInterfaceIfNotForwarded(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnTypeDescriptor) throws LexicalException {
         this.localIdentifiers.addFunctionInterfaceIfNotForwarded(identifier, formalParameters, returnTypeDescriptor);
-    }
-
-    void forwardProcedure(String identifier, List<FormalParameter> formalParameters) throws LexicalException {
-        this.localIdentifiers.forwardProcedure(identifier, formalParameters);
     }
 
     void forwardFunction(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnTypeDescriptor) throws LexicalException {

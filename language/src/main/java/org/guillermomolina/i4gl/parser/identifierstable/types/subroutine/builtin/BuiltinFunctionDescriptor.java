@@ -4,7 +4,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.root.FunctionI4GLRootNode;
+import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.parser.utils.FormalParameter;
 import org.guillermomolina.i4gl.parser.exceptions.ArgumentTypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.IncorrectNumberOfArgumentsProvidedException;
@@ -35,7 +35,7 @@ public abstract class BuiltinFunctionDescriptor extends FunctionDescriptor {
      */
     BuiltinFunctionDescriptor(ExpressionNode bodyNode, List<FormalParameter> parameters) {
         super(parameters, bodyNode.getType());
-        this.setRootNode(new FunctionI4GLRootNode(I4GLLanguage.INSTANCE, new FrameDescriptor(), bodyNode));
+        this.setRootNode(new I4GLRootNode(I4GLLanguage.INSTANCE, new FrameDescriptor(), bodyNode));
     }
 
     BuiltinFunctionDescriptor() {

@@ -8,12 +8,13 @@ import com.oracle.truffle.api.nodes.RootNode;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
+import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
 
 /**
  * This node represents the root node of AST of any subroutine or main program.
  */
 @TypeSystemReference(I4GLTypes.class)
-public abstract class I4GLRootNode extends RootNode {
+public class I4GLRootNode extends RootNode {
 
 	@Child
 	protected ExpressionNode bodyNode;
@@ -23,8 +24,13 @@ public abstract class I4GLRootNode extends RootNode {
 		this.bodyNode = bodyNode;
 	}
 
-	public Object execute(VirtualFrame virtualFrame) {
-		return bodyNode.executeGeneric(virtualFrame);
-	}
+    @Override
+    public Object execute(VirtualFrame virtualFrame) {
+        try {
+            return bodyNode.executeGeneric(virtualFrame);
+        } catch (HaltException e) {
+            return e.getExitCode();
+        }
+    }    
 
 }

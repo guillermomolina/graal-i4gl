@@ -39,9 +39,8 @@ import org.guillermomolina.i4gl.nodes.logic.LessThanNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanOrEqualNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.NotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
-import org.guillermomolina.i4gl.nodes.root.FunctionI4GLRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.nodes.root.MainFunctionI4GLRootNode;
+import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.BlockNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
@@ -188,12 +187,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
     }
 
-    @Override
-    public Node visitCompilationUnit(final I4GLParser.CompilationUnitContext ctx) {
-        //currentLexicalScope.setName("PROGRAM");
-        return visitChildren(ctx);
-    }
-
     private StatementNode createSubroutineNode(final StatementNode bodyNode) {
         final List<StatementNode> subroutineNodes = new ArrayList<>();
 
@@ -207,36 +200,31 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitMainBlock(final I4GLParser.MainBlockContext ctx) {
         assert mainRootNode == null;
         final String identifier = "MAIN";
-        MainFunctionI4GLRootNode rootNode = null;
         try {
             final FunctionDescriptor functionDescriptor = currentLexicalScope.registerFunction(identifier);
+
             currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
             if (ctx.typeDeclarations() != null) {
                 visit(ctx.typeDeclarations());
             }
-            BlockNode blockNode;
-            if (ctx.mainStatements() != null) {
-                blockNode = (BlockNode) visit(ctx.mainStatements());
-            } else {
-                final StatementNode[] bodyNodes = new StatementNode[0];
-                blockNode = new BlockNode(bodyNodes);
-            }
-            final StatementNode bodyNode = createSubroutineNode(blockNode);
-            rootNode = new MainFunctionI4GLRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode);
-            // MainFunctionBodyNode functionNode = MainFunctionBodyNodeGen.create(language,
-            // bodyNode, currentLexicalScope.getFrameDescriptor(),
-            // currentLexicalScope.getReturnSlot());
-            // mainRootNode = new FunctionI4GLRootNode(language,
-            // currentLexicalScope.getFrameDescriptor(), functionNode);
-            currentLexicalScope = currentLexicalScope.getOuterScope();
-            mainRootNode = rootNode;                
+            final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
+            currentLexicalScope.registerReturnVariable(returnTypeDescriptor);
+            functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
         }
-        catch(LexicalException e) {
+        catch(LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
             currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
 
         }
-        return rootNode;
+        BlockNode blockNode;
+        if (ctx.mainStatements() != null) {
+            blockNode = (BlockNode) visit(ctx.mainStatements());
+        } else {
+            final StatementNode[] bodyNodes = new StatementNode[0];
+            blockNode = new BlockNode(bodyNodes);
+        }
+        mainRootNode = finishFunctionImplementation(blockNode);            
+        return mainRootNode;
     }
 
     @Override
@@ -251,18 +239,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitFunctionDefinition(final I4GLParser.FunctionDefinitionContext ctx) {
         final String identifier = ctx.functionIdentifier().getText();
-        startFunctionImplementation(identifier, ctx);
-        return finishFunctionImplementation((StatementNode) visit(ctx.codeBlock()));
-    }
-
-    /**
-     * Changes the current state to the beginning of an implementation of a new
-     * function. It creates new child scope to the current scope and and sets it as
-     * the current scope.
-     * 
-     * @param heading heading of the new function
-     */
-    public void startFunctionImplementation(final String identifier, final I4GLParser.FunctionDefinitionContext ctx) {
         final List<String> parameterIdentifiers = new ArrayList<>();
         if (ctx.parameterList() != null) {
             for (final I4GLParser.ParameterGroupContext parameterCtx : ctx.parameterList().parameterGroup()) {
@@ -301,7 +277,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             reportError(e.getMessage());
             currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
         }
+        return finishFunctionImplementation((StatementNode) visit(ctx.codeBlock()));
     }
+
 
     /**
      * Changes current state after parsing of some function is finished. It finishes
@@ -315,13 +293,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         final FunctionBodyNode functionBodyNode = FunctionBodyNodeGen.create(subroutineNode,
                 currentLexicalScope.getReturnSlot(),
                 currentLexicalScope.getIdentifierDescriptor(currentLexicalScope.getName()));
-        final I4GLRootNode rootNode = new FunctionI4GLRootNode(language, currentLexicalScope.getFrameDescriptor(),
+        final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(),
                 functionBodyNode);
-        finishSubroutine(rootNode);
-        return rootNode;
-    }
-
-    private void finishSubroutine(final I4GLRootNode rootNode) {
         final String subroutineIdentifier = currentLexicalScope.getName();
         currentLexicalScope = currentLexicalScope.getOuterScope();
         try {
@@ -329,6 +302,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         } catch (final UnknownIdentifierException e) {
             reportError(e.getMessage());
         }
+        return rootNode;
     }
 
     /**
