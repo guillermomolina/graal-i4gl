@@ -9,7 +9,9 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.graalvm.polyglot.Context;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
@@ -232,16 +234,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         BlockNode blockNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
         mainRootNode = finishFunctionImplementation(blockNode);
         return mainRootNode;
-    }
-
-    private void flattenBlocks(Iterable<? extends StatementNode> bodyNodes, List<StatementNode> flattenedNodes) {
-        for (StatementNode n : bodyNodes) {
-            if (n instanceof BlockNode) {
-                flattenBlocks(((BlockNode) n).getStatements(), flattenedNodes);
-            } else {
-                flattenedNodes.add(n);
-            }
-        }
     }
 
     @Override
@@ -687,10 +679,22 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitTypeDeclaration(final I4GLParser.TypeDeclarationContext ctx) {
-        List<StatementNode> flattenedNodes = new ArrayList<>();
+        /*List<StatementNode> flattenedNodes = new ArrayList<>();
         for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
             BlockNode blockNode = (BlockNode) visit(variableDeclarationCtx);
             if (blockNode != null) {
+                flattenedNodes.addAll(blockNode.getStatements());
+            }
+        }
+        return new BlockNode(flattenedNodes.toArray(new StatementNode[flattenedNodes.size()]));*/
+        return flattenBlocks(ctx.variableDeclaration());
+    }
+
+    private BlockNode flattenBlocks(Iterable<? extends ParserRuleContext> contextList) {
+        List<StatementNode> flattenedNodes = new ArrayList<>();
+        for (ParseTree variableDeclarationCtx : contextList) {
+            BlockNode blockNode = (BlockNode) visit(variableDeclarationCtx);
+            if (blockNode instanceof BlockNode)  {
                 flattenedNodes.addAll(blockNode.getStatements());
             }
         }

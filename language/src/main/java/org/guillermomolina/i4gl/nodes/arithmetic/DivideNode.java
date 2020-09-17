@@ -35,7 +35,7 @@ public abstract class DivideNode extends BinaryExpressionNode {
 
     @Specialization
     protected double divideLong(long left, long right) {
-        return left / right;
+        return left / (double) right;
     }
 
 	@Specialization
