@@ -40,8 +40,8 @@ public class LexicalScope {
     private String name;
     private final LexicalScope outer;
     private int loopDepth;
-    IdentifiersTable localIdentifiers;
-    final List<StatementNode> scopeInitializationNodes = new ArrayList<>();
+    IdentifiersTable localIdentifiers; 
+    final List<String> arguments;
 
     /**
      * Default constructor.
@@ -54,6 +54,7 @@ public class LexicalScope {
         this.outer = outer;
         this.localIdentifiers = new IdentifiersTable();
         this.localIdentifiers.addBuiltins();
+        this.arguments = new ArrayList<>();
     }
 
     String getName() {
@@ -155,13 +156,8 @@ public class LexicalScope {
         this.localIdentifiers.addVariable(identifier, typeDescriptor);
     }
 
-    /**
-     * Adds initialization scope for this lexical scope. These nodes are prepended to the main block's tree of the
-     * subroutine this scope represents. They are required to initialize values of each local variable of the scope.
-     * @param initializationNode the new initialization node
-     */
-    void addScopeInitializationNode(StatementNode initializationNode) {
-        this.scopeInitializationNodes.add(initializationNode);
+    void addArgument(String identifier) {
+        arguments.add(identifier);
     }
 
     void registerReturnVariable(TypeDescriptor typeDescriptor) throws LexicalException {
