@@ -11,10 +11,10 @@ import com.oracle.truffle.api.source.Source;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.graalvm.polyglot.Context;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
+import org.guillermomolina.i4gl.nodes.InitializationNodeFactory;
 import org.guillermomolina.i4gl.nodes.arithmetic.AddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.DivideIntegerNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.DivideNodeGen;
@@ -89,7 +89,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public I4GLVisitorImpl(final I4GLLanguage language, final Source source) {
         this.language = language;
         // this.source = source;
-        this.currentLexicalScope = new LexicalScope(null, "GLOBAL", false);
+        this.currentLexicalScope = new LexicalScope(null, "GLOBAL");
         this.errorList = new ArrayList<>();
     }
 
@@ -207,8 +207,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         List<StatementNode> blockNodes = new ArrayList<>();
         try {
             final FunctionDescriptor functionDescriptor = currentLexicalScope.registerFunction(identifier);
-
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier);
             if (ctx.typeDeclarations() != null) {
                 BlockNode initializationNode = (BlockNode) visit(ctx.typeDeclarations());
                 if (initializationNode != null) {
@@ -220,7 +219,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
         } catch (LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier);
         }
 
         if (ctx.mainStatements() != null) {
@@ -250,49 +249,47 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitFunctionDefinition(final I4GLParser.FunctionDefinitionContext ctx) {
-        final String identifier = ctx.functionIdentifier().getText();
-        final List<String> parameterIdentifiers = new ArrayList<>();
-        if (ctx.parameterList() != null) {
-            for (final I4GLParser.ParameterGroupContext parameterCtx : ctx.parameterList().parameterGroup()) {
-                parameterIdentifiers.add(parameterCtx.getText());
-            }
-        }
-
-        BlockNode initializationNode = new BlockNode(new StatementNode[0]);
         try {
+            final String identifier = ctx.functionIdentifier().getText();
+            List<StatementNode> blockNodes = new ArrayList<>();
             final FunctionDescriptor functionDescriptor = currentLexicalScope.registerFunction(identifier);
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
-            if (ctx.typeDeclarations() != null) {
-                initializationNode = (BlockNode) visit(ctx.typeDeclarations());
-            }
-            final List<FormalParameter> formalParameters = new ArrayList<>(parameterIdentifiers.size());
-            int count = 0;
-            for (final String parameterIdentifier : parameterIdentifiers) {
-                final TypeDescriptor typeDescriptor = doLookup(parameterIdentifier,
-                        LexicalScope::getIdentifierDescriptor);
 
-                if (typeDescriptor == null) {
-                    reportError("Function argument " + parameterIdentifier + " without type");
-                    throw new LexicalException("Function argument " + parameterIdentifier + " without type");
+            final List<FormalParameter> formalParameters = new ArrayList<>();
+            if (ctx.parameterList() != null) {
+                for (final I4GLParser.ParameterGroupContext parameterCtx : ctx.parameterList().parameterGroup()) {
+                    final String parameterIdentifier = parameterCtx.getText();
+                    final FormalParameter parameter = new FormalParameter(parameterIdentifier);
+                    formalParameters.add(parameter);
                 }
-                final FormalParameter parameter = new FormalParameter(parameterIdentifier, typeDescriptor, false);
-                formalParameters.add(parameter);
-                final ExpressionNode readNode = new ReadArgumentNode(count++, typeDescriptor);
-                final SimpleAssignmentNode assignment = createAssignmentNode(parameterIdentifier, readNode);
-
-                this.currentLexicalScope.addScopeInitializationNode(assignment);
             }
             functionDescriptor.setFormalParameters(formalParameters);
-            /*
-             * final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
-             * currentLexicalScope.registerReturnVariable(returnTypeDescriptor);
-             * functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
-             */
+
+            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier);
+            if (ctx.typeDeclarations() != null) {
+                BlockNode initializationNode = (BlockNode) visit(ctx.typeDeclarations());
+                if (initializationNode != null) {
+                    blockNodes.addAll(initializationNode.getStatements());
+                }
+            }
+
+            final TypeDescriptor returnTypeDescriptor = getTypeDescriptor("INTEGER");
+            currentLexicalScope.registerReturnVariable(returnTypeDescriptor);
+            functionDescriptor.setReturnDescriptor(returnTypeDescriptor);
+
+            if (ctx.codeBlock() != null) {
+                BlockNode bodyNode = (BlockNode) visit(ctx.codeBlock());
+                if (bodyNode != null) {
+                    List<StatementNode> statements = bodyNode.getStatements();
+                    blockNodes.addAll(statements);
+                }
+            }
+    
+            BlockNode blockNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
+            return finishFunctionImplementation(blockNode);
         } catch (final LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
-            currentLexicalScope = new LexicalScope(currentLexicalScope, identifier, false);
+            return null;
         }
-        return finishFunctionImplementation((BlockNode) visit(ctx.codeBlock()));
     }
 
     /**
@@ -667,38 +664,23 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitTypeDeclarations(final I4GLParser.TypeDeclarationsContext ctx) {
-        List<StatementNode> flattenedNodes = new ArrayList<>();
-        for (I4GLParser.TypeDeclarationContext typeDeclarationCtx : ctx.typeDeclaration()) {
-            BlockNode blockNode = (BlockNode) visit(typeDeclarationCtx);
-            if (blockNode != null) {
-                flattenedNodes.addAll(blockNode.getStatements());
-            }
-        }
-        return new BlockNode(flattenedNodes.toArray(new StatementNode[flattenedNodes.size()]));
+        return mergeBlocks(ctx.typeDeclaration());
     }
 
     @Override
     public Node visitTypeDeclaration(final I4GLParser.TypeDeclarationContext ctx) {
-        /*List<StatementNode> flattenedNodes = new ArrayList<>();
-        for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
-            BlockNode blockNode = (BlockNode) visit(variableDeclarationCtx);
-            if (blockNode != null) {
-                flattenedNodes.addAll(blockNode.getStatements());
-            }
-        }
-        return new BlockNode(flattenedNodes.toArray(new StatementNode[flattenedNodes.size()]));*/
-        return flattenBlocks(ctx.variableDeclaration());
+        return mergeBlocks(ctx.variableDeclaration());
     }
 
-    private BlockNode flattenBlocks(Iterable<? extends ParserRuleContext> contextList) {
-        List<StatementNode> flattenedNodes = new ArrayList<>();
+    private BlockNode mergeBlocks(Iterable<? extends ParserRuleContext> contextList) {
+        List<StatementNode> statementNodes = new ArrayList<>();
         for (ParseTree variableDeclarationCtx : contextList) {
             BlockNode blockNode = (BlockNode) visit(variableDeclarationCtx);
             if (blockNode instanceof BlockNode)  {
-                flattenedNodes.addAll(blockNode.getStatements());
+                statementNodes.addAll(blockNode.getStatements());
             }
         }
-        return new BlockNode(flattenedNodes.toArray(new StatementNode[flattenedNodes.size()]));
+        return new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
     }
 
     @Override
@@ -714,13 +696,24 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             final TypeDescriptor typeDescriptor = getTypeDescriptor(type);
             for (final String identifier : identifierList) {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
-
-                StatementNode initializationNode = currentLexicalScope.createInitializationNode(identifier,
-                        typeDescriptor, null);
-                if (initializationNode != null) {
-                    initializationNodes.add(initializationNode);
+                final boolean isArgument = false;
+                StatementNode initializationNode;
+                if (isArgument) {
+                    throw new NotImplementedException();
+                    final ExpressionNode readNode = new ReadArgumentNode(index, typeDescriptor);
+                    initializationNode = createAssignmentNode(identifier, readNode);
                 }
-            }
+                else {
+                    Object defaultValue = typeDescriptor.getDefaultValue();
+                    if (defaultValue == null) {
+                        throw new LexicalException("Undefined default value for type " + typeDescriptor.toString());
+                    }        
+                    FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
+                    initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
+    
+                }
+                initializationNodes.add(initializationNode);
+        }
         } catch (final UnknownIdentifierException | LexicalException e) {
             reportError(e.getMessage());
         }

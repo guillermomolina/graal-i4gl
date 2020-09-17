@@ -85,12 +85,6 @@ public abstract class SubroutineDescriptor implements TypeDescriptor {
         return this.formalParameters.size() != 0;
     }
 
-    /**
-     * Checks whether this subroutine's parameter at the specified index is passed by reference.
-     */
-    public boolean isReferenceParameter(int parameterIndex) {
-        return this.formalParameters.get(parameterIndex).isReference;
-    }
 
     /**
      * Checks whether this subroutine's parameter at the specified index is a subroutine-type parameter.

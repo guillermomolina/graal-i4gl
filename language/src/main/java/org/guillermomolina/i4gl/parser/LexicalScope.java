@@ -2,13 +2,11 @@ package org.guillermomolina.i4gl.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.nodes.statement.BlockNode;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.InitializationNodeFactory;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
@@ -51,7 +49,7 @@ public class LexicalScope {
      * @param name name of the current lexical scope
      * @param usingTPExtension a flag whether support for Turbo I4GL extensions is turned on
      */
-    LexicalScope(LexicalScope outer, String name, boolean usingTPExtension) {
+    LexicalScope(LexicalScope outer, String name) {
         this.name = name;
         this.outer = outer;
         this.localIdentifiers = new IdentifiersTable();
@@ -118,42 +116,6 @@ public class LexicalScope {
 
     void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addType(identifier, typeDescriptor);
-    }
-
-    /**
-     * Checks whether subroutine with the specified identifier in current scope receives reference passed variable as
-     * argument at specified index.
-     * @param identifier identifier of the subroutine
-     * @param parameterIndex index of the subroutine's formal parameter
-     * @throws LexicalException if the received identifier does not represent a subroutine or the specified index is
-     * invalid for the subroutine
-     */
-    boolean isReferenceParameter(String identifier, int parameterIndex) throws LexicalException {
-        TypeDescriptor subroutineDescriptor = this.localIdentifiers.getIdentifierDescriptor(identifier);
-        if (!(subroutineDescriptor instanceof SubroutineDescriptor)) {
-            throw new LexicalException("Not a subroutine: " + identifier);
-        }
-
-        SubroutineDescriptor descriptor = (SubroutineDescriptor)subroutineDescriptor;
-        return descriptor.isReferenceParameter(parameterIndex);
-    }
-
-    /**
-     * Checks whether subroutine with the specified identifier in current scope receives a subroutine as argument at
-     * specified index.
-     * @param identifier identifier of the subroutine
-     * @param parameterIndex index of the subroutine's formal parameter
-     * @throws LexicalException if the received identifier does not represent a subroutine or the specified index is
-     * invalid for the subroutine
-     */
-    boolean isSubroutineParameter(String identifier, int parameterIndex) throws LexicalException {
-        TypeDescriptor subroutineDescriptor = this.localIdentifiers.getIdentifierDescriptor(identifier);
-        if (!(subroutineDescriptor instanceof SubroutineDescriptor)) {
-            throw new LexicalException("Not a subroutine: " + identifier);
-        }
-
-        SubroutineDescriptor descriptor = (SubroutineDescriptor)subroutineDescriptor;
-        return descriptor.isSubroutineParameter(parameterIndex);
     }
 
     boolean isParameterlessSubroutine(String identifier) {
@@ -287,16 +249,6 @@ public class LexicalScope {
 
     OrdinalDescriptor createImplicitRangeDescriptor() {
         return new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(1));
-    }
-
-    public StatementNode createInitializationNode(String identifier, TypeDescriptor typeDescriptor, VirtualFrame frame) {
-        Object defaultValue = typeDescriptor.getDefaultValue();
-        if (defaultValue == null) {
-            return null;
-        }
-
-        FrameSlot frameSlot = this.localIdentifiers.getFrameSlot(identifier);
-        return InitializationNodeFactory.create(frameSlot, typeDescriptor.getDefaultValue(), frame);
     }
 
     /**

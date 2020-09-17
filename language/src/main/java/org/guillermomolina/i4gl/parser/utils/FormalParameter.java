@@ -8,11 +8,9 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.Subrout
  * flag whether it is a reference passed parameter and descriptor of the subroutine to which it belongs.
  */
 public class FormalParameter {
-
-    public FormalParameter(String identifier, TypeDescriptor type, boolean isReference, SubroutineDescriptor subroutine) {
+    public FormalParameter(String identifier, TypeDescriptor type, SubroutineDescriptor subroutine) {
         this.type = type;
         this.identifier = identifier;
-        this.isReference = isReference;
 
         if (subroutine != null) {
             this.isSubroutine = true;
@@ -20,14 +18,16 @@ public class FormalParameter {
         }
     }
 
-    public FormalParameter(String identifier, TypeDescriptor type, boolean isReference) {
-        this(identifier, type, isReference, null);
+    public FormalParameter(String identifier, TypeDescriptor type) {
+        this(identifier, type, null);
+    }
+
+    public FormalParameter(String identifier) {
+        this(identifier, null, null);
     }
 
     public TypeDescriptor type;
     public String identifier;
-    public boolean isReference;
     public boolean isSubroutine;
     public SubroutineDescriptor subroutine;
-
 }

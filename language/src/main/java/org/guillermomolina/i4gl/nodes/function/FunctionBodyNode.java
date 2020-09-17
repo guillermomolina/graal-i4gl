@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.nodes.function;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -100,7 +99,7 @@ public abstract class FunctionBodyNode extends ExpressionNode {
         nullTaken.enter();
         /* Return the default null value. */
         //return frame.getValue(getSlot()); 
-        return 0;
+        return getTypeDescriptor().getDefaultValue();
     }
 
     @Override
