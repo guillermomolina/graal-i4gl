@@ -1,22 +1,20 @@
 package org.guillermomolina.i4gl;
 
-import com.oracle.truffle.api.CallTarget;
-import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
-import com.oracle.truffle.api.frame.FrameDescriptor;
-import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.RootNode;
-import com.oracle.truffle.api.source.Source;
-import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
-import org.guillermomolina.i4gl.parser.I4GLParser;
-
-import java.io.*;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
+
+import com.oracle.truffle.api.CallTarget;
+import com.oracle.truffle.api.Truffle;
+import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
+import com.oracle.truffle.api.nodes.RootNode;
+import com.oracle.truffle.api.source.Source;
+
+import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
+import org.guillermomolina.i4gl.parser.I4GLParser;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the TruffleLanguage.Registration
@@ -31,15 +29,11 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
     public static final I4GLLanguage INSTANCE = null;
 
     private Random random;
-    private Map<String, VirtualFrame> unitFrames;
-    private Map<String, Map<String, I4GLFunction>> unitFunctions;
-    private Map<String, I4GLFunction> functions;
+    private Map<String, CallTarget> functions;
     private Scanner input = new Scanner(System.in);
 
     public I4GLLanguage() {
         random = new Random(26270);
-        unitFrames = new HashMap<>();
-        unitFunctions = new HashMap<>();
         functions = new HashMap<>();
         input = new Scanner(System.in);
     }
@@ -57,11 +51,6 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
     @Override
     protected Object getLanguageGlobal(I4GLState i4glState) {
         return i4glState;
-    }
-
-    @Override
-    protected boolean isObjectOfLanguage(Object obj) {
-        return obj instanceof I4GLFunction;
     }
 
     /**
@@ -89,37 +78,11 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
         return Math.abs(random.nextInt()) % upperBound;
     }
 
-    public boolean isUnitRegistered(String unitIdentifier) {
-        return this.unitFrames.containsKey(unitIdentifier);
-    }
-
-    public VirtualFrame getUnitFrame(String unitIdentifier) {
-        return this.unitFrames.get(unitIdentifier);
-    }
-
-    public VirtualFrame createUnitFrame(String unitIdentifier, FrameDescriptor frameDescriptor) {
-        VirtualFrame unitFrame = Truffle.getRuntime().createVirtualFrame(new Object[0], frameDescriptor);
-        this.unitFrames.put(unitIdentifier, unitFrame);
-
-        return unitFrame;
-    }
-
-    public void updateFunction(String unitIdentifier, String functionIdentifier, I4GLRootNode rootNode) {
-        if (!this.unitFunctions.containsKey(unitIdentifier)) {
-            this.unitFunctions.put(unitIdentifier, new HashMap<>());
-        }
-        this.unitFunctions.get(unitIdentifier).put(functionIdentifier, new I4GLFunction(Truffle.getRuntime().createCallTarget(rootNode)));
-    }
-
-    public I4GLFunction getFunction(String unitIdentifier, String functionIdentifier) {
-        return this.unitFunctions.get(unitIdentifier).get(functionIdentifier);
-    }
-
     public void updateFunction(String functionIdentifier, I4GLRootNode rootNode) {
-        this.functions.put(functionIdentifier, new I4GLFunction(Truffle.getRuntime().createCallTarget(rootNode)));
+        this.functions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
     }
 
-    public I4GLFunction getFunction(String functionIdentifier) {
+    public CallTarget getFunction(String functionIdentifier) {
         return this.functions.get(functionIdentifier);
     }
 

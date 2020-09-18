@@ -1,5 +1,6 @@
 package org.guillermomolina.i4gl.nodes.call;
 
+import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -8,7 +9,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
@@ -25,7 +25,7 @@ public abstract class InvokeNode extends ExpressionNode {
     private final String functionIdentifier;
     private final TypeDescriptor type;
     @Children private final ExpressionNode[] argumentNodes;
-    @CompilerDirectives.CompilationFinal private I4GLFunction function;
+    @CompilerDirectives.CompilationFinal private CallTarget function;
 
 	InvokeNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes, TypeDescriptor type) {
         this.language = language;
@@ -42,7 +42,7 @@ public abstract class InvokeNode extends ExpressionNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
 
-        return function.getCallTarget().call(argumentValues);
+        return function.call(argumentValues);
 	}
 
     @Override
@@ -50,7 +50,7 @@ public abstract class InvokeNode extends ExpressionNode {
 	    return type;
     }
 
-    private I4GLFunction getFunction() {
+    private CallTarget getFunction() {
         return language.getFunction(this.functionIdentifier);
     }
 
