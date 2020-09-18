@@ -6,9 +6,6 @@ import java.util.List;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
-import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
@@ -22,7 +19,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.OrdinalConstantDescriptor;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * This class represents currently parsed lexical scope. It is a slight wrapper of {@link IdentifiersTable} with some
@@ -86,25 +82,12 @@ public class LexicalScope {
         this.name = identifier;
     }
 
-    void setFunctionRootNode(I4GLLanguage language, String identifier, I4GLRootNode rootNode) throws UnknownIdentifierException {
-        language.updateFunction(identifier, rootNode);
-        this.localIdentifiers.setFunctionRootNode(identifier, rootNode);
-    }
-
     void registerLabel(String identifier) throws LexicalException {
         this.localIdentifiers.addLabel(identifier);
     }
 
     void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addType(identifier, typeDescriptor);
-    }
-
-    boolean isParameterlessFunction(String identifier) {
-        return this.localIdentifiers.isParameterlessFunction(identifier);
-    }
-
-    boolean isFunction(String identifier) {
-        return this.localIdentifiers.isFunction(identifier);
     }
 
     boolean labelExists(String identifier) {
@@ -166,25 +149,12 @@ public class LexicalScope {
         this.localIdentifiers.initializeAllUninitializedPointerDescriptors();
     }
 
-    public void registerBuiltinFunction(I4GLLanguage language, String identifier, FunctionDescriptor descriptor) {
-        try {
-            this.localIdentifiers.addFunction(identifier, descriptor);
-            language.updateFunction(identifier, descriptor.getRootNode());
-        } catch (LexicalException e) {
-            throw new I4GLRuntimeException("Could not register builtin function: " + identifier);
-        }
-    }
-
     public void registerType(String identifier, TypeDescriptor type) throws LexicalException{
         this.localIdentifiers.addType(identifier, type);
     }
 
     void registerConstant(String identifier, ConstantDescriptor constant) throws LexicalException {
         this.localIdentifiers.addConstant(identifier, constant);
-    }
-
-    FunctionDescriptor registerFunction(String identifier) throws LexicalException {
-        return this.localIdentifiers.addFunction(identifier);
     }
 
     OrdinalDescriptor createRangeDescriptor(OrdinalConstantDescriptor lowerBound, OrdinalConstantDescriptor upperBound)  throws LexicalException {

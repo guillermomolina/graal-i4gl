@@ -10,6 +10,10 @@ import java.util.Collections;
  */
 public class GenericEnumTypeDescriptor extends EnumTypeDescriptor {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7437423675855027750L;
     private static GenericEnumTypeDescriptor instance = new GenericEnumTypeDescriptor();
 
     public static GenericEnumTypeDescriptor getInstance() {

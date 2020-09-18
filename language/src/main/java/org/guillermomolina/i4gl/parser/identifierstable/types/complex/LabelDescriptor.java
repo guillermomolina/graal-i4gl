@@ -29,4 +29,9 @@ public class LabelDescriptor implements TypeDescriptor {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return identifier;
+    }
+
 }

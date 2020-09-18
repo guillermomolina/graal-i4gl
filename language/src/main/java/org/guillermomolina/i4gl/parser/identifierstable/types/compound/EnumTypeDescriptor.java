@@ -15,6 +15,11 @@ import java.util.List;
  */
 public class EnumTypeDescriptor implements OrdinalDescriptor, Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = -523231960451422534L;
+    
     private final List<String> identifiers;
     // TODO: this is a bit useless overgeneralization since it is always the first declared value
     private final String defaultValue;

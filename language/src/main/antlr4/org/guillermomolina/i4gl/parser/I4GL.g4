@@ -7,51 +7,6 @@
 
 grammar I4GL;
 
-
-@parser::header {
-// DO NOT MODIFY - generated from I4GL.g4 using "mx create-i4gl-parser"
-
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-import com.oracle.truffle.api.source.Source;
-import com.oracle.truffle.api.nodes.RootNode;
-
-import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.parser.I4GLVisitorImpl;
-import org.guillermomolina.i4gl.parser.exceptions.BailoutErrorListener;
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
-
-import java.util.Map;
-import java.util.List;
-}
-
-@lexer::header {
-// DO NOT MODIFY - generated from I4GL.g4 using "mx create-i4gl-parser"
-}
-
-@parser::members {
-   public static RootNode parse(I4GLLanguage language, Source source) throws LexicalException {
-      I4GLLexer lexer = new I4GLLexer(CharStreams.fromString(source.getCharacters().toString()));
-      I4GLParser parser = new I4GLParser(new CommonTokenStream(lexer));
-      lexer.removeErrorListeners();
-      parser.removeErrorListeners();
-      BailoutErrorListener listener = new BailoutErrorListener(source);
-      lexer.addErrorListener(listener);
-      parser.addErrorListener(listener);
-      I4GLParser.CompilationUnitContext tree = parser.compilationUnit();
-      I4GLVisitorImpl visitor = new I4GLVisitorImpl(language, source);
-      visitor.visit(tree);
-      List<String> errorList = visitor.getErrorList();
-      if (errorList.size() > 0) {
-         throw new LexicalException(errorList.get(0));
-      }
-      return visitor.getRootNode();
-   }
-}
-
 compilationUnit
    : databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock? functionOrReportDefinitions? EOF
    ;

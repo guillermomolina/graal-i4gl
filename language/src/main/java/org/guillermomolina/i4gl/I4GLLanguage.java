@@ -2,6 +2,7 @@ package org.guillermomolina.i4gl;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
@@ -13,8 +14,14 @@ import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
+import org.guillermomolina.i4gl.parser.I4GLLexer;
 import org.guillermomolina.i4gl.parser.I4GLParser;
+import org.guillermomolina.i4gl.parser.I4GLVisitorImpl;
+import org.guillermomolina.i4gl.parser.exceptions.BailoutErrorListener;
+import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the TruffleLanguage.Registration
@@ -62,8 +69,21 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
     @Override
     protected CallTarget parse(ParsingRequest request) throws Exception {
         Source source = request.getSource();
-        RootNode mainFunctionNode = I4GLParser.parse(this, source);
-        return Truffle.getRuntime().createCallTarget(mainFunctionNode);
+        I4GLLexer lexer = new I4GLLexer(CharStreams.fromString(source.getCharacters().toString()));
+        I4GLParser parser = new I4GLParser(new CommonTokenStream(lexer));
+        lexer.removeErrorListeners();
+        parser.removeErrorListeners();
+        BailoutErrorListener listener = new BailoutErrorListener(source);
+        lexer.addErrorListener(listener);
+        parser.addErrorListener(listener);
+        I4GLParser.CompilationUnitContext tree = parser.compilationUnit();
+        I4GLVisitorImpl visitor = new I4GLVisitorImpl(this, source);
+        visitor.visit(tree);
+        List<String> errorList = visitor.getErrorList();
+        if (errorList.size() > 0) {
+            throw new LexicalException(errorList.get(0));
+        }
+        return Truffle.getRuntime().createCallTarget(visitor.getRootNode());
     }
 
 
@@ -78,7 +98,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
         return Math.abs(random.nextInt()) % upperBound;
     }
 
-    public void updateFunction(String functionIdentifier, I4GLRootNode rootNode) {
+    public void addFunction(String functionIdentifier, I4GLRootNode rootNode) {
         this.functions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
     }
 

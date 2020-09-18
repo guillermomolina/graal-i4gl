@@ -10,7 +10,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantD
  * Type descriptor for the <i>values</i> of an enum type. Contains additional information about the enum type to which
  * it belongs and the identifier of the enum value.
  */
-public class EnumLiteralDescriptor implements TypeDescriptor, ConstantDescriptor {
+public class EnumLiteralDescriptor implements ConstantDescriptor {
 
     private final EnumTypeDescriptor enumTypeDescriptor;
     private final String identifier;

@@ -1,7 +1,6 @@
 package org.guillermomolina.i4gl.parser;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -21,7 +20,7 @@ import org.guillermomolina.i4gl.nodes.arithmetic.DivideNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.ModuloNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.MultiplyNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.SubtractNodeGen;
-import org.guillermomolina.i4gl.nodes.call.InvokeNodeGen;
+import org.guillermomolina.i4gl.nodes.call.InvokeNode;
 import org.guillermomolina.i4gl.nodes.call.ReadArgumentNode;
 import org.guillermomolina.i4gl.nodes.call.ReturnNode;
 import org.guillermomolina.i4gl.nodes.control.CaseNode;
@@ -174,7 +173,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitMainBlock(final I4GLParser.MainBlockContext ctx) {
         mainRootNode = createFunction("MAIN", null, ctx.typeDeclarations(), ctx.mainStatements());
-        return mainRootNode;
+        return null;
     }
 
     @Override
@@ -204,40 +203,35 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     public I4GLRootNode createFunction(final String functionIdentifier, List<String> parameteridentifiers,
             I4GLParser.TypeDeclarationsContext typeDeclarationsContext, ParserRuleContext codeBlockContext) {
-        try {
-            currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
-            if (parameteridentifiers != null) {
-                for (final String parameteridentifier : parameteridentifiers) {
-                    currentLexicalScope.addArgument(parameteridentifier);
-                }
+        currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
+        if (parameteridentifiers != null) {
+            for (final String parameteridentifier : parameteridentifiers) {
+                currentLexicalScope.addArgument(parameteridentifier);
             }
-
-            List<StatementNode> blockNodes = new ArrayList<>();
-            if (typeDeclarationsContext != null) {
-                BlockNode initializationNode = (BlockNode) visit(typeDeclarationsContext);
-                if (initializationNode != null) {
-                    blockNodes.addAll(initializationNode.getStatements());
-                }
-            }
-
-            if (codeBlockContext != null) {
-                BlockNode bodyNode = (BlockNode) visit(codeBlockContext);
-                if (bodyNode != null) {
-                    blockNodes.addAll(bodyNode.getStatements());
-                }
-            }
-
-            BlockNode blockNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
-            final FunctionBodyNode functionBodyNode = new FunctionBodyNode(blockNode);
-            final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(),
-                    functionBodyNode);
-            currentLexicalScope = currentLexicalScope.getOuterScope();
-            currentLexicalScope.setFunctionRootNode(language, functionIdentifier, rootNode);
-            return rootNode;
-        } catch (final UnknownIdentifierException e) {
-            reportError(e.getMessage());
-            return null;
         }
+
+        List<StatementNode> blockNodes = new ArrayList<>();
+        if (typeDeclarationsContext != null) {
+            BlockNode initializationNode = (BlockNode) visit(typeDeclarationsContext);
+            if (initializationNode != null) {
+                blockNodes.addAll(initializationNode.getStatements());
+            }
+        }
+
+        if (codeBlockContext != null) {
+            BlockNode bodyNode = (BlockNode) visit(codeBlockContext);
+            if (bodyNode != null) {
+                blockNodes.addAll(bodyNode.getStatements());
+            }
+        }
+
+        BlockNode blockNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
+        final FunctionBodyNode functionBodyNode = new FunctionBodyNode(blockNode);
+        final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(),
+                functionBodyNode);
+        language.addFunction(functionIdentifier, rootNode);
+        currentLexicalScope = currentLexicalScope.getOuterScope();
+        return null;
     }
 
     /**
@@ -292,55 +286,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         for (final I4GLParser.ActualParameterContext attributeCtx : attributeListCtx) {
             parameterNodes.add((ExpressionNode) visit(attributeCtx));
         }
-        try {
-            final ExpressionNode callNode = createFunctionCall(identifier, parameterNodes);
-            if (!ctx.variable().isEmpty()) {
-                String resultIdentifier = ctx.variable(0).getText();
-                return createAssignmentNode(resultIdentifier, callNode);
-            }
-            return callNode;
-        } catch (final LexicalException e) {
-            reportError(e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Creates {@link InvokeNode} for call statement with specified parameters.
-     * 
-     * @param identifierToken identifier of the called function
-     * @param params          argument expression nodes
-     * @return the newly created node
-     */
-    public ExpressionNode createFunctionCall(final String identifier, final List<ExpressionNode> params)
-            throws LexicalException {
-        try {
-            return doLookup(identifier, (final LexicalScope foundInScope, final String foundIdentifier) -> {
-                if (foundInScope.isFunction(foundIdentifier)) {
-                    final FunctionDescriptor functionDescriptor = foundInScope.getFunctionDescriptor(foundIdentifier,
-                            params);
-                    functionDescriptor.verifyArguments(params);
-                    return this.createInvokeNode(foundIdentifier, functionDescriptor, foundInScope, params);
-                } else {
-                    throw new LexicalException(foundIdentifier + " is not a function.");
-                }
-            });
-        } catch (final UnknownIdentifierException e) {
-            // Forward declaration of function in local unit
-            LexicalScope scope = currentLexicalScope;
-            while (scope.getOuterScope() != null) {
-                scope = scope.getOuterScope();
-            }
-            final FunctionDescriptor functionDescriptor = scope.registerFunction(identifier);
-
-            return this.createInvokeNode(identifier, functionDescriptor, scope, params);
-        }
-    }
-
-    private ExpressionNode createInvokeNode(final String identifier, final TypeDescriptor returnType,
-            final LexicalScope functionScope, final List<ExpressionNode> argumentNodes) {
-        final ExpressionNode[] arguments = argumentNodes.toArray(new ExpressionNode[argumentNodes.size()]);
-        return InvokeNodeGen.create(language, identifier, arguments, returnType);
+        final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
+        return new InvokeNode(language, identifier, arguments);
     }
 
     @Override
@@ -675,18 +622,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public ExpressionNode createExpressionFromSingleIdentifier(final String identifier) {
         try {
             return doLookup(identifier, (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
-                if (foundInLexicalScope.isParameterlessFunction(foundIdentifier)) {
-                    final FunctionDescriptor descriptor = (FunctionDescriptor) foundInLexicalScope
-                            .getIdentifierDescriptor(foundIdentifier);
-                    return this.createInvokeNode(foundIdentifier, descriptor, foundInLexicalScope,
-                            Collections.emptyList());
-                } else {
-                    return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
-                }
+                return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
             });
         } catch (final UnknownIdentifierException e) {
-            reportError(e.getMessage());
-            return null;
+            // is it a function ???
+            throw new NotImplementedException();
+            /*
+             * reportError(e.getMessage()); return null;
+             */
         }
     }
 
