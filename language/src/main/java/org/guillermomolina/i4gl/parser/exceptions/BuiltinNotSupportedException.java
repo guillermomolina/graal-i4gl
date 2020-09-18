@@ -1,7 +1,7 @@
 package org.guillermomolina.i4gl.parser.exceptions;
 
 /**
- * Exception thrown during parsing phase when user uses a built-in subroutine that is not supported in Trupple.
+ * Exception thrown during parsing phase when user uses a built-in function that is not supported in Trupple.
  */
 public class BuiltinNotSupportedException extends LexicalException {
 

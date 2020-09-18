@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.subroutine;
+package org.guillermomolina.i4gl.parser.identifierstable.types.function;
 
 import java.util.List;
 
@@ -14,33 +14,25 @@ import org.guillermomolina.i4gl.parser.exceptions.IncorrectNumberOfArgumentsProv
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.utils.FormalParameter;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLSubroutine;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 
 /**
- * Base type descriptor for subroutines. It contains the list of its formal parameters and an instance of {@link I4GLSubroutine}
- * representing the subroutine.
+ * Base type descriptor for functions. It contains the list of its formal parameters and an instance of {@link I4GLFunction}
+ * representing the function.
  */
-public abstract class SubroutineDescriptor implements TypeDescriptor {
+public class FunctionDescriptor implements TypeDescriptor {
 
     protected List<FormalParameter> formalParameters;
 
-    protected I4GLSubroutine subroutine;
+    protected I4GLFunction function;
 
     /**
      * The default constructor.
-     * @param formalParameters list of the subroutine's formal parameters
+     * @param formalParameters list of the function's formal parameters
      */
-    SubroutineDescriptor() {
+    public FunctionDescriptor() {
         this.formalParameters = null;
     }
-
-    /**
-     * The default constructor.
-     * @param formalParameters list of the subroutine's formal parameters
-     */
-    /*SubroutineDescriptor(List<FormalParameter> formalParameters) {
-        this.formalParameters = formalParameters;
-    }*/
 
     @Override
     public FrameSlotKind getSlotKind() {
@@ -49,14 +41,15 @@ public abstract class SubroutineDescriptor implements TypeDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return this.subroutine;
+        return this.function;
     }
 
     /**
-     * Gets the descriptor of overload of this subroutine matching the specified arguments. Used only in
-     * {@link org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.builtin.OverloadedFunctionDescriptor}.
+     * Gets the descriptor of overload of this function matching the specified arguments. Used only in
+     * {@link org.guillermomolina.i4gl.parser.identifierstable.types.function.builtin.OverloadedFunctionDescriptor}.
      */
-    public SubroutineDescriptor getOverload(List<ExpressionNode> arguments) throws LexicalException {
+    @SuppressWarnings("unused")
+    public FunctionDescriptor getOverload(List<ExpressionNode> arguments) {
         return this;
     }
 
@@ -68,17 +61,17 @@ public abstract class SubroutineDescriptor implements TypeDescriptor {
         this.formalParameters = formalParameters;
     }
 
-    public I4GLSubroutine getSubroutine() {
-        return this.subroutine;
+    public I4GLFunction getFunction() {
+        return this.function;
     }
 
     public void setRootNode(RootNode rootNode) {
         RootCallTarget callTarget = Truffle.getRuntime().createCallTarget(rootNode);
-        this.subroutine = new I4GLSubroutine(callTarget);
+        this.function = new I4GLFunction(callTarget);
     }
 
     public I4GLRootNode getRootNode() {
-        return (I4GLRootNode) this.subroutine.getCallTarget().getRootNode();
+        return (I4GLRootNode) this.function.getCallTarget().getRootNode();
     }
 
     public boolean hasParameters() {
@@ -87,14 +80,14 @@ public abstract class SubroutineDescriptor implements TypeDescriptor {
 
 
     /**
-     * Checks whether this subroutine's parameter at the specified index is a subroutine-type parameter.
+     * Checks whether this function's parameter at the specified index is a function-type parameter.
      */
-    public boolean isSubroutineParameter(int parameterIndex) {
-        return this.formalParameters.get(parameterIndex).isSubroutine;
+    public boolean isFunctionParameter(int parameterIndex) {
+        return this.formalParameters.get(parameterIndex).isFunction;
     }
 
     /**
-     * Verifies whether the types of the specified expressions match this subroutine's formal parameters.
+     * Verifies whether the types of the specified expressions match this function's formal parameters.
      */
     public void verifyArguments(List<ExpressionNode> passedArguments) throws LexicalException {
         if (formalParameters == null) {
@@ -115,12 +108,12 @@ public abstract class SubroutineDescriptor implements TypeDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        if (!(type instanceof SubroutineDescriptor)) {
+        if (!(type instanceof FunctionDescriptor)) {
             return false;
         }
 
-        SubroutineDescriptor subroutine = (SubroutineDescriptor) type;
-        return compareFormalParameters(subroutine.formalParameters, this.formalParameters);
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) type;
+        return compareFormalParameters(functionDescriptor.formalParameters, this.formalParameters);
     }
 
     private static boolean compareFormalParameters(List<FormalParameter> left, List<FormalParameter> right) {

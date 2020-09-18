@@ -11,7 +11,7 @@ import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
 
 /**
- * This node represents the root node of AST of any subroutine or main program.
+ * This node represents the root node of AST of any function or main program.
  */
 @TypeSystemReference(I4GLTypes.class)
 public class I4GLRootNode extends RootNode {

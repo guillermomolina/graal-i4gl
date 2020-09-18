@@ -5,14 +5,10 @@ import java.util.List;
 
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.VirtualFrame;
+
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.InitializationNodeFactory;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLSubroutine;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
@@ -26,14 +22,14 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.OrdinalConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.FunctionDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.ReturnTypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.SubroutineDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.function.FunctionDescriptor;
 import org.guillermomolina.i4gl.parser.utils.FormalParameter;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
+import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * This class represents currently parsed lexical scope. It is a slight wrapper of {@link IdentifiersTable} with some
- * extended functionality. Lexical scope of i4gl are scopes of subroutines.
+ * extended functionality. Lexical scope of i4gl are scopes of functions.
  */
 public class LexicalScope {
 
@@ -77,13 +73,13 @@ public class LexicalScope {
         return this.localIdentifiers.getFrameSlot(identifier);
     }
 
-    I4GLSubroutine getSubroutine(String identifier) throws UnknownIdentifierException, LexicalException {
-        return this.localIdentifiers.getSubroutine(identifier);
+    I4GLFunction getFunction(String identifier) throws UnknownIdentifierException, LexicalException {
+        return this.localIdentifiers.getFunction(identifier);
     }
 
-    SubroutineDescriptor getSubroutineDescriptor(String identifier, List<ExpressionNode> actualArguments) throws LexicalException {
-        SubroutineDescriptor subroutineDescriptor = (SubroutineDescriptor) this.getIdentifierDescriptor(identifier);
-        return subroutineDescriptor.getOverload(actualArguments);
+    FunctionDescriptor getFunctionDescriptor(String identifier, List<ExpressionNode> actualArguments) throws LexicalException {
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) this.getIdentifierDescriptor(identifier);
+        return functionDescriptor.getOverload(actualArguments);
     }
 
     FrameSlot getReturnSlot() {
@@ -106,9 +102,9 @@ public class LexicalScope {
         this.name = identifier;
     }
 
-    void setSubroutineRootNode(I4GLLanguage language, String identifier, I4GLRootNode rootNode) throws UnknownIdentifierException {
-        language.updateSubroutine(identifier, rootNode);
-        this.localIdentifiers.setSubroutineRootNode(identifier, rootNode);
+    void setFunctionRootNode(I4GLLanguage language, String identifier, I4GLRootNode rootNode) throws UnknownIdentifierException {
+        language.updateFunction(identifier, rootNode);
+        this.localIdentifiers.setFunctionRootNode(identifier, rootNode);
     }
 
     void registerLabel(String identifier) throws LexicalException {
@@ -119,12 +115,12 @@ public class LexicalScope {
         this.localIdentifiers.addType(identifier, typeDescriptor);
     }
 
-    boolean isParameterlessSubroutine(String identifier) {
-        return this.localIdentifiers.isParameterlessSubroutine(identifier);
+    boolean isParameterlessFunction(String identifier) {
+        return this.localIdentifiers.isParameterlessFunction(identifier);
     }
 
-    boolean isSubroutine(String identifier) {
-        return this.localIdentifiers.isSubroutine(identifier);
+    boolean isFunction(String identifier) {
+        return this.localIdentifiers.isFunction(identifier);
     }
 
     boolean labelExists(String identifier) {
@@ -132,20 +128,11 @@ public class LexicalScope {
     }
 
     boolean containsLocalIdentifier(String identifier) {
-        return this.localIdentifiers.containsIdentifier(identifier) && !(this.localIdentifiers.getIdentifierDescriptor(identifier) instanceof ReturnTypeDescriptor);
+        return this.localIdentifiers.containsIdentifier(identifier);
     }
 
     boolean containsPublicIdentifier(String identifier) {
         return this.containsLocalIdentifier(identifier);
-    }
-
-    /**
-     * Checks whether current lexical scope contains return variable with the specified identifier.
-     */
-    boolean containsReturnType(String identifier, boolean onlyPublic) {
-        return this.localIdentifiers.containsIdentifier(identifier) &&
-                (this.localIdentifiers.getIdentifierDescriptor(identifier) instanceof ReturnTypeDescriptor) &&
-                (!onlyPublic || this.containsPublicIdentifier(identifier));
     }
 
     FrameSlot registerReferenceVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
@@ -158,10 +145,6 @@ public class LexicalScope {
 
     void addArgument(String identifier) {
         arguments.add(identifier);
-    }
-
-    void registerReturnVariable(TypeDescriptor typeDescriptor) throws LexicalException {
-        this.localIdentifiers.addReturnVariable(this.getName(), typeDescriptor);
     }
 
     ArrayDescriptor createArrayType(OrdinalDescriptor dimension, TypeDescriptor typeDescriptor) {
@@ -199,20 +182,12 @@ public class LexicalScope {
         this.localIdentifiers.initializeAllUninitializedPointerDescriptors();
     }
 
-    void registerFunctionInterfaceIfNotForwarded(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnTypeDescriptor) throws LexicalException {
-        this.localIdentifiers.addFunctionInterfaceIfNotForwarded(identifier, formalParameters, returnTypeDescriptor);
-    }
-
-    void forwardFunction(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnTypeDescriptor) throws LexicalException {
-        this.localIdentifiers.forwardFunction(identifier, formalParameters, returnTypeDescriptor);
-    }
-
-    public void registerBuiltinSubroutine(I4GLLanguage language, String identifier, SubroutineDescriptor descriptor) {
+    public void registerBuiltinFunction(I4GLLanguage language, String identifier, FunctionDescriptor descriptor) {
         try {
-            this.localIdentifiers.addSubroutine(identifier, descriptor);
-            language.updateSubroutine(identifier, descriptor.getRootNode());
+            this.localIdentifiers.addFunction(identifier, descriptor);
+            language.updateFunction(identifier, descriptor.getRootNode());
         } catch (LexicalException e) {
-            throw new I4GLRuntimeException("Could not register builtin subroutine: " + identifier);
+            throw new I4GLRuntimeException("Could not register builtin function: " + identifier);
         }
     }
 

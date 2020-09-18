@@ -6,7 +6,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.Reference;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 
 /**
- * This node is used to initialize reference passed variable in called subroutine.
+ * This node is used to initialize reference passed variable in called function.
  */
 public class ReferenceInitializationNode extends StatementNode {
 
@@ -20,7 +20,7 @@ public class ReferenceInitializationNode extends StatementNode {
 
     /**
      * The reference object is passed in arguments in the virtual frame.
-     * After reading the reference objects it is assigned to the Object slot from the frame of the actual subroutine
+     * After reading the reference objects it is assigned to the Object slot from the frame of the actual function
      */
     @Override
     public void executeVoid(VirtualFrame frame) {

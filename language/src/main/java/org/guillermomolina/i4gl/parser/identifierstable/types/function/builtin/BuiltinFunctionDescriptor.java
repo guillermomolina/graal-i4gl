@@ -1,26 +1,25 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.builtin;
+package org.guillermomolina.i4gl.parser.identifierstable.types.function.builtin;
+
+import java.util.Collections;
+import java.util.List;
 
 import com.oracle.truffle.api.frame.FrameDescriptor;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.parser.utils.FormalParameter;
 import org.guillermomolina.i4gl.parser.exceptions.ArgumentTypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.IncorrectNumberOfArgumentsProvidedException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumLiteralDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumTypeDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.function.FunctionDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.FunctionDescriptor;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.guillermomolina.i4gl.parser.utils.FormalParameter;
 
 /**
  * Base type descriptor for type descriptors for I4GL's built-in functions. It additionally to {@link FunctionDescriptor}
@@ -34,16 +33,13 @@ public abstract class BuiltinFunctionDescriptor extends FunctionDescriptor {
      * @param parameters list of formal parameters of the function
      */
     BuiltinFunctionDescriptor(ExpressionNode bodyNode, List<FormalParameter> parameters) {
-        super(parameters, bodyNode.getType());
+        super();
+        this.setFormalParameters(formalParameters);
         this.setRootNode(new I4GLRootNode(I4GLLanguage.INSTANCE, new FrameDescriptor(), bodyNode));
     }
 
-    BuiltinFunctionDescriptor() {
-        super(new ArrayList<>(), null);
-    }
-
     @Override
-    public boolean isSubroutineParameter(int index) {
+    public boolean isFunctionParameter(int index) {
         return false;
     }
 

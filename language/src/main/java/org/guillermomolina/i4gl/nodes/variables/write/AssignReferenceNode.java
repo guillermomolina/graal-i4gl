@@ -84,9 +84,9 @@ public abstract class AssignReferenceNode extends StatementNode {
     }
 
     @Specialization
-    void assignSubroutine(VirtualFrame frame, I4GLSubroutine subroutine) {
+    void assignFunction(VirtualFrame frame, I4GLFunction function) {
         Reference reference = (Reference) getFrame(frame).getValue(getSlot());
-        reference.getFromFrame().setObject(reference.getFrameSlot(), subroutine);
+        reference.getFromFrame().setObject(reference.getFrameSlot(), function);
     }
 
     @Specialization

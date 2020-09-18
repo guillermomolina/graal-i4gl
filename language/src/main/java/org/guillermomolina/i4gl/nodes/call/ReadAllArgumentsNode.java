@@ -9,7 +9,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
  * This node is used to read all arguments from actual frame and return them. It is used in {@link org.guillermomolina.i4gl.nodes.builtin.io.WriteBuiltinNode}
- * and {@link org.guillermomolina.i4gl.nodes.builtin.io.ReadBuiltinNode} because these subroutine have variable
+ * and {@link org.guillermomolina.i4gl.nodes.builtin.io.ReadBuiltinNode} because these function have variable
  * number of arguments.
  *
  * {@link ReadArgumentNode}

@@ -1,20 +1,20 @@
 package org.guillermomolina.i4gl.parser.utils;
 
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.SubroutineDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.function.FunctionDescriptor;
 
 /**
- * Structure representing a subroutine formal parameter. It contains the identifier of the parameter, its type descriptor,
- * flag whether it is a reference passed parameter and descriptor of the subroutine to which it belongs.
+ * Structure representing a function formal parameter. It contains the identifier of the parameter, its type descriptor,
+ * flag whether it is a reference passed parameter and descriptor of the function to which it belongs.
  */
 public class FormalParameter {
-    public FormalParameter(String identifier, TypeDescriptor type, SubroutineDescriptor subroutine) {
+    public FormalParameter(String identifier, TypeDescriptor type, FunctionDescriptor function) {
         this.type = type;
         this.identifier = identifier;
 
-        if (subroutine != null) {
-            this.isSubroutine = true;
-            this.subroutine = subroutine;
+        if (function != null) {
+            this.isFunction = true;
+            this.function = function;
         }
     }
 
@@ -28,6 +28,6 @@ public class FormalParameter {
 
     public TypeDescriptor type;
     public String identifier;
-    public boolean isSubroutine;
-    public SubroutineDescriptor subroutine;
+    public boolean isFunction;
+    public FunctionDescriptor function;
 }

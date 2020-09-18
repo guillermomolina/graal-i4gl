@@ -9,7 +9,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLSubroutine;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.parser.I4GLParser;
 
 import java.io.*;
@@ -32,15 +32,15 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
 
     private Random random;
     private Map<String, VirtualFrame> unitFrames;
-    private Map<String, Map<String, I4GLSubroutine>> unitSubroutines;
-    private Map<String, I4GLSubroutine> subroutines;
+    private Map<String, Map<String, I4GLFunction>> unitFunctions;
+    private Map<String, I4GLFunction> functions;
     private Scanner input = new Scanner(System.in);
 
     public I4GLLanguage() {
         random = new Random(26270);
         unitFrames = new HashMap<>();
-        unitSubroutines = new HashMap<>();
-        subroutines = new HashMap<>();
+        unitFunctions = new HashMap<>();
+        functions = new HashMap<>();
         input = new Scanner(System.in);
     }
 
@@ -61,7 +61,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
 
     @Override
     protected boolean isObjectOfLanguage(Object obj) {
-        return obj instanceof I4GLSubroutine;
+        return obj instanceof I4GLFunction;
     }
 
     /**
@@ -104,23 +104,23 @@ public class I4GLLanguage extends TruffleLanguage<I4GLState> {
         return unitFrame;
     }
 
-    public void updateSubroutine(String unitIdentifier, String subroutineIdentifier, I4GLRootNode rootNode) {
-        if (!this.unitSubroutines.containsKey(unitIdentifier)) {
-            this.unitSubroutines.put(unitIdentifier, new HashMap<>());
+    public void updateFunction(String unitIdentifier, String functionIdentifier, I4GLRootNode rootNode) {
+        if (!this.unitFunctions.containsKey(unitIdentifier)) {
+            this.unitFunctions.put(unitIdentifier, new HashMap<>());
         }
-        this.unitSubroutines.get(unitIdentifier).put(subroutineIdentifier, new I4GLSubroutine(Truffle.getRuntime().createCallTarget(rootNode)));
+        this.unitFunctions.get(unitIdentifier).put(functionIdentifier, new I4GLFunction(Truffle.getRuntime().createCallTarget(rootNode)));
     }
 
-    public I4GLSubroutine getSubroutine(String unitIdentifier, String subroutineIdentifier) {
-        return this.unitSubroutines.get(unitIdentifier).get(subroutineIdentifier);
+    public I4GLFunction getFunction(String unitIdentifier, String functionIdentifier) {
+        return this.unitFunctions.get(unitIdentifier).get(functionIdentifier);
     }
 
-    public void updateSubroutine(String subroutineIdentifier, I4GLRootNode rootNode) {
-        this.subroutines.put(subroutineIdentifier, new I4GLSubroutine(Truffle.getRuntime().createCallTarget(rootNode)));
+    public void updateFunction(String functionIdentifier, I4GLRootNode rootNode) {
+        this.functions.put(functionIdentifier, new I4GLFunction(Truffle.getRuntime().createCallTarget(rootNode)));
     }
 
-    public I4GLSubroutine getSubroutine(String subroutineIdentifier) {
-        return this.subroutines.get(subroutineIdentifier);
+    public I4GLFunction getFunction(String functionIdentifier) {
+        return this.functions.get(functionIdentifier);
     }
 
     public Scanner getInput() {

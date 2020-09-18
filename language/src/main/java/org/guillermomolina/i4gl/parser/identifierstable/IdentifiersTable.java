@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.parser.identifierstable;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLSubroutine;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.parser.LexicalScope;
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.*;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.LabelDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
-import org.guillermomolina.i4gl.parser.identifierstable.types.subroutine.*;
+import org.guillermomolina.i4gl.parser.identifierstable.types.function.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,16 +53,13 @@ public class IdentifiersTable {
     }
 
     protected void addBuiltinTypes() {
+        typeDescriptors.put("SMALLINT", IntDescriptor.getInstance());
         typeDescriptors.put("INTEGER", IntDescriptor.getInstance());
-        typeDescriptors.put("shortint", IntDescriptor.getInstance());
-        typeDescriptors.put("longint", LongDescriptor.getInstance());
-        typeDescriptors.put("int64", LongDescriptor.getInstance());
-        typeDescriptors.put("byte", IntDescriptor.getInstance());
-        typeDescriptors.put("single", RealDescriptor.getInstance());
-        typeDescriptors.put("real", RealDescriptor.getInstance());
-        typeDescriptors.put("boolean", BooleanDescriptor.getInstance());
+        typeDescriptors.put("INT", IntDescriptor.getInstance());
+        typeDescriptors.put("BIGINT", LongDescriptor.getInstance());
+        typeDescriptors.put("FLOAT", RealDescriptor.getInstance());
+        typeDescriptors.put("DOUBLE", RealDescriptor.getInstance());
         typeDescriptors.put("CHAR", CharDescriptor.getInstance());
-        typeDescriptors.put("text", TextFileDescriptor.getInstance());
         typeDescriptors.put("TEXT", StringDescriptor.getInstance());
 
         for (Map.Entry<String, TypeDescriptor> typeEntry : typeDescriptors.entrySet()) {
@@ -102,40 +99,40 @@ public class IdentifiersTable {
         return this.identifiersMap;
     }
 
-    public I4GLSubroutine getSubroutine(String identifier) throws UnknownIdentifierException,LexicalException  {
-        TypeDescriptor subroutineDescriptor = this.identifiersMap.get(identifier);
-        if (subroutineDescriptor == null) {
+    public I4GLFunction getFunction(String identifier) throws UnknownIdentifierException,LexicalException  {
+        TypeDescriptor functionDescriptor = this.identifiersMap.get(identifier);
+        if (functionDescriptor == null) {
             throw new UnknownIdentifierException(identifier);
-        } else if (!(subroutineDescriptor instanceof SubroutineDescriptor)) {
-            throw new LexicalException("Not a subroutine: " + identifier);
+        } else if (!(functionDescriptor instanceof FunctionDescriptor)) {
+            throw new LexicalException("Not a function: " + identifier);
         } else {
-            return ((SubroutineDescriptor) subroutineDescriptor).getSubroutine();
+            return ((FunctionDescriptor) functionDescriptor).getFunction();
         }
     }
 
-    public void setSubroutineRootNode(String identifier, I4GLRootNode rootNode) throws UnknownIdentifierException {
+    public void setFunctionRootNode(String identifier, I4GLRootNode rootNode) throws UnknownIdentifierException {
         TypeDescriptor descriptor = this.identifiersMap.get(identifier);
         if (descriptor == null) {
             throw new UnknownIdentifierException(identifier);
         }
-        ((SubroutineDescriptor)descriptor).setRootNode(rootNode);
+        ((FunctionDescriptor)descriptor).setRootNode(rootNode);
     }
 
     public boolean containsIdentifier(String identifier) {
         return this.identifiersMap.containsKey(identifier);
     }
 
-    public boolean isSubroutine(String identifier) {
-        return this.identifiersMap.containsKey(identifier) && (this.identifiersMap.get(identifier) instanceof SubroutineDescriptor);
+    public boolean isFunction(String identifier) {
+        return this.identifiersMap.containsKey(identifier) && (this.identifiersMap.get(identifier) instanceof FunctionDescriptor);
     }
 
-    public boolean isParameterlessSubroutine(String identifier) {
+    public boolean isParameterlessFunction(String identifier) {
         if (!this.identifiersMap.containsKey(identifier)) {
             return false;
         }
 
         TypeDescriptor descriptor = this.identifiersMap.get(identifier);
-        return descriptor instanceof SubroutineDescriptor && !((SubroutineDescriptor) descriptor).hasParameters();
+        return descriptor instanceof FunctionDescriptor && !((FunctionDescriptor) descriptor).hasParameters();
     }
 
     public boolean isLabel(String identifier) {
@@ -181,10 +178,6 @@ public class IdentifiersTable {
 
     public void addVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, typeDescriptor);
-    }
-
-    public void addReturnVariable(String identifier, TypeDescriptor returnTypeDescriptor) throws LexicalException {
-        this.registerNewIdentifier(identifier, new ReturnTypeDescriptor(returnTypeDescriptor));
     }
 
     public void addConstant(String identifier, ConstantDescriptor descriptor) throws LexicalException {
@@ -237,27 +230,7 @@ public class IdentifiersTable {
         return new SetDescriptor(base);
     }
 
-    public void addFunctionInterfaceIfNotForwarded(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnType) throws LexicalException {
-        TypeDescriptor descriptor = this.identifiersMap.get(identifier);
-        if (descriptor != null) {
-            if (!(descriptor instanceof FunctionDescriptor)) {
-                throw new LexicalException("Not a subroutine");
-            } else {
-                if (!SubroutineDescriptor.compareFormalParametersExact(((SubroutineDescriptor) descriptor).getFormalParameters(), formalParameters)) {
-                    throw new LexicalException("Argument types mismatch");
-                }
-            }
-            return;
-        }
-        this.forwardFunction(identifier, formalParameters, returnType);
-    }
-
-    public void forwardFunction(String identifier, List<FormalParameter> formalParameters, TypeDescriptor returnTypeDescriptor) throws LexicalException {
-        TypeDescriptor typeDescriptor = new FunctionDescriptor(formalParameters, returnTypeDescriptor);
-        this.registerNewIdentifier(identifier, typeDescriptor);
-    }
-
-    public void addSubroutine(String identifier, SubroutineDescriptor descriptor) throws LexicalException {
+    public void addFunction(String identifier, FunctionDescriptor descriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, descriptor);
     }
 

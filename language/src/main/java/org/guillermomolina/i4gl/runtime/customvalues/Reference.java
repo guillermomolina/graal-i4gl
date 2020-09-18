@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**
- * Representation of variables passed as a reference to subroutines. It contains a frame of the variable and its slot.
+ * Representation of variables passed as a reference to functions. It contains a frame of the variable and its slot.
  */
 @CompilerDirectives.ValueType
 public class Reference {

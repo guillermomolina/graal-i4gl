@@ -10,7 +10,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLSubroutine;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
 import org.guillermomolina.i4gl.runtime.customvalues.*;
 import org.guillermomolina.i4gl.parser.identifierstable.types.extension.PCharDesriptor;
@@ -79,7 +79,8 @@ public abstract class SimpleAssignmentNode extends StatementNode {
 
     @Specialization
     void assignString(VirtualFrame frame, I4GLString value) {
-        frame = getFrame(frame);
+        getFrame(frame).setObject(getSlot(), value);
+        /*frame = getFrame(frame);
         Object targetObject = frame.getValue(getSlot());
         if (targetObject instanceof I4GLString) {
             frame.setObject(getSlot(), value);
@@ -88,12 +89,12 @@ public abstract class SimpleAssignmentNode extends StatementNode {
             if (pointerValue.getType() instanceof PCharDesriptor) {
                 assignPChar(pointerValue, value);
             }
-        }
+        }*/
     }
 
     @Specialization
-    void assignSubroutine(VirtualFrame frame, I4GLSubroutine subroutine) {
-        getFrame(frame).setObject(getSlot(), subroutine);
+    void assignFunction(VirtualFrame frame, I4GLFunction function) {
+        getFrame(frame).setObject(getSlot(), function);
     }
 
     @Specialization
