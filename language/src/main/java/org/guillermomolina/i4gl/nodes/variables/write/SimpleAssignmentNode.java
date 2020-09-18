@@ -129,6 +129,7 @@ public abstract class SimpleAssignmentNode extends StatementNode {
         getFrame(frame).setObject(getSlot(), array.createDeepCopy());
     }
 
+    @SuppressWarnings("unused")
     private void assignPChar(PointerValue pcharPointer, I4GLString value) {
         PCharValue pchar = (PCharValue) pcharPointer.getDereferenceValue();
         pchar.assignString(value.toString());

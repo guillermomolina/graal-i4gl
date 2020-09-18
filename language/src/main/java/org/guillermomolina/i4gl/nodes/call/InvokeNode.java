@@ -50,7 +50,7 @@ public final class InvokeNode extends ExpressionNode {
 
     @ExplodeLoop
     private Object[] evaluateArguments(VirtualFrame frame) {
-        //CompilerAsserts.compilationConstant(argumentNodes.length);
+        CompilerAsserts.compilationConstant(argumentNodes.length);
         
         Object[] argumentValues = new Object[argumentNodes.length + 1];
         argumentValues[0] = frame;

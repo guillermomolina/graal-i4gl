@@ -110,16 +110,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      * 
      * @param identifier     identifier to be looked up
      * @param lookupFunction the function to be called when the identifier is found
-     * @param withReturnType flag whether to also lookup for functions' return
-     *                       variable which are write-only
      * @param <T>            type of the returned object
      * @return the value return from the
      *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
      */
-    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction,
-            final boolean withReturnType) throws UnknownIdentifierException {
+    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction) throws UnknownIdentifierException {
         try {
-            T result = lookupToParentScope(this.currentLexicalScope, identifier, lookupFunction, withReturnType, false);
+            T result = lookupToParentScope(this.currentLexicalScope, identifier, lookupFunction, false);
             if (result == null) {
                 throw new UnknownIdentifierException(identifier);
             }
@@ -128,15 +125,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             reportError(e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Overload of
-     * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)}.
-     */
-    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction)
-            throws UnknownIdentifierException {
-        return this.doLookup(identifier, lookupFunction, false);
     }
 
     /**
@@ -152,7 +140,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
      */
     private <T> T lookupToParentScope(LexicalScope scope, final String identifier,
-            final GlobalObjectLookup<T> lookupFunction, boolean withReturnType, final boolean onlyPublic)
+            final GlobalObjectLookup<T> lookupFunction, final boolean onlyPublic)
             throws LexicalException {
         while (scope != null) {
             if ((onlyPublic) ? scope.containsPublicIdentifier(identifier) : scope.containsLocalIdentifier(identifier)) {
@@ -160,7 +148,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             } else {
                 scope = scope.getOuterScope();
             }
-            withReturnType = false; // NOTE: return variable may be only in current scope
         }
 
         return null;
@@ -231,7 +218,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 functionBodyNode);
         language.addFunction(functionIdentifier, rootNode);
         currentLexicalScope = currentLexicalScope.getOuterScope();
-        return null;
+        return rootNode;
     }
 
     /**

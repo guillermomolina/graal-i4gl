@@ -1,11 +1,16 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
+import java.util.Map;
+
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.frame.*;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
+import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotTypeException;
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import java.util.Map;
+import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Representation of record-type variables. It contains its own frame where its content is stored and a descriptor of
@@ -50,10 +55,12 @@ public class RecordValue {
         switch (slot.getKind()) {
             case Int: frame.setInt(slot, (int) value); break;
             case Long: frame.setLong(slot, (long) value); break;
+            case Float: frame.setFloat(slot, (float) value); break;
             case Double: frame.setDouble(slot, (double) value); break;
             case Byte: frame.setByte(slot, (byte) (char) value); break;
             case Boolean: frame.setBoolean(slot, (boolean) value); break;
             case Object: frame.setObject(slot, value); break;
+            default:
         }
     }
 
@@ -62,10 +69,12 @@ public class RecordValue {
         switch (slot.getKind()) {
             case Int: toFrame.setInt(slot, fromFrame.getInt(slot)); break;
             case Long: toFrame.setLong(slot, fromFrame.getLong(slot)); break;
+            case Float: toFrame.setFloat(slot, fromFrame.getFloat(slot)); break;
             case Double: toFrame.setDouble(slot, fromFrame.getDouble(slot)); break;
             case Byte: toFrame.setByte(slot, fromFrame.getByte(slot)); break;
             case Boolean: toFrame.setBoolean(slot, fromFrame.getBoolean(slot)); break;
             case Object: toFrame.setObject(slot, fromFrame.getObject(slot)); break;
+            default:
         }
     }
 
