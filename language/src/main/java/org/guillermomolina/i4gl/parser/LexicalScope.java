@@ -22,9 +22,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.OrdinalConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.function.FunctionDescriptor;
-import org.guillermomolina.i4gl.parser.utils.FormalParameter;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -71,19 +68,6 @@ public class LexicalScope {
 
     FrameSlot getLocalSlot(String identifier) {
         return this.localIdentifiers.getFrameSlot(identifier);
-    }
-
-    I4GLFunction getFunction(String identifier) throws UnknownIdentifierException, LexicalException {
-        return this.localIdentifiers.getFunction(identifier);
-    }
-
-    FunctionDescriptor getFunctionDescriptor(String identifier, List<ExpressionNode> actualArguments) throws LexicalException {
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) this.getIdentifierDescriptor(identifier);
-        return functionDescriptor.getOverload(actualArguments);
-    }
-
-    FrameSlot getReturnSlot() {
-        return this.localIdentifiers.getFrameSlot(this.name);
     }
 
     TypeDescriptor getIdentifierDescriptor(String identifier) {

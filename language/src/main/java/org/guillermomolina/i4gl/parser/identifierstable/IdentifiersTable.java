@@ -1,27 +1,37 @@
 package org.guillermomolina.i4gl.parser.identifierstable;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
+
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.parser.LexicalScope;
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
-import org.guillermomolina.i4gl.parser.utils.FormalParameter;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeTypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.*;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.*;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.LabelDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
-import org.guillermomolina.i4gl.parser.identifierstable.types.function.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.NilPointerDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumLiteralDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumTypeDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.StringDescriptor;
+import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * This is a storage for all identifiers encountered during the parsing phase.
@@ -99,40 +109,8 @@ public class IdentifiersTable {
         return this.identifiersMap;
     }
 
-    public I4GLFunction getFunction(String identifier) throws UnknownIdentifierException,LexicalException  {
-        TypeDescriptor functionDescriptor = this.identifiersMap.get(identifier);
-        if (functionDescriptor == null) {
-            throw new UnknownIdentifierException(identifier);
-        } else if (!(functionDescriptor instanceof FunctionDescriptor)) {
-            throw new LexicalException("Not a function: " + identifier);
-        } else {
-            return ((FunctionDescriptor) functionDescriptor).getFunction();
-        }
-    }
-
-    public void setFunctionRootNode(String identifier, I4GLRootNode rootNode) throws UnknownIdentifierException {
-        TypeDescriptor descriptor = this.identifiersMap.get(identifier);
-        if (descriptor == null) {
-            throw new UnknownIdentifierException(identifier);
-        }
-        ((FunctionDescriptor)descriptor).setRootNode(rootNode);
-    }
-
     public boolean containsIdentifier(String identifier) {
         return this.identifiersMap.containsKey(identifier);
-    }
-
-    public boolean isFunction(String identifier) {
-        return this.identifiersMap.containsKey(identifier) && (this.identifiersMap.get(identifier) instanceof FunctionDescriptor);
-    }
-
-    public boolean isParameterlessFunction(String identifier) {
-        if (!this.identifiersMap.containsKey(identifier)) {
-            return false;
-        }
-
-        TypeDescriptor descriptor = this.identifiersMap.get(identifier);
-        return descriptor instanceof FunctionDescriptor && !((FunctionDescriptor) descriptor).hasParameters();
     }
 
     public boolean isLabel(String identifier) {
@@ -184,18 +162,6 @@ public class IdentifiersTable {
         this.registerNewIdentifier(identifier, descriptor);
     }
 
-    public FunctionDescriptor addFunction(String identifier) throws LexicalException {
-        FunctionDescriptor descriptor = (FunctionDescriptor) this.identifiersMap.get(identifier);
-        if (descriptor == null) {
-            descriptor = new FunctionDescriptor();
-            registerNewIdentifier(identifier, descriptor);
-        }
-        if (!(descriptor instanceof FunctionDescriptor)) {
-            throw new LexicalException("Not a function");
-        } 
-        return descriptor;
-    }
-
     public EnumTypeDescriptor createEnum(List<String> identifiers) throws LexicalException {
         EnumTypeDescriptor enumTypeDescriptor = new EnumTypeDescriptor(identifiers);
 
@@ -228,10 +194,6 @@ public class IdentifiersTable {
 
     public TypeDescriptor createSetType(OrdinalDescriptor base) {
         return new SetDescriptor(base);
-    }
-
-    public void addFunction(String identifier, FunctionDescriptor descriptor) throws LexicalException {
-        this.registerNewIdentifier(identifier, descriptor);
     }
 
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {

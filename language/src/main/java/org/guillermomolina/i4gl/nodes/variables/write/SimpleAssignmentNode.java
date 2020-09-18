@@ -10,10 +10,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
 import org.guillermomolina.i4gl.runtime.customvalues.*;
-import org.guillermomolina.i4gl.parser.identifierstable.types.extension.PCharDesriptor;
 
 import java.util.Arrays;
 
@@ -91,12 +89,7 @@ public abstract class SimpleAssignmentNode extends StatementNode {
             }
         }*/
     }
-
-    @Specialization
-    void assignFunction(VirtualFrame frame, I4GLFunction function) {
-        getFrame(frame).setObject(getSlot(), function);
-    }
-
+    
     @Specialization
     void assignIntArray(VirtualFrame frame, int[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));

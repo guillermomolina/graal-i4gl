@@ -4,13 +4,12 @@ import com.oracle.truffle.api.dsl.ImplicitCast;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
 import org.guillermomolina.i4gl.runtime.customvalues.*;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
 
 /**
  * The type system of our interpreter. It specifies which variable types we will be using and implicit casts.
  */
-@TypeSystem({ int.class, long.class, boolean.class, char.class, double.class, I4GLFunction.class, I4GLString.class,
+@TypeSystem({ int.class, long.class, boolean.class, char.class, double.class, I4GLString.class,
         EnumValue.class, I4GLArray.class, Reference.class, PointerValue.class, SetTypeValue.class, FileValue.class, })
 public class I4GLTypes {
 
