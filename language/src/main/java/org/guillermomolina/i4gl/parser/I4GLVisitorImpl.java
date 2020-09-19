@@ -57,6 +57,25 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantD
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanDescriptor;
 
 public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
+    /*private int count = 0;
+
+    @Override
+    public Node visitChildren(org.antlr.v4.runtime.tree.RuleNode node) {
+        ++count;
+        if (count == 16) {
+            count = 16;
+        }
+        try {
+            Node result = super.visitChildren(node);
+            if (result == null) {
+                throw new NotImplementedException(node.getClass().toString());
+            }
+            return result;
+        } catch (Exception e) {
+            reportError(e.getMessage());
+            return null;
+        }
+    }*/
 
     /**
      * Lambda interface used in
@@ -114,7 +133,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      * @return the value return from the
      *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
      */
-    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction) throws UnknownIdentifierException {
+    private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction)
+            throws UnknownIdentifierException {
         try {
             T result = lookupToParentScope(this.currentLexicalScope, identifier, lookupFunction, false);
             if (result == null) {
@@ -140,8 +160,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
      */
     private <T> T lookupToParentScope(LexicalScope scope, final String identifier,
-            final GlobalObjectLookup<T> lookupFunction, final boolean onlyPublic)
-            throws LexicalException {
+            final GlobalObjectLookup<T> lookupFunction, final boolean onlyPublic) throws LexicalException {
         while (scope != null) {
             if ((onlyPublic) ? scope.containsPublicIdentifier(identifier) : scope.containsLocalIdentifier(identifier)) {
                 return lookupFunction.onFound(scope, identifier);
@@ -156,11 +175,17 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public TypeDescriptor getTypeDescriptor(final String identifier) throws UnknownIdentifierException {
         return this.doLookup(identifier, LexicalScope::getTypeDescriptor);
     }
-
+/*
+    @Override
+    public Node visitCompilationUnit(final I4GLParser.CompilationUnitContext ctx) {
+        mainRootNode = (RootNode) visit(ctx.mainBlock());
+        return mainRootNode;
+    }
+*/
     @Override
     public Node visitMainBlock(final I4GLParser.MainBlockContext ctx) {
         mainRootNode = createFunction("MAIN", null, ctx.typeDeclarations(), ctx.mainStatements());
-        return null;
+        return mainRootNode;
     }
 
     @Override
@@ -177,7 +202,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitFunctionDefinition(final I4GLParser.FunctionDefinitionContext ctx) {
-        final String functionIdentifier = ctx.functionIdentifier().getText();
+        final String functionIdentifier = ctx.identifier().getText();
         List<String> parameteridentifiers = null;
         if (ctx.parameterList() != null) {
             parameteridentifiers = new ArrayList<>(ctx.parameterList().parameterGroup().size());
@@ -265,8 +290,21 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitProcedureStatement(final I4GLParser.ProcedureStatementContext ctx) {
-        final String identifier = ctx.procedureIdentifier().getText();
+    public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
+        final String identifier = ctx.functionIdentifier().getText();
+
+        final List<I4GLParser.ActualParameterContext> attributeListCtx = ctx.actualParameter();
+        final List<ExpressionNode> parameterNodes = new ArrayList<>(attributeListCtx.size());
+        for (final I4GLParser.ActualParameterContext attributeCtx : attributeListCtx) {
+            parameterNodes.add((ExpressionNode) visit(attributeCtx));
+        }
+        final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
+        return new InvokeNode(language, identifier, arguments);
+    }
+
+    @Override
+    public Node visitFunction(final I4GLParser.FunctionContext ctx) {
+        final String identifier = ctx.functionIdentifier().getText();
 
         final List<I4GLParser.ActualParameterContext> attributeListCtx = ctx.actualParameter();
         final List<ExpressionNode> parameterNodes = new ArrayList<>(attributeListCtx.size());
@@ -503,20 +541,10 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitFactor(final I4GLParser.FactorContext ctx) {
-        ExpressionNode factor = null;
-        if (ctx.variable() != null) {
-            factor = (ExpressionNode) visit(ctx.variable());
-        } else if (ctx.constant() != null) {
-            factor = (ExpressionNode) visit(ctx.constant());
-        } else if (ctx.expression() != null) {
-            factor = (ExpressionNode) visit(ctx.expression());
-        } else /* ctx.factor() != null */ {
-            factor = NotNodeGen.create((ExpressionNode) visit(ctx.factor()));
-        }
         if (ctx.unitType() != null) {
             throw new NotImplementedException();
         }
-        return factor;
+        return visit(ctx.factorTypes());
     }
 
     @Override
@@ -554,9 +582,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitVariableDeclaration(final I4GLParser.VariableDeclarationContext ctx) {
         final String type = ctx.type().getText();
-        final List<I4GLParser.ConstantIdentifierContext> identifierCtxList = ctx.constantIdentifier();
+        final List<I4GLParser.IdentifierContext> identifierCtxList = ctx.identifier();
         final List<String> identifierList = new ArrayList<>(identifierCtxList.size());
-        for (final I4GLParser.ConstantIdentifierContext identifierCtx : identifierCtxList) {
+        for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
             identifierList.add(identifierCtx.getText());
         }
         List<StatementNode> initializationNodes = new ArrayList<>();
@@ -596,27 +624,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitVariable(final I4GLParser.VariableContext ctx) {
-        return createExpressionFromSingleIdentifier(ctx.getText());
-    }
-
-    /**
-     * Creates an {@link ExpressionNode} from an identifier (can be variable read or
-     * parameterless function call)
-     * 
-     * @param identifierToken the identifier
-     * @return the newly created node
-     */
-    public ExpressionNode createExpressionFromSingleIdentifier(final String identifier) {
+        final String identifier = ctx.getText();
         try {
             return doLookup(identifier, (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
                 return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
             });
         } catch (final UnknownIdentifierException e) {
-            // is it a function ???
-            throw new NotImplementedException();
-            /*
-             * reportError(e.getMessage()); return null;
-             */
+            return new InvokeNode(language, identifier, new ExpressionNode[0]);
         }
     }
 
