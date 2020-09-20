@@ -4,6 +4,18 @@
  *
  * 
  *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
  */
 
 grammar I4GL;
@@ -128,23 +140,21 @@ recordType:
 	);
 
 arrayIndexer:
-	LBRACK numericConstant (
-		COMMA numericConstant
-		| COMMA numericConstant COMMA numericConstant
+	LBRACK dimensionSize (
+		COMMA dimensionSize
+		| COMMA dimensionSize COMMA dimensionSize
 	)? RBRACK;
 
-arrayType:
-	ARRAY arrayIndexer OF (
-		recordType
-		| typeIdentifier
-		| largeType
-	);
+dimensionSize: UNSIGNED_INTEGER;
+
+arrayType: ARRAY arrayIndexer OF arrayTypeType;
+
+arrayTypeType: recordType | typeIdentifier | largeType;
 
 dynArrayType:
-	DYNAMIC ARRAY WITH numericConstant DIMENSIONS OF (
-		recordType
-		| typeIdentifier
-	);
+	DYNAMIC ARRAY WITH numericConstant DIMENSIONS OF dynArrayTypeType;
+
+dynArrayTypeType: recordType | typeIdentifier;
 
 string: STRING_LITERAL;
 
@@ -336,33 +346,30 @@ factorTypes:
 	| NOT factor;
 
 function:
-	functionIdentifier LPAREN (actualParameter (COMMA actualParameter)*)? RPAREN;
+	functionIdentifier LPAREN (
+		actualParameter (COMMA actualParameter)*
+	)? RPAREN;
 
 constant: numericConstant | string;
 
 numericConstant: integer | real;
 
-variable: entireVariable | componentVariable;
-
-entireVariable: identifier;
+variable: identifier indexingVariable? | componentVariable;
 
 indexingVariable: LBRACK expression (COMMA expression)* RBRACK;
 
 /*
  thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
  */
-componentVariable: (recordVariable indexingVariable?) (
+componentVariable:
+	identifier (
 		(DOT STAR)
 		| (
 			DOT componentVariable (
 				(THROUGH | THRU) componentVariable
 			)?
 		)
-	)?;
-
-recordVariable: identifier;
-
-fieldIdentifier: identifier;
+	);
 
 structuredStatement: conditionalStatement | repetetiveStatement;
 

@@ -43,7 +43,10 @@ import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.BlockNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
+import org.guillermomolina.i4gl.nodes.variables.ReadIndexNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadReferenceVariableNodeGen;
@@ -52,30 +55,23 @@ import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNodeGen;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanDescriptor;
 
 public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
-    /*private int count = 0;
-
-    @Override
-    public Node visitChildren(org.antlr.v4.runtime.tree.RuleNode node) {
-        ++count;
-        if (count == 16) {
-            count = 16;
-        }
-        try {
-            Node result = super.visitChildren(node);
-            if (result == null) {
-                throw new NotImplementedException(node.getClass().toString());
-            }
-            return result;
-        } catch (Exception e) {
-            reportError(e.getMessage());
-            return null;
-        }
-    }*/
+    /*
+     * private int count = 0;
+     * 
+     * @Override public Node visitChildren(org.antlr.v4.runtime.tree.RuleNode node)
+     * { ++count; if (count == 16) { count = 16; } try { Node result =
+     * super.visitChildren(node); if (result == null) { throw new
+     * NotImplementedException(node.getClass().toString()); } return result; } catch
+     * (Exception e) { reportError(e.getMessage()); return null; } }
+     */
 
     /**
      * Lambda interface used in
@@ -175,13 +171,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public TypeDescriptor getTypeDescriptor(final String identifier) throws UnknownIdentifierException {
         return this.doLookup(identifier, LexicalScope::getTypeDescriptor);
     }
-/*
-    @Override
-    public Node visitCompilationUnit(final I4GLParser.CompilationUnitContext ctx) {
-        mainRootNode = (RootNode) visit(ctx.mainBlock());
-        return mainRootNode;
-    }
-*/
+
+    /*
+     * @Override public Node visitCompilationUnit(final
+     * I4GLParser.CompilationUnitContext ctx) { mainRootNode = (RootNode)
+     * visit(ctx.mainBlock()); return mainRootNode; }
+     */
     @Override
     public Node visitMainBlock(final I4GLParser.MainBlockContext ctx) {
         mainRootNode = createFunction("MAIN", null, ctx.typeDeclarations(), ctx.mainStatements());
@@ -579,9 +574,17 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         return mergeBlocks(ctx.variableDeclaration());
     }
 
+    class TypeNode extends Node {
+        public final TypeDescriptor descriptor;
+
+        public TypeNode(final TypeDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+    }
+
     @Override
     public Node visitVariableDeclaration(final I4GLParser.VariableDeclarationContext ctx) {
-        final String type = ctx.type().getText();
+        final TypeNode typeNode = (TypeNode) visit(ctx.type());
         final List<I4GLParser.IdentifierContext> identifierCtxList = ctx.identifier();
         final List<String> identifierList = new ArrayList<>(identifierCtxList.size());
         for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
@@ -589,7 +592,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
         List<StatementNode> initializationNodes = new ArrayList<>();
         try {
-            final TypeDescriptor typeDescriptor = getTypeDescriptor(type);
+            final TypeDescriptor typeDescriptor = typeNode.descriptor;
             for (final String identifier : identifierList) {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
                 StatementNode initializationNode;
@@ -608,11 +611,98 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 }
                 initializationNodes.add(initializationNode);
             }
-        } catch (final UnknownIdentifierException | LexicalException e) {
+        } catch (final LexicalException e) {
             reportError(e.getMessage());
         }
 
         return new BlockNode(initializationNodes.toArray(new StatementNode[initializationNodes.size()]));
+    }
+
+    @Override 
+    public Node visitCharType(final I4GLParser.CharTypeContext ctx) {
+        try {
+            if(ctx.numericConstant().isEmpty()) {
+                return new TypeNode(getTypeDescriptor(ctx.getText()));
+            }
+            else {
+                throw new NotImplementedException();
+            }
+        } catch (UnknownIdentifierException e) {
+            reportError(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override 
+    public Node visitNumberType(final I4GLParser.NumberTypeContext ctx) {
+        try {
+            if(ctx.numericConstant().isEmpty()) {
+                return new TypeNode(getTypeDescriptor(ctx.getText()));
+            }
+            else {
+                throw new NotImplementedException();
+            }
+        } catch (UnknownIdentifierException e) {
+            reportError(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override 
+    public Node visitTimeType(final I4GLParser.TimeTypeContext ctx) {
+        throw new NotImplementedException();
+    }
+
+    @Override 
+    public Node visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
+        throw new NotImplementedException();
+    }
+
+    @Override 
+    public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
+        throw new NotImplementedException();
+    }
+
+    @Override 
+    public Node visitRecordType(final I4GLParser.RecordTypeContext ctx) {
+        throw new NotImplementedException();
+    }
+
+    class OrdinalNode extends Node {
+        public final List<OrdinalDescriptor> ordinalDimensions;
+
+        public OrdinalNode(final int dimensions) {
+            this.ordinalDimensions = new ArrayList<>(dimensions);
+        }
+    }
+
+    @Override
+    public Node visitArrayIndexer(final I4GLParser.ArrayIndexerContext ctx) {
+        OrdinalNode ordinalNode = new OrdinalNode(ctx.dimensionSize().size());
+        for (I4GLParser.DimensionSizeContext sizeCtx : ctx.dimensionSize()) { 
+            final long size = Long.parseLong(sizeCtx.getText());
+            OrdinalDescriptor ordinalDescriptor = new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(size));                  
+            ordinalNode.ordinalDimensions.add(ordinalDescriptor);
+        }
+        return ordinalNode;
+    }
+
+    @Override 
+    public Node visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
+        TypeNode typeNode = (TypeNode) visit(ctx.arrayTypeType());
+        OrdinalNode ordinalNode = (OrdinalNode) visit(ctx.arrayIndexer());
+        List<OrdinalDescriptor> ordinalDimensions = ordinalNode.ordinalDimensions;
+        ArrayDescriptor arrayDescriptor = currentLexicalScope.createArrayType(ordinalDimensions.get(ordinalDimensions.size() - 1), typeNode.descriptor);
+        
+	    for (int i = ordinalDimensions.size() - 2; i > -1; --i) {
+	        arrayDescriptor = currentLexicalScope.createArrayType(ordinalDimensions.get(i), arrayDescriptor);
+        }
+        return new TypeNode(arrayDescriptor);
+    }
+
+    @Override 
+    public Node visitDynArrayType(final I4GLParser.DynArrayTypeContext ctx) {
+        throw new NotImplementedException();
     }
 
     @Override
@@ -624,14 +714,50 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitVariable(final I4GLParser.VariableContext ctx) {
-        final String identifier = ctx.getText();
+        if (ctx.componentVariable() != null) {
+            throw new NotImplementedException();
+        }
+        final String identifier = ctx.identifier().getText();
         try {
+            if (ctx.indexingVariable() != null) {
+                final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expression();
+                if(indexList.size() > 3) {
+                    throw new LexicalException("Dimensions can not be " + indexList.size());
+                }
+                List<ExpressionNode> indexes = new ArrayList<>(indexList.size());
+                for(I4GLParser.ExpressionContext indexCtx: indexList) {
+                    indexes.add((ExpressionNode) visit(indexCtx));
+                }
+                return createReadFromArrayNode(, indexes);
+            }
             return doLookup(identifier, (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
                 return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
             });
-        } catch (final UnknownIdentifierException e) {
-            return new InvokeNode(language, identifier, new ExpressionNode[0]);
+        } catch (final LexicalException | UnknownIdentifierException e) {
+            reportError(e.getMessage());
+            return null;
         }
+    }
+
+    /**
+     * Creates {@link ReadFromArrayNode} that reads value from specified array at specified index.
+     * @param arrayExpression node that returns the array
+     * @param indexes nodes of the indexes at which the array will be read
+     * @return the newly created node
+     */
+    public ExpressionNode createReadFromArrayNode(ExpressionNode arrayExpression, List<ExpressionNode> indexes) {
+	    ExpressionNode readArrayNode = arrayExpression;
+	    for (ExpressionNode index : indexes) {
+	        TypeDescriptor actualType = getActualType(readArrayNode.getType());
+	        if (!(actualType instanceof  ArrayDescriptor)) {
+                reportError("Not an array");
+                break;
+            }
+            ReadIndexNode readIndexNode = ReadIndexNodeGen.create(index, ((ArrayDescriptor) actualType).getOffset());
+            TypeDescriptor returnType = ((ArrayDescriptor) actualType).getValuesDescriptor();
+	        readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
+        }
+        return readArrayNode;
     }
 
     /**
