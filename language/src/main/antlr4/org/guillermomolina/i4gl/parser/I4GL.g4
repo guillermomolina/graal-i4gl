@@ -16,6 +16,118 @@
  *
  * 
  *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
+ * 
+ *
  */
 
 grammar I4GL;
@@ -183,7 +295,30 @@ runStatement:
 	)? EOL;
 
 assignmentStatement:
-	LET variable EQUAL expression (COMMA expression)* EOL;
+	LET (
+		simpleAssignment
+		| arrayAssignment
+		| recordAssignment
+		| complexAssignment
+	) EOL;
+
+simpleAssignment:
+	identifier EQUAL (expression (COMMA expression)* | NULL);
+
+arrayAssignment:
+	identifier indexingVariable EQUAL (
+		expression (COMMA expression)*
+		| NULL
+	);
+
+recordAssignment:
+	identifier (DOT identifier)+ EQUAL (
+		expression (COMMA expression)*
+		| NULL
+	);
+
+complexAssignment:
+	identifier DOT STAR EQUAL identifier DOT STAR;
 
 callStatement:
 	CALL functionIdentifier (

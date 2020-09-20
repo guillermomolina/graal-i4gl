@@ -660,7 +660,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override 
     public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
-        throw new NotImplementedException();
+        try {
+            return new TypeNode(getTypeDescriptor(ctx.getText()));
+        } catch (UnknownIdentifierException e) {
+            reportError(e.getMessage());
+            return null;
+        }
     }
 
     @Override 
@@ -706,12 +711,37 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitAssignmentStatement(final I4GLParser.AssignmentStatementContext ctx) {
-        final String variableIdentifier = ctx.variable().getText();
+    public Node visitSimpleAssignment(final I4GLParser.SimpleAssignmentContext ctx) {
+        if(ctx.expression().size() != 1) {
+            throw new NotImplementedException();
+        }
         final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
-        return createAssignmentNode(variableIdentifier, valueNode);
+        return createAssignmentNode(ctx.identifier().getText(), valueNode);
     }
 
+    @Override
+    public Node visitArrayAssignment(final I4GLParser.ArrayAssignmentContext ctx) {
+        if(ctx.expression().size() != 1) {
+            throw new NotImplementedException();
+        }
+        final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
+        final ExpressionNode arrayIndexNode = (ExpressionNode) visit(ctx.);
+        return createAssignmentToArray(targetNode, arrayIndexNode, valueNode);
+    }
+
+    @Override
+    public Node visitRecordAssignment(final I4GLParser.RecordAssignmentContext ctx) {
+        if(ctx.expression().size() != 1) {
+            throw new NotImplementedException();
+        }
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Node visitComplexAssignment(final I4GLParser.ComplexAssignmentContext ctx) {
+        throw new NotImplementedException();
+    }
+    
     @Override
     public Node visitVariable(final I4GLParser.VariableContext ctx) {
         if (ctx.componentVariable() != null) {
@@ -719,20 +749,21 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
         final String identifier = ctx.identifier().getText();
         try {
-            if (ctx.indexingVariable() != null) {
-                final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expression();
-                if(indexList.size() > 3) {
-                    throw new LexicalException("Dimensions can not be " + indexList.size());
-                }
-                List<ExpressionNode> indexes = new ArrayList<>(indexList.size());
-                for(I4GLParser.ExpressionContext indexCtx: indexList) {
-                    indexes.add((ExpressionNode) visit(indexCtx));
-                }
-                return createReadFromArrayNode(, indexes);
-            }
-            return doLookup(identifier, (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
+            ExpressionNode variableNode = doLookup(identifier, (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
                 return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
             });
+            if (ctx.indexingVariable() == null) {
+                return variableNode;
+            }
+            final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expression();
+            if(indexList.size() > 3) {
+                throw new LexicalException("Dimensions can not be " + indexList.size());
+            }
+            List<ExpressionNode> indexes = new ArrayList<>(indexList.size());
+            for(I4GLParser.ExpressionContext indexCtx: indexList) {
+                indexes.add((ExpressionNode) visit(indexCtx));
+            }
+            return createReadFromArrayNode(variableNode, indexes);
         } catch (final LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
             return null;
@@ -748,7 +779,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public ExpressionNode createReadFromArrayNode(ExpressionNode arrayExpression, List<ExpressionNode> indexes) {
 	    ExpressionNode readArrayNode = arrayExpression;
 	    for (ExpressionNode index : indexes) {
-	        TypeDescriptor actualType = getActualType(readArrayNode.getType());
+	        TypeDescriptor actualType = readArrayNode.getType();
 	        if (!(actualType instanceof  ArrayDescriptor)) {
                 reportError("Not an array");
                 break;
