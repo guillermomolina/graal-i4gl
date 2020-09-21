@@ -14,7 +14,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescri
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumTypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
@@ -116,10 +115,6 @@ public class LexicalScope {
 
     ArrayDescriptor createArrayType(OrdinalDescriptor dimension, TypeDescriptor typeDescriptor) {
         return this.localIdentifiers.createArray(dimension, typeDescriptor);
-    }
-
-    EnumTypeDescriptor createEnumType(List<String> identifiers) throws LexicalException {
-        return this.localIdentifiers.createEnum(identifiers);
     }
 
     FileDescriptor createFileDescriptor(TypeDescriptor contentTypeDescriptor) {

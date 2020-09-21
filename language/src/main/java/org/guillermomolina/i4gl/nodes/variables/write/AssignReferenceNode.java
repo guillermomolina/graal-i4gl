@@ -53,12 +53,6 @@ public abstract class AssignReferenceNode extends StatementNode {
     }
 
     @Specialization
-    void writeEnum(VirtualFrame frame, EnumValue value) {
-        Reference reference = (Reference) getFrame(frame).getValue(getSlot());
-        reference.getFromFrame().setObject(reference.getFrameSlot(), value);
-    }
-
-    @Specialization
     void assignSet(VirtualFrame frame, SetTypeValue set) {
         Reference reference = (Reference) getFrame(frame).getValue(getSlot());
         reference.getFromFrame().setObject(reference.getFrameSlot(), set.createDeepCopy());

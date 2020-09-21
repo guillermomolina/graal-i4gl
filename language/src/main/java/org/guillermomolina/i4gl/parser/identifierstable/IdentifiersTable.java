@@ -20,8 +20,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumLiteralDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumTypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
@@ -164,19 +162,6 @@ public class IdentifiersTable {
 
     public void addConstant(String identifier, ConstantDescriptor descriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, descriptor);
-    }
-
-    public EnumTypeDescriptor createEnum(List<String> identifiers) throws LexicalException {
-        EnumTypeDescriptor enumTypeDescriptor = new EnumTypeDescriptor(identifiers);
-
-        for (String identifier : identifiers) {
-            if (this.typeDescriptors.containsKey(identifier)) {
-                throw new DuplicitIdentifierException(identifier);
-            }
-            this.registerNewIdentifier(identifier, new EnumLiteralDescriptor(enumTypeDescriptor, identifier));
-        }
-
-        return enumTypeDescriptor;
     }
 
     public FileDescriptor createFileDescriptor(TypeDescriptor contentTypeDescriptor) {

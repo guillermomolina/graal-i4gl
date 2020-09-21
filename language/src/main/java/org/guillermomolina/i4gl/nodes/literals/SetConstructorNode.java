@@ -5,7 +5,6 @@ import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumLiteralDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
 
 import java.util.HashSet;
@@ -38,10 +37,6 @@ public class SetConstructorNode extends ExpressionNode {
     @Override
     public TypeDescriptor getType() {
         TypeDescriptor innerType = this.valueNodes[0].getType();
-        if (innerType instanceof EnumLiteralDescriptor) {
-            return new SetDescriptor(((EnumLiteralDescriptor) innerType).getEnumType());
-        } else {
-            return new SetDescriptor((OrdinalDescriptor) innerType);
-        }
+        return new SetDescriptor((OrdinalDescriptor) innerType);
     }
 }

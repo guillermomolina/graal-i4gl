@@ -3,13 +3,11 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.runtime.customvalues.EnumValue;
 import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
 import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.GenericEnumTypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
 
 /**
@@ -26,7 +24,6 @@ public abstract class EqualsNode extends BinaryExpressionNode {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(CharDescriptor.getInstance(), CharDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(GenericEnumTypeDescriptor.getInstance(), GenericEnumTypeDescriptor.getInstance()), IntDescriptor.getInstance());
     }
 
     @Specialization
@@ -48,9 +45,6 @@ public abstract class EqualsNode extends BinaryExpressionNode {
     protected int equals(char left, char right) {
 	    return left == right ? 1 : 0;
     }
-
-	@Specialization
-	protected int equals(EnumValue left, EnumValue right) { return left.equals(right) ? 1 : 0; }
 
 	@Specialization
 	protected int equals(SetTypeValue left, SetTypeValue right) {

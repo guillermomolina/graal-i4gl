@@ -50,11 +50,6 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     }
 
     @Specialization
-    void writeEnum(VirtualFrame frame, EnumValue value) {
-        getFrame(frame).setObject(getSlot(), value);
-    }
-
-    @Specialization
     void assignSet(VirtualFrame frame, SetTypeValue set) {
         getFrame(frame).setObject(getSlot(), set.createDeepCopy());
     }

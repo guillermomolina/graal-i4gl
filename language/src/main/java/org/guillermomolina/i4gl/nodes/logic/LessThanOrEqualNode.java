@@ -3,12 +3,10 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.runtime.customvalues.EnumValue;
 import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.GenericEnumTypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
 
 /**
@@ -31,7 +29,6 @@ public abstract class LessThanOrEqualNode extends BinaryExpressionNode {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(CharDescriptor.getInstance(), CharDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(GenericEnumTypeDescriptor.getInstance(), GenericEnumTypeDescriptor.getInstance()), IntDescriptor.getInstance());
     }
 
     @Specialization
@@ -57,11 +54,6 @@ public abstract class LessThanOrEqualNode extends BinaryExpressionNode {
 	@Specialization
 	int lessThanOrEqual(SetTypeValue left, SetTypeValue right) {
 		return (left.getSize() < right.getSize()) || (left.getSize() == right.getSize()) ? 1 : 0;
-	}
-
-	@Specialization
-	int lessThanOrEqual(EnumValue left, EnumValue right) {
-		return left.lesserThan(right) || left.equals(right) ? 1 : 0;
 	}
 
     @Override

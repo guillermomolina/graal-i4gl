@@ -4,7 +4,6 @@ import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.runtime.customvalues.EnumValue;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
 
@@ -36,11 +35,6 @@ public abstract class ReadIndexNode extends ExpressionNode {
     @Specialization
     int getCharIndex(char index) {
         return (int) index - getOffset();
-    }
-
-    @Specialization
-    int getEnumIndex(EnumValue index) {
-        return (int) index.getOrdinalValue() - getOffset();
     }
 
     @Override

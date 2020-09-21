@@ -77,7 +77,7 @@ charType:
 
 character: CHAR | NCHAR | CHARACTER;
 
-varchar: CHAR | NCHAR | CHARACTER;
+varchar: VARCHAR | NVARCHAR;
 
 timeType:
 	DATE
