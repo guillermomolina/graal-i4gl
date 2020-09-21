@@ -50,11 +50,6 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     }
 
     @Specialization
-    void assignSet(VirtualFrame frame, SetTypeValue set) {
-        getFrame(frame).setObject(getSlot(), set.createDeepCopy());
-    }
-
-    @Specialization
     void assignRecord(VirtualFrame frame, RecordValue record) {
         getFrame(frame).setObject(getSlot(), record.getCopy());
     }

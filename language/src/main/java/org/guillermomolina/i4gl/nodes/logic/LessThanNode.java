@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
@@ -49,16 +48,6 @@ public abstract class LessThanNode extends BinaryExpressionNode {
 	int lessThan(char left, char right) {
 		return left < right ? 1 : 0;
 	}
-
-	@Specialization
-	int lessThan(SetTypeValue left, SetTypeValue right) {
-		return left.getSize() < right.getSize() ? 1 : 0;
-	}
-
-	@Override
-    public boolean verifyNonPrimitiveArgumentTypes(TypeDescriptor leftType, TypeDescriptor rightType) {
-        return this.verifyBothCompatibleSetTypes(leftType, rightType);
-    }
 
     @Override
     public TypeDescriptor getType() {

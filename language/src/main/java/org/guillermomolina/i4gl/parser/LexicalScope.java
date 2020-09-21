@@ -129,10 +129,6 @@ public class LexicalScope {
         return this.localIdentifiers.createPointerDescriptor(innerTypeIdentifier);
     }
 
-    TypeDescriptor createSetType(OrdinalDescriptor baseType) {
-        return this.localIdentifiers.createSetType(baseType);
-    }
-
     /**
      * I4GL allows to declare a pointer to a type that is declared after the pointer's declaration. In these cases, we
      * create a pointer type with unspecified inner type but with the identifier of the type to be declared later. After

@@ -122,7 +122,9 @@ structuredType: recordType | arrayType | dynArrayType;
 
 recordType:
 	RECORD (
-		EOL (variableDeclaration (COMMA variableDeclaration)*) END RECORD
+		EOL (
+			variableDeclaration (COMMA EOL variableDeclaration)*
+		) EOL END RECORD
 		| (LIKE tableIdentifier DOT STAR)
 	);
 
@@ -344,7 +346,7 @@ constant: numericConstant | string;
 
 numericConstant: integer | real;
 
-variable: identifier indexingVariable? | componentVariable;
+variable: identifier (indexingVariable | (DOT identifier)+ )?;
 
 indexingVariable: LBRACK expression (COMMA expression)* RBRACK;
 
@@ -1758,7 +1760,12 @@ DOUBLEVERTBAR: '||';
 // testLiterals is set to true! This means that after we match the rule, we look in the literals
 // table to see if it's a literal or really an identifer
 
-IDENT: ('a' .. 'z' | '_') ('a' .. 'z' | '_' | '0' .. '9')*;
+IDENT: ('a' .. 'z' | '_') (
+		'a' .. 'z'
+		| 'A' .. 'Z'
+		| '_'
+		| '0' .. '9'
+	)*;
 
 // character literals
 CHAR_LITERAL: '\'' ( /*ESC |*/ ~'\'') '\'';

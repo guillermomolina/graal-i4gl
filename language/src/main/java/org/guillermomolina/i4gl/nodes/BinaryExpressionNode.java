@@ -5,7 +5,6 @@ import com.oracle.truffle.api.dsl.NodeChildren;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,14 +76,6 @@ public abstract class BinaryExpressionNode extends ExpressionNode {
      */
     protected TypeDescriptor getNonPrimitiveArgumentsResultingType(TypeDescriptor leftType, TypeDescriptor rightType) {
         return null;
-    }
-
-    /**
-     * Helper function that returns true if the given types are both set types and compatible.
-     */
-    protected boolean verifyBothCompatibleSetTypes(TypeDescriptor leftType, TypeDescriptor rightType) {
-        return leftType instanceof SetDescriptor && rightType instanceof SetDescriptor &&
-                ((SetDescriptor) leftType).getInnerType() == ((SetDescriptor) rightType).getInnerType();
     }
 
     /**

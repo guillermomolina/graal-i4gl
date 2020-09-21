@@ -3,8 +3,6 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
-import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
@@ -44,24 +42,6 @@ public abstract class EqualsNode extends BinaryExpressionNode {
 	@Specialization
     protected int equals(char left, char right) {
 	    return left == right ? 1 : 0;
-    }
-
-	@Specialization
-	protected int equals(SetTypeValue left, SetTypeValue right) {
-	    return left.equals(right) ? 1 : 0;
-    }
-
-    @Specialization
-    protected int equals(PointerValue left, PointerValue right) {
-	    return left.equals(right) ? 1 : 0;
-    }
-
-    // TODO: what about record type? file type?
-
-    @Override
-    public boolean verifyNonPrimitiveArgumentTypes(TypeDescriptor leftType, TypeDescriptor rightType) {
-        return this.verifyBothCompatibleSetTypes(leftType, rightType) ||
-                this.verifyBothCompatiblePointerTypes(leftType, rightType);
     }
 
     @Override

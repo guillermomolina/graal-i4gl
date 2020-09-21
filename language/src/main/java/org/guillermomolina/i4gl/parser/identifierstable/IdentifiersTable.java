@@ -1,7 +1,6 @@
 package org.guillermomolina.i4gl.parser.identifierstable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -21,7 +20,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
@@ -179,10 +177,6 @@ public class IdentifiersTable {
 
     public ArrayDescriptor createArray(OrdinalDescriptor dimension, TypeDescriptor typeDescriptor) {
         return new ArrayDescriptor(dimension, typeDescriptor);
-    }
-
-    public TypeDescriptor createSetType(OrdinalDescriptor base) {
-        return new SetDescriptor(base);
     }
 
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {

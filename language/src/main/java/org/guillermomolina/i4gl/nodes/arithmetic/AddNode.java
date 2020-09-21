@@ -3,10 +3,7 @@ package org.guillermomolina.i4gl.nodes.arithmetic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
-import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
@@ -46,23 +43,4 @@ public abstract class AddNode extends BinaryExpressionNode {
 	protected double add(double left, double right) {
 		return left + right;
 	}
-
-	@Specialization
-	protected SetTypeValue add(SetTypeValue left, SetTypeValue right) {
-		return SetTypeValue.union(left, right);
-	}
-
-    @Override
-    public boolean verifyNonPrimitiveArgumentTypes(TypeDescriptor leftType, TypeDescriptor rightType) {
-        return this.verifyBothCompatibleSetTypes(leftType, rightType);
-    }
-
-    @Override
-    protected TypeDescriptor getNonPrimitiveArgumentsResultingType(TypeDescriptor leftType, TypeDescriptor rightType) {
-        if (leftType instanceof SetDescriptor) {
-            return new SetDescriptor(((SetDescriptor) leftType).getBaseTypeDescriptor());
-        }
-        return null;
-    }
-
 }

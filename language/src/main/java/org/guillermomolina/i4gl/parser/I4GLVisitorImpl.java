@@ -711,21 +711,24 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitAssignmentStatement(final I4GLParser.AssignmentStatementContext ctx) {
         if(!ctx.identifier().isEmpty()) {
+            // RECORD.* = RECORD.*
             throw new NotImplementedException();
         }
         try {
-            if (ctx.variable().componentVariable() != null) {
+            if (!ctx.variable().DOT().isEmpty()) {
+                // RECORD.RECORD
                 throw new NotImplementedException();
             }
-            final String identifier = ctx.variable().identifier().getText();
+            final String identifier = ctx.variable().identifier(0).getText();
+            if (ctx.variable().indexingVariable() == null) {
+                final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
+                return createAssignmentNode(identifier, valueNode);
+            }
             ExpressionNode variableNode;
             variableNode = doLookup(identifier,
                     (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
                         return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
                     });
-            if (ctx.variable().indexingVariable() == null) {
-                return variableNode;
-            }
             final List<I4GLParser.ExpressionContext> indexList = ctx.variable().indexingVariable().expression();
             if (indexList.size() > 3) {
                 reportError("Dimensions can not be " + indexList.size());
@@ -779,10 +782,11 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitVariable(final I4GLParser.VariableContext ctx) {
-        if (ctx.componentVariable() != null) {
+        if (ctx.identifier().size() > 1 && !ctx.DOT().isEmpty()) {
+            // RECORD
             throw new NotImplementedException();
         }
-        final String identifier = ctx.identifier().getText();
+        final String identifier = ctx.identifier(0).getText();
         try {
             ExpressionNode variableNode = doLookup(identifier,
                     (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
