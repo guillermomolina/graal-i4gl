@@ -1,6 +1,6 @@
 MAIN  
   DEFINE myrecord RECORD
-    anInteger INTEGER ,
+    anInteger INTEGER,
     aFloat FLOAT
   END RECORD
   LET myrecord.anInteger = 100

@@ -57,6 +57,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 
@@ -666,7 +667,20 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitRecordType(final I4GLParser.RecordTypeContext ctx) {
-        throw new NotImplementedException();
+        currentLexicalScope = new RecordLexicalScope(this.currentLexicalScope);        
+
+        if(ctx.LIKE() != null) {
+            throw new NotImplementedException();
+        }
+        for (I4GLParser.VariableDeclarationContext variableDeclarationCtx :ctx.variableDeclaration()) {
+            visit(variableDeclarationCtx);
+        }
+
+        RecordDescriptor descriptor = currentLexicalScope.createRecordDescriptor();
+
+        assert currentLexicalScope.getOuterScope() != null;
+        currentLexicalScope = currentLexicalScope.getOuterScope();
+        return new TypeNode(descriptor);
     }
 
     class OrdinalNode extends Node {
