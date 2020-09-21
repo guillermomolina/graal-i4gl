@@ -26,7 +26,6 @@ public abstract class ReadConstantNode extends ExpressionNode {
     @CompilerDirectives.CompilationFinal private long longValue;
     @CompilerDirectives.CompilationFinal private double doubleValue;
     @CompilerDirectives.CompilationFinal private char charValue;
-    @CompilerDirectives.CompilationFinal private boolean booleanValue;
     @CompilerDirectives.CompilationFinal private Object genericValue;
 
 	ReadConstantNode(Object value) {
@@ -38,8 +37,6 @@ public abstract class ReadConstantNode extends ExpressionNode {
             this.doubleValue = (double) value;
         } else if (value instanceof Character) {
             this.charValue= (char) value;
-        } else if (value instanceof Boolean) {
-            this.booleanValue = (boolean) value;
         }
         this.genericValue = value;
     }
@@ -62,11 +59,6 @@ public abstract class ReadConstantNode extends ExpressionNode {
     @Specialization(guards = "isChar()")
     char readChar() {
         return this.charValue;
-    }
-
-    @Specialization(guards = "isBoolean()")
-    boolean readBoolean() {
-        return booleanValue;
     }
 
     @Specialization

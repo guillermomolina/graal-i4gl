@@ -6,7 +6,7 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
-import org.guillermomolina.i4gl.runtime.customvalues.PCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
@@ -45,11 +45,6 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
         return array[index];
     }
 
-    @Specialization
-    boolean readBoolean(boolean[] array, int index) {
-        return array[index];
-    }
-
     // TODO: do we need this I4GLString class?
     @Specialization
     char readString(I4GLString string, int index) {
@@ -57,7 +52,7 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
     }
 
     @Specialization
-    char readPChar(PCharValue string, int index) {
+    char readVarchar(VarcharValue string, int index) {
         return (char) string.getValueAt(index);
     }
 

@@ -47,13 +47,6 @@ import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
-/**
- * Implementation of the I4GL return statement. We need to unwind an unknown number of interpreter
- * frames that are between this {@link ReturnNode} and the {@link FunctionBodyNode} of the
- * method we are exiting. This is done by throwing an {@link ReturnException exception} that is
- * caught by the {@link FunctionBodyNode#executeGeneric function body}. The exception transports
- * the return value.
- */
 @NodeInfo(shortName = "return", description = "The node implementing a return statement")
 public final class ReturnNode extends StatementNode {
 

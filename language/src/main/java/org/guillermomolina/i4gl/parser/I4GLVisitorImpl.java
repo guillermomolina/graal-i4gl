@@ -27,10 +27,8 @@ import org.guillermomolina.i4gl.nodes.control.CaseNode;
 import org.guillermomolina.i4gl.nodes.control.ForNode;
 import org.guillermomolina.i4gl.nodes.control.IfNode;
 import org.guillermomolina.i4gl.nodes.control.WhileNode;
-import org.guillermomolina.i4gl.nodes.function.FunctionBodyNode;
 import org.guillermomolina.i4gl.nodes.literals.DoubleLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.LogicLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.LongLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.StringLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
@@ -61,7 +59,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceD
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanDescriptor;
 
 public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     /*
@@ -227,16 +224,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
 
         if (codeBlockContext != null) {
-            BlockNode bodyNode = (BlockNode) visit(codeBlockContext);
-            if (bodyNode != null) {
-                blockNodes.addAll(bodyNode.getStatements());
+            BlockNode blockNode = (BlockNode) visit(codeBlockContext);
+            if (blockNode != null) {
+                blockNodes.addAll(blockNode.getStatements());
             }
         }
 
-        BlockNode blockNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
-        final FunctionBodyNode functionBodyNode = new FunctionBodyNode(blockNode);
-        final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(),
-                functionBodyNode);
+        final BlockNode bodyNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
+        final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode);
         language.addFunction(functionIdentifier, rootNode);
         currentLexicalScope = currentLexicalScope.getOuterScope();
         return rootNode;
@@ -344,7 +339,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             } else {
                 stepValue = IntLiteralNodeGen.create(1);
             }
-            StatementNode loopBody = (StatementNode) visit(ctx.codeBlock());
+
+            StatementNode loopBody = ctx.codeBlock() == null? new BlockNode() : (StatementNode) visit(ctx.codeBlock());
             FrameSlot controlSlot = this.doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
             if (startValue.getType() != finalValue.getType()
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
@@ -419,10 +415,10 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitIfCondition(final I4GLParser.IfConditionContext ctx) {
         if (ctx.TRUE() != null) {
-            return LogicLiteralNodeGen.create(true);
+            return IntLiteralNodeGen.create(0);
         }
         if (ctx.FALSE() != null) {
-            return LogicLiteralNodeGen.create(false);
+            return IntLiteralNodeGen.create(1);
         }
         ExpressionNode leftNode = (ExpressionNode) visit(ctx.ifCondition2(0));
         final I4GLParser.RelationalOperatorContext operatorCtx = ctx.relationalOperator();
@@ -450,9 +446,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                  */
             }
         }
-        if (leftNode.getType() != BooleanDescriptor.getInstance()) {
+        /*if (leftNode.getType() != BooleanDescriptor.getInstance()) {
             leftNode = NotNodeGen.create(EqualsNodeGen.create(leftNode, IntLiteralNodeGen.create(0)));
-        }
+        }*/
         return leftNode;
     }
 
@@ -622,8 +618,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitCharType(final I4GLParser.CharTypeContext ctx) {
         try {
-            if (ctx.numericConstant().isEmpty()) {
-                return new TypeNode(getTypeDescriptor(ctx.getText()));
+            if (ctx.varchar() != null) {
+                final TypeDescriptor descriptor = getTypeDescriptor("VARCHAR");
+                return new TypeNode(descriptor);
             } else {
                 throw new NotImplementedException();
             }

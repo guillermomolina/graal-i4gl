@@ -30,10 +30,6 @@ public abstract class ExpressionNode extends StatementNode {
 
 	public abstract Object executeGeneric(VirtualFrame frame);
 
-	public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
-		return I4GLTypesGen.expectBoolean(executeGeneric(frame));
-	}
-
 	public int executeInt(VirtualFrame frame) throws UnexpectedResultException {
 	    return I4GLTypesGen.expectInteger(executeGeneric(frame));
     }
@@ -64,10 +60,6 @@ public abstract class ExpressionNode extends StatementNode {
 
     protected boolean isChar() {
         return getType() == CharDescriptor.getInstance() || getType() instanceof CharConstantDescriptor;
-    }
-
-    protected boolean isBoolean() {
-        return getType() == BooleanDescriptor.getInstance() || getType() instanceof BooleanConstantDescriptor;
     }
 
     /**

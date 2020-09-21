@@ -65,11 +65,7 @@ public class WhileNode extends StatementNode {
 
         private boolean evaluateCondition(VirtualFrame frame) {
             try {
-                /*
-                 * The condition must evaluate to a boolean value, so we call the boolean-specialized
-                 * execute method.
-                 */
-                return conditionNode.executeBoolean(frame);
+                return conditionNode.executeInt(frame) != 0;
             } catch (UnexpectedResultException ex) {
                 // This should not happen thanks to our compile time type checking
                 throw new I4GLRuntimeException("Condition node provided to while is not boolean type");

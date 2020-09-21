@@ -63,15 +63,6 @@ public abstract class ReadGlobalVariableNode extends ExpressionNode {
         }
     }
 
-    @Specialization(guards = "isBoolean()")
-    boolean readBoolean(VirtualFrame frame) {
-        try {
-            return getFrame(frame).getBoolean(getSlot());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
-    }
-
     @Specialization
     Object readGeneric(VirtualFrame frame) {
 	    return getFrame(frame).getValue(getSlot());

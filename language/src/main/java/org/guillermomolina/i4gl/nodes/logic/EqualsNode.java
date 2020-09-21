@@ -22,50 +22,44 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
 public abstract class EqualsNode extends BinaryExpressionNode {
 
     EqualsNode() {
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BooleanDescriptor.getInstance(), BooleanDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(CharDescriptor.getInstance(), CharDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(GenericEnumTypeDescriptor.getInstance(), GenericEnumTypeDescriptor.getInstance()), BooleanDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(CharDescriptor.getInstance(), CharDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(GenericEnumTypeDescriptor.getInstance(), GenericEnumTypeDescriptor.getInstance()), IntDescriptor.getInstance());
     }
 
     @Specialization
-    protected boolean equals(int left, int right) {
-        return left == right;
+    protected int equals(int left, int right) {
+        return left == right ? 1 : 0;
     }
-
-	@Specialization
-	protected boolean equals(boolean left, boolean right) {
-		return left == right;
-	}
 
     @Specialization
-    protected boolean equals(long left, long right) {
-        return left == right;
+    protected int equals(long left, long right) {
+        return left == right ? 1 : 0;
     }
 
 	@Specialization
-	protected boolean equals(double left, double right) {
-		return left == right;
+	protected int equals(double left, double right) {
+		return left == right ? 1 : 0;
 	}
 
 	@Specialization
-    protected boolean equals(char left, char right) {
-	    return left == right;
+    protected int equals(char left, char right) {
+	    return left == right ? 1 : 0;
     }
 
 	@Specialization
-	protected boolean equals(EnumValue left, EnumValue right) { return left.equals(right); }
+	protected int equals(EnumValue left, EnumValue right) { return left.equals(right) ? 1 : 0; }
 
 	@Specialization
-	protected boolean equals(SetTypeValue left, SetTypeValue right) {
-	    return left.equals(right);
+	protected int equals(SetTypeValue left, SetTypeValue right) {
+	    return left.equals(right) ? 1 : 0;
     }
 
     @Specialization
-    protected boolean equals(PointerValue left, PointerValue right) {
-	    return left.equals(right);
+    protected int equals(PointerValue left, PointerValue right) {
+	    return left.equals(right) ? 1 : 0;
     }
 
     // TODO: what about record type? file type?
@@ -78,7 +72,7 @@ public abstract class EqualsNode extends BinaryExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return BooleanDescriptor.getInstance();
+        return IntDescriptor.getInstance();
     }
 
 }

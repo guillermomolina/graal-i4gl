@@ -39,11 +39,6 @@ public abstract class ReadDereferenceNode extends ExpressionNode {
         return (char) pointer.getDereferenceValue();
     }
 
-    @Specialization(guards = "isBoolean()")
-    boolean dereferenceBoolean(PointerValue pointer) {
-        return (boolean) pointer.getDereferenceValue();
-    }
-
     @Specialization
     Object dereferenceGeneric(PointerValue pointer) {
         return pointer.getDereferenceValue();

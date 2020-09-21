@@ -6,7 +6,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
-import org.guillermomolina.i4gl.runtime.customvalues.PCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 
 /**
@@ -43,17 +43,12 @@ public abstract class AssignToArrayNode extends StatementNode {
     }
 
     @Specialization
-    void assignBoolean(boolean[] array, int index, boolean value) {
-        array[index] = value;
-    }
-
-    @Specialization
     void assignToString(I4GLString string, int index, char value) {
         string.setValueAt(index, value);
     }
 
     @Specialization
-    void assignToPChar(PCharValue string, int index, char value) {
+    void assignToVarchar(VarcharValue string, int index, char value) {
         string.setValueAt(index, value);
     }
 

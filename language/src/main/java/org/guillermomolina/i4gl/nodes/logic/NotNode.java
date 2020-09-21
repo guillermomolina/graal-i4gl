@@ -6,7 +6,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.arithmetic.UnaryNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
 
 /**
  * Node representing logical not operation.
@@ -18,21 +18,25 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanD
 public abstract class NotNode extends UnaryNode {
 
 	@Override
-	public abstract boolean executeBoolean(VirtualFrame frame);
+	public abstract int executeInt(VirtualFrame frame);
 
 	@Specialization
-	boolean logicalNot(boolean child) {
-		return !child;
+	int logicalNot(int child) {
+		return child == 0 ? 1 : 0;
+	}
+
+	@Specialization
+	int logicalNot(long child) {
+		return child == 0 ? 1 : 0;
+	}
+
+	@Specialization
+	int logicalNot(char child) {
+		return child == '0' ? 1 : 0;
 	}
 
     @Override
     public TypeDescriptor getType() {
-        return BooleanDescriptor.getInstance();
+        return IntDescriptor.getInstance();
     }
-
-    @Override
-    public boolean verifyChildrenNodeTypes() {
-        return this.getArgument().getType() == BooleanDescriptor.getInstance();
-    }
-
 }

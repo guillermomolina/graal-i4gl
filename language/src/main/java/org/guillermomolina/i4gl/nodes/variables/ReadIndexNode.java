@@ -39,11 +39,6 @@ public abstract class ReadIndexNode extends ExpressionNode {
     }
 
     @Specialization
-    int getBooleanIndex(boolean index) {
-        return ((index)? 1:0) - getOffset();
-    }
-
-    @Specialization
     int getEnumIndex(EnumValue index) {
         return (int) index.getOrdinalValue() - getOffset();
     }

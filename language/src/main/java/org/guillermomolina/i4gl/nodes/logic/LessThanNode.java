@@ -21,52 +21,46 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
 public abstract class LessThanNode extends BinaryExpressionNode {
 
     LessThanNode() {
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), LongDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), RealDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(CharDescriptor.getInstance(), CharDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BooleanDescriptor.getInstance(), BooleanDescriptor.getInstance()), BooleanDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(GenericEnumTypeDescriptor.getInstance(), GenericEnumTypeDescriptor.getInstance()), BooleanDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(CharDescriptor.getInstance(), CharDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(GenericEnumTypeDescriptor.getInstance(), GenericEnumTypeDescriptor.getInstance()), IntDescriptor.getInstance());
     }
 
     @Specialization
-    boolean lessThan(int left, int right) {
-        return left < right;
+    int lessThan(int left, int right) {
+        return left < right ? 1 : 0;
     }
 
 	@Specialization
-	boolean lessThan(long left, long right) {
-		return left < right;
+	int lessThan(long left, long right) {
+		return left < right ? 1 : 0;
 	}
 
 	@Specialization
-	boolean lessThan(double left, double right) {
-		return left < right;
+	int lessThan(double left, double right) {
+		return left < right ? 1 : 0;
 	}
 
 	@Specialization
-	boolean lessThan(char left, char right) {
-		return left < right;
+	int lessThan(char left, char right) {
+		return left < right ? 1 : 0;
 	}
 
 	@Specialization
-	boolean lessThan(boolean left, boolean right) {
-		return !left && right;
+	int lessThan(SetTypeValue left, SetTypeValue right) {
+		return left.getSize() < right.getSize() ? 1 : 0;
 	}
 
 	@Specialization
-	boolean lessThan(SetTypeValue left, SetTypeValue right) {
-		return left.getSize() < right.getSize();
-	}
-
-	@Specialization
-	boolean lessThan(EnumValue left, EnumValue right) {
-		return left.lesserThan(right);
+	int lessThan(EnumValue left, EnumValue right) {
+		return left.lesserThan(right) ? 1 : 0;
 	}
 
 	@Override
@@ -76,7 +70,7 @@ public abstract class LessThanNode extends BinaryExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return BooleanDescriptor.getInstance();
+        return IntDescriptor.getInstance();
     }
 
 }

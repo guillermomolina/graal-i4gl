@@ -67,16 +67,6 @@ public abstract class ReadReferenceVariableNode extends ExpressionNode {
         }
     }
 
-    @Specialization(guards = "isBoolean()")
-    boolean readBooleanReference(VirtualFrame frame) {
-        try {
-            Reference reference = (Reference) frame.getValue(getSlot());
-            return reference.getFromFrame().getBoolean(reference.getFrameSlot());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
-    }
-
     @Specialization
     Object readReference(VirtualFrame frame) {
         Reference reference = (Reference) frame.getValue(getSlot());

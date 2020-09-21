@@ -24,6 +24,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumLiter
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.EnumTypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
@@ -37,7 +38,10 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
  */
 public class IdentifiersTable {
 
-    /** Map of all identifiers: e.g.: variable names, function names, types names, ... */
+    /**
+     * Map of all identifiers: e.g.: variable names, function names, types names,
+     * ...
+     */
     private Map<String, TypeDescriptor> identifiersMap;
 
     /** Map of type identifiers: e.g.: integer, boolean, enums, records, ... */
@@ -69,6 +73,7 @@ public class IdentifiersTable {
         typeDescriptors.put("FLOAT", RealDescriptor.getInstance());
         typeDescriptors.put("DOUBLE", RealDescriptor.getInstance());
         typeDescriptors.put("CHAR", CharDescriptor.getInstance());
+        typeDescriptors.put("VARCHAR", VarcharDescriptor.getInstance());
         typeDescriptors.put("TEXT", StringDescriptor.getInstance());
 
         for (Map.Entry<String, TypeDescriptor> typeEntry : typeDescriptors.entrySet()) {

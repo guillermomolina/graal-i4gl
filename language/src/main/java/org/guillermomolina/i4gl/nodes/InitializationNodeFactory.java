@@ -22,8 +22,6 @@ public class InitializationNodeFactory {
                     new LongInitializationNode(frameSlot, (long) value) : new LongInitializationWithFrameNode(frameSlot, (long) value, frame);
             case Double: return (frame == null)?
                     new DoubleInitializationNode(frameSlot, (double) value) : new DoubleInitializationWithFrameNode(frameSlot, (double) value, frame);
-            case Boolean: return (frame == null)?
-                    new BooleanInitializationNode(frameSlot, (boolean) value) : new BooleanInitializationWithFrameNode(frameSlot, (boolean) value, frame);
             case Byte: return (frame == null)?
                     new CharInitializationNode(frameSlot, (char) value) : new CharInitializationWithFrameNode(frameSlot, (char) value, frame);
             default: return (frame == null)?
@@ -203,44 +201,6 @@ class DoubleInitializationWithFrameNode extends DoubleInitializationNode {
 
 }
 
-/**
- * Initialization node for boolean type variables. It looks for the variable the current frame.
- */
-class BooleanInitializationNode extends InitializationNode {
-
-	protected final boolean value;
-	
-	BooleanInitializationNode(FrameSlot slot, boolean value) {
-		super(slot);
-		this.value = value;
-	}
-
-    @Override
-    public void executeVoid(VirtualFrame frame) {
-        frame.setBoolean(slot, value);
-    }
-
-}
-
-/**
- * Initialization node for boolean type variables. It looks for the variable the specified frame. It is used to
- * initialize variables inside a unit.
- */
-class BooleanInitializationWithFrameNode extends BooleanInitializationNode {
-
-    private final VirtualFrame frame;
-
-    BooleanInitializationWithFrameNode(FrameSlot slot, boolean value, VirtualFrame frame) {
-        super(slot, value);
-        this.frame = frame;
-    }
-
-    @Override
-    public void executeVoid(VirtualFrame frame) {
-        this.frame.setBoolean(slot, value);
-    }
-
-}
 
 /**
  * Initialization node for generic type variables. It looks for the variable the current frame.

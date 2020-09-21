@@ -18,6 +18,10 @@ public class BlockNode extends StatementNode {
     @Children
     private final StatementNode[] bodyNodes;
 
+    public BlockNode() {
+        this(new StatementNode[0]);
+    }
+
     public BlockNode(StatementNode[] bodyNodes) {
         this.bodyNodes = bodyNodes;
     }

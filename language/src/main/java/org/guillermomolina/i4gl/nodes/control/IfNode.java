@@ -44,7 +44,7 @@ public final class IfNode extends StatementNode {
 
 	private boolean checkCondition(VirtualFrame frame) {
 		try {
-			return conditionNode.executeBoolean(frame);
+			return conditionNode.executeInt(frame) != 0;
 		} catch (UnexpectedResultException e) {
 		    // This should not happen thanks to our compile time type checking
 			throw new I4GLRuntimeException("The condition node provided for if is not boolean type");

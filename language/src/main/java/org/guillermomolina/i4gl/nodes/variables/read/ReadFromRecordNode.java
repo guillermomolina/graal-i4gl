@@ -68,16 +68,6 @@ public abstract class ReadFromRecordNode extends ExpressionNode {
         }
     }
 
-    @Specialization(guards = "isBoolean()")
-    boolean readBoolean(RecordValue record) {
-        FrameSlot slot = record.getSlot(this.getIdentifier());
-        try {
-            return record.getFrame().getBoolean(slot);
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
-    }
-
     @Specialization
     Object readGeneric(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());

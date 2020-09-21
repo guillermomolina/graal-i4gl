@@ -40,11 +40,6 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     }
 
     @Specialization
-    void writeBoolean(VirtualFrame frame, boolean value) {
-        getFrame(frame).setBoolean(getSlot(), value);
-    }
-
-    @Specialization
     void writeChar(VirtualFrame frame, char value) {
         getFrame(frame).setByte(getSlot(), (byte) value);
     }
@@ -84,8 +79,8 @@ public abstract class SimpleAssignmentNode extends StatementNode {
             frame.setObject(getSlot(), value);
         } else if (targetObject instanceof PointerValue) {
             PointerValue pointerValue = (PointerValue) targetObject;
-            if (pointerValue.getType() instanceof PCharDesriptor) {
-                assignPChar(pointerValue, value);
+            if (pointerValue.getType() instanceof VarcharDesriptor) {
+                assignVarchar(pointerValue, value);
             }
         }*/
     }
@@ -110,11 +105,6 @@ public abstract class SimpleAssignmentNode extends StatementNode {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
-    @Specialization
-    void assignBooleanArray(VirtualFrame frame, boolean[] array) {
-        getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
     /**
      * This is used for multidimensional arrays
      */
@@ -130,9 +120,9 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     }
 
     @SuppressWarnings("unused")
-    private void assignPChar(PointerValue pcharPointer, I4GLString value) {
-        PCharValue pchar = (PCharValue) pcharPointer.getDereferenceValue();
-        pchar.assignString(value.toString());
+    private void assignVarchar(PointerValue varcharPointer, I4GLString value) {
+        VarcharValue varchar = (VarcharValue) varcharPointer.getDereferenceValue();
+        varchar.assignString(value.toString());
     }
 
     @ExplodeLoop

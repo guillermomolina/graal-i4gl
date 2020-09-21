@@ -9,9 +9,9 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.*;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
-import org.guillermomolina.i4gl.parser.identifierstable.types.extension.PCharDesriptor;
 
 /**
  * Node representing assignment to a reference type variable. Compared to {@link SimpleAssignmentNode} it has to firstly
@@ -38,12 +38,6 @@ public abstract class AssignReferenceNode extends StatementNode {
     void writeLong(VirtualFrame frame, long value) {
         Reference reference = (Reference) getFrame(frame).getValue(getSlot());
         reference.getFromFrame().setLong(reference.getFrameSlot(), value);
-    }
-
-    @Specialization
-    void writeBoolean(VirtualFrame frame, boolean value) {
-        Reference reference = (Reference) getFrame(frame).getValue(getSlot());
-        reference.getFromFrame().setBoolean(reference.getFrameSlot(), value);
     }
 
     @Specialization
@@ -92,8 +86,8 @@ public abstract class AssignReferenceNode extends StatementNode {
             reference.getFromFrame().setObject(reference.getFrameSlot(), value);
         } else if (targetObject instanceof PointerValue) {
             PointerValue pointerValue = (PointerValue) targetObject;
-            if (pointerValue.getType() instanceof PCharDesriptor) {
-                assignPChar(pointerValue, value);
+            if (pointerValue.getType() instanceof VarcharDescriptor) {
+                assignVarchar(pointerValue, value);
             }
         }
     }
@@ -104,9 +98,9 @@ public abstract class AssignReferenceNode extends StatementNode {
         reference.getFromFrame().setObject(reference.getFrameSlot(), array.createDeepCopy());
     }
 
-    private void assignPChar(PointerValue pcharPointer, I4GLString value) {
-        PCharValue pchar = (PCharValue) pcharPointer.getDereferenceValue();
-        pchar.assignString(value.toString());
+    private void assignVarchar(PointerValue varcharPointer, I4GLString value) {
+        VarcharValue varchar = (VarcharValue) varcharPointer.getDereferenceValue();
+        varchar.assignString(value.toString());
     }
 
     @ExplodeLoop

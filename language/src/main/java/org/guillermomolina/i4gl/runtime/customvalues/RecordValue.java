@@ -58,7 +58,6 @@ public class RecordValue {
             case Float: frame.setFloat(slot, (float) value); break;
             case Double: frame.setDouble(slot, (double) value); break;
             case Byte: frame.setByte(slot, (byte) (char) value); break;
-            case Boolean: frame.setBoolean(slot, (boolean) value); break;
             case Object: frame.setObject(slot, value); break;
             default:
         }
@@ -72,7 +71,6 @@ public class RecordValue {
             case Float: toFrame.setFloat(slot, fromFrame.getFloat(slot)); break;
             case Double: toFrame.setDouble(slot, fromFrame.getDouble(slot)); break;
             case Byte: toFrame.setByte(slot, fromFrame.getByte(slot)); break;
-            case Boolean: toFrame.setBoolean(slot, fromFrame.getBoolean(slot)); break;
             case Object: toFrame.setObject(slot, fromFrame.getObject(slot)); break;
             default:
         }

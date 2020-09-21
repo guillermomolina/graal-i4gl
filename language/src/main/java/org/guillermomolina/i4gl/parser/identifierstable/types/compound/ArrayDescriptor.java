@@ -40,8 +40,6 @@ public class ArrayDescriptor implements TypeDescriptor {
             return new double[this.dimension.getSize()];
         } else if (valuesDescriptor == CharDescriptor.getInstance()) {
             return new char[this.dimension.getSize()];
-        } else if (valuesDescriptor == BooleanDescriptor.getInstance()) {
-            return new boolean[this.dimension.getSize()];
         } else {
             Object[] data = new Object[dimension.getSize()];
             for (int i = 0; i < data.length; ++i) {

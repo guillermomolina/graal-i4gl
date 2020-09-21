@@ -86,7 +86,7 @@ public class ForNode extends StatementNode {
     private void execute(VirtualFrame frame, ExpressionNode hasEndedNode) throws UnexpectedResultException {
         assignment.executeVoid(frame);
 
-        while (hasEndedNode.executeBoolean(frame)) {
+        while (hasEndedNode.executeInt(frame) == 0) {
             body.executeVoid(frame);
             step.executeVoid(frame);
         }

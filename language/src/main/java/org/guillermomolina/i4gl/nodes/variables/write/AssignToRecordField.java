@@ -48,11 +48,6 @@ public abstract class AssignToRecordField extends StatementNode {
     }
 
     @Specialization
-    void assignBoolean(RecordValue record, boolean value) {
-        record.getFrame().setBoolean(record.getSlot(this.identifier), value);
-    }
-
-    @Specialization
     void assignPointer(RecordValue record, PointerValue pointer) {
         PointerValue recordPointer = (PointerValue) record.getFrame().getValue(record.getSlot(this.identifier));
         recordPointer.setHeapSlot(pointer.getHeapSlot());

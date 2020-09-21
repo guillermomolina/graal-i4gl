@@ -3,10 +3,10 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.runtime.customvalues.SetTypeValue;
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.SetDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.BooleanDescriptor;
 
 /**
  * Node representing in operation. This operation is used for set types.
@@ -35,7 +35,8 @@ public abstract class InNode extends BinaryExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return BooleanDescriptor.getInstance();
+        throw new NotImplementedException();
+        //return BooleanDescriptor.getInstance();
     }
 
 }
