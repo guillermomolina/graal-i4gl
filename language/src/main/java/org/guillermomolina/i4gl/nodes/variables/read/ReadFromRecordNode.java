@@ -19,8 +19,8 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
  */
 @NodeChild(value = "record", type = ExpressionNode.class)
 @NodeFields({
-        @NodeField(name = "returnType", type = TypeDescriptor.class),
-        @NodeField(name = "identifier", type = String.class)
+    @NodeField(name = "identifier", type = String.class),
+    @NodeField(name = "returnType", type = TypeDescriptor.class)
 })
 public abstract class ReadFromRecordNode extends ExpressionNode {
 
