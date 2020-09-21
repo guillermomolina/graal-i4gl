@@ -50,6 +50,7 @@ import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadReferenceVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.AssignToArrayNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNode;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNodeGen;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
@@ -384,13 +385,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             indexNodes.add((ExpressionNode) visit(ctx.expression(expressionIndex++)));
             statementNodes.add((StatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
         }
-        ExpressionNode[] indexes = indexNodes.toArray(new ExpressionNode[indexNodes.size()]);
-        StatementNode[] statements = statementNodes.toArray(new StatementNode[statementNodes.size()]);
+        ExpressionNode[] indexNodesArray = indexNodes.toArray(new ExpressionNode[indexNodes.size()]);
+        StatementNode[] statementNodesArray = statementNodes.toArray(new StatementNode[statementNodes.size()]);
         StatementNode otherwiseNode = null;
         if (ctx.OTHERWISE() != null) {
             otherwiseNode = (StatementNode) visit(ctx.codeBlock(codeBlockIndex));
         }
-        return new CaseNode(caseExpression, indexes, statements, otherwiseNode);
+        return new CaseNode(caseExpression, indexNodesArray, statementNodesArray, otherwiseNode);
     }
 
     @Override
@@ -618,13 +619,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         return new BlockNode(initializationNodes.toArray(new StatementNode[initializationNodes.size()]));
     }
 
-    @Override 
+    @Override
     public Node visitCharType(final I4GLParser.CharTypeContext ctx) {
         try {
-            if(ctx.numericConstant().isEmpty()) {
+            if (ctx.numericConstant().isEmpty()) {
                 return new TypeNode(getTypeDescriptor(ctx.getText()));
-            }
-            else {
+            } else {
                 throw new NotImplementedException();
             }
         } catch (UnknownIdentifierException e) {
@@ -633,13 +633,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
     }
 
-    @Override 
+    @Override
     public Node visitNumberType(final I4GLParser.NumberTypeContext ctx) {
         try {
-            if(ctx.numericConstant().isEmpty()) {
+            if (ctx.numericConstant().isEmpty()) {
                 return new TypeNode(getTypeDescriptor(ctx.getText()));
-            }
-            else {
+            } else {
                 throw new NotImplementedException();
             }
         } catch (UnknownIdentifierException e) {
@@ -648,17 +647,17 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
     }
 
-    @Override 
+    @Override
     public Node visitTimeType(final I4GLParser.TimeTypeContext ctx) {
         throw new NotImplementedException();
     }
 
-    @Override 
+    @Override
     public Node visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
         throw new NotImplementedException();
     }
 
-    @Override 
+    @Override
     public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
         try {
             return new TypeNode(getTypeDescriptor(ctx.getText()));
@@ -668,7 +667,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
     }
 
-    @Override 
+    @Override
     public Node visitRecordType(final I4GLParser.RecordTypeContext ctx) {
         throw new NotImplementedException();
     }
@@ -684,64 +683,103 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitArrayIndexer(final I4GLParser.ArrayIndexerContext ctx) {
         OrdinalNode ordinalNode = new OrdinalNode(ctx.dimensionSize().size());
-        for (I4GLParser.DimensionSizeContext sizeCtx : ctx.dimensionSize()) { 
+        for (I4GLParser.DimensionSizeContext sizeCtx : ctx.dimensionSize()) {
             final long size = Long.parseLong(sizeCtx.getText());
-            OrdinalDescriptor ordinalDescriptor = new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(size));                  
+            OrdinalDescriptor ordinalDescriptor = new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0),
+                    new LongConstantDescriptor(size));
             ordinalNode.ordinalDimensions.add(ordinalDescriptor);
         }
         return ordinalNode;
     }
 
-    @Override 
+    @Override
     public Node visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
         TypeNode typeNode = (TypeNode) visit(ctx.arrayTypeType());
         OrdinalNode ordinalNode = (OrdinalNode) visit(ctx.arrayIndexer());
         List<OrdinalDescriptor> ordinalDimensions = ordinalNode.ordinalDimensions;
-        ArrayDescriptor arrayDescriptor = currentLexicalScope.createArrayType(ordinalDimensions.get(ordinalDimensions.size() - 1), typeNode.descriptor);
-        
-	    for (int i = ordinalDimensions.size() - 2; i > -1; --i) {
-	        arrayDescriptor = currentLexicalScope.createArrayType(ordinalDimensions.get(i), arrayDescriptor);
+        ArrayDescriptor arrayDescriptor = currentLexicalScope
+                .createArrayType(ordinalDimensions.get(ordinalDimensions.size() - 1), typeNode.descriptor);
+
+        for (int i = ordinalDimensions.size() - 2; i > -1; --i) {
+            arrayDescriptor = currentLexicalScope.createArrayType(ordinalDimensions.get(i), arrayDescriptor);
         }
         return new TypeNode(arrayDescriptor);
     }
 
-    @Override 
+    @Override
     public Node visitDynArrayType(final I4GLParser.DynArrayTypeContext ctx) {
         throw new NotImplementedException();
     }
 
     @Override
-    public Node visitSimpleAssignment(final I4GLParser.SimpleAssignmentContext ctx) {
-        if(ctx.expression().size() != 1) {
+    public Node visitAssignmentStatement(final I4GLParser.AssignmentStatementContext ctx) {
+        if(!ctx.identifier().isEmpty()) {
             throw new NotImplementedException();
         }
-        final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
-        return createAssignmentNode(ctx.identifier().getText(), valueNode);
-    }
-
-    @Override
-    public Node visitArrayAssignment(final I4GLParser.ArrayAssignmentContext ctx) {
-        if(ctx.expression().size() != 1) {
-            throw new NotImplementedException();
+        try {
+            if (ctx.variable().componentVariable() != null) {
+                throw new NotImplementedException();
+            }
+            final String identifier = ctx.variable().identifier().getText();
+            ExpressionNode variableNode;
+            variableNode = doLookup(identifier,
+                    (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
+                        return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
+                    });
+            if (ctx.variable().indexingVariable() == null) {
+                return variableNode;
+            }
+            final List<I4GLParser.ExpressionContext> indexList = ctx.variable().indexingVariable().expression();
+            if (indexList.size() > 3) {
+                reportError("Dimensions can not be " + indexList.size());
+                return null;
+            }
+            List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
+            for (I4GLParser.ExpressionContext indexCtx : indexList) {
+                indexNodes.add((ExpressionNode) visit(indexCtx));
+            }
+            final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
+            return createAssignmentToArray(variableNode, indexNodes, valueNode);
+        } catch (UnknownIdentifierException e) {
+            reportError(e.getMessage());
+            return null;
         }
-        final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
-        final ExpressionNode arrayIndexNode = (ExpressionNode) visit(ctx.);
-        return createAssignmentToArray(targetNode, arrayIndexNode, valueNode);
     }
 
-    @Override
-    public Node visitRecordAssignment(final I4GLParser.RecordAssignmentContext ctx) {
-        if(ctx.expression().size() != 1) {
-            throw new NotImplementedException();
+    /**
+     * Creates {@link AssignToArrayNode} for assignment to an array at specified
+     * index
+     * 
+     * @param arrayExpression     expression node which returns the target array
+     * @param indexExpressionNode expression node returning the index
+     * @param valueNode           assigning value's node
+     * @return the newly created node
+     */
+    private StatementNode createAssignmentToArray(ExpressionNode arrayExpression, List<ExpressionNode> indexNodes,
+            ExpressionNode valueNode) {
+        ExpressionNode readArrayNode = arrayExpression;
+        StatementNode result = null;
+        final int lastIndex = indexNodes.size() - 1;
+        for (int index = 0; index < indexNodes.size(); index++) {
+            TypeDescriptor actualType = readArrayNode.getType();
+            if (!(actualType instanceof ArrayDescriptor)) {
+                reportError("Not an array");
+                return null;
+            }
+            ExpressionNode indexNode = indexNodes.get(index);
+            ReadIndexNode readIndexNode = ReadIndexNodeGen.create(indexNode,
+                    ((ArrayDescriptor) actualType).getOffset());
+            TypeDescriptor returnType = ((ArrayDescriptor) actualType).getValuesDescriptor();
+            if (index == lastIndex) {
+                result = AssignToArrayNodeGen.create(readArrayNode, readIndexNode, valueNode);
+            } else {
+                readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
+            }
         }
-        throw new NotImplementedException();
+        assert result != null;
+        return result;
     }
 
-    @Override
-    public Node visitComplexAssignment(final I4GLParser.ComplexAssignmentContext ctx) {
-        throw new NotImplementedException();
-    }
-    
     @Override
     public Node visitVariable(final I4GLParser.VariableContext ctx) {
         if (ctx.componentVariable() != null) {
@@ -749,21 +787,22 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
         final String identifier = ctx.identifier().getText();
         try {
-            ExpressionNode variableNode = doLookup(identifier, (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
-                return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
-            });
+            ExpressionNode variableNode = doLookup(identifier,
+                    (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
+                        return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
+                    });
             if (ctx.indexingVariable() == null) {
                 return variableNode;
             }
             final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expression();
-            if(indexList.size() > 3) {
+            if (indexList.size() > 3) {
                 throw new LexicalException("Dimensions can not be " + indexList.size());
             }
-            List<ExpressionNode> indexes = new ArrayList<>(indexList.size());
-            for(I4GLParser.ExpressionContext indexCtx: indexList) {
-                indexes.add((ExpressionNode) visit(indexCtx));
+            List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
+            for (I4GLParser.ExpressionContext indexCtx : indexList) {
+                indexNodes.add((ExpressionNode) visit(indexCtx));
             }
-            return createReadFromArrayNode(variableNode, indexes);
+            return createReadFromArrayNode(variableNode, indexNodes);
         } catch (final LexicalException | UnknownIdentifierException e) {
             reportError(e.getMessage());
             return null;
@@ -771,22 +810,25 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     }
 
     /**
-     * Creates {@link ReadFromArrayNode} that reads value from specified array at specified index.
+     * Creates {@link ReadFromArrayNode} that reads value from specified array at
+     * specified index.
+     * 
      * @param arrayExpression node that returns the array
-     * @param indexes nodes of the indexes at which the array will be read
+     * @param indexNodes      nodes of the indexNodes at which the array will be
+     *                        read
      * @return the newly created node
      */
-    public ExpressionNode createReadFromArrayNode(ExpressionNode arrayExpression, List<ExpressionNode> indexes) {
-	    ExpressionNode readArrayNode = arrayExpression;
-	    for (ExpressionNode index : indexes) {
-	        TypeDescriptor actualType = readArrayNode.getType();
-	        if (!(actualType instanceof  ArrayDescriptor)) {
+    public ExpressionNode createReadFromArrayNode(ExpressionNode arrayExpression, List<ExpressionNode> indexNodes) {
+        ExpressionNode readArrayNode = arrayExpression;
+        for (ExpressionNode indexNode : indexNodes) {
+            TypeDescriptor actualType = readArrayNode.getType();
+            if (!(actualType instanceof ArrayDescriptor)) {
                 reportError("Not an array");
                 break;
             }
-            ReadIndexNode readIndexNode = ReadIndexNodeGen.create(index, ((ArrayDescriptor) actualType).getOffset());
+            ReadIndexNode readIndexNode = ReadIndexNodeGen.create(indexNode, ((ArrayDescriptor) actualType).getOffset());
             TypeDescriptor returnType = ((ArrayDescriptor) actualType).getValuesDescriptor();
-	        readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
+            readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
         }
         return readArrayNode;
     }
