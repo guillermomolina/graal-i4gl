@@ -7,11 +7,16 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
+
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.*;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
+import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.customvalues.Reference;
 
 /**
  * Node representing assignment to a reference type variable. Compared to {@link SimpleAssignmentNode} it has to firstly
@@ -75,7 +80,7 @@ public abstract class AssignReferenceNode extends StatementNode {
         } else if (targetObject instanceof PointerValue) {
             PointerValue pointerValue = (PointerValue) targetObject;
             if (pointerValue.getType() instanceof VarcharDescriptor) {
-                assignVarchar(pointerValue, value);
+                assignNChar(pointerValue, value);
             }
         }
     }
@@ -86,9 +91,9 @@ public abstract class AssignReferenceNode extends StatementNode {
         reference.getFromFrame().setObject(reference.getFrameSlot(), array.createDeepCopy());
     }
 
-    private void assignVarchar(PointerValue varcharPointer, I4GLString value) {
-        VarcharValue varchar = (VarcharValue) varcharPointer.getDereferenceValue();
-        varchar.assignString(value.toString());
+    private void assignNChar(PointerValue pcharPointer, I4GLString value) {
+        NCharValue pchar = (NCharValue) pcharPointer.getDereferenceValue();
+        pchar.assignString(value.toString());
     }
 
     @ExplodeLoop

@@ -3,6 +3,7 @@ package org.guillermomolina.i4gl.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.RootNode;
@@ -44,25 +45,26 @@ import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
 import org.guillermomolina.i4gl.nodes.variables.ReadIndexNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromRecordNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadReferenceVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.AssignToArrayNode;
 import org.guillermomolina.i4gl.nodes.variables.write.AssignToArrayNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.AssignToRecordField;
 import org.guillermomolina.i4gl.nodes.variables.write.AssignToRecordFieldNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNode;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNodeGen;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 
 public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     /*
@@ -635,13 +637,18 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitCharType(final I4GLParser.CharTypeContext ctx) {
         try {
             if (ctx.varchar() != null) {
-                final TypeDescriptor descriptor = getTypeDescriptor("VARCHAR");
+                final int size = Integer.parseInt(ctx.numericConstant(0).getText());
+                final TypeDescriptor descriptor = currentLexicalScope.createVarcharType(size);
                 return new TypeNode(descriptor);
             } else {
-                final TypeDescriptor descriptor = getTypeDescriptor("CHAR");
+                int size = 1;
+                if(!ctx.numericConstant().isEmpty()) {
+                    size = Integer.parseInt(ctx.numericConstant(0).getText());
+                }
+                final TypeDescriptor descriptor = currentLexicalScope.createNCharType(size);
                 return new TypeNode(descriptor);
             }
-        } catch (UnknownIdentifierException e) {
+        } catch (Exception e) {
             reportError(e.getMessage());
             return null;
         }
@@ -699,36 +706,17 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         return new TypeNode(descriptor);
     }
 
-    class OrdinalNode extends Node {
-        public final List<OrdinalDescriptor> ordinalDimensions;
-
-        public OrdinalNode(final int dimensions) {
-            this.ordinalDimensions = new ArrayList<>(dimensions);
-        }
-    }
-
-    @Override
-    public Node visitArrayIndexer(final I4GLParser.ArrayIndexerContext ctx) {
-        OrdinalNode ordinalNode = new OrdinalNode(ctx.dimensionSize().size());
-        for (I4GLParser.DimensionSizeContext sizeCtx : ctx.dimensionSize()) {
-            final long size = Long.parseLong(sizeCtx.getText());
-            OrdinalDescriptor ordinalDescriptor = new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0),
-                    new LongConstantDescriptor(size));
-            ordinalNode.ordinalDimensions.add(ordinalDescriptor);
-        }
-        return ordinalNode;
-    }
-
     @Override
     public Node visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
         TypeNode typeNode = (TypeNode) visit(ctx.arrayTypeType());
-        OrdinalNode ordinalNode = (OrdinalNode) visit(ctx.arrayIndexer());
-        List<OrdinalDescriptor> ordinalDimensions = ordinalNode.ordinalDimensions;
-        ArrayDescriptor arrayDescriptor = currentLexicalScope
-                .createArrayType(ordinalDimensions.get(ordinalDimensions.size() - 1), typeNode.descriptor);
-
-        for (int i = ordinalDimensions.size() - 2; i > -1; --i) {
-            arrayDescriptor = currentLexicalScope.createArrayType(ordinalDimensions.get(i), arrayDescriptor);
+        ArrayDescriptor arrayDescriptor = null;
+        for(int i = ctx.arrayIndexer().dimensionSize().size() -1; i >= 0; i--) {
+            int size = Integer.parseInt(ctx.arrayIndexer().dimensionSize(i).getText());
+            if (arrayDescriptor == null) {
+                arrayDescriptor = currentLexicalScope.createArrayType(size, typeNode.descriptor);
+            } else {
+                arrayDescriptor = currentLexicalScope.createArrayType(size, arrayDescriptor);
+            }
         }
         return new TypeNode(arrayDescriptor);
     }

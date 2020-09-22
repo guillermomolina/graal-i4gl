@@ -1,19 +1,23 @@
 package org.guillermomolina.i4gl.nodes.variables.write;
 
+import java.util.Arrays;
+
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
-
 import com.oracle.truffle.api.nodes.ExplodeLoop;
+
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
-import org.guillermomolina.i4gl.runtime.customvalues.*;
-
-import java.util.Arrays;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
+import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -55,24 +59,17 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     }
 
     @Specialization
-    void assignPointers(VirtualFrame frame, PointerValue pointer) {
-        PointerValue assignmentTarget = (PointerValue) getFrame(frame).getValue(getSlot());
-        assignmentTarget.setHeapSlot((pointer).getHeapSlot());
-    }
-
-    @Specialization
     void assignString(VirtualFrame frame, I4GLString value) {
-        getFrame(frame).setObject(getSlot(), value);
-        /*frame = getFrame(frame);
+        frame = getFrame(frame);
         Object targetObject = frame.getValue(getSlot());
         if (targetObject instanceof I4GLString) {
             frame.setObject(getSlot(), value);
         } else if (targetObject instanceof PointerValue) {
             PointerValue pointerValue = (PointerValue) targetObject;
-            if (pointerValue.getType() instanceof VarcharDesriptor) {
-                assignVarchar(pointerValue, value);
+            if (pointerValue.getType() instanceof NCharDescriptor) {
+                assignNChar(pointerValue, value);
             }
-        }*/
+        }
     }
     
     @Specialization
@@ -95,6 +92,11 @@ public abstract class SimpleAssignmentNode extends StatementNode {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
+    private void assignNChar(PointerValue pcharPointer, I4GLString value) {
+        NCharValue pchar = (NCharValue) pcharPointer.getDereferenceValue();
+        pchar.assignString(value.toString());
+    }
+
     /**
      * This is used for multidimensional arrays
      */
@@ -107,12 +109,6 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     @Specialization
     void assignArray(VirtualFrame frame, I4GLArray array) {
         getFrame(frame).setObject(getSlot(), array.createDeepCopy());
-    }
-
-    @SuppressWarnings("unused")
-    private void assignVarchar(PointerValue varcharPointer, I4GLString value) {
-        VarcharValue varchar = (VarcharValue) varcharPointer.getDereferenceValue();
-        varchar.assignString(value.toString());
     }
 
     @ExplodeLoop

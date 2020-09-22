@@ -15,10 +15,10 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.TypeTypeDescriptor
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.LabelDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.NilPointerDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
@@ -180,6 +180,10 @@ public class IdentifiersTable {
 
     public VarcharDescriptor createVarchar(int size) {
         return new VarcharDescriptor(size);
+    }
+
+    public PointerDescriptor createNChar(int size) {
+        return new PointerDescriptor(new NCharDescriptor(size));
     }
 
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {

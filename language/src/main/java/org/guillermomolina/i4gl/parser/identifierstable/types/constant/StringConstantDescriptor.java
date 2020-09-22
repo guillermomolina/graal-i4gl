@@ -1,14 +1,14 @@
 package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+
 import org.guillermomolina.i4gl.parser.exceptions.CantBeNegatedException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.TextDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 
 /**
  * Type descriptor for a real-type constant. It also contains the constant's value.
@@ -21,7 +21,7 @@ public class StringConstantDescriptor extends ArrayDescriptor implements Constan
      * The default descriptor containing value of the constant.
      */
     public StringConstantDescriptor(String value) {
-        super(new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(Integer.MAX_VALUE)), CharDescriptor.getInstance());
+        super(Integer.MAX_VALUE, CharDescriptor.getInstance());
         this.value = new I4GLString(value);
     }
 

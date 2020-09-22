@@ -4,11 +4,12 @@ import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
+
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 
 /**
  * This nodes read value from an array at specified index.
@@ -52,7 +53,7 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
     }
 
     @Specialization
-    char readVarchar(VarcharValue string, int index) {
+    char readNChar(NCharValue string, int index) {
         return (char) string.getValueAt(index);
     }
 

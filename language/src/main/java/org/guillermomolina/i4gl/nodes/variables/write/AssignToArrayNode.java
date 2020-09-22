@@ -8,6 +8,7 @@ import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 
 /**
  * Node representing assignment to an array. Compared to {@link SimpleAssignmentNode} it has to receive also index.
@@ -48,8 +49,13 @@ public abstract class AssignToArrayNode extends StatementNode {
     }
 
     @Specialization
-    void assignToVarchar(VarcharValue string, int index, char value) {
+    void assignToNChar(NCharValue string, int index, char value) {
         string.setValueAt(index, value);
+    }
+
+    @Specialization
+    void assignToVarchar(VarcharValue string, int index, I4GLString value) {
+        string.setValueAt(index, value.getValueAt(0));
     }
 
     @Specialization

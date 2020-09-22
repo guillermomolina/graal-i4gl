@@ -1,13 +1,13 @@
 package org.guillermomolina.i4gl.parser.identifierstable.types.primitive;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.StringConstantDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 
 /**
  * Type descriptor representing the string type.
@@ -37,7 +37,8 @@ public class TextDescriptor extends ArrayDescriptor implements PrimitiveDescript
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type instanceof VarcharDescriptor || type instanceof StringConstantDescriptor;
+        return type instanceof NCharDescriptor || type instanceof VarcharDescriptor
+                || type instanceof StringConstantDescriptor;
     }
 
 }

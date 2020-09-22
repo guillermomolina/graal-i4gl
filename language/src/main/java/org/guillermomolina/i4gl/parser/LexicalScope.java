@@ -114,12 +114,16 @@ public class LexicalScope {
         arguments.add(identifier);
     }
 
-    ArrayDescriptor createArrayType(OrdinalDescriptor dimension, TypeDescriptor typeDescriptor) {
-        return this.localIdentifiers.createArray(dimension, typeDescriptor);
+    ArrayDescriptor createArrayType(int size, TypeDescriptor typeDescriptor) {
+        return this.localIdentifiers.createArray(size, typeDescriptor);
     }
 
-    VarcharDescriptor createVarcharType(OrdinalDescriptor dimension) {
-        return this.localIdentifiers.createVarchar(dimension);
+    VarcharDescriptor createVarcharType(int size) {
+        return this.localIdentifiers.createVarchar(size);
+    }
+
+    PointerDescriptor createNCharType(int size) {
+        return this.localIdentifiers.createNChar(size);
     }
 
     FileDescriptor createFileDescriptor(TypeDescriptor contentTypeDescriptor) {
