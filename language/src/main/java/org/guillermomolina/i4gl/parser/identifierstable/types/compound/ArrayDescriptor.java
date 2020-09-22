@@ -2,6 +2,7 @@ package org.guillermomolina.i4gl.parser.identifierstable.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
 
@@ -20,8 +21,8 @@ public class ArrayDescriptor implements TypeDescriptor {
      * @param dimension universe of the indices
      * @param valuesDescriptor type descriptor of the inner values
      */
-    public ArrayDescriptor(OrdinalDescriptor dimension, TypeDescriptor valuesDescriptor) {
-        this.dimension = dimension;
+    public ArrayDescriptor(int size, TypeDescriptor valuesDescriptor) {
+        this.dimension = new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(size));
         this.valuesDescriptor = valuesDescriptor;
     }
 

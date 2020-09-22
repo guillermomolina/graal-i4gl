@@ -12,16 +12,16 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.constant.StringCon
 /**
  * Type descriptor representing the string type.
  */
-public class StringDescriptor extends ArrayDescriptor implements PrimitiveDescriptor {
+public class TextDescriptor extends ArrayDescriptor implements PrimitiveDescriptor {
 
-    private static StringDescriptor instance = new StringDescriptor();
+    private static TextDescriptor instance = new TextDescriptor();
 
-    public static StringDescriptor getInstance() {
+    public static TextDescriptor getInstance() {
         return instance;
     }
 
-    private StringDescriptor() {
-        super(new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(Integer.MAX_VALUE)), CharDescriptor.getInstance());
+    private TextDescriptor() {
+        super(Integer.MAX_VALUE, CharDescriptor.getInstance());
 
     }
 

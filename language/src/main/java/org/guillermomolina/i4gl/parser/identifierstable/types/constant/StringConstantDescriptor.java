@@ -8,7 +8,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.StringDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.TextDescriptor;
 
 /**
  * Type descriptor for a real-type constant. It also contains the constant's value.
@@ -37,7 +37,7 @@ public class StringConstantDescriptor extends ArrayDescriptor implements Constan
 
     @Override
     public boolean convertibleTo(TypeDescriptor typeDescriptor) {
-        return typeDescriptor == StringDescriptor.getInstance();
+        return typeDescriptor == TextDescriptor.getInstance();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class StringConstantDescriptor extends ArrayDescriptor implements Constan
 
     @Override
     public TypeDescriptor getType() {
-        return StringDescriptor.getInstance();
+        return TextDescriptor.getInstance();
     }
 
     @Override

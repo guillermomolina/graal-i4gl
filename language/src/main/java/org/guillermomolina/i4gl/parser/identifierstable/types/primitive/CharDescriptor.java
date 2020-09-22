@@ -28,7 +28,7 @@ public class CharDescriptor implements PrimitiveDescriptor, OrdinalDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return '\0';
+        return ' ';
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CharDescriptor implements PrimitiveDescriptor, OrdinalDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type == StringDescriptor.getInstance() || type instanceof CharConstantDescriptor ||
+        return type == TextDescriptor.getInstance() || type instanceof CharConstantDescriptor ||
                 type instanceof StringConstantDescriptor;
     }
 

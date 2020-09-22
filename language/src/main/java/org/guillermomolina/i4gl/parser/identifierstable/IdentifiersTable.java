@@ -26,7 +26,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDesc
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.StringDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.TextDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -69,8 +69,7 @@ public class IdentifiersTable {
         typeDescriptors.put("FLOAT", RealDescriptor.getInstance());
         typeDescriptors.put("DOUBLE", RealDescriptor.getInstance());
         typeDescriptors.put("CHAR", CharDescriptor.getInstance());
-        typeDescriptors.put("VARCHAR", VarcharDescriptor.getInstance());
-        typeDescriptors.put("TEXT", StringDescriptor.getInstance());
+        typeDescriptors.put("TEXT", TextDescriptor.getInstance());
 
         for (Map.Entry<String, TypeDescriptor> typeEntry : typeDescriptors.entrySet()) {
             identifiersMap.put(typeEntry.getKey(), new TypeTypeDescriptor(typeEntry.getValue()));
@@ -175,8 +174,12 @@ public class IdentifiersTable {
         return (innerTypeDescriptor == null)? new PointerDescriptor(innerTypeIdentifier) : new PointerDescriptor(innerTypeDescriptor);
     }
 
-    public ArrayDescriptor createArray(OrdinalDescriptor dimension, TypeDescriptor typeDescriptor) {
-        return new ArrayDescriptor(dimension, typeDescriptor);
+    public ArrayDescriptor createArray(int size, TypeDescriptor typeDescriptor) {
+        return new ArrayDescriptor(size, typeDescriptor);
+    }
+
+    public VarcharDescriptor createVarchar(int size) {
+        return new VarcharDescriptor(size);
     }
 
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {
