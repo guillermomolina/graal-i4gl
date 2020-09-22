@@ -13,15 +13,15 @@ import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 /**
  * Type descriptor representing the string type.
  */
-public class NCharDescriptor extends ArrayDescriptor {
+public class TextDescriptor extends ArrayDescriptor {
 
-    private static NCharDescriptor instance = new NCharDescriptor();
+    private static TextDescriptor instance = new TextDescriptor();
 
-    public static NCharDescriptor getInstance() {
+    public static TextDescriptor getInstance() {
         return instance;
     }
 
-    private NCharDescriptor() {
+    private TextDescriptor() {
         super(Integer.MAX_VALUE, CharDescriptor.getInstance());
 
     }

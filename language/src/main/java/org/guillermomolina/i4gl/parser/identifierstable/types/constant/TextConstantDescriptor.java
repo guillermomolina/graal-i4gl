@@ -6,21 +6,21 @@ import org.guillermomolina.i4gl.parser.exceptions.CantBeNegatedException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.TextDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 
 /**
  * Type descriptor for a real-type constant. It also contains the constant's value.
  */
-public class StringConstantDescriptor extends ArrayDescriptor implements ConstantDescriptor {
+public class TextConstantDescriptor extends ArrayDescriptor implements ConstantDescriptor {
 
     private final I4GLString value;
 
     /**
      * The default descriptor containing value of the constant.
      */
-    public StringConstantDescriptor(String value) {
+    public TextConstantDescriptor(String value) {
         super(Integer.MAX_VALUE, CharDescriptor.getInstance());
         this.value = new I4GLString(value);
     }

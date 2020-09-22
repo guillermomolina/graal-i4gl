@@ -20,13 +20,13 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceD
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.TextDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -68,7 +68,9 @@ public class IdentifiersTable {
         typeDescriptors.put("BIGINT", LongDescriptor.getInstance());
         typeDescriptors.put("FLOAT", RealDescriptor.getInstance());
         typeDescriptors.put("DOUBLE", RealDescriptor.getInstance());
-        typeDescriptors.put("CHAR", CharDescriptor.getInstance());
+        typeDescriptors.put("INT8", CharDescriptor.getInstance());
+        typeDescriptors.put("NCHAR", NCharDescriptor.getInstance());
+        typeDescriptors.put("VARCHAR", VarcharDescriptor.getInstance());
         typeDescriptors.put("TEXT", TextDescriptor.getInstance());
 
         for (Map.Entry<String, TypeDescriptor> typeEntry : typeDescriptors.entrySet()) {
@@ -176,14 +178,6 @@ public class IdentifiersTable {
 
     public ArrayDescriptor createArray(int size, TypeDescriptor typeDescriptor) {
         return new ArrayDescriptor(size, typeDescriptor);
-    }
-
-    public VarcharDescriptor createVarchar(int size) {
-        return new VarcharDescriptor(size);
-    }
-
-    public PointerDescriptor createNChar(int size) {
-        return new PointerDescriptor(new NCharDescriptor(size));
     }
 
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {

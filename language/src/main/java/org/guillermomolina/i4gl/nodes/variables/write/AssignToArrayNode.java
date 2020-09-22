@@ -49,6 +49,11 @@ public abstract class AssignToArrayNode extends StatementNode {
     }
 
     @Specialization
+    void assignToString(I4GLString string, int index, I4GLString value) {
+        string.setValueAt(index, value.getValueAt(0));
+    }
+
+    @Specialization
     void assignToNChar(NCharValue string, int index, char value) {
         string.setValueAt(index, value);
     }
