@@ -63,7 +63,16 @@ public final class DisplayNode extends StatementNode {
     public void executeVoid(VirtualFrame frame) {
         for (int i = 0; i < argumentNodes.length; i++) {
             Object value = argumentNodes[i].executeGeneric(frame);
-            System.out.println(value);
+            if (value instanceof Integer) {
+                System.out.printf("%11d", (int)value);
+            } else if (value instanceof Long) {
+                System.out.printf("11d ", (long)value);
+            } else if (value instanceof Double) {
+                System.out.printf("%11.2f", (double)value);
+            } else {
+                System.out.print(value.toString());
+            }
         }
+        System.out.printf("%n");
     }
 }

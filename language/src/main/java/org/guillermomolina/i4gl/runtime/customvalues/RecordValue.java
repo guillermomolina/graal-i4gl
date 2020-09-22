@@ -28,28 +28,29 @@ public class RecordValue {
      * @param types map of the record's identifiers and their types
      */
     // TODO: can't the frame descriptor be created from the second argument?
-    public RecordValue(FrameDescriptor frameDescriptor, Map<String, TypeDescriptor> types) {
+    public RecordValue(final FrameDescriptor frameDescriptor, final Map<String, TypeDescriptor> types) {
         this(frameDescriptor);
         this.initValues(frameDescriptor, types);
     }
 
-    private RecordValue(FrameDescriptor frameDescriptor) {
+    private RecordValue(final FrameDescriptor frameDescriptor) {
         this.frameDescriptor = frameDescriptor;
         this.frame = Truffle.getRuntime().createVirtualFrame(new Object[frameDescriptor.getSize()], frameDescriptor);
     }
 
-    private void initValues(FrameDescriptor frameDescriptor, Map<String, TypeDescriptor> types) {
-        for (FrameSlot slot : frameDescriptor.getSlots()) {
-            TypeDescriptor slotsType = types.get(slot.getIdentifier().toString());
+    private void initValues(final FrameDescriptor frameDescriptor, final Map<String, TypeDescriptor> types) {
+        for (final FrameSlot slot : frameDescriptor.getSlots()) {
+            final TypeDescriptor slotsType = types.get(slot.getIdentifier().toString());
             this.initValue(slot, slotsType);
         }
     }
 
-    private void initValue(FrameSlot slot, TypeDescriptor descriptor) {
+    private void initValue(final FrameSlot slot, final TypeDescriptor descriptor) {
         this.setValue(slot, descriptor.getDefaultValue());
     }
 
-    private void setValue(FrameSlot slot, Object value) {
+    @SuppressWarnings("deprecation")
+    private void setValue(final FrameSlot slot, final Object value) {
         // TODO: whole initialization process is weird
         // this switch is surely a duplicity and is also somewhere else in the code
         switch (slot.getKind()) {
@@ -63,20 +64,35 @@ public class RecordValue {
         }
     }
 
-    private void copySlotValue(VirtualFrame fromFrame, VirtualFrame toFrame, FrameSlot slot) throws FrameSlotTypeException {
-        // TODO: this switch is surely a duplicity and is also somewhere else in the code
+    @SuppressWarnings("deprecation")
+    private void copySlotValue(final VirtualFrame fromFrame, final VirtualFrame toFrame, final FrameSlot slot)
+            throws FrameSlotTypeException {
+        // TODO: this switch is surely a duplicity and is also somewhere else in the
+        // code
         switch (slot.getKind()) {
-            case Int: toFrame.setInt(slot, fromFrame.getInt(slot)); break;
-            case Long: toFrame.setLong(slot, fromFrame.getLong(slot)); break;
-            case Float: toFrame.setFloat(slot, fromFrame.getFloat(slot)); break;
-            case Double: toFrame.setDouble(slot, fromFrame.getDouble(slot)); break;
-            case Byte: toFrame.setByte(slot, fromFrame.getByte(slot)); break;
-            case Object: toFrame.setObject(slot, fromFrame.getObject(slot)); break;
+            case Int:
+                toFrame.setInt(slot, fromFrame.getInt(slot));
+                break;
+            case Long:
+                toFrame.setLong(slot, fromFrame.getLong(slot));
+                break;
+            case Float:
+                toFrame.setFloat(slot, fromFrame.getFloat(slot));
+                break;
+            case Double:
+                toFrame.setDouble(slot, fromFrame.getDouble(slot));
+                break;
+            case Byte:
+                toFrame.setByte(slot, fromFrame.getByte(slot));
+                break;
+            case Object:
+                toFrame.setObject(slot, fromFrame.getObject(slot));
+                break;
             default:
         }
     }
 
-    public FrameSlot getSlot(String identifier) {
+    public FrameSlot getSlot(final String identifier) {
         return this.frameDescriptor.findFrameSlot(identifier);
     }
 
@@ -88,11 +104,11 @@ public class RecordValue {
      * Creates a deep copy of the record.
      */
     public RecordValue getCopy() {
-        RecordValue copy = new RecordValue(this.frameDescriptor);
-        for (FrameSlot slot : this.frameDescriptor.getSlots()) {
+        final RecordValue copy = new RecordValue(this.frameDescriptor);
+        for (final FrameSlot slot : this.frameDescriptor.getSlots()) {
             try {
                 this.copySlotValue(this.frame, copy.frame, slot);
-            } catch (FrameSlotTypeException e) {
+            } catch (final FrameSlotTypeException e) {
                 throw new I4GLRuntimeException("Unexpected type in record copying");
             }
         }

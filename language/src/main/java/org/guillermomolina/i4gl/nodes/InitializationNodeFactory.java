@@ -13,6 +13,7 @@ public class InitializationNodeFactory {
     private InitializationNodeFactory() {
     }
 
+    @SuppressWarnings("deprecation")
 	public static StatementNode create(FrameSlot frameSlot, Object value, VirtualFrame frame) {
 	    // TODO: this is a duplicity
         switch (frameSlot.getKind()) {

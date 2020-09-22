@@ -82,10 +82,10 @@ public final class I4GLMain {
             source = Source.newBuilder(LANGUAGE_ID, new File(file)).build();
         }
 
-        System.exit(executeSource(source, System.in, System.out, options));
+        System.exit(executeSource(file, source, System.in, System.out, options));
     }
 
-    private static int executeSource(Source source, InputStream in, PrintStream out, Map<String, String> options) {
+    private static int executeSource(String file, Source source, InputStream in, PrintStream out, Map<String, String> options) {
         Context context;
         PrintStream err = System.err;
         try {
@@ -94,8 +94,8 @@ public final class I4GLMain {
             err.println(e.getMessage());
             return 1;
         }
-        out.println("== running on " + context.getEngine().getImplementationName() 
-            + " " + context.getEngine().getVersion());
+        out.println("== Running " + file + " on " + context.getEngine().getImplementationName() 
+            + " " + context.getEngine().getVersion() + " ==");
 
         try {
             Value result = context.eval(source);
@@ -104,7 +104,7 @@ public final class I4GLMain {
                 return 1;
             }*/
             if (!result.isNull()) {
-                out.println("== exit code " + result.toString());
+                out.println("== Exit code " + result.toString() + " ==");
             }
             return 0;
         } catch (PolyglotException ex) {

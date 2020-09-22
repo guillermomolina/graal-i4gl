@@ -313,13 +313,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitReturnStatement(final I4GLParser.ReturnStatementContext ctx) {
         final List<ExpressionNode> parameterNodes = new ArrayList<>();
-        if (ctx.variableOrConstantList() != null) {
-            final List<I4GLParser.ExpressionContext> parameterListCtx = ctx.variableOrConstantList().expression();
-            for (final I4GLParser.ExpressionContext parameterCtx : parameterListCtx) {
+        if (ctx.expressionList() == null) {
+            parameterNodes.add(IntLiteralNodeGen.create(0));
+        } else {
+            for (final I4GLParser.ExpressionContext parameterCtx : ctx.expressionList().expression()) {
                 parameterNodes.add((ExpressionNode) visit(parameterCtx));
             }
-        } else {
-            parameterNodes.add(IntLiteralNodeGen.create(0));
         }
         return new ReturnNode(parameterNodes.get(0));
     }
@@ -356,6 +355,22 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                     AddNodeGen.create(readControlVariableNode, stepValue));
             return new ForNode(initialAssignment, controlSlot, startValue, finalValue, stepNode,
                     readControlVariableNode, loopBody);
+        } catch (final UnknownIdentifierException e) {
+            reportError(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Creates node that read value from specified variable.
+     * 
+     * @param identifierToken identifier token of the variable
+     * @return the newly created node
+     */
+    public ExpressionNode createReadVariableNode(final String identifier) {
+        try {
+            return this.doLookup(identifier, (final LexicalScope foundInScope,
+                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
         } catch (final UnknownIdentifierException e) {
             reportError(e.getMessage());
             return null;
@@ -450,11 +465,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                  */
             }
         }
-        /*
-         * if (leftNode.getType() != BooleanDescriptor.getInstance()) { leftNode =
-         * NotNodeGen.create(EqualsNodeGen.create(leftNode,
-         * IntLiteralNodeGen.create(0))); }
-         */
         return leftNode;
     }
 
@@ -486,11 +496,11 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         if (ctx.NOT() != null) {
             return NotNodeGen.create((ExpressionNode) visit(ctx.ifCondition()));
         }
-        return visit(ctx.simpleExpression());
+        return visit(ctx.expression());
     }
 
     @Override
-    public Node visitSimpleExpression(final I4GLParser.SimpleExpressionContext ctx) {
+    public Node visitExpression(final I4GLParser.ExpressionContext ctx) {
         ExpressionNode leftNode = null;
         int index = 0;
         for (final I4GLParser.TermContext termCtx : ctx.term()) {
@@ -547,10 +557,10 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitDisplayStatement(final I4GLParser.DisplayStatementContext ctx) {
-        final List<I4GLParser.ExpressionContext> attributeListCtx = ctx.expression();
-        final List<ExpressionNode> parameterNodes = new ArrayList<>(attributeListCtx.size());
-        for (final I4GLParser.ExpressionContext attributeCtx : attributeListCtx) {
-            parameterNodes.add((ExpressionNode) visit(attributeCtx));
+        final List<I4GLParser.DisplayValueContext> valueListCtx = ctx.displayValue();
+        final List<ExpressionNode> parameterNodes = new ArrayList<>(valueListCtx.size());
+        for (final I4GLParser.DisplayValueContext valueCtx : valueListCtx) {
+            parameterNodes.add((ExpressionNode) visit(valueCtx));
         }
         return new DisplayNode(parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]));
     }
@@ -628,7 +638,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 final TypeDescriptor descriptor = getTypeDescriptor("VARCHAR");
                 return new TypeNode(descriptor);
             } else {
-                throw new NotImplementedException();
+                final TypeDescriptor descriptor = getTypeDescriptor("CHAR");
+                return new TypeNode(descriptor);
             }
         } catch (UnknownIdentifierException e) {
             reportError(e.getMessage());
@@ -734,23 +745,32 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             throw new NotImplementedException();
         }
         try {
-            final String identifier = ctx.variable().identifier(0).getText();
-            if (ctx.variable().indexingVariable() == null && ctx.variable().DOT().isEmpty()) {
-                //Simple variable
-                final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
+            I4GLParser.VariableContext variableCtx = ctx.variable();
+            if (variableCtx.indexingVariable() == null && variableCtx.identifier().size() == 1) {
+                // Simple variable
+                final String identifier = variableCtx.identifier(0).getText();
+                final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expressionList().expression(0));
                 return createAssignmentNode(identifier, valueNode);
             }
-            ExpressionNode variableNode = doLookup(identifier,
-                    (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
-                        return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
-                    });
-            if (ctx.variable().identifier().size() > 1) {
+            ExpressionNode variableNode = null;
+            for (int index = 0; index < variableCtx.identifier().size(); index++) {
                 // Record
-                final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
-                return createAssignmentToRecordField(variableNode, ctx.variable().identifier(1).getText(),valueNode);
+                final String identifier = variableCtx.identifier(index).getText();
+                if (index == 0) {
+                    variableNode = doLookup(identifier,
+                            (final LexicalScope foundInLexicalScope,
+                                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier,
+                                            foundInLexicalScope));
+                } else if (index == variableCtx.identifier().size() - 1 && variableCtx.indexingVariable() == null) {
+                    final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expressionList().expression(0));
+                    return createAssignmentToRecordField(variableNode, identifier, valueNode);
+                } else {
+                    variableNode = createReadFromRecordNode(variableNode, identifier);
+                }
             }
             // Array
-            final List<I4GLParser.ExpressionContext> indexList = ctx.variable().indexingVariable().expression();
+            final List<I4GLParser.ExpressionContext> indexList = variableCtx.indexingVariable().expressionList()
+                    .expression();
             if (indexList.size() > 3) {
                 reportError("Dimensions can not be " + indexList.size());
                 return null;
@@ -759,22 +779,25 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             for (I4GLParser.ExpressionContext indexCtx : indexList) {
                 indexNodes.add((ExpressionNode) visit(indexCtx));
             }
-            final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expression(0));
+            final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expressionList().expression(0));
             return createAssignmentToArray(variableNode, indexNodes, valueNode);
-        } catch (UnknownIdentifierException e) {
+        } catch (LexicalException | NullPointerException | UnknownIdentifierException e) {
             reportError(e.getMessage());
             return null;
         }
     }
 
     /**
-     * Creates {@link AssignToRecordField} node for assignment to variable inside a record
+     * Creates {@link AssignToRecordField} node for assignment to variable inside a
+     * record
+     * 
      * @param recordExpression expression node which returns the record
-     * @param identifierToken token of the target record's variable
-     * @param valueNode assigning value's node
+     * @param identifierToken  token of the target record's variable
+     * @param valueNode        assigning value's node
      * @return the newly created node
      */
-    private StatementNode createAssignmentToRecordField(ExpressionNode recordExpression, String identifier, ExpressionNode valueNode) {
+    private StatementNode createAssignmentToRecordField(ExpressionNode recordExpression, String identifier,
+            ExpressionNode valueNode) {
         TypeDescriptor expressionType = recordExpression.getType();
         if (!(expressionType instanceof RecordDescriptor)) {
             reportError("Not a record");
@@ -820,21 +843,25 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitVariable(final I4GLParser.VariableContext ctx) {
         try {
-            final String identifier = ctx.identifier(0).getText();
-            ExpressionNode variableNode = doLookup(identifier,
-                    (final LexicalScope foundInLexicalScope, final String foundIdentifier) -> {
-                        return createReadVariableFromScope(foundIdentifier, foundInLexicalScope);
-                    });
-            if (ctx.identifier().size() > 1) {
-                // RECORD
-                return createReadFromRecordNode(variableNode, ctx.identifier(1).getText());
+            ExpressionNode variableNode = null;
+            for (int index = 0; index < ctx.identifier().size(); index++) {
+                final String identifier = ctx.identifier(index).getText();
+                if (index == 0) {
+                    // simple variable
+                    variableNode = doLookup(identifier,
+                            (final LexicalScope foundInLexicalScope,
+                                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier,
+                                            foundInLexicalScope));
+                } else {
+                    // RECORD
+                    variableNode = createReadFromRecordNode(variableNode, identifier);
+                }
             }
             if (ctx.indexingVariable() == null) {
-                // simple variable
                 return variableNode;
             }
             // array
-            final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expression();
+            final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expressionList().expression();
             if (indexList.size() > 3) {
                 throw new LexicalException("Dimensions can not be " + indexList.size());
             }
@@ -849,18 +876,17 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         }
     }
 
-    public ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression, final String identifier) {
+    public ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression, final String identifier)
+            throws LexicalException, UnknownIdentifierException {
         TypeDescriptor descriptor = recordExpression.getType();
         TypeDescriptor returnType = null;
 
         if (!(descriptor instanceof RecordDescriptor)) {
-            reportError("Can not access non record type this way");
-            return null;
+            throw new LexicalException("Can not access non record type this way");
         }
         RecordDescriptor accessedRecordDescriptor = (RecordDescriptor) descriptor;
         if (!accessedRecordDescriptor.containsIdentifier(identifier)) {
-            reportError("The record does not contain this identifier");
-            return null;
+            throw new UnknownIdentifierException("The record does not contain this identifier");
         }
 
         returnType = accessedRecordDescriptor.getLexicalScope().getIdentifierDescriptor(identifier);
@@ -890,22 +916,6 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
         }
         return readArrayNode;
-    }
-
-    /**
-     * Creates node that read value from specified variable.
-     * 
-     * @param identifierToken identifier token of the variable
-     * @return the newly created node
-     */
-    public ExpressionNode createReadVariableNode(final String identifier) {
-        try {
-            return this.doLookup(identifier, (final LexicalScope foundInScope,
-                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
-        } catch (final UnknownIdentifierException e) {
-            reportError(e.getMessage());
-            return null;
-        }
     }
 
     private ExpressionNode createReadVariableFromScope(final String identifier, final LexicalScope scope) {

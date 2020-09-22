@@ -44,6 +44,7 @@ public interface OrdinalDescriptor extends TypeDescriptor {
         }
 
         @Override
+        @SuppressWarnings("deprecation")
         public TypeDescriptor getInnerTypeDescriptor() {
             return lowerBound.getInnerType();
         }

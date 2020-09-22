@@ -26,7 +26,7 @@ functionOrReportDefinitions: (
 		| functionDefinition
 	)+;
 
-returnStatement: RETURN variableOrConstantList? EOL;
+returnStatement: RETURN expressionList? EOL;
 
 functionDefinition:
 	FUNCTION identifier parameterList? EOL typeDeclarations? codeBlock? END FUNCTION EOL;
@@ -173,7 +173,7 @@ runStatement:
 
 assignmentStatement:
 	LET (
-		variable EQUAL (expression (COMMA expression)* | NULL)
+		variable EQUAL (expressionList | NULL)
 		| identifier DOT STAR EQUAL identifier DOT STAR
 	) EOL;
 
@@ -311,16 +311,16 @@ ifCondition2: ifLogicalTerm (OR ifLogicalTerm)*;
 
 ifLogicalTerm: ifLogicalFactor (AND ifLogicalFactor)*;
 
-expression: simpleExpression (CLIPPED | USING string)*;
-
 ifLogicalFactor:
 	// Added "prior" to a comparison expression to support use of a condition in a connect_clause.
 	// (simpleExpression IS NOT? NULL) simpleExpression IS NOT? NULL
 	| /*(NOT ifCondition)*/ NOT ifCondition
 	| LPAREN ifCondition RPAREN
-	| simpleExpression;
+	| expression;
 
-simpleExpression: /*sign?*/ term (addingOperator term)*;
+expressionList: expression (COMMA expression)*;
+
+expression: /*sign?*/ term (addingOperator term)*;
 
 addingOperator: PLUS | MINUS;
 
@@ -346,9 +346,9 @@ constant: numericConstant | string;
 
 numericConstant: integer | real;
 
-variable: identifier (indexingVariable | (DOT identifier)+ )?;
+variable: identifier (DOT identifier)* indexingVariable?;
 
-indexingVariable: LBRACK expression (COMMA expression)* RBRACK;
+indexingVariable: LBRACK expressionList RBRACK;
 
 /*
  thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
@@ -448,7 +448,7 @@ otherStorageStatement:
 	| FREE variable (COMMA variable)*
 	| INITIALIZE variable (COMMA variable)* (
 		TO NULL
-		| LIKE expression (COMMA expression)*
+		| LIKE expressionList
 	)
 	| VALIDATE variable (COMMA variable)* LIKE expression (
 		COMMA expression
@@ -485,9 +485,7 @@ reportStatement:
 	| NEED expression LINES EOL
 	| PRINT (printExpressionList SEMI? | FILE string)? EOL
 	| SKIP2 (expression (LINE | LINES) | TO TOP OF PAGE) EOL
-	| OUTPUT TO REPORT identifier LPAREN (
-		expression (COMMA expression)*
-	)? RPAREN EOL;
+	| OUTPUT TO REPORT identifier LPAREN expressionList? RPAREN EOL;
 
 fieldName: ((identifier (LBRACK numericConstant RBRACK)?) DOT)? identifier
 	| (identifier (LBRACK numericConstant RBRACK)?) DOT (
@@ -553,21 +551,23 @@ displayEvents: ON KEY LPAREN keyList RPAREN codeBlock+;
 
 displayStatement:
 	DISPLAY (
-		BY NAME (expression (COMMA expression)*)
-		| (expression (COMMA expression)*) (
+		BY NAME variableList
+		| (displayValue (COMMA displayValue)*) (
 			TO fieldList
 			| AT expression COMMA expression
 		)?
 	) attributeList? EOL;
 
-errorStatement:
-	ERROR expression (COMMA expression)* attributeList? EOL;
+displayValue:
+	expression (CLIPPED | USING string)?
+	| ASCII UNSIGNED_INTEGER;
 
-messageStatement:
-	MESSAGE expression (COMMA expression)* attributeList? EOL;
+errorStatement: ERROR expressionList attributeList? EOL;
+
+messageStatement: MESSAGE expressionList attributeList? EOL;
 
 promptStatement:
-	PROMPT expression (COMMA expression)* attributeList? FOR CHAR? variable (
+	PROMPT expressionList attributeList? FOR CHAR? variable (
 		HELP numericConstant
 	)? attributeList? (
 		(ON KEY LPAREN keyList RPAREN codeBlock?)* END PROMPT
@@ -586,8 +586,8 @@ inputGroupStatement: inputEvents codeBlock*;
 
 inputStatement:
 	INPUT (
-		BY NAME expression (COMMA expression)* (WITHOUT DEFAULTS)?
-		| expression (COMMA expression)* (WITHOUT DEFAULTS)? FROM fieldList
+		BY NAME expressionList (WITHOUT DEFAULTS)?
+		| expressionList (WITHOUT DEFAULTS)? FROM fieldList
 	) attributeList? (HELP numericConstant)? (
 		inputGroupStatement+ END INPUT
 	)? EOL;
@@ -841,7 +841,7 @@ sqlUnLoadStatement:
 
 sqlInsertStatement:
 	INSERT INTO tableIdentifier (LPAREN columnsList RPAREN)? (
-		VALUES LPAREN expression (COMMA expression)* RPAREN
+		VALUES LPAREN expressionList RPAREN
 		| simpleSelectStatement
 	);
 
@@ -854,7 +854,7 @@ sqlUpdateStatement:
 		)
 		| (
 			(LPAREN columnsList RPAREN | (aliasName DOT)? STAR) EQUAL (
-				LPAREN expression (COMMA expression)* RPAREN
+				LPAREN expressionList RPAREN
 				| (aliasName DOT)? STAR
 			)
 		)
