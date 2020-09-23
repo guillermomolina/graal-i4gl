@@ -8,21 +8,15 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.constant.NCharCons
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.TextConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.VarcharConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
+import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 
 /**
  * Type descriptor representing the string type.
  */
 public class NCharDescriptor extends ArrayDescriptor {
 
-    private static NCharDescriptor instance = new NCharDescriptor();
-
-    public static NCharDescriptor getInstance() {
-        return instance;
-    }
-
-    private NCharDescriptor() {
-        super(Integer.MAX_VALUE, CharDescriptor.getInstance());
+    public NCharDescriptor(int size) {
+        super(size, CharDescriptor.getInstance());
 
     }
 
@@ -33,14 +27,14 @@ public class NCharDescriptor extends ArrayDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLString();
+        return new NCharValue(getSize());
     }
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type instanceof CharConstantDescriptor || type == TextDescriptor.getInstance() || 
-        type instanceof TextConstantDescriptor || type == VarcharDescriptor.getInstance() || 
-        type instanceof VarcharConstantDescriptor || type == NCharDescriptor.getInstance() || 
+        type instanceof TextConstantDescriptor || type instanceof VarcharDescriptor || 
+        type instanceof VarcharConstantDescriptor || type instanceof NCharDescriptor || 
         type instanceof NCharConstantDescriptor;
     }
 

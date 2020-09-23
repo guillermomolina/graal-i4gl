@@ -1,6 +1,10 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
+import java.util.Arrays;
+
 import com.oracle.truffle.api.CompilerDirectives;
+
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 
 /**
  * Representation of variables of NChar type. It is a slight wrapper to Java's {@link String}.
@@ -10,29 +14,27 @@ public class NCharValue implements I4GLArray {
 
     private String data;
 
-    public NCharValue() {
-        data = "\0";
-    }
-
-    public NCharValue(long size) {
-        StringBuilder str = new StringBuilder();
-        for (int i = 0; i < size - 1; ++i) {
-            str.append(' ');
-        }
-        str.append('\0');
-        this.data = str.toString();
+    public NCharValue(int size) {
+        char[] chars = new char[size];
+        Arrays.fill(chars, ' ');
+        this.data = new String(chars);
     }
 
     private NCharValue(NCharValue source) {
         this.data = source.data;
     }
 
-    private NCharValue(String data) {
-        this.data = data;
-    }
-
     public void assignString(String value) {
-        this.data = value + "\0";
+        final int size = data.length();
+        if (value.length() > size) {
+            data = value.substring(0, size);
+        } else {
+            final StringBuilder str = new StringBuilder(value);
+            for (int i = value.length(); i < size; ++i) {
+                str.append(' ');
+            }
+            data = str.toString();    
+        }
     }
 
     @Override
@@ -69,12 +71,7 @@ public class NCharValue implements I4GLArray {
      * @return the NChar string
      */
     public static NCharValue concat(NCharValue left, NCharValue right) {
-        StringBuilder newData = new StringBuilder();
-        newData.append(left.data);
-        newData.deleteCharAt(newData.length() - 1);
-        newData.append(right.data);
-
-        return new NCharValue(newData.toString());
+        throw new NotImplementedException();
     }
 
 }

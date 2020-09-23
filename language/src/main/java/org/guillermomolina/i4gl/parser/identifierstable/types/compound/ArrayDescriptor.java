@@ -58,6 +58,10 @@ public class ArrayDescriptor implements TypeDescriptor {
         return this.dimension.getFirstIndex();
     }
 
+    public int getSize() {
+        return this.dimension.getSize();
+    }
+
     public TypeDescriptor getValuesDescriptor() {
         return this.valuesDescriptor;
     }

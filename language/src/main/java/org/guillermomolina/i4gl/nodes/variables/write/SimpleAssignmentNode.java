@@ -64,11 +64,9 @@ public abstract class SimpleAssignmentNode extends StatementNode {
         Object targetObject = frame.getValue(getSlot());
         if (targetObject instanceof I4GLString) {
             frame.setObject(getSlot(), value);
-        } else if (targetObject instanceof PointerValue) {
-            PointerValue pointerValue = (PointerValue) targetObject;
-            if (pointerValue.getType() instanceof NCharDescriptor) {
-                assignNChar(pointerValue, value);
-            }
+        } else if (targetObject instanceof NCharValue) {
+            NCharValue pchar = (NCharValue) targetObject;
+            pchar.assignString(value.toString());
         }
     }
     
@@ -90,11 +88,6 @@ public abstract class SimpleAssignmentNode extends StatementNode {
     @Specialization
     void assignCharArray(VirtualFrame frame, char[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    private void assignNChar(PointerValue pcharPointer, I4GLString value) {
-        NCharValue pchar = (NCharValue) pcharPointer.getDereferenceValue();
-        pchar.assignString(value.toString());
     }
 
     /**

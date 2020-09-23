@@ -39,8 +39,8 @@ public class VarcharDescriptor extends ArrayDescriptor {
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type instanceof CharConstantDescriptor || type == TextDescriptor.getInstance() || 
-        type instanceof TextConstantDescriptor || type == VarcharDescriptor.getInstance() || 
-        type instanceof VarcharConstantDescriptor || type == NCharDescriptor.getInstance() || 
+        type instanceof TextConstantDescriptor || type instanceof VarcharDescriptor || 
+        type instanceof VarcharConstantDescriptor || type instanceof NCharDescriptor || 
         type instanceof NCharConstantDescriptor;
     }
 

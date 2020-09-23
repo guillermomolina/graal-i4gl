@@ -69,8 +69,6 @@ public class IdentifiersTable {
         typeDescriptors.put("FLOAT", RealDescriptor.getInstance());
         typeDescriptors.put("DOUBLE", RealDescriptor.getInstance());
         typeDescriptors.put("INT8", CharDescriptor.getInstance());
-        typeDescriptors.put("NCHAR", NCharDescriptor.getInstance());
-        typeDescriptors.put("VARCHAR", VarcharDescriptor.getInstance());
         typeDescriptors.put("TEXT", TextDescriptor.getInstance());
 
         for (Map.Entry<String, TypeDescriptor> typeEntry : typeDescriptors.entrySet()) {
@@ -178,6 +176,10 @@ public class IdentifiersTable {
 
     public ArrayDescriptor createArray(int size, TypeDescriptor typeDescriptor) {
         return new ArrayDescriptor(size, typeDescriptor);
+    }
+
+    public NCharDescriptor createNChar(int size) {
+        return new NCharDescriptor(size);
     }
 
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {

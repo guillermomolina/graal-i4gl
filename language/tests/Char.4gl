@@ -1,5 +1,5 @@
 MAIN
-    DEFINE var1 CHAR(8)
+    DEFINE var1 NCHAR(8)
     LET var1 = "H"
     DISPLAY "|", var1, "|"
     LET var1[4] = "X"

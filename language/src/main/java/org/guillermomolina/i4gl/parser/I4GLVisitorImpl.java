@@ -31,7 +31,7 @@ import org.guillermomolina.i4gl.nodes.control.WhileNode;
 import org.guillermomolina.i4gl.nodes.literals.DoubleLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.LongLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.NCharLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.I4GLStringLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.EqualsNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanNodeGen;
@@ -638,13 +638,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         try {
             if (ctx.varchar() != null) {
                 //final int size = Integer.parseInt(ctx.numericConstant(0).getText());
-                return new TypeNode(getTypeDescriptor("VARCHAR"));
+                throw new NotImplementedException();
             } else {
-                /*int size = 1;
+                int size = 1;
                 if(!ctx.numericConstant().isEmpty()) {
                     size = Integer.parseInt(ctx.numericConstant(0).getText());
-                }*/
-                return new TypeNode(getTypeDescriptor("CHAR"));
+                }
+                return new TypeNode(currentLexicalScope.createNCharType(size));
             }
         } catch (Exception e) {
             reportError(e.getMessage());
@@ -678,6 +678,9 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
+        if(ctx.BYTE() != null) {
+            throw new NotImplementedException();
+        }
         try {
             return new TypeNode(getTypeDescriptor(ctx.getText()));
         } catch (UnknownIdentifierException e) {
@@ -934,7 +937,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         assert literal.length() >= 2 && literal.startsWith("\"") && literal.endsWith("\"");
         literal = literal.substring(1, literal.length() - 1);
 
-        return NCharLiteralNodeGen.create(literal.intern());
+        return I4GLStringLiteralNodeGen.create(literal.intern());
     }
 
     @Override

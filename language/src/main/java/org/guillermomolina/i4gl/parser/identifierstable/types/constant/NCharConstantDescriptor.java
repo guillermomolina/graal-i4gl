@@ -2,6 +2,7 @@ package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.parser.exceptions.CantBeNegatedException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
@@ -37,7 +38,7 @@ public class NCharConstantDescriptor extends ArrayDescriptor implements Constant
 
     @Override
     public boolean convertibleTo(TypeDescriptor typeDescriptor) {
-        return typeDescriptor == NCharDescriptor.getInstance();
+        return typeDescriptor instanceof NCharDescriptor;
     }
 
     @Override
@@ -47,7 +48,8 @@ public class NCharConstantDescriptor extends ArrayDescriptor implements Constant
 
     @Override
     public TypeDescriptor getType() {
-        return NCharDescriptor.getInstance();
+        throw new NotImplementedException();
+//        return NCharDescriptor.getInstance();
     }
 
     @Override
