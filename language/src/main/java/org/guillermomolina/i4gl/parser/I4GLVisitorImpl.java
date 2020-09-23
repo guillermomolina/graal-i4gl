@@ -211,17 +211,23 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public I4GLRootNode createFunction(final String functionIdentifier, List<String> parameteridentifiers,
             I4GLParser.TypeDeclarationsContext typeDeclarationsContext, ParserRuleContext codeBlockContext) {
         currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
-        if (parameteridentifiers != null) {
-            for (final String parameteridentifier : parameteridentifiers) {
-                currentLexicalScope.addArgument(parameteridentifier);
-            }
-        }
-
         List<StatementNode> blockNodes = new ArrayList<>();
         if (typeDeclarationsContext != null) {
             BlockNode initializationNode = (BlockNode) visit(typeDeclarationsContext);
             if (initializationNode != null) {
                 blockNodes.addAll(initializationNode.getStatements());
+            }
+        }
+
+        if (parameteridentifiers != null) {
+            int argumentIndex = 0;
+            for (final String parameteridentifier : parameteridentifiers) {
+                final TypeDescriptor typeDescriptor = currentLexicalScope.getIdentifierDescriptor(parameteridentifier);
+                if(typeDescriptor == null) {
+                    reportError("Function parameter " + parameteridentifier + " is not declared");
+                }
+                final ExpressionNode readNode = new ReadArgumentNode(argumentIndex++, typeDescriptor);
+                blockNodes.add(createAssignmentNode(parameteridentifier, readNode));
             }
         }
 
@@ -607,19 +613,12 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             for (final String identifier : identifierList) {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
                 StatementNode initializationNode;
-                final int argumentIndex = currentLexicalScope.arguments.indexOf(identifier);
-                if (argumentIndex != -1) {
-                    final ExpressionNode readNode = new ReadArgumentNode(argumentIndex, typeDescriptor);
-                    initializationNode = createAssignmentNode(identifier, readNode);
-                } else {
-                    Object defaultValue = typeDescriptor.getDefaultValue();
-                    if (defaultValue == null) {
-                        throw new LexicalException("Undefined default value for type " + typeDescriptor.toString());
-                    }
-                    FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
-                    initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
-
+                Object defaultValue = typeDescriptor.getDefaultValue();
+                if (defaultValue == null) {
+                    throw new LexicalException("Undefined default value for type " + typeDescriptor.toString());
                 }
+                FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
+                initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
                 initializationNodes.add(initializationNode);
             }
         } catch (final LexicalException e) {
@@ -637,7 +636,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 return new TypeNode(currentLexicalScope.createVarcharType(size));
             } else {
                 int size = 1;
-                if(!ctx.numericConstant().isEmpty()) {
+                if (!ctx.numericConstant().isEmpty()) {
                     size = Integer.parseInt(ctx.numericConstant(0).getText());
                 }
                 return new TypeNode(currentLexicalScope.createNCharType(size));
@@ -674,7 +673,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
-        if(ctx.BYTE() != null) {
+        if (ctx.BYTE() != null) {
             throw new NotImplementedException();
         }
         try {
@@ -707,7 +706,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
         TypeNode typeNode = (TypeNode) visit(ctx.arrayTypeType());
         ArrayDescriptor arrayDescriptor = null;
-        for(int i = ctx.arrayIndexer().dimensionSize().size() -1; i >= 0; i--) {
+        for (int i = ctx.arrayIndexer().dimensionSize().size() - 1; i >= 0; i--) {
             int size = Integer.parseInt(ctx.arrayIndexer().dimensionSize(i).getText());
             if (arrayDescriptor == null) {
                 arrayDescriptor = currentLexicalScope.createArrayType(size, typeNode.descriptor);
