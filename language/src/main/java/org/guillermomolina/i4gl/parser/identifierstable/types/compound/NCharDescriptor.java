@@ -4,9 +4,6 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.CharConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.NCharConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.TextConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.VarcharConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 
@@ -33,9 +30,7 @@ public class NCharDescriptor extends ArrayDescriptor {
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type instanceof CharConstantDescriptor || type == TextDescriptor.getInstance() || 
-        type instanceof TextConstantDescriptor || type instanceof VarcharDescriptor || 
-        type instanceof VarcharConstantDescriptor || type instanceof NCharDescriptor || 
-        type instanceof NCharConstantDescriptor;
+        type instanceof VarcharDescriptor || type instanceof NCharDescriptor;
     }
 
 }

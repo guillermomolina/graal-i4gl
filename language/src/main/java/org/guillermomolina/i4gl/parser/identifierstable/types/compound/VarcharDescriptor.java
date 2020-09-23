@@ -3,10 +3,6 @@ package org.guillermomolina.i4gl.parser.identifierstable.types.compound;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.CharConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.NCharConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.TextConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.VarcharConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
@@ -31,9 +27,7 @@ public class VarcharDescriptor extends ArrayDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type instanceof CharConstantDescriptor || type == TextDescriptor.getInstance() || 
-        type instanceof TextConstantDescriptor || type instanceof NCharDescriptor || 
-        type instanceof NCharConstantDescriptor || type instanceof VarcharDescriptor || 
-        type instanceof VarcharConstantDescriptor;
+        return type == TextDescriptor.getInstance() || type instanceof VarcharDescriptor
+                || type instanceof NCharDescriptor;
     }
 }
