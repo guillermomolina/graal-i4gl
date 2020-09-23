@@ -1,6 +1,8 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
 import com.oracle.truffle.api.CompilerDirectives;
+
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
 
 /**
@@ -10,30 +12,20 @@ import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
 public class VarcharValue implements I4GLArray {
 
     private String data;
+    private final int size;
 
-    public VarcharValue() {
-        data = "\0";
-    }
-
-    public VarcharValue(long size) {
-        StringBuilder str = new StringBuilder();
-        for (int i = 0; i < size - 1; ++i) {
-            str.append(' ');
-        }
-        str.append('\0');
-        this.data = str.toString();
+    public VarcharValue(int size) {
+        this.size = size;
+        this.data = "";
     }
 
     private VarcharValue(VarcharValue source) {
+        this.size = source.size;
         this.data = source.data;
     }
 
-    private VarcharValue(String data) {
-        this.data = data;
-    }
-
     public void assignString(String value) {
-        this.data = value + "\0";
+        data = value.substring(0, Math.min(size, value.length()));
     }
 
     @Override
@@ -43,13 +35,24 @@ public class VarcharValue implements I4GLArray {
 
     @Override
     public Object getValueAt(int index) {
-        return this.data.charAt(index);
+        checkArrayIndex(index);
+        return data.charAt(index);
     }
 
     @Override
     public void setValueAt(int index, Object value) {
-        this.checkArrayIndex(index);
-        this.data = this.data.substring(0, index) + value + this.data.substring(index + 1);
+        checkArrayIndex(index);
+        if(index > data.length()) {
+            final StringBuilder str = new StringBuilder(data);
+            for (int i = data.length(); i < index; ++i) {
+                str.append(' ');
+            }
+            str.append(value);
+            data = str.toString();    
+        }
+        else {
+            data = data.substring(0, index) + value + data.substring(index + 1);
+        }
     }
 
     @Override
@@ -58,7 +61,7 @@ public class VarcharValue implements I4GLArray {
     }
 
     private void checkArrayIndex(int index) {
-        if (index >= this.data.length()) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
     }
@@ -70,12 +73,7 @@ public class VarcharValue implements I4GLArray {
      * @return the Varchar string
      */
     public static VarcharValue concat(VarcharValue left, VarcharValue right) {
-        StringBuilder newData = new StringBuilder();
-        newData.append(left.data);
-        newData.deleteCharAt(newData.length() - 1);
-        newData.append(right.data);
-
-        return new VarcharValue(newData.toString());
+        throw new NotImplementedException();
     }
 
 }

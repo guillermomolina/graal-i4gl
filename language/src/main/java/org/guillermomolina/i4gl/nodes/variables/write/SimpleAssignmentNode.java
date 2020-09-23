@@ -10,6 +10,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
@@ -18,6 +19,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -65,8 +67,13 @@ public abstract class SimpleAssignmentNode extends StatementNode {
         if (targetObject instanceof I4GLString) {
             frame.setObject(getSlot(), value);
         } else if (targetObject instanceof NCharValue) {
-            NCharValue pchar = (NCharValue) targetObject;
-            pchar.assignString(value.toString());
+            NCharValue target = (NCharValue) targetObject;
+            target.assignString(value.toString());
+        } else if (targetObject instanceof VarcharValue) {
+            VarcharValue target = (VarcharValue) targetObject;
+            target.assignString(value.toString());
+        } else {
+            throw new NotImplementedException();
         }
     }
     

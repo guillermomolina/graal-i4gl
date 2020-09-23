@@ -9,6 +9,7 @@ import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * This nodes read value from an array at specified index.
@@ -27,38 +28,42 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
 
     @Specialization
     int readInt(int[] array, int index) {
-        return array[index];
+        return array[index - 1];
     }
 
     @Specialization
     long readLong(long[] array, int index) {
-        return array[index];
+        return array[index - 1];
     }
 
     @Specialization
     double readDouble(double[] array, int index) {
-        return array[index];
+        return array[index - 1];
     }
 
     @Specialization
     char readChar(char[] array, int index) {
-        return array[index];
+        return array[index - 1];
     }
 
-    // TODO: do we need this I4GLString class?
     @Specialization
     char readString(I4GLString string, int index) {
-        return (char) string.getValueAt(index);
+        return (char) string.getValueAt(index - 1);
     }
 
     @Specialization
     char readNChar(NCharValue string, int index) {
-        return (char) string.getValueAt(index);
+        return (char) string.getValueAt(index - 1);
+    }
+
+    @Specialization
+    char readVarchar(VarcharValue string, int index) {
+        return (char) string.getValueAt(index - 1);
     }
 
     @Specialization
     Object readGeneric(Object[] array, int index) {
-        return array[index];
+        return array[index - 1];
     }
 
     @Override

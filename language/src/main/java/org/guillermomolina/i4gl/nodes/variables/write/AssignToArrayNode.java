@@ -24,47 +24,47 @@ public abstract class AssignToArrayNode extends StatementNode {
 
     @Specialization
     void assignInt(int[] array, int index, int value) {
-        array[index] = value;
+        array[index - 1] = value;
     }
 
     @Specialization
     void assignLong(long[] array, int index, long value) {
-        array[index] = value;
+        array[index - 1] = value;
     }
 
     @Specialization
     void assignDouble(double[] array, int index, double value) {
-        array[index] = value;
+        array[index - 1] = value;
     }
 
     @Specialization
     void assignChar(char[] array, int index, char value) {
-        array[index] = value;
+        array[index - 1] = value;
     }
 
     @Specialization
     void assignToString(I4GLString string, int index, char value) {
-        string.setValueAt(index, value);
+        string.setValueAt(index - 1, value);
     }
 
     @Specialization
     void assignToString(I4GLString string, int index, I4GLString value) {
-        string.setValueAt(index, value.getValueAt(0));
+        string.setValueAt(index - 1, value.getValueAt(0));
     }
 
     @Specialization
-    void assignToNChar(NCharValue string, int index, char value) {
-        string.setValueAt(index, value);
+    void assignToNChar(NCharValue string, int index, I4GLString value) {
+        string.setValueAt(index - 1, value.getValueAt(0));
     }
 
     @Specialization
     void assignToVarchar(VarcharValue string, int index, I4GLString value) {
-        string.setValueAt(index, value.getValueAt(0));
+        string.setValueAt(index - 1, value.getValueAt(0));
     }
 
     @Specialization
     void assignObject(Object[] array, int index, Object value) {
-        array[index] = value;
+        array[index - 1] = value;
     }
 
 }

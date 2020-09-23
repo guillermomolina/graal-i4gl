@@ -16,6 +16,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.OrdinalConstantDescriptor;
@@ -120,6 +121,10 @@ public class LexicalScope {
 
     NCharDescriptor createNCharType(int size) {
         return this.localIdentifiers.createNChar(size);
+    }
+
+    VarcharDescriptor createVarcharType(int size) {
+        return this.localIdentifiers.createVarchar(size);
     }
 
     FileDescriptor createFileDescriptor(TypeDescriptor contentTypeDescriptor) {

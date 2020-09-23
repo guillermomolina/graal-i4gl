@@ -2,6 +2,7 @@ package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.parser.exceptions.CantBeNegatedException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
@@ -37,7 +38,7 @@ public class VarcharConstantDescriptor extends ArrayDescriptor implements Consta
 
     @Override
     public boolean convertibleTo(TypeDescriptor typeDescriptor) {
-        return typeDescriptor == VarcharDescriptor.getInstance();
+        return typeDescriptor instanceof VarcharDescriptor;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class VarcharConstantDescriptor extends ArrayDescriptor implements Consta
 
     @Override
     public TypeDescriptor getType() {
-        return VarcharDescriptor.getInstance();
+        throw new NotImplementedException();
     }
 
     @Override

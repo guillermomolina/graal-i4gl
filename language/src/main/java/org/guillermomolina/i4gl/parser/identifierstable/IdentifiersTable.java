@@ -182,6 +182,10 @@ public class IdentifiersTable {
         return new NCharDescriptor(size);
     }
 
+    public VarcharDescriptor createVarchar(int size) {
+        return new VarcharDescriptor(size);
+    }
+
     public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {
         TypeDescriptor descriptor = this.identifiersMap.get(identifier);
         if (descriptor == null) {

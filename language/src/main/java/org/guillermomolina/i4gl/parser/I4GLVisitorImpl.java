@@ -635,8 +635,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     public Node visitCharType(final I4GLParser.CharTypeContext ctx) {
         try {
             if (ctx.varchar() != null) {
-                //final int size = Integer.parseInt(ctx.numericConstant(0).getText());
-                throw new NotImplementedException();
+                final int size = Integer.parseInt(ctx.numericConstant(0).getText());
+                return new TypeNode(currentLexicalScope.createVarcharType(size));
             } else {
                 int size = 1;
                 if(!ctx.numericConstant().isEmpty()) {
