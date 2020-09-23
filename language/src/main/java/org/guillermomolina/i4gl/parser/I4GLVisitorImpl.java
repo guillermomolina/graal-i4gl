@@ -29,9 +29,9 @@ import org.guillermomolina.i4gl.nodes.control.ForNode;
 import org.guillermomolina.i4gl.nodes.control.IfNode;
 import org.guillermomolina.i4gl.nodes.control.WhileNode;
 import org.guillermomolina.i4gl.nodes.literals.DoubleLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.I4GLStringLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.LongLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.I4GLStringLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.EqualsNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanNodeGen;
@@ -49,7 +49,6 @@ import org.guillermomolina.i4gl.nodes.variables.read.ReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromRecordNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.read.ReadReferenceVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.AssignToArrayNode;
 import org.guillermomolina.i4gl.nodes.variables.write.AssignToArrayNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.AssignToRecordField;
@@ -59,7 +58,6 @@ import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNodeGen;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
@@ -905,19 +903,13 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
         final TypeDescriptor type = scope.getIdentifierDescriptor(identifier);
         final boolean isLocal = scope == currentLexicalScope;
-        final boolean isReference = type instanceof ReferenceDescriptor;
         final boolean isConstant = type instanceof ConstantDescriptor;
 
         if (isConstant) {
             final ConstantDescriptor constantType = (ConstantDescriptor) type;
             return ReadConstantNodeGen.create(constantType.getValue(), constantType);
         } else if (isLocal) {
-            // TODO: check if it is a variable
-            if (isReference) {
-                return ReadReferenceVariableNodeGen.create(variableSlot, type);
-            } else {
-                return ReadLocalVariableNodeGen.create(variableSlot, type);
-            }
+            return ReadLocalVariableNodeGen.create(variableSlot, type);
         } else {
             return ReadGlobalVariableNodeGen.create(variableSlot, type);
         }

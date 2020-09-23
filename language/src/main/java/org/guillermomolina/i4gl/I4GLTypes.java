@@ -10,7 +10,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
  * The type system of our interpreter. It specifies which variable types we will be using and implicit casts.
  */
 @TypeSystem({ int.class, long.class, boolean.class, char.class, double.class, I4GLString.class,
-        I4GLArray.class, Reference.class, PointerValue.class, FileValue.class, })
+        I4GLArray.class, FileValue.class, })
 public class I4GLTypes {
 
     @ImplicitCast

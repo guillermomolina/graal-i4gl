@@ -13,11 +13,9 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
-import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 

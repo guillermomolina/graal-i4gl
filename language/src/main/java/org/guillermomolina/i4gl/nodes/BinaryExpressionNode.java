@@ -1,13 +1,13 @@
 package org.guillermomolina.i4gl.nodes;
 
-import com.oracle.truffle.api.dsl.NodeChild;
-import com.oracle.truffle.api.dsl.NodeChildren;
-import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.oracle.truffle.api.dsl.NodeChild;
+import com.oracle.truffle.api.dsl.NodeChildren;
+
+import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
+import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
  * Base node for each binary expression node. It also contains functions for static type checking.
@@ -76,18 +76,6 @@ public abstract class BinaryExpressionNode extends ExpressionNode {
      */
     protected TypeDescriptor getNonPrimitiveArgumentsResultingType(TypeDescriptor leftType, TypeDescriptor rightType) {
         return null;
-    }
-
-    /**
-     * Helper function that returns true if the given types are both pointer types and compatible.
-     */
-    protected boolean verifyBothCompatiblePointerTypes(TypeDescriptor leftType, TypeDescriptor rightType) {
-        if (!(leftType instanceof PointerDescriptor && rightType instanceof PointerDescriptor)) {
-            return false;
-        }
-        TypeDescriptor leftInnerType = ((PointerDescriptor) leftType).getInnerTypeDescriptor();
-        TypeDescriptor rightInnerType = ((PointerDescriptor) rightType).getInnerTypeDescriptor();
-        return (leftInnerType == null) || (rightInnerType == null) || (rightInnerType.equals(leftInnerType));
     }
 
 }

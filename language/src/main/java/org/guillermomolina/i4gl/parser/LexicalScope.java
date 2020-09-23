@@ -12,7 +12,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
@@ -103,10 +102,6 @@ public class LexicalScope {
         return this.containsLocalIdentifier(identifier);
     }
 
-    FrameSlot registerReferenceVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
-        return this.localIdentifiers.addReference(identifier, typeDescriptor);
-    }
-
     void registerLocalVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addVariable(identifier, typeDescriptor);
     }
@@ -133,21 +128,6 @@ public class LexicalScope {
 
     RecordDescriptor createRecordDescriptor() {
         return this.localIdentifiers.createRecordDescriptor(this);
-    }
-
-    PointerDescriptor createPointerDescriptor(String innerTypeIdentifier) {
-        return this.localIdentifiers.createPointerDescriptor(innerTypeIdentifier);
-    }
-
-    /**
-     * I4GL allows to declare a pointer to a type that is declared after the pointer's declaration. In these cases, we
-     * create a pointer type with unspecified inner type but with the identifier of the type to be declared later. After
-     * the whole types declaration statement is parsed, this function is called and sets the correct inner type
-     * descriptors for each of these pointer types.
-     * @throws LexicalException if the inner type was not declared
-     */
-    void initializeAllUninitializedPointerDescriptors() throws LexicalException {
-        this.localIdentifiers.initializeAllUninitializedPointerDescriptors();
     }
 
     public void registerType(String identifier, TypeDescriptor type) throws LexicalException{

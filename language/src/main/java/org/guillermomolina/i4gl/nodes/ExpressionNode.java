@@ -61,13 +61,4 @@ public abstract class ExpressionNode extends StatementNode {
     protected boolean isChar() {
         return getType() == CharDescriptor.getInstance() || getType() instanceof CharConstantDescriptor;
     }
-
-    /**
-     * Returns true if this expression is a reference. Vast majority of expressions are not references so only those that
-     * are have to override this method.
-     */
-    protected boolean isReference() {
-        return false;
-    }
-
 }

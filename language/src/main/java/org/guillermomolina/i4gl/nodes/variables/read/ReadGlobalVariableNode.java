@@ -77,11 +77,6 @@ public abstract class ReadGlobalVariableNode extends ExpressionNode {
         return frame;
     }
 
-    @Override
-    protected boolean isReference() {
-	    return false;
-    }
-
 	@Override
     public TypeDescriptor getType() {
 	    return this.getTypeDescriptor();

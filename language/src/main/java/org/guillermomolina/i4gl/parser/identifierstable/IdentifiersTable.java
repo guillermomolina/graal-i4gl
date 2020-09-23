@@ -14,9 +14,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeTypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.LabelDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.NilPointerDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.PointerDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.ReferenceDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
@@ -78,8 +75,8 @@ public class IdentifiersTable {
 
     private void addBuiltinConstants() {
         try {
-            this.registerNewIdentifier("nil", new NilPointerDescriptor());
-        } catch (LexicalException e) {
+            // TODO
+        } catch (Exception e) {
             throw new I4GLRuntimeException("Could not initialize builtin constants");
         }
     }
@@ -125,34 +122,6 @@ public class IdentifiersTable {
         this.typeDescriptors.put(identifier, typeDescriptor);
     }
 
-    /**
-     * I4GL allows to declare a pointer to a type that is declared after the pointer's declaration. In these cases, we
-     * create a pointer type with unspecified inner type but with the identifier of the type to be declared later. After
-     * the whole types declaration statement is parsed, this function is called and sets the correct inner type
-     * descriptors for each of these pointer types.
-     * @throws LexicalException if the inner type was not declared
-     */
-    public void initializeAllUninitializedPointerDescriptors() throws LexicalException {
-        for (Map.Entry<String, TypeDescriptor> typeEntry : this.typeDescriptors.entrySet()) {
-            TypeDescriptor type = typeEntry.getValue();
-            if (type instanceof PointerDescriptor) {
-                PointerDescriptor pointerDescriptor = (PointerDescriptor) type;
-                if (!pointerDescriptor.isInnerTypeInitialized()) {
-                    TypeDescriptor pointerInnerType = this.getTypeDescriptor(pointerDescriptor.getInnerTypeIdentifier());
-                    if (pointerInnerType == null) {
-                        throw new LexicalException("Pointer type not declared in the same type statement.");
-                    } else {
-                        pointerDescriptor.setInnerType(pointerInnerType);
-                    }
-                }
-            }
-        }
-    }
-
-    public FrameSlot addReference(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
-        return this.registerNewIdentifier(identifier, new ReferenceDescriptor(typeDescriptor));
-    }
-
     public void addVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, typeDescriptor);
     }
@@ -167,11 +136,6 @@ public class IdentifiersTable {
 
     public RecordDescriptor createRecordDescriptor(LexicalScope recordScope) {
         return new RecordDescriptor(recordScope);
-    }
-
-    public PointerDescriptor createPointerDescriptor(String innerTypeIdentifier) {
-        TypeDescriptor innerTypeDescriptor = this.getTypeDescriptor(innerTypeIdentifier);
-        return (innerTypeDescriptor == null)? new PointerDescriptor(innerTypeIdentifier) : new PointerDescriptor(innerTypeDescriptor);
     }
 
     public ArrayDescriptor createArray(int size, TypeDescriptor typeDescriptor) {

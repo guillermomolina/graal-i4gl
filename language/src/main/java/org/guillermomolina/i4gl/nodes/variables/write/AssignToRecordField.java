@@ -3,9 +3,9 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
+
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.PointerValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
 /**
@@ -45,12 +45,6 @@ public abstract class AssignToRecordField extends StatementNode {
     @Specialization
     void assignChar(RecordValue record, char value) {
         record.getFrame().setByte(record.getSlot(this.identifier), (byte) value);
-    }
-
-    @Specialization
-    void assignPointer(RecordValue record, PointerValue pointer) {
-        PointerValue recordPointer = (PointerValue) record.getFrame().getValue(record.getSlot(this.identifier));
-        recordPointer.setHeapSlot(pointer.getHeapSlot());
     }
 
     @Specialization
