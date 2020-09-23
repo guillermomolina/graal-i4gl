@@ -12,6 +12,7 @@ import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeTypeDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.complex.DatabaseDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.LabelDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
@@ -115,6 +116,10 @@ public class IdentifiersTable {
 
     public void addLabel(String identifier) throws LexicalException {
         this.registerNewIdentifier(identifier, new LabelDescriptor(identifier));
+    }
+
+    public FrameSlot addDatabase(String identifier) throws LexicalException {
+        return this.registerNewIdentifier("_database", new DatabaseDescriptor(identifier));
     }
 
     public void addType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {

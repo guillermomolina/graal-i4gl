@@ -940,4 +940,16 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         final String literal = ctx.getText();
         return DoubleLiteralNodeGen.create(Double.parseDouble(literal));
     }
+
+    @Override
+    public Node visitDatabaseDeclaration(final I4GLParser.DatabaseDeclarationContext ctx) {
+        final String identifier = ctx.identifier(0).getText();
+        try {
+            final FrameSlot databaseSlot = currentLexicalScope.registerDatabase(identifier);
+        } catch (LexicalException e) {
+            e.printStackTrace();
+        }
+        throw new NotImplementedException();
+        //return new ConnectToDatabaseNodeGen.create(databaseSlot);
+    }
 }

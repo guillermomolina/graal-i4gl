@@ -86,6 +86,10 @@ public class LexicalScope {
         this.localIdentifiers.addLabel(identifier);
     }
 
+    FrameSlot registerDatabase(String identifier) throws LexicalException {
+        return this.localIdentifiers.addDatabase(identifier);
+    }
+
     void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addType(identifier, typeDescriptor);
     }
