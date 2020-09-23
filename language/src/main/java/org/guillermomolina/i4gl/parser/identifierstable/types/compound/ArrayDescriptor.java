@@ -1,10 +1,12 @@
 package org.guillermomolina.i4gl.parser.identifierstable.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
+
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be
@@ -13,7 +15,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
  */
 public class ArrayDescriptor implements TypeDescriptor {
 
-    private final OrdinalDescriptor dimension;
+    private final int size;
     private final TypeDescriptor valuesDescriptor;
 
     /**
@@ -22,7 +24,7 @@ public class ArrayDescriptor implements TypeDescriptor {
      * @param valuesDescriptor type descriptor of the inner values
      */
     public ArrayDescriptor(int size, TypeDescriptor valuesDescriptor) {
-        this.dimension = new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(size));
+        this.size = size;
         this.valuesDescriptor = valuesDescriptor;
     }
 
@@ -34,15 +36,15 @@ public class ArrayDescriptor implements TypeDescriptor {
     @Override
     public Object getDefaultValue() {
         if (valuesDescriptor == IntDescriptor.getInstance()) {
-            return new int[this.dimension.getSize()];
+            return new int[size];
         } else if (valuesDescriptor == LongDescriptor.getInstance()) {
-            return new long[this.dimension.getSize()];
+            return new long[size];
         } else if (valuesDescriptor == RealDescriptor.getInstance()) {
-            return new double[this.dimension.getSize()];
+            return new double[size];
         } else if (valuesDescriptor == CharDescriptor.getInstance()) {
-            return new char[this.dimension.getSize()];
+            return new char[size];
         } else {
-            Object[] data = new Object[dimension.getSize()];
+            Object[] data = new Object[size];
             for (int i = 0; i < data.length; ++i) {
                 data[i] = valuesDescriptor.getDefaultValue();
             }
@@ -50,16 +52,8 @@ public class ArrayDescriptor implements TypeDescriptor {
         }
     }
 
-    /**
-     * Gets the offset of the array indices. I4GL array does not have to begin at index 0 or any other hardwired index
-     * number.
-     */
-    public int getOffset() {
-        return this.dimension.getFirstIndex();
-    }
-
     public int getSize() {
-        return this.dimension.getSize();
+        return size;
     }
 
     public TypeDescriptor getValuesDescriptor() {

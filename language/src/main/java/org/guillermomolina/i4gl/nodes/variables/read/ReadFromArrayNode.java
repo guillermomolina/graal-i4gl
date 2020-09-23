@@ -6,7 +6,6 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
@@ -19,7 +18,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
  */
 @NodeChildren({
         @NodeChild(value = "valueNode", type = ExpressionNode.class),
-        @NodeChild(value = "indexNode", type = ReadIndexNode.class),
+        @NodeChild(value = "indexNode", type = ExpressionNode.class),
 })
 @NodeField(name = "returnType", type = TypeDescriptor.class)
 public abstract class ReadFromArrayNode extends ExpressionNode {

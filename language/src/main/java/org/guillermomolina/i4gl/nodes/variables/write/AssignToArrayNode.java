@@ -5,7 +5,6 @@ import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
@@ -18,7 +17,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
  */
 @NodeChildren({
         @NodeChild(value = "arrayNode", type = ExpressionNode.class),
-        @NodeChild(value = "indexNode", type = ReadIndexNode.class),
+        @NodeChild(value = "indexNode", type = ExpressionNode.class),
         @NodeChild(value = "valueNode", type = ExpressionNode.class)
 })
 public abstract class AssignToArrayNode extends StatementNode {

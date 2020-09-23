@@ -42,8 +42,6 @@ import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.BlockNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.nodes.variables.ReadIndexNode;
-import org.guillermomolina.i4gl.nodes.variables.ReadIndexNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNodeGen;
@@ -816,13 +814,11 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 return null;
             }
             ExpressionNode indexNode = indexNodes.get(index);
-            ReadIndexNode readIndexNode = ReadIndexNodeGen.create(indexNode,
-                    ((ArrayDescriptor) actualType).getOffset());
             TypeDescriptor returnType = ((ArrayDescriptor) actualType).getValuesDescriptor();
             if (index == lastIndex) {
-                result = AssignToArrayNodeGen.create(readArrayNode, readIndexNode, valueNode);
+                result = AssignToArrayNodeGen.create(readArrayNode, indexNode, valueNode);
             } else {
-                readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
+                readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, indexNode, returnType);
             }
         }
         assert result != null;
@@ -899,10 +895,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 reportError("Not an array");
                 break;
             }
-            ReadIndexNode readIndexNode = ReadIndexNodeGen.create(indexNode,
-                    ((ArrayDescriptor) actualType).getOffset());
             TypeDescriptor returnType = ((ArrayDescriptor) actualType).getValuesDescriptor();
-            readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, readIndexNode, returnType);
+            readArrayNode = ReadFromArrayNodeGen.create(readArrayNode, indexNode, returnType);
         }
         return readArrayNode;
     }
