@@ -8,7 +8,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescr
 /**
  * Type descriptor for a integer-type constant. It also contains the constant's value.
  */
-public class IntConstantDescriptor implements OrdinalConstantDescriptor {
+public class IntConstantDescriptor implements ConstantDescriptor {
 
     private final int value;
 
@@ -42,16 +42,6 @@ public class IntConstantDescriptor implements OrdinalConstantDescriptor {
     @Override
     public ConstantDescriptor negatedCopy() throws LexicalException {
         return new IntConstantDescriptor(-this.value);
-    }
-
-    @Override
-    public int getOrdinalValue() {
-        return this.value;
-    }
-
-    @Override
-    public TypeDescriptor getInnerType() {
-        return this.getType();
     }
 
     @Override

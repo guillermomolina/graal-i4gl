@@ -9,7 +9,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDesc
 /**
  * Type descriptor for a char-type constant. It also contains the constant's value.
  */
-public class CharConstantDescriptor implements OrdinalConstantDescriptor {
+public class CharConstantDescriptor implements ConstantDescriptor {
 
     private final char value;
 
@@ -48,16 +48,6 @@ public class CharConstantDescriptor implements OrdinalConstantDescriptor {
     @Override
     public ConstantDescriptor negatedCopy() throws LexicalException {
         throw new CantBeNegatedException();
-    }
-
-    @Override
-    public int getOrdinalValue() {
-        return (int)this.value;
-    }
-
-    @Override
-    public TypeDescriptor getInnerType() {
-        return this.getType();
     }
 
     @Override

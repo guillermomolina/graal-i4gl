@@ -63,16 +63,6 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDes
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 
 public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
-    /*
-     * private int count = 0;
-     * 
-     * @Override public Node visitChildren(org.antlr.v4.runtime.tree.RuleNode node)
-     * { ++count; if (count == 16) { count = 16; } try { Node result =
-     * super.visitChildren(node); if (result == null) { throw new
-     * NotImplementedException(node.getClass().toString()); } return result; } catch
-     * (Exception e) { reportError(e.getMessage()); return null; } }
-     */
-
     /**
      * Lambda interface used in
      * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function.

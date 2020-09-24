@@ -8,7 +8,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDesc
 /**
  * Type descriptor for a long-type constant. It also contains the constant's value.
  */
-public class LongConstantDescriptor implements OrdinalConstantDescriptor {
+public class LongConstantDescriptor implements ConstantDescriptor {
 
     private final long value;
 
@@ -45,18 +45,8 @@ public class LongConstantDescriptor implements OrdinalConstantDescriptor {
     }
 
     @Override
-    public int getOrdinalValue() {
-        return (int)this.value;
-    }
-
-    @Override
     public TypeDescriptor getType() {
         return LongDescriptor.getInstance();
-    }
-
-    @Override
-    public TypeDescriptor getInnerType() {
-        return this.getType();
     }
 
     @Override

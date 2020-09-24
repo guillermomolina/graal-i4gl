@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
@@ -30,7 +30,7 @@ import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
  */
 @TruffleLanguage.Registration(id = I4GLLanguage.ID, name = "I4GLLanguage", defaultMimeType = I4GLLanguage.MIME_TYPE, characterMimeTypes = I4GLLanguage.MIME_TYPE, contextPolicy = ContextPolicy.SHARED, fileTypeDetectors = I4GLFileDetector.class)
 public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
-    public static volatile int counter;
+    private static AtomicInteger counter;
 
     public static final String ID = "i4gl";
     public static final String MIME_TYPE = "application/x-i4gl";
@@ -38,13 +38,11 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     // To make the linter happy, remove it
     public static final I4GLLanguage INSTANCE = null;
 
-    private Random random;
     private Map<String, CallTarget> functions;
     private Scanner input = new Scanner(System.in);
 
     public I4GLLanguage() {
-        counter++;
-        random = new Random(26270);
+        counter.incrementAndGet();
         functions = new HashMap<>();
         input = new Scanner(System.in);
     }
@@ -59,11 +57,23 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         return !InteropLibrary.getFactory().getUncached(value).isNull(value);
     }
 
+    /**
+     * Does some thing in old style.
+     *
+     * @deprecated  
+     */
+    @Deprecated
     @Override
     protected Object findExportedSymbol(I4GLContext state, String globalName, boolean onlyExplicit) {
         return null;
     }
 
+    /**
+     * Does some thing in old style.
+     *
+     * @deprecated  
+     */
+    @Deprecated
     @Override
     protected Object getLanguageGlobal(I4GLContext i4glState) {
         return i4glState;
@@ -90,21 +100,10 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         I4GLVisitorImpl visitor = new I4GLVisitorImpl(this, source);
         visitor.visit(tree);
         List<String> errorList = visitor.getErrorList();
-        if (errorList.size() > 0) {
+        if (!errorList.isEmpty()) {
             throw new LexicalException(errorList.get(0));
         }
         return Truffle.getRuntime().createCallTarget(visitor.getRootNode());
-    }
-
-    /**
-     * Resets the random seed.
-     */
-    public void randomize() {
-        random = new Random();
-    }
-
-    public int getRandom(int upperBound) {
-        return Math.abs(random.nextInt()) % upperBound;
     }
 
     public void addFunction(String functionIdentifier, I4GLRootNode rootNode) {
