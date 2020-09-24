@@ -11,14 +11,11 @@ import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.OrdinalConstantDescriptor;
 
 /**
  * This class represents currently parsed lexical scope. It is a slight wrapper of {@link IdentifiersTable} with some
@@ -140,25 +137,6 @@ public class LexicalScope {
 
     void registerConstant(String identifier, ConstantDescriptor constant) throws LexicalException {
         this.localIdentifiers.addConstant(identifier, constant);
-    }
-
-    OrdinalDescriptor createRangeDescriptor(OrdinalConstantDescriptor lowerBound, OrdinalConstantDescriptor upperBound)  throws LexicalException {
-        if (!lowerBound.getClass().equals(upperBound.getClass())) {
-            throw new LexicalException("Range type mismatch");
-        }
-
-        long lower = lowerBound.getOrdinalValue();
-        long upper = upperBound.getOrdinalValue();
-
-        if (lower > upper) {
-            throw new LexicalException("Lower upper bound than lower bound");
-        }
-
-        return new OrdinalDescriptor.RangeDescriptor(lowerBound, upperBound);
-    }
-
-    OrdinalDescriptor createImplicitRangeDescriptor() {
-        return new OrdinalDescriptor.RangeDescriptor(new LongConstantDescriptor(0), new LongConstantDescriptor(1));
     }
 
     /**

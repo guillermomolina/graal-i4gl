@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.parser.identifierstable.types.primitive;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.OrdinalDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
@@ -11,7 +10,7 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDe
 /**
  * Type descriptor representing the char type.
  */
-public class CharDescriptor implements PrimitiveDescriptor, OrdinalDescriptor {
+public class CharDescriptor implements PrimitiveDescriptor {
 
     private static CharDescriptor instance = new CharDescriptor();
 
@@ -31,26 +30,6 @@ public class CharDescriptor implements PrimitiveDescriptor, OrdinalDescriptor {
     @Override
     public Object getDefaultValue() {
         return ' ';
-    }
-
-    @Override
-    public int getSize() {
-        return 256;
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-        return value instanceof Character;
-    }
-
-    @Override
-    public TypeDescriptor getInnerTypeDescriptor() {
-        return CharDescriptor.getInstance();
-    }
-
-    @Override
-    public int getFirstIndex() {
-        return Character.MIN_VALUE;
     }
 
     @Override
