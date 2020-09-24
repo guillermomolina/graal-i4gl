@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
+import com.oracle.truffle.api.debug.DebuggerTags;
+import com.oracle.truffle.api.instrumentation.ProvidedTags;
+import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.source.Source;
 
@@ -29,9 +31,10 @@ import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
  * Truffle's PolyglotEngine will use our language.
  */
 @TruffleLanguage.Registration(id = I4GLLanguage.ID, name = "I4GLLanguage", defaultMimeType = I4GLLanguage.MIME_TYPE, characterMimeTypes = I4GLLanguage.MIME_TYPE, contextPolicy = ContextPolicy.SHARED, fileTypeDetectors = I4GLFileDetector.class)
+@ProvidedTags({ StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class,
+        StandardTags.RootBodyTag.class, StandardTags.ExpressionTag.class, DebuggerTags.AlwaysHalt.class,
+        StandardTags.ReadVariableTag.class, StandardTags.WriteVariableTag.class })
 public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
-    private static AtomicInteger counter;
-
     public static final String ID = "i4gl";
     public static final String MIME_TYPE = "application/x-i4gl";
 
@@ -42,7 +45,6 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     private Scanner input = new Scanner(System.in);
 
     public I4GLLanguage() {
-        counter.incrementAndGet();
         functions = new HashMap<>();
         input = new Scanner(System.in);
     }
@@ -60,7 +62,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     /**
      * Does some thing in old style.
      *
-     * @deprecated  
+     * @deprecated
      */
     @Deprecated
     @Override
@@ -71,7 +73,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     /**
      * Does some thing in old style.
      *
-     * @deprecated  
+     * @deprecated
      */
     @Deprecated
     @Override

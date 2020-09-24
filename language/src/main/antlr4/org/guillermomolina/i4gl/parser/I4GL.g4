@@ -163,7 +163,12 @@ simpleStatement:
 	| menuInsideStatement
 	| constructInsideStatement
 	| displayInsideStatement
-	| inputInsideStatement;
+	| inputInsideStatement
+	| debugStatement;
+
+debugStatement: DEBUG EOL;
+
+DEBUG: D E B U G;
 
 runStatement:
 	RUN (variable | string) (IN FORM MODE | IN LINE MODE)? (
