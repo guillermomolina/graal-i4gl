@@ -4,6 +4,8 @@ import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
@@ -69,6 +71,11 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
     @Override
     public TypeDescriptor getType() {
         return this.getReturnType();
+    }
+
+    @Override
+    public boolean hasTag(Class<? extends Tag> tag) {
+        return tag == ReadVariableTag.class || super.hasTag(tag);
     }
 
 }

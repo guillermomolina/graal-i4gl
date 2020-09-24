@@ -6,6 +6,8 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
@@ -72,6 +74,11 @@ public abstract class ReadLocalVariableNode extends ExpressionNode {
 	@Override
     public TypeDescriptor getType() {
 	    return this.getTypeDescriptor();
+    }
+
+    @Override
+    public boolean hasTag(Class<? extends Tag> tag) {
+        return tag == ReadVariableTag.class || super.hasTag(tag);
     }
 
 }

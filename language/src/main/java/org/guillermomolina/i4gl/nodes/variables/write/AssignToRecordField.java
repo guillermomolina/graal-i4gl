@@ -3,6 +3,8 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
@@ -52,4 +54,8 @@ public abstract class AssignToRecordField extends StatementNode {
         record.getFrame().setObject(record.getSlot(this.identifier), value);
     }
 
+    @Override
+    public boolean hasTag(Class<? extends Tag> tag) {
+        return tag == WriteVariableTag.class || super.hasTag(tag);
+    }
 }

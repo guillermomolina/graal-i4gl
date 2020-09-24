@@ -64,7 +64,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
      */
     @Deprecated
     @Override
-    protected Object findExportedSymbol(I4GLContext state, String globalName, boolean onlyExplicit) {
+    protected Object findExportedSymbol(I4GLContext context, String globalName, boolean onlyExplicit) {
         return null;
     }
 
@@ -75,8 +75,8 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
      */
     @Deprecated
     @Override
-    protected Object getLanguageGlobal(I4GLContext i4glState) {
-        return i4glState;
+    protected Object getLanguageGlobal(I4GLContext i4glContext) {
+        return i4glContext;
     }
 
     /**

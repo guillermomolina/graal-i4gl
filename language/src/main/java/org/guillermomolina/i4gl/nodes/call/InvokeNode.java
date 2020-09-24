@@ -4,6 +4,8 @@ import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.StandardTags;
+import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
@@ -60,5 +62,12 @@ public final class InvokeNode extends ExpressionNode {
 
         return argumentValues;
     }
-    
+
+    @Override
+    public boolean hasTag(Class<? extends Tag> tag) {
+        if (tag == StandardTags.CallTag.class) {
+            return true;
+        }
+        return super.hasTag(tag);
+    }    
 }

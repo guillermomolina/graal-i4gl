@@ -8,6 +8,8 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
@@ -123,4 +125,8 @@ public abstract class SimpleAssignmentNode extends StatementNode {
         return frame;
     }
 
+    @Override
+    public boolean hasTag(Class<? extends Tag> tag) {
+        return tag == WriteVariableTag.class || super.hasTag(tag);
+    }
 }
