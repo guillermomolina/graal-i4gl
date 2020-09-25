@@ -2,10 +2,10 @@ package org.guillermomolina.i4gl.nodes.literals;
 
 import com.oracle.truffle.api.dsl.Specialization;
 
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 
 /**
  * Node representing string literal.

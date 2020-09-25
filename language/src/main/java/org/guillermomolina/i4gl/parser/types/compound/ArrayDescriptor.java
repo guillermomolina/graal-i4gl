@@ -1,12 +1,12 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.compound;
+package org.guillermomolina.i4gl.parser.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be

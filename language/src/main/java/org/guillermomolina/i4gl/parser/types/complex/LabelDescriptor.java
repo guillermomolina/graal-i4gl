@@ -1,7 +1,8 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.complex;
+package org.guillermomolina.i4gl.parser.types.complex;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
  * Type descriptor for I4GL's labels. Contains additional information about the identifier of the label.

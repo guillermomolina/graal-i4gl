@@ -7,14 +7,13 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
-import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.complex.FileDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 
 /**
  * This class represents currently parsed lexical scope. It is a slight wrapper

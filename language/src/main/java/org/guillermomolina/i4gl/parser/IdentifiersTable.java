@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.parser.identifierstable;
+package org.guillermomolina.i4gl.parser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,25 +6,24 @@ import java.util.Map;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
-import org.guillermomolina.i4gl.parser.LexicalScope;
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeTypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.DatabaseDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.complex.LabelDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.NCharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeTypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.complex.DatabaseDescriptor;
+import org.guillermomolina.i4gl.parser.types.complex.FileDescriptor;
+import org.guillermomolina.i4gl.parser.types.complex.LabelDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**

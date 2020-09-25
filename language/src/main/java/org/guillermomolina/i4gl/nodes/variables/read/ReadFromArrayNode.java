@@ -4,11 +4,11 @@ import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
+import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;

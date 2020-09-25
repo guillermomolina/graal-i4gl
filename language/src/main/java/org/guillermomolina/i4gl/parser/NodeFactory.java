@@ -67,12 +67,27 @@ import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.parser.exceptions.TypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 
 public class NodeFactory extends I4GLBaseVisitor<Node> {
+
+    /* State while parsing a source unit. */
+    private final Source source;
+    private RootNode mainRootNode;
+
+    /* State while parsing a block. */
+    private final I4GLLanguage language;
+    private LexicalScope currentLexicalScope;
+
+    public NodeFactory(final I4GLLanguage language, final Source source) {
+        this.language = language;
+        this.source = source;
+        this.currentLexicalScope = new LexicalScope(null, "GLOBAL");
+    }
+
     /**
      * Lambda interface used in
      * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function.
@@ -102,7 +117,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
      */
     private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction)
             throws LexicalException {
-        T result = lookupToParentScope(this.currentLexicalScope, identifier, lookupFunction, false);
+        T result = lookupToParentScope(currentLexicalScope, identifier, lookupFunction, false);
         if (result == null) {
             throw new UnknownIdentifierException(identifier);
         }
@@ -135,21 +150,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     }
 
     public TypeDescriptor getTypeDescriptor(final String identifier) throws LexicalException {
-        return this.doLookup(identifier, LexicalScope::getTypeDescriptor);
-    }
-
-    /* State while parsing a source unit. */
-    private final Source source;
-    private RootNode mainRootNode;
-
-    /* State while parsing a block. */
-    private final I4GLLanguage language;
-    private LexicalScope currentLexicalScope;
-
-    public NodeFactory(final I4GLLanguage language, final Source source) {
-        this.language = language;
-        this.source = source;
-        this.currentLexicalScope = new LexicalScope(null, "GLOBAL");
+        return doLookup(identifier, LexicalScope::getTypeDescriptor);
     }
 
     public RootNode getRootNode() {
@@ -266,7 +267,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     private SimpleAssignmentNode createAssignmentNode(final String targetIdentifier, final ExpressionNode valueNode)
             throws LexicalException {
         final TypeDescriptor targetType = doLookup(targetIdentifier, LexicalScope::getIdentifierDescriptor);
-        this.checkTypesAreCompatible(valueNode.getType(), targetType);
+        checkTypesAreCompatible(valueNode.getType(), targetType);
         final FrameSlot targetSlot = doLookup(targetIdentifier, LexicalScope::getLocalSlot);
 
         return SimpleAssignmentNodeGen.create(valueNode, targetSlot);
@@ -380,7 +381,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             }
 
             StatementNode loopBody = ctx.codeBlock() == null ? new BlockNode() : (StatementNode) visit(ctx.codeBlock());
-            FrameSlot controlSlot = this.doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
+            FrameSlot controlSlot = doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
             if (startValue.getType() != finalValue.getType()
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
                 throw new ParseException(source, ctx, "Type mismatch in beginning and last value of for loop.");
@@ -408,7 +409,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
      * @throws UnknownIdentifierException
      */
     private ExpressionNode createReadVariableNode(final String identifier) throws LexicalException {
-        return this.doLookup(identifier, (final LexicalScope foundInScope,
+        return doLookup(identifier, (final LexicalScope foundInScope,
                 final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
     }
 
@@ -738,7 +739,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitRecordType(final I4GLParser.RecordTypeContext ctx) {
-        currentLexicalScope = new RecordLexicalScope(this.currentLexicalScope);
+        currentLexicalScope = new RecordLexicalScope(currentLexicalScope);
 
         if (ctx.LIKE() != null) {
             throw new NotImplementedException();

@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.nodes.literals;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 
 /**
  * Node representing integer literal.

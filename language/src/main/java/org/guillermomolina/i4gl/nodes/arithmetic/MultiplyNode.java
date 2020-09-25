@@ -5,9 +5,9 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.LongDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 
 /**
  * Node representing I4GL's multiplication operation. If the arguments are sets, then it is understood as intersection.

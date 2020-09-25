@@ -7,7 +7,7 @@ import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
  * Base node for each binary expression node. It also contains functions for static type checking.

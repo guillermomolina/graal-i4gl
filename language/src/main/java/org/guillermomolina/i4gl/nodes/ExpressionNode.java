@@ -1,7 +1,7 @@
 package org.guillermomolina.i4gl.nodes;
 
 import com.oracle.truffle.api.dsl.TypeSystemReference;
-import com.oracle.truffle.api.frame.*;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.ProbeNode;
 import com.oracle.truffle.api.instrumentation.StandardTags;
@@ -12,9 +12,15 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.*;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.CharConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.IntConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.LongConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.RealConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all

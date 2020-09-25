@@ -1,8 +1,9 @@
 package org.guillermomolina.i4gl.nodes.arithmetic;
 
 import com.oracle.truffle.api.dsl.NodeChild;
+
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
  * Base class for each unary node. It has one child node which is the operation's argument.

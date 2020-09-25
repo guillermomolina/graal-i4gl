@@ -6,13 +6,13 @@ import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
-import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
+import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
  * This node reads value from an record with specified identifier.

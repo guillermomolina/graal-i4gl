@@ -9,7 +9,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**

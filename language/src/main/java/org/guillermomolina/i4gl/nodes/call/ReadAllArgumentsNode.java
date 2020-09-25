@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
  * This node is used to read all arguments from actual frame and return them. It is used in {@link org.guillermomolina.i4gl.nodes.builtin.io.WriteBuiltinNode}

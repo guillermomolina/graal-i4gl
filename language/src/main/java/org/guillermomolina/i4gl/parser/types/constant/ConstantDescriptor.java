@@ -1,7 +1,7 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
+package org.guillermomolina.i4gl.parser.types.constant;
 
 import org.guillermomolina.i4gl.parser.exceptions.ParseException;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
  * Interface for type descriptors for constants.

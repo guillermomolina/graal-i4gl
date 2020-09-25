@@ -1,7 +1,7 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.complex;
+package org.guillermomolina.i4gl.parser.types.complex;
 
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.TextFileValue;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
  * Specialized type descriptor for text-file values.

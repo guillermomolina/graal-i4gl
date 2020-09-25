@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types;
+package org.guillermomolina.i4gl.parser.types;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 

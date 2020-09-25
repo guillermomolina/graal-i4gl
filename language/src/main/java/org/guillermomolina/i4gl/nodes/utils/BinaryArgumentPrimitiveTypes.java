@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.nodes.utils;
 
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
  * Stores one set of types of arguments of binary operations. This utility class is used for static type checking. We

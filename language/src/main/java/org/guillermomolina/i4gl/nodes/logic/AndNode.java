@@ -3,9 +3,12 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
-import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.*;
+import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
+import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 
 /**
  * Node representing logical and operation.

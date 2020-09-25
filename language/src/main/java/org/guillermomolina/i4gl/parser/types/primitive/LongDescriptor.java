@@ -1,9 +1,10 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.primitive;
+package org.guillermomolina.i4gl.parser.types.primitive;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.LongConstantDescriptor;
-import org.guillermomolina.i4gl.parser.identifierstable.types.constant.RealConstantDescriptor;
+
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.LongConstantDescriptor;
+import org.guillermomolina.i4gl.parser.types.constant.RealConstantDescriptor;
 
 /**
  * Type descriptor representing the longint type.

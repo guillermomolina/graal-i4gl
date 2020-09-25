@@ -1,8 +1,9 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.complex;
+package org.guillermomolina.i4gl.parser.types.complex;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
+
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.ObjectFileValue;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
  * Descriptor for a file type. Contains type descriptor of the type of file's content (e.g.: for  <i>file of integer</i>

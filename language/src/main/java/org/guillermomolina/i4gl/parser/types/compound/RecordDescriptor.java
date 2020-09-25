@@ -1,9 +1,10 @@
-package org.guillermomolina.i4gl.parser.identifierstable.types.compound;
+package org.guillermomolina.i4gl.parser.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+
 import org.guillermomolina.i4gl.parser.LexicalScope;
-import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
 /**
  * Type descriptor for I4GL's records types. It contains additional information about the variables it contains.
