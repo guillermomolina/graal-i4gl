@@ -46,6 +46,9 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+
 public class ParseException extends RuntimeException implements TruffleException {
 
     private static final long serialVersionUID = -8856095491491956089L;
@@ -54,6 +57,16 @@ public class ParseException extends RuntimeException implements TruffleException
     private final int line;
     private final int column;
     private final int length;
+
+    public ParseException(Source source, ParserRuleContext ctx, String message) {
+        this(source, ctx.start.getLine(), ctx.start.getCharPositionInLine() + 1,
+                ctx.stop.getStopIndex() - ctx.start.getStartIndex(), message);
+    }
+
+    public ParseException(Source source, Token token, String message) {
+        this(source, token.getLine(), token.getCharPositionInLine() + 1, token.getStopIndex() - token.getStartIndex(),
+                message);
+    }
 
     public ParseException(Source source, int line, int column, int length, String message) {
         super(source.getName() + ":" + line + ":" + column + ": error: " + message);

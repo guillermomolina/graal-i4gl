@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
 
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
+import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 
 /**
@@ -21,7 +21,7 @@ public interface ConstantDescriptor extends TypeDescriptor {
     /**
      * Gets the negated copy of this constant
      */
-    ConstantDescriptor negatedCopy() throws LexicalException;
+    ConstantDescriptor negatedCopy() throws ParseException;
 
     /**
      * Gets the type of the constant.

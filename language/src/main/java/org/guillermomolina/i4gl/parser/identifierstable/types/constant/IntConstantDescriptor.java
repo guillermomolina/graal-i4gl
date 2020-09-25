@@ -1,7 +1,8 @@
 package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
+
+import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.IntDescriptor;
 
@@ -40,7 +41,7 @@ public class IntConstantDescriptor implements ConstantDescriptor {
     }
 
     @Override
-    public ConstantDescriptor negatedCopy() throws LexicalException {
+    public ConstantDescriptor negatedCopy() throws ParseException {
         return new IntConstantDescriptor(-this.value);
     }
 

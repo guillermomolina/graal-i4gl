@@ -6,7 +6,7 @@ import java.util.List;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
+import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
@@ -71,7 +71,7 @@ public class LexicalScope {
         return this.localIdentifiers.getTypeDescriptor(identifier);
     }
 
-    ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {
+    ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, ParseException {
         return this.localIdentifiers.getConstant(identifier);
     }
 
@@ -79,15 +79,15 @@ public class LexicalScope {
         this.name = identifier;
     }
 
-    void registerLabel(String identifier) throws LexicalException {
+    void registerLabel(String identifier) throws ParseException {
         this.localIdentifiers.addLabel(identifier);
     }
 
-    FrameSlot registerDatabase(String identifier) throws LexicalException {
+    FrameSlot registerDatabase(String identifier) throws ParseException {
         return this.localIdentifiers.addDatabase(identifier);
     }
 
-    void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
         this.localIdentifiers.addType(identifier, typeDescriptor);
     }
 
@@ -103,7 +103,7 @@ public class LexicalScope {
         return this.containsLocalIdentifier(identifier);
     }
 
-    void registerLocalVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    void registerLocalVariable(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
         this.localIdentifiers.addVariable(identifier, typeDescriptor);
     }
 
@@ -131,11 +131,11 @@ public class LexicalScope {
         return this.localIdentifiers.createRecordDescriptor(this);
     }
 
-    public void registerType(String identifier, TypeDescriptor type) throws LexicalException{
+    public void registerType(String identifier, TypeDescriptor type) throws ParseException{
         this.localIdentifiers.addType(identifier, type);
     }
 
-    void registerConstant(String identifier, ConstantDescriptor constant) throws LexicalException {
+    void registerConstant(String identifier, ConstantDescriptor constant) throws ParseException {
         this.localIdentifiers.addConstant(identifier, constant);
     }
 
@@ -150,9 +150,9 @@ public class LexicalScope {
         ++loopDepth;
     }
 
-    void decreaseLoopDepth() throws LexicalException {
+    void decreaseLoopDepth() throws ParseException {
         if (loopDepth == 0) {
-            throw new LexicalException("Cannot leave cycle.");
+            throw new ParseException("Cannot leave cycle.");
         } else {
             --loopDepth;
         }

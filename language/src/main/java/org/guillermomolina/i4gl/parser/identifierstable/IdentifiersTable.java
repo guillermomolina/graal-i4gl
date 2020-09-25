@@ -8,7 +8,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.LexicalScope;
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
+import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeTypeDescriptor;
@@ -114,24 +114,24 @@ public class IdentifiersTable {
         return this.identifiersMap.get(identifier) instanceof LabelDescriptor;
     }
 
-    public void addLabel(String identifier) throws LexicalException {
+    public void addLabel(String identifier) throws ParseException {
         this.registerNewIdentifier(identifier, new LabelDescriptor(identifier));
     }
 
-    public FrameSlot addDatabase(String identifier) throws LexicalException {
+    public FrameSlot addDatabase(String identifier) throws ParseException {
         return this.registerNewIdentifier("_database", new DatabaseDescriptor(identifier));
     }
 
-    public void addType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    public void addType(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
         this.registerNewIdentifier(identifier, new TypeTypeDescriptor(typeDescriptor));
         this.typeDescriptors.put(identifier, typeDescriptor);
     }
 
-    public void addVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    public void addVariable(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
         this.registerNewIdentifier(identifier, typeDescriptor);
     }
 
-    public void addConstant(String identifier, ConstantDescriptor descriptor) throws LexicalException {
+    public void addConstant(String identifier, ConstantDescriptor descriptor) throws ParseException {
         this.registerNewIdentifier(identifier, descriptor);
     }
 
@@ -155,18 +155,18 @@ public class IdentifiersTable {
         return new VarcharDescriptor(size);
     }
 
-    public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, LexicalException {
+    public ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, ParseException {
         TypeDescriptor descriptor = this.identifiersMap.get(identifier);
         if (descriptor == null) {
             throw new UnknownIdentifierException(identifier);
         } else if (! (descriptor instanceof ConstantDescriptor)) {
-            throw new LexicalException("Not a constant: " + identifier);
+            throw new ParseException("Not a constant: " + identifier);
         } else {
             return (ConstantDescriptor)descriptor;
         }
     }
 
-    FrameSlot registerNewIdentifier(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    FrameSlot registerNewIdentifier(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
         if (this.identifiersMap.containsKey(identifier)){
             throw new DuplicitIdentifierException(identifier);
         } else {

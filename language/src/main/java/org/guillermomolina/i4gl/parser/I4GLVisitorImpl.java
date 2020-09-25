@@ -11,7 +11,6 @@ import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.guillermomolina.i4gl.I4GLLanguage;
@@ -49,6 +48,7 @@ import org.guillermomolina.i4gl.nodes.logic.NotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.BlockNode;
+import org.guillermomolina.i4gl.nodes.statement.ConnectToDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
@@ -64,8 +64,8 @@ import org.guillermomolina.i4gl.nodes.variables.write.AssignToRecordField;
 import org.guillermomolina.i4gl.nodes.variables.write.AssignToRecordFieldNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNode;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNodeGen;
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.ParseException;
+import org.guillermomolina.i4gl.parser.exceptions.TypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.compound.ArrayDescriptor;
@@ -83,7 +83,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      * @param <T>
      */
     private interface GlobalObjectLookup<T> {
-        T onFound(LexicalScope foundInScope, String foundIdentifier) throws LexicalException;
+        T onFound(LexicalScope foundInScope, String foundIdentifier) throws ParseException;
     }
 
     /* State while parsing a source unit. */
@@ -94,25 +94,14 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
     private final I4GLLanguage language;
     private LexicalScope currentLexicalScope;
 
-    private final List<String> errorList;
-
     public I4GLVisitorImpl(final I4GLLanguage language, final Source source) {
         this.language = language;
         this.source = source;
         this.currentLexicalScope = new LexicalScope(null, "GLOBAL");
-        this.errorList = new ArrayList<>();
-    }
-
-    private void reportError(/* ParserRuleContext context, */final String error) {
-        errorList.add(error);
     }
 
     public RootNode getRootNode() {
         return mainRootNode;
-    }
-
-    public List<String> getErrorList() {
-        return errorList;
     }
 
     private static void setSourceFromContext(StatementNode node, ParserRuleContext ctx) {
@@ -232,7 +221,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             for (final String parameteridentifier : parameteridentifiers) {
                 final TypeDescriptor typeDescriptor = currentLexicalScope.getIdentifierDescriptor(parameteridentifier);
                 if (typeDescriptor == null) {
-                    throw new LexicalException(source, typeDeclarationsContext, "Function parameter " + parameteridentifier + " must be declared");
+                    throw new ParseException(source, typeDeclarationsContext,
+                            "Function parameter " + parameteridentifier + " must be declared");
                 }
                 final ExpressionNode readNode = new ReadArgumentNode(argumentIndex++, typeDescriptor);
                 blockNodes.add(createAssignmentNode(parameteridentifier, readNode));
@@ -262,27 +252,26 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      * @param targetIdentifier the variable's identifier
      * @param valueNode        assigning value's node
      * @return the newly created node
+     * @throws TypeMismatchException
      */
-    private SimpleAssignmentNode createAssignmentNode(final String targetIdentifier, final ExpressionNode valueNode) {
-        try {
-            final TypeDescriptor targetType = doLookup(targetIdentifier, LexicalScope::getIdentifierDescriptor);
-            this.checkTypesAreCompatible(valueNode.getType(), targetType);
-            final FrameSlot targetSlot = doLookup(targetIdentifier, LexicalScope::getLocalSlot);
+    private SimpleAssignmentNode createAssignmentNode(final String targetIdentifier, final ExpressionNode valueNode)
+            throws UnknownIdentifierException, TypeMismatchException {
+        final TypeDescriptor targetType = doLookup(targetIdentifier, LexicalScope::getIdentifierDescriptor);
+        this.checkTypesAreCompatible(valueNode.getType(), targetType);
+        final FrameSlot targetSlot = doLookup(targetIdentifier, LexicalScope::getLocalSlot);
 
-            return SimpleAssignmentNodeGen.create(valueNode, targetSlot);
-        } catch (final UnknownIdentifierException e) {
-            reportError(e.getMessage());
-            return null;
-        }
+        return SimpleAssignmentNodeGen.create(valueNode, targetSlot);
     }
 
     /**
      * Checks whether the two types are compatible. The operation is not symmetric.
+     * 
+     * @throws TypeMismatchException
      */
-    private boolean checkTypesAreCompatible(final TypeDescriptor leftType, final TypeDescriptor rightType) {
+    private boolean checkTypesAreCompatible(final TypeDescriptor leftType, final TypeDescriptor rightType)
+            throws TypeMismatchException {
         if ((leftType != rightType) && (!leftType.convertibleTo(rightType))) {
-            reportError("Type mismatch");
-            return false;
+            throw new TypeMismatchException(leftType, rightType);
         }
         return true;
     }
@@ -378,7 +367,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             FrameSlot controlSlot = this.doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
             if (startValue.getType() != finalValue.getType()
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
-                throw new LexicalException(source, ctx, "Type mismatch in beginning and last value of for loop.");
+                throw new ParseException(source, ctx, "Type mismatch in beginning and last value of for loop.");
             }
             SimpleAssignmentNode initialAssignment = createAssignmentNode(iteratingIdentifier, startValue);
             ExpressionNode readControlVariableNode = createReadVariableNode(iteratingIdentifier);
@@ -389,9 +378,8 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
-        } catch (final UnknownIdentifierException e) {
-            reportError(e.getMessage());
-            return null;
+        } catch (final UnknownIdentifierException|TypeMismatchException e) {
+            throw new ParseException(source, ctx, e.getMessage());
         }
     }
 
@@ -400,15 +388,11 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
      * 
      * @param identifierToken identifier token of the variable
      * @return the newly created node
+     * @throws UnknownIdentifierException
      */
-    private ExpressionNode createReadVariableNode(final String identifier) {
-        try {
-            return this.doLookup(identifier, (final LexicalScope foundInScope,
-                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
-        } catch (final UnknownIdentifierException e) {
-            reportError(e.getMessage());
-            return null;
-        }
+    private ExpressionNode createReadVariableNode(final String identifier) throws UnknownIdentifierException {
+        return this.doLookup(identifier, (final LexicalScope foundInScope,
+                final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
     }
 
     @Override
@@ -668,7 +652,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             StatementNode initializationNode;
             Object defaultValue = typeDescriptor.getDefaultValue();
             if (defaultValue == null) {
-                throw new LexicalException(source, ctx, "Undefined default value for type " + typeDescriptor.toString());
+                throw new ParseException(source, ctx, "Undefined default value for type " + typeDescriptor.toString());
             }
             FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
             initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
@@ -704,7 +688,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 throw new NotImplementedException();
             }
         } catch (UnknownIdentifierException e) {
-            throw new LexicalException(source, ctx, e.getMessage());
+            throw new ParseException(source, ctx, e.getMessage());
         }
     }
 
@@ -726,7 +710,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
         try {
             return new TypeNode(getTypeDescriptor(ctx.getText()));
         } catch (UnknownIdentifierException e) {
-            throw new LexicalException(source, ctx, e.getMessage());
+            throw new ParseException(source, ctx, e.getMessage());
         }
     }
 
@@ -808,7 +792,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             final List<I4GLParser.ExpressionContext> indexList = variableCtx.indexingVariable().expressionList()
                     .expression();
             if (indexList.size() > 3) {
-                throw new LexicalException(source, ctx, "Dimensions can not be " + indexList.size());
+                throw new ParseException(source, ctx, "Dimensions can not be " + indexList.size());
             }
             List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
             for (I4GLParser.ExpressionContext indexCtx : indexList) {
@@ -820,7 +804,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             setSourceFromContext(node, ctx);
             return node;
         } catch (NullPointerException | UnknownIdentifierException e) {
-            throw new LexicalException(source, ctx, e.getMessage());
+            throw new ParseException(source, ctx, e.getMessage());
         }
     }
 
@@ -837,8 +821,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             ExpressionNode valueNode) {
         TypeDescriptor expressionType = recordExpression.getType();
         if (!(expressionType instanceof RecordDescriptor)) {
-            reportError("Not a record");
-            return null;
+            throw new TypeMismatchException(expressionType, RecordDescriptor);
         }
         return AssignToRecordFieldNodeGen.create(identifier, recordExpression, valueNode);
     }
@@ -897,7 +880,7 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
                 final List<I4GLParser.ExpressionContext> indexList = ctx.indexingVariable().expressionList()
                         .expression();
                 if (indexList.size() > 3) {
-                    throw new LexicalException(source, ctx, "Dimensions can not be " + indexList.size());
+                    throw new ParseException(source, ctx, "Dimensions can not be " + indexList.size());
                 }
                 List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
                 for (I4GLParser.ExpressionContext indexCtx : indexList) {
@@ -909,17 +892,17 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
             variableNode.addExpressionTag();
             return variableNode;
         } catch (NullPointerException | UnknownIdentifierException e) {
-            throw new LexicalException(source, ctx, e.getMessage());
+            throw new ParseException(source, ctx, e.getMessage());
         }
     }
 
     private ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression, final String identifier)
-            throws LexicalException, UnknownIdentifierException {
+            throws ParseException, UnknownIdentifierException {
         TypeDescriptor descriptor = recordExpression.getType();
         TypeDescriptor returnType = null;
 
         if (!(descriptor instanceof RecordDescriptor)) {
-            throw new LexicalException("Can not access non record type this way");
+            throw new ParseException("Can not access non record type this way");
         }
         RecordDescriptor accessedRecordDescriptor = (RecordDescriptor) descriptor;
         if (!accessedRecordDescriptor.containsIdentifier(identifier)) {
@@ -1016,22 +999,11 @@ public class I4GLVisitorImpl extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitDatabaseDeclaration(final I4GLParser.DatabaseDeclarationContext ctx) {
-        Token token = ctx.getStart();
-        int line = token.getLine();
-        int col = token.getCharPositionInLine() + 1;
-        String location = "-- line " + line + " col " + col + ": ";
-        int length = token == null ? 1 : Math.max(token.getStopIndex() - token.getStartIndex(), 0);
-        String msg = "Not implemented statement";
-        throw new ParseException(source, line, col, length, "Error(s) parsing script:" + location + msg);
-        /*try {
-            String identifier = ctx.identifier(0).getText();
-            final FrameSlot databaseSlot = currentLexicalScope.registerDatabase(identifier);
-            ConnectToDatabaseNode node = new ConnectToDatabaseNode(databaseSlot);
-            setSourceFromContext(node, ctx);
-            return node;
-        } catch (LexicalException e) {
-            e.printStackTrace();
-            return null;
-        }*/
+        String identifier = ctx.identifier(0).getText();
+        final FrameSlot databaseSlot = currentLexicalScope.registerDatabase(identifier);
+        ConnectToDatabaseNode node = new ConnectToDatabaseNode(databaseSlot);
+        setSourceFromContext(node, ctx);
+        node.addStatementTag();
+        return node;
     }
 }

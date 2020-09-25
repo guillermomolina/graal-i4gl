@@ -17,6 +17,6 @@ public class BailoutErrorListener extends BaseErrorListener {
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
         Token token = (Token) offendingSymbol;
-        throw new LexicalException(source, token, msg);
+        throw new ParseException(source, token, msg);
     }
 }

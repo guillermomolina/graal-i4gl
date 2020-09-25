@@ -1,10 +1,11 @@
 package org.guillermomolina.i4gl.parser.identifierstable.types.constant;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import org.guillermomolina.i4gl.parser.exceptions.CantBeNegatedException;
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
+
+import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.runtime.exceptions.CantBeNegatedException;
 
 /**
  * Type descriptor for a char-type constant. It also contains the constant's value.
@@ -46,7 +47,7 @@ public class CharConstantDescriptor implements ConstantDescriptor {
     }
 
     @Override
-    public ConstantDescriptor negatedCopy() throws LexicalException {
+    public ConstantDescriptor negatedCopy() throws ParseException {
         throw new CantBeNegatedException();
     }
 
