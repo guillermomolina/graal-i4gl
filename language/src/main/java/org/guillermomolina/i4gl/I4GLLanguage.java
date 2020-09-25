@@ -2,7 +2,6 @@ package org.guillermomolina.i4gl;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -23,7 +22,6 @@ import org.guillermomolina.i4gl.parser.I4GLLexer;
 import org.guillermomolina.i4gl.parser.I4GLParser;
 import org.guillermomolina.i4gl.parser.I4GLVisitorImpl;
 import org.guillermomolina.i4gl.parser.exceptions.BailoutErrorListener;
-import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the
@@ -101,10 +99,6 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         I4GLParser.CompilationUnitContext tree = parser.compilationUnit();
         I4GLVisitorImpl visitor = new I4GLVisitorImpl(this, source);
         visitor.visit(tree);
-        List<String> errorList = visitor.getErrorList();
-        if (!errorList.isEmpty()) {
-            throw new LexicalException(errorList.get(0));
-        }
         return Truffle.getRuntime().createCallTarget(visitor.getRootNode());
     }
 

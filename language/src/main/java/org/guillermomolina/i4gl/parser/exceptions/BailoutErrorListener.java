@@ -13,12 +13,10 @@ public class BailoutErrorListener extends BaseErrorListener {
     public BailoutErrorListener(Source source) {
         this.source = source;
     }
+
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
         Token token = (Token) offendingSymbol;
-        int col = charPositionInLine + 1;
-        String location = "-- line " + line + " col " + col + ": ";
-        int length = token == null ? 1 : Math.max(token.getStopIndex() - token.getStartIndex(), 0);
-        throw new ParseError(source, line, col, length, "Error(s) parsing script:" + location + msg);
+        throw new LexicalException(source, token, msg);
     }
 }

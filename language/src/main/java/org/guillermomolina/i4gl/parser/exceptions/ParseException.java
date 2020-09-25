@@ -46,16 +46,17 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
-public class ParseError extends RuntimeException implements TruffleException {
+public class ParseException extends RuntimeException implements TruffleException {
 
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8856095491491956089L;
+
     private final Source source;
     private final int line;
     private final int column;
     private final int length;
 
-    public ParseError(Source source, int line, int column, int length, String message) {
-        super(message);
+    public ParseException(Source source, int line, int column, int length, String message) {
+        super(source.getName() + ":" + line + ":" + column + ": error: " + message);
         this.source = source;
         this.line = line;
         this.column = column;
