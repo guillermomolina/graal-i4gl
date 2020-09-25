@@ -21,7 +21,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
  */
 @NodeChildren({
         @NodeChild(value = "valueNode", type = ExpressionNode.class),
-        @NodeChild(value = "indexNode", type = ExpressionNode.class),
+        @NodeChild(value = "indexNode", type = ExpressionNode.class)
 })
 @NodeField(name = "returnType", type = TypeDescriptor.class)
 public abstract class ReadFromArrayNode extends ExpressionNode {

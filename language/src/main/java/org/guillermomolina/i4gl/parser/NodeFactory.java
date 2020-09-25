@@ -22,6 +22,7 @@ import org.guillermomolina.i4gl.nodes.arithmetic.DivideNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.ModuloNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.MultiplyNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.SubtractNodeGen;
+import org.guillermomolina.i4gl.nodes.call.CallNode;
 import org.guillermomolina.i4gl.nodes.call.InvokeNode;
 import org.guillermomolina.i4gl.nodes.call.ReadArgumentNode;
 import org.guillermomolina.i4gl.nodes.call.ReturnNode;
@@ -231,8 +232,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             for (final String parameteridentifier : parameteridentifiers) {
                 final TypeDescriptor typeDescriptor = currentLexicalScope.getIdentifierDescriptor(parameteridentifier);
                 if (typeDescriptor == null) {
-                    throw new ParseException(source, typeDeclarationsContext,
-                            "Function parameter " + parameteridentifier + " must be declared");
+                    throw new LexicalException("Function parameter " + parameteridentifier + " must be declared");
                 }
                 final ExpressionNode readNode = new ReadArgumentNode(argumentIndex++, typeDescriptor);
                 blockNodes.add(createAssignmentNode(parameteridentifier, readNode));
@@ -262,7 +262,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
      * @param targetIdentifier the variable's identifier
      * @param valueNode        assigning value's node
      * @return the newly created node
-     * @throws TypeMismatchException
+     * @throws LexicalException
      */
     private SimpleAssignmentNode createAssignmentNode(final String targetIdentifier, final ExpressionNode valueNode)
             throws LexicalException {
@@ -276,10 +276,10 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     /**
      * Checks whether the two types are compatible. The operation is not symmetric.
      * 
-     * @throws TypeMismatchException
+     * @throws LexicalException
      */
     private boolean checkTypesAreCompatible(final TypeDescriptor leftType, final TypeDescriptor rightType)
-            throws TypeMismatchException {
+            throws LexicalException {
         if ((leftType != rightType) && (!leftType.convertibleTo(rightType))) {
             throw new TypeMismatchException(leftType.toString(), rightType.toString());
         }
@@ -303,35 +303,58 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
-        if (ctx.RETURNING() != null) {
-            throw new NotImplementedException();
+        try {
+            final String identifier = ctx.functionIdentifier().getText();
+            StatementNode node;
+            if (ctx.RETURNING() == null) {
+                node = createInvokeNode(identifier, ctx.actualParameter());
+            } else {
+                node = createCallNode(identifier, ctx.actualParameter(), ctx.identifier());
+
+            }
+            setSourceFromContext(node, ctx);
+            node.addStatementTag();
+            return node;
+        } catch (final LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
         }
-        final String identifier = ctx.functionIdentifier().getText();
-        InvokeNode node = createInnvokeNode(identifier, ctx.actualParameter());
-        setSourceFromContext(node, ctx);
-        node.addStatementTag();
-        return node;
+    }
+
+    private CallNode createCallNode(final String identifier,
+            final List<I4GLParser.ActualParameterContext> parameterListCtx,
+            final List<I4GLParser.IdentifierContext> resultVariableListCtx) throws LexicalException {
+        final List<ExpressionNode> parameterNodes = new ArrayList<>(parameterListCtx.size());
+        for (final I4GLParser.ActualParameterContext parameterCtx : parameterListCtx) {
+            parameterNodes.add((ExpressionNode) visit(parameterCtx));
+        }
+        final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
+
+        final List<FrameSlot> resultSlotList = new ArrayList<>(resultVariableListCtx.size());
+        for (final I4GLParser.IdentifierContext resultVariableCtx : resultVariableListCtx) {
+            resultSlotList.add(doLookup(resultVariableCtx.getText(), LexicalScope::getLocalSlot));
+        }
+        final FrameSlot[] resultSlots = resultSlotList.toArray(new FrameSlot[resultSlotList.size()]);
+
+        return new CallNode(language, identifier, arguments, resultSlots);
     }
 
     @Override
     public Node visitFunction(final I4GLParser.FunctionContext ctx) {
         final String identifier = ctx.functionIdentifier().getText();
-        InvokeNode node = createInnvokeNode(identifier, ctx.actualParameter());
+        InvokeNode node = createInvokeNode(identifier, ctx.actualParameter());
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;
     }
 
-    private InvokeNode createInnvokeNode(final String identifier,
+    private InvokeNode createInvokeNode(final String identifier,
             final List<I4GLParser.ActualParameterContext> parameterListCtx) {
         final List<ExpressionNode> parameterNodes = new ArrayList<>(parameterListCtx.size());
         for (final I4GLParser.ActualParameterContext parameterCtx : parameterListCtx) {
             parameterNodes.add((ExpressionNode) visit(parameterCtx));
         }
         final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
-        InvokeNode node = new InvokeNode(language, identifier, arguments);
-        node.addExpressionTag();
-        return node;
+        return new InvokeNode(language, identifier, arguments);
     }
 
     @Override
@@ -344,7 +367,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 parameterNodes.add((ExpressionNode) visit(parameterCtx));
             }
         }
-        ReturnNode node = new ReturnNode(parameterNodes.get(0));
+        ReturnNode node = new ReturnNode(parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]));
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;

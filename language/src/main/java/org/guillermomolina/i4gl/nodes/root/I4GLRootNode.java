@@ -51,8 +51,15 @@ public class I4GLRootNode extends RootNode {
         return sourceSection;
     }
 
+
     @Override
     public Object execute(VirtualFrame frame) {
+        assert lookupContextReference(I4GLLanguage.class).get() != null;
+        bodyNode.executeVoid(frame);
+        return 0;
+    }
+
+    public Object executeWithException(VirtualFrame frame) {
         assert lookupContextReference(I4GLLanguage.class).get() != null;
         try {
             /* Execute the function body. */
@@ -64,7 +71,7 @@ public class I4GLRootNode extends RootNode {
              */
             exceptionTaken.enter();
             /* The exception transports the actual return value. */
-            return ex.getResult();
+            return ex.getResults()[0];
         } catch (HaltException e) {
             exceptionTaken.enter();
 

@@ -50,15 +50,18 @@ import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 @NodeInfo(shortName = "return", description = "The node implementing a return statement")
 public final class ReturnNode extends StatementNode {
 
-    @Child private ExpressionNode valueNode;
+    @Children private ExpressionNode[] valueNodes;
 
-    public ReturnNode(ExpressionNode valueNode) {
-        this.valueNode = valueNode;
+    public ReturnNode(ExpressionNode[] valueNodes) {
+        this.valueNodes = valueNodes;
     }
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Object result = valueNode.executeGeneric(frame);
-        throw new ReturnException(result);
+        Object[] results = new Object[valueNodes.length];
+        for (int i = 0; i < valueNodes.length; i++) {
+            results[i] = valueNodes[i].executeGeneric(frame);
+        }
+        throw new ReturnException(results);
     }
 }

@@ -6,13 +6,13 @@ public final class ReturnException extends ControlFlowException {
 
     private static final long serialVersionUID = 4073191346281369231L;
 
-    private final Object result;
+    private final Object[] results;
 
-    public ReturnException(Object result) {
-        this.result = result;
+    public ReturnException(Object[] results) {
+        this.results = results;
     }
 
-    public Object getResult() {
-        return result;
+    public Object[] getResults() {
+        return results;
     }
 }

@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
-import java.util.Map;
+import java.util.List;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.Truffle;
@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
  * its own type.
  */
 @CompilerDirectives.ValueType
-public class RecordValue {
+public class ReturnValue {
 
     private final VirtualFrame frame;
     private final FrameDescriptor frameDescriptor;
@@ -28,19 +28,20 @@ public class RecordValue {
      * @param types map of the record's identifiers and their types
      */
     // TODO: can't the frame descriptor be created from the second argument?
-    public RecordValue(final FrameDescriptor frameDescriptor, final Map<String, TypeDescriptor> types) {
+    public ReturnValue(final FrameDescriptor frameDescriptor, final List<TypeDescriptor> types) {
         this(frameDescriptor);
         this.initValues(frameDescriptor, types);
     }
 
-    private RecordValue(final FrameDescriptor frameDescriptor) {
+    private ReturnValue(final FrameDescriptor frameDescriptor) {
         this.frameDescriptor = frameDescriptor;
         this.frame = Truffle.getRuntime().createVirtualFrame(new Object[frameDescriptor.getSize()], frameDescriptor);
     }
 
-    private void initValues(final FrameDescriptor frameDescriptor, final Map<String, TypeDescriptor> types) {
+    private void initValues(final FrameDescriptor frameDescriptor, final List<TypeDescriptor> types) {
+        int i = 0;
         for (final FrameSlot slot : frameDescriptor.getSlots()) {
-            final TypeDescriptor slotsType = types.get(slot.getIdentifier().toString());
+            final TypeDescriptor slotsType = types.get(i++);
             this.initValue(slot, slotsType);
         }
     }
@@ -103,8 +104,8 @@ public class RecordValue {
     /**
      * Creates a deep copy of the record.
      */
-    public RecordValue getCopy() {
-        final RecordValue copy = new RecordValue(this.frameDescriptor);
+    public ReturnValue getCopy() {
+        final ReturnValue copy = new ReturnValue(this.frameDescriptor);
         for (final FrameSlot slot : this.frameDescriptor.getSlots()) {
             try {
                 this.copySlotValue(this.frame, copy.frame, slot);
