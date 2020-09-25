@@ -20,7 +20,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.parser.I4GLLexer;
 import org.guillermomolina.i4gl.parser.I4GLParser;
-import org.guillermomolina.i4gl.parser.I4GLVisitorImpl;
+import org.guillermomolina.i4gl.parser.NodeFactory;
 import org.guillermomolina.i4gl.parser.exceptions.BailoutErrorListener;
 
 /**
@@ -97,7 +97,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         lexer.addErrorListener(listener);
         parser.addErrorListener(listener);
         I4GLParser.CompilationUnitContext tree = parser.compilationUnit();
-        I4GLVisitorImpl visitor = new I4GLVisitorImpl(this, source);
+        NodeFactory visitor = new NodeFactory(this, source);
         visitor.visit(tree);
         return Truffle.getRuntime().createCallTarget(visitor.getRootNode());
     }

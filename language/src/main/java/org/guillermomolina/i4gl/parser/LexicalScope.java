@@ -6,8 +6,7 @@ import java.util.List;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
-import org.guillermomolina.i4gl.parser.exceptions.ParseException;
-import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
+import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.identifierstable.IdentifiersTable;
 import org.guillermomolina.i4gl.parser.identifierstable.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.identifierstable.types.complex.FileDescriptor;
@@ -18,22 +17,25 @@ import org.guillermomolina.i4gl.parser.identifierstable.types.compound.VarcharDe
 import org.guillermomolina.i4gl.parser.identifierstable.types.constant.ConstantDescriptor;
 
 /**
- * This class represents currently parsed lexical scope. It is a slight wrapper of {@link IdentifiersTable} with some
- * extended functionality. Lexical scope of i4gl are scopes of functions.
+ * This class represents currently parsed lexical scope. It is a slight wrapper
+ * of {@link IdentifiersTable} with some extended functionality. Lexical scope
+ * of i4gl are scopes of functions.
  */
 public class LexicalScope {
 
     private String name;
     private final LexicalScope outer;
     private int loopDepth;
-    IdentifiersTable localIdentifiers; 
+    IdentifiersTable localIdentifiers;
     final List<String> arguments;
 
     /**
      * Default constructor.
-     * @param outer instance of outer lexical scope
-     * @param name name of the current lexical scope
-     * @param usingTPExtension a flag whether support for Turbo I4GL extensions is turned on
+     * 
+     * @param outer            instance of outer lexical scope
+     * @param name             name of the current lexical scope
+     * @param usingTPExtension a flag whether support for Turbo I4GL extensions is
+     *                         turned on
      */
     LexicalScope(LexicalScope outer, String name) {
         this.name = name;
@@ -71,7 +73,7 @@ public class LexicalScope {
         return this.localIdentifiers.getTypeDescriptor(identifier);
     }
 
-    ConstantDescriptor getConstant(String identifier) throws UnknownIdentifierException, ParseException {
+    ConstantDescriptor getConstant(String identifier) throws LexicalException {
         return this.localIdentifiers.getConstant(identifier);
     }
 
@@ -79,15 +81,15 @@ public class LexicalScope {
         this.name = identifier;
     }
 
-    void registerLabel(String identifier) throws ParseException {
+    void registerLabel(String identifier) throws LexicalException {
         this.localIdentifiers.addLabel(identifier);
     }
 
-    FrameSlot registerDatabase(String identifier) throws ParseException {
+    FrameSlot registerDatabase(String identifier) throws LexicalException {
         return this.localIdentifiers.addDatabase(identifier);
     }
 
-    void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
+    void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addType(identifier, typeDescriptor);
     }
 
@@ -103,7 +105,7 @@ public class LexicalScope {
         return this.containsLocalIdentifier(identifier);
     }
 
-    void registerLocalVariable(String identifier, TypeDescriptor typeDescriptor) throws ParseException {
+    void registerLocalVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addVariable(identifier, typeDescriptor);
     }
 
@@ -131,16 +133,17 @@ public class LexicalScope {
         return this.localIdentifiers.createRecordDescriptor(this);
     }
 
-    public void registerType(String identifier, TypeDescriptor type) throws ParseException{
+    public void registerType(String identifier, TypeDescriptor type) throws LexicalException {
         this.localIdentifiers.addType(identifier, type);
     }
 
-    void registerConstant(String identifier, ConstantDescriptor constant) throws ParseException {
+    void registerConstant(String identifier, ConstantDescriptor constant) throws LexicalException {
         this.localIdentifiers.addConstant(identifier, constant);
     }
 
     /**
-     * Returns true if the parser is currently inside a loop in the currently parsed source.
+     * Returns true if the parser is currently inside a loop in the currently parsed
+     * source.
      */
     boolean isInLoop() {
         return loopDepth > 0;
@@ -150,9 +153,9 @@ public class LexicalScope {
         ++loopDepth;
     }
 
-    void decreaseLoopDepth() throws ParseException {
+    void decreaseLoopDepth() throws LexicalException {
         if (loopDepth == 0) {
-            throw new ParseException("Cannot leave cycle.");
+            throw new LexicalException("cannot leave cycle");
         } else {
             --loopDepth;
         }
