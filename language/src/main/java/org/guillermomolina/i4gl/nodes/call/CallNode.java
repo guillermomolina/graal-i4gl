@@ -11,48 +11,46 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
-@NodeInfo(shortName = "invoke")
-public final class InvokeNode extends ExpressionNode {
+@NodeInfo(shortName = "call")
+public final class CallNode extends StatementNode {
 
     private final I4GLLanguage language;
     private final String functionIdentifier;
     @Children private final ExpressionNode[] argumentNodes;
+    @Children private final StatementNode[] resultNodes;
     @CompilerDirectives.CompilationFinal private CallTarget function;
     @Child private InteropLibrary library;
 
-	public InvokeNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes) {
+	public CallNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes, StatementNode[] resultNodes) {
         this.language = language;
         this.functionIdentifier = identifier;
         this.argumentNodes = argumentNodes;
+        this.resultNodes = resultNodes;
         this.library = InteropLibrary.getFactory().createDispatched(3);
 	}
-
-    @Override
-    public TypeDescriptor getType() {
-	    return null;
-    }
 
     private CallTarget getFunction() {
         return language.getFunction(this.functionIdentifier);
     }
 
     @Override
-    public Object executeGeneric(VirtualFrame frame) {
+    public void executeVoid(VirtualFrame frame) {
 	    if (function == null) {
 	        CompilerDirectives.transferToInterpreterAndInvalidate();
 	        function = getFunction();
         }
         Object[] argumentValues = this.evaluateArguments(frame);
         ReturnValue returnValue = (ReturnValue) function.call(argumentValues);
-        if(returnValue.getSize() != 1) {
-            throw new IncorrectNumberOfReturnValuesException(1, returnValue.getSize());
+        if(returnValue.getSize() != resultNodes.length) {
+            throw new IncorrectNumberOfReturnValuesException(resultNodes.length, returnValue.getSize());
         }
-        return returnValue.getValueAt(0);
+        throw new NotImplementedException();
 	}
 
     @ExplodeLoop

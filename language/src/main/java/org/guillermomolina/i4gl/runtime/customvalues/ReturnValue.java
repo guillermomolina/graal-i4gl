@@ -18,6 +18,10 @@ public class ReturnValue implements I4GLArray {
         this.data = value.data;
     }
 
+    public int getSize() {
+        return data.length;
+    }
+
     @Override
     public Object getValueAt(int index) {
         return data[index];
