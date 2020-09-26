@@ -15,8 +15,6 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
-import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
-import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
 @NodeInfo(shortName = "call")
 public final class CallNode extends StatementNode {
@@ -51,7 +49,9 @@ public final class CallNode extends StatementNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
 
-        try {
+        Object result = function.call(argumentValues);
+
+        /*try {
             function.call(argumentValues);
         } catch (ReturnException e) {
             Object[] results = e.getResults();
@@ -60,7 +60,7 @@ public final class CallNode extends StatementNode {
                 throw new IncorrectNumberOfReturnValuesException(resultSlots.length, results.length);
             }
             throw new NotImplementedException();
-        }
+        }*/
         throw new NotImplementedException();
     }
 

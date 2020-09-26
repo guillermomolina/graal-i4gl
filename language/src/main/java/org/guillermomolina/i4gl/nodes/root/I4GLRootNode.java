@@ -11,6 +11,7 @@ import com.oracle.truffle.api.source.SourceSection;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
@@ -51,15 +52,8 @@ public class I4GLRootNode extends RootNode {
         return sourceSection;
     }
 
-
     @Override
     public Object execute(VirtualFrame frame) {
-        assert lookupContextReference(I4GLLanguage.class).get() != null;
-        bodyNode.executeVoid(frame);
-        return 0;
-    }
-
-    public Object executeWithException(VirtualFrame frame) {
         assert lookupContextReference(I4GLLanguage.class).get() != null;
         try {
             /* Execute the function body. */
@@ -71,12 +65,13 @@ public class I4GLRootNode extends RootNode {
              */
             exceptionTaken.enter();
             /* The exception transports the actual return value. */
-            return ex.getResults()[0];
+            return ex.getResult();
         } catch (HaltException e) {
             exceptionTaken.enter();
 
-            /* The exception transports the actual return value. */
-            return e.getExitCode();
+            ReturnValue result = new ReturnValue(1);
+            result.setValueAt(0, e.getExitCode());
+            return result;
         }
 
         /*
@@ -85,7 +80,7 @@ public class I4GLRootNode extends RootNode {
          */
         nullTaken.enter();
         /* Return the default null value. */
-        return 0;
+        return new ReturnValue(0);
     }
 
     @Override

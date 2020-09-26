@@ -47,7 +47,9 @@ public final class InvokeNode extends ExpressionNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
 
-        return function.call(argumentValues);
+        Object result = function.call(argumentValues);
+        
+        return result;
 	}
 
     @ExplodeLoop

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.truffle.api.dsl.NodeChild;
-import com.oracle.truffle.api.dsl.NodeChildren;
 
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
@@ -12,10 +11,8 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 /**
  * Base node for each binary expression node. It also contains functions for static type checking.
  */
-@NodeChildren({
-        @NodeChild(value = "leftNode", type = ExpressionNode.class),
-        @NodeChild(value = "rightNode", type = ExpressionNode.class)
-})
+@NodeChild(value = "leftNode", type = ExpressionNode.class)
+@NodeChild(value = "rightNode", type = ExpressionNode.class)
 public abstract class BinaryExpressionNode extends ExpressionNode {
 
     /**

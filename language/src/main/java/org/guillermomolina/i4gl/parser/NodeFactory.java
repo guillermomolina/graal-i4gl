@@ -22,9 +22,9 @@ import org.guillermomolina.i4gl.nodes.arithmetic.DivideNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.ModuloNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.MultiplyNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.SubtractNodeGen;
-import org.guillermomolina.i4gl.nodes.call.CallNode;
 import org.guillermomolina.i4gl.nodes.call.InvokeNode;
 import org.guillermomolina.i4gl.nodes.call.ReadArgumentNode;
+import org.guillermomolina.i4gl.nodes.call.ReadFromReturnNodeGen;
 import org.guillermomolina.i4gl.nodes.call.ReturnNode;
 import org.guillermomolina.i4gl.nodes.control.CaseNode;
 import org.guillermomolina.i4gl.nodes.control.DebuggerNode;
@@ -310,7 +310,6 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 node = createInvokeNode(identifier, ctx.actualParameter());
             } else {
                 node = createCallNode(identifier, ctx.actualParameter(), ctx.identifier());
-
             }
             setSourceFromContext(node, ctx);
             node.addStatementTag();
@@ -320,7 +319,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private CallNode createCallNode(final String identifier,
+    private BlockNode createCallNode(final String identifier,
             final List<I4GLParser.ActualParameterContext> parameterListCtx,
             final List<I4GLParser.IdentifierContext> resultVariableListCtx) throws LexicalException {
         final List<ExpressionNode> parameterNodes = new ArrayList<>(parameterListCtx.size());
@@ -329,13 +328,18 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
         final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
 
-        final List<FrameSlot> resultSlotList = new ArrayList<>(resultVariableListCtx.size());
-        for (final I4GLParser.IdentifierContext resultVariableCtx : resultVariableListCtx) {
-            resultSlotList.add(doLookup(resultVariableCtx.getText(), LexicalScope::getLocalSlot));
-        }
-        final FrameSlot[] resultSlots = resultSlotList.toArray(new FrameSlot[resultSlotList.size()]);
 
-        return new CallNode(language, identifier, arguments, resultSlots);
+        List<StatementNode> statements = new ArrayList<>(resultVariableListCtx.size() + 1);
+        InvokeNode invokeNode = new InvokeNode(language, identifier, arguments);
+        statements.add(invokeNode);
+        int index = 0;
+        for (final I4GLParser.IdentifierContext resultVariableCtx : resultVariableListCtx) {
+            final String resultIdentifier = resultVariableCtx.getText();
+            TypeDescriptor descriptor = currentLexicalScope.getIdentifierDescriptor(resultIdentifier);
+            ExpressionNode readNode = ReadFromReturnNodeGen.create(invokeNode, index, descriptor);
+            statements.add(createAssignmentNode(resultIdentifier, readNode));
+        }
+        return new BlockNode(statements.toArray(new StatementNode[statements.size()]));
     }
 
     @Override
