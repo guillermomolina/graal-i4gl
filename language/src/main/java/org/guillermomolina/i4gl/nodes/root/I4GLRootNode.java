@@ -12,7 +12,6 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
-import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
 /**
@@ -66,12 +65,6 @@ public class I4GLRootNode extends RootNode {
             exceptionTaken.enter();
             /* The exception transports the actual return value. */
             return ex.getResult();
-        } catch (HaltException e) {
-            exceptionTaken.enter();
-
-            ReturnValue result = new ReturnValue(1);
-            result.setValueAt(0, e.getExitCode());
-            return result;
         }
 
         /*

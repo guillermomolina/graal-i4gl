@@ -12,6 +12,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
+import org.guillermomolina.i4gl.nodes.statement.StatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 @NodeInfo(shortName = "invoke")
@@ -20,13 +21,15 @@ public final class InvokeNode extends ExpressionNode {
     private final I4GLLanguage language;
     private final String functionIdentifier;
     @Children private final ExpressionNode[] argumentNodes;
+    @Children private final StatementNode[] resultNodes;
     @CompilerDirectives.CompilationFinal private CallTarget function;
     @Child private InteropLibrary library;
 
-	public InvokeNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes) {
+	public InvokeNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes, StatementNode[] resultNodes) {
         this.language = language;
         this.functionIdentifier = identifier;
         this.argumentNodes = argumentNodes;
+        this.resultNodes = resultNodes;
         this.library = InteropLibrary.getFactory().createDispatched(3);
 	}
 
@@ -46,10 +49,7 @@ public final class InvokeNode extends ExpressionNode {
 	        function = getFunction();
         }
         Object[] argumentValues = this.evaluateArguments(frame);
-
-        Object result = function.call(argumentValues);
-        
-        return result;
+        return function.call(argumentValues);
 	}
 
     @ExplodeLoop

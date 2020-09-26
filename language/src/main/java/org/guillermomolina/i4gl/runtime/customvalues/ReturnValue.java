@@ -14,12 +14,8 @@ public class ReturnValue implements I4GLArray {
         this.data = new Object[size];
     }
 
-    int getSize() {
-        return data.length;
-    }
-
-    boolean isVoid() {
-        return data.length == 0;
+    private ReturnValue(ReturnValue value) {
+        this.data = value.data;
     }
 
     @Override
@@ -34,7 +30,6 @@ public class ReturnValue implements I4GLArray {
 
     @Override
     public Object createDeepCopy() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ReturnValue(this);
     }
 }

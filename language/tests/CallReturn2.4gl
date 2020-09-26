@@ -1,7 +1,7 @@
 MAIN
-  DEFINE result INTEGER
-
-  DISPLAY f1()
+  DEFINE result1, result2 INTEGER
+  CALL f1() RETURNING result1, result2
+  DISPLAY result1, result2
 END MAIN 
 
 FUNCTION f1()
