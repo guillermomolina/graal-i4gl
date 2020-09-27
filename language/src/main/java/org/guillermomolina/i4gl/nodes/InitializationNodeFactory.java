@@ -2,7 +2,7 @@ package org.guillermomolina.i4gl.nodes;
 
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 
 /**
  * Node factory for initialization nodes. Each variable has to be initialized before it is read. This factory creates
@@ -14,7 +14,7 @@ public class InitializationNodeFactory {
     }
 
     @SuppressWarnings("deprecation")
-	public static StatementNode create(FrameSlot frameSlot, Object value, VirtualFrame frame) {
+	public static I4GLStatementNode create(FrameSlot frameSlot, Object value, VirtualFrame frame) {
 	    // TODO: this is a duplicity
         switch (frameSlot.getKind()) {
             case Int: return (frame == null)?
@@ -34,7 +34,7 @@ public class InitializationNodeFactory {
 /**
  * Base class for every initialization node.
  */
-abstract class InitializationNode extends StatementNode {
+abstract class InitializationNode extends I4GLStatementNode {
 	
 	protected final FrameSlot slot;
 

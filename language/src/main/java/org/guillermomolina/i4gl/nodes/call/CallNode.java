@@ -1,5 +1,9 @@
 package org.guillermomolina.i4gl.nodes.call;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
@@ -13,21 +17,21 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "call")
-public final class CallNode extends StatementNode {
+public final class CallNode extends I4GLStatementNode {
 
     private final I4GLLanguage language;
     private final String functionIdentifier;
     @Children private final ExpressionNode[] argumentNodes;
-    @Children private final StatementNode[] resultNodes;
+    @Children private final I4GLStatementNode[] resultNodes;
     @CompilerDirectives.CompilationFinal private CallTarget function;
     @Child private InteropLibrary library;
 
-	public CallNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes, StatementNode[] resultNodes) {
+	public CallNode(I4GLLanguage language, String identifier, ExpressionNode[] argumentNodes, I4GLStatementNode[] resultNodes) {
         this.language = language;
         this.functionIdentifier = identifier;
         this.argumentNodes = argumentNodes;
@@ -47,10 +51,7 @@ public final class CallNode extends StatementNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
         ReturnValue returnValue = (ReturnValue) function.call(argumentValues);
-        if(returnValue.getSize() != resultNodes.length) {
-            throw new IncorrectNumberOfReturnValuesException(resultNodes.length, returnValue.getSize());
-        }
-        throw new NotImplementedException();
+        evaluateResult(frame, returnValue);
 	}
 
     @ExplodeLoop
@@ -64,6 +65,26 @@ public final class CallNode extends StatementNode {
         }
 
         return argumentValues;
+    }
+
+    @ExplodeLoop
+    public void evaluateResult(VirtualFrame virtualFrame, ReturnValue returnValue) {
+        if(returnValue.getSize() != resultNodes.length) {
+            throw new IncorrectNumberOfReturnValuesException(resultNodes.length, returnValue.getSize());
+        }
+        CompilerAsserts.compilationConstant(resultNodes.length);
+
+        for (I4GLStatementNode resultNode : resultNodes) {
+            throw new NotImplementedException();
+            //resultNode.executeVoid(virtualFrame);
+        }
+    }
+
+    public List<I4GLStatementNode> getResultStatements() {
+        if (resultNodes == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(Arrays.asList(resultNodes));
     }
 
     @Override

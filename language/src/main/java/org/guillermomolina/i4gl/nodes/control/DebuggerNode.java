@@ -45,13 +45,13 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 
 /**
  * Implementation of the I4GL debugger statement. When under the debugger, execution suspends here.
  */
 @NodeInfo(shortName = "debugger", description = "The node implementing a debugger statement")
-public class DebuggerNode extends StatementNode {
+public class DebuggerNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {

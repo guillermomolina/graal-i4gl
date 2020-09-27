@@ -6,7 +6,7 @@ import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
@@ -21,7 +21,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 @NodeChild(value = "arrayNode", type = ExpressionNode.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-public abstract class AssignToArrayNode extends StatementNode {
+public abstract class AssignToArrayNode extends I4GLStatementNode {
 
     @Specialization
     void assignInt(int[] array, int index, int value) {

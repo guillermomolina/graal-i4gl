@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 
-public class ConnectToDatabaseNode extends StatementNode {
+public class ConnectToDatabaseNode extends I4GLStatementNode {
     @SuppressWarnings("unused")
     private final FrameSlot slot;
 

@@ -7,7 +7,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
 /**
@@ -21,7 +21,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
         @NodeChild(value = "recordNode", type = ExpressionNode.class),
         @NodeChild(value = "valueNode", type = ExpressionNode.class)
 })
-public abstract class AssignToRecordField extends StatementNode {
+public abstract class AssignToRecordField extends I4GLStatementNode {
 
     private final String identifier;
 

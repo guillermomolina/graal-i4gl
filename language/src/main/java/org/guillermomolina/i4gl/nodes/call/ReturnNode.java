@@ -44,12 +44,12 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
 @NodeInfo(shortName = "return", description = "The node implementing a return statement")
-public final class ReturnNode extends StatementNode {
+public final class ReturnNode extends I4GLStatementNode {
 
     @Children private ExpressionNode[] valueNodes;
 

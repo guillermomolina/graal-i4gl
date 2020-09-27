@@ -10,7 +10,7 @@ import com.oracle.truffle.api.source.SourceSection;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.I4GLTypes;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
@@ -36,9 +36,9 @@ public class I4GLRootNode extends RootNode {
     private final SourceSection sourceSection;
 
     @Child
-    protected StatementNode bodyNode;
+    protected I4GLStatementNode bodyNode;
 
-    public I4GLRootNode(I4GLLanguage language, FrameDescriptor frameDescriptor, StatementNode bodyNode,
+    public I4GLRootNode(I4GLLanguage language, FrameDescriptor frameDescriptor, I4GLStatementNode bodyNode,
             SourceSection sourceSection, String name) {
         super(language, frameDescriptor);
         this.bodyNode = bodyNode;

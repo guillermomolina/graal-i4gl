@@ -10,7 +10,7 @@ import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.logic.LessThanNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanOrEqualNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.NotNodeGen;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.write.SimpleAssignmentNode;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
@@ -18,12 +18,12 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
  * Node representing for cycle.
  */
 @NodeInfo(shortName = "for")
-public class ForNode extends StatementNode {
+public class ForNode extends I4GLStatementNode {
     private final FrameSlot controlSlot;
     @Child
     private SimpleAssignmentNode assignment;
     @Child
-    private StatementNode body;
+    private I4GLStatementNode body;
     @Child
     private ExpressionNode hasEndedAscendingNode;
     @Child
@@ -36,7 +36,7 @@ public class ForNode extends StatementNode {
     private SimpleAssignmentNode step;
 
     public ForNode(SimpleAssignmentNode assignment, FrameSlot controlSlot, ExpressionNode initialValue, ExpressionNode finalValue,
-    SimpleAssignmentNode step, ExpressionNode readControlVariableNode, StatementNode body) {
+    SimpleAssignmentNode step, ExpressionNode readControlVariableNode, I4GLStatementNode body) {
         this.assignment = assignment;
         this.controlSlot = controlSlot;
         this.initialValue = initialValue;

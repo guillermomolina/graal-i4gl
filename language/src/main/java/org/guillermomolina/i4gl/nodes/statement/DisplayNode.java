@@ -47,7 +47,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 
 @NodeInfo(shortName = "DISPLAY", description = "The node implementing the DISPLAY statement")
-public final class DisplayNode extends StatementNode {
+public final class DisplayNode extends I4GLStatementNode {
 
     @Children
     private final ExpressionNode[] argumentNodes;

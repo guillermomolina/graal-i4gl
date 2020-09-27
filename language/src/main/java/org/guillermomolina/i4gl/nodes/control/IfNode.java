@@ -6,25 +6,25 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import com.oracle.truffle.api.profiles.ConditionProfile;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Node representing if statement.
  */
 @NodeInfo(shortName = "if", description = "The node implementing a conditional statement")
-public final class IfNode extends StatementNode {
+public final class IfNode extends I4GLStatementNode {
 
 	@Child
 	private ExpressionNode conditionNode;
 	@Child
-	private StatementNode thenNode;
+	private I4GLStatementNode thenNode;
 	@Child
-	private StatementNode elseNode;
+	private I4GLStatementNode elseNode;
     private final ConditionProfile conditionProfile = ConditionProfile.createCountingProfile();
     private final boolean containsElseNode;
 
-	public IfNode(ExpressionNode conditionNode, StatementNode thenNode, StatementNode elseNode) {
+	public IfNode(ExpressionNode conditionNode, I4GLStatementNode thenNode, I4GLStatementNode elseNode) {
 		this.conditionNode = conditionNode;
 		this.thenNode = thenNode;
 		this.elseNode = elseNode;

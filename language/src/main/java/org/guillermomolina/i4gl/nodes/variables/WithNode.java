@@ -4,7 +4,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 import java.util.List;
@@ -13,13 +13,13 @@ import java.util.List;
  * Representation of I4GL's with statement. It steps into frame of provided record values and executes the inner
  * statements.
  */
-public class WithNode extends StatementNode {
+public class WithNode extends I4GLStatementNode {
 
     private final List<FrameSlot> recordSlots;
 
-    @Child private StatementNode innerStatement;
+    @Child private I4GLStatementNode innerStatement;
 
-    public WithNode(List<FrameSlot> recordSlots, StatementNode innerStatement) {
+    public WithNode(List<FrameSlot> recordSlots, I4GLStatementNode innerStatement) {
         this.recordSlots = recordSlots;
         this.innerStatement = innerStatement;
     }

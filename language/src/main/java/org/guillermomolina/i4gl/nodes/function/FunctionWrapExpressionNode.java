@@ -3,14 +3,14 @@ package org.guillermomolina.i4gl.nodes.function;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 public class FunctionWrapExpressionNode extends ExpressionNode {
     @Child
-    private StatementNode functionNode;
+    private I4GLStatementNode functionNode;
 
-    public FunctionWrapExpressionNode(StatementNode functionNode) {
+    public FunctionWrapExpressionNode(I4GLStatementNode functionNode) {
         this.functionNode = functionNode;
     }
 

@@ -5,12 +5,12 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.SourceSection;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
 
 public class MainFunctionRootNode extends I4GLRootNode {
-    public MainFunctionRootNode(I4GLLanguage language, FrameDescriptor frameDescriptor, StatementNode bodyNode,
+    public MainFunctionRootNode(I4GLLanguage language, FrameDescriptor frameDescriptor, I4GLStatementNode bodyNode,
     SourceSection sourceSection, String name) {
         super(language, frameDescriptor, bodyNode, sourceSection, name);
     }

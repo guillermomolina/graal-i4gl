@@ -11,7 +11,7 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.CharConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.IntConstantDescriptor;
@@ -30,7 +30,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 @TypeSystemReference(I4GLTypes.class)
 @NodeInfo(description = "Abstract class for all nodes that return value")
 @GenerateWrapper
-public abstract class ExpressionNode extends StatementNode {
+public abstract class ExpressionNode extends I4GLStatementNode {
 
     private boolean hasExpressionTag;
 

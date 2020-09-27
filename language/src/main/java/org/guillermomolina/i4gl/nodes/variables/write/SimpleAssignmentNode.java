@@ -14,7 +14,7 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
 import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
 import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
@@ -29,7 +29,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
  */
 @NodeField(name = "slot", type = FrameSlot.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-public abstract class SimpleAssignmentNode extends StatementNode {
+public abstract class SimpleAssignmentNode extends I4GLStatementNode {
 
     protected abstract FrameSlot getSlot();
 

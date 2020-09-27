@@ -4,15 +4,15 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import org.guillermomolina.i4gl.runtime.exceptions.GotoException;
 
 /**
- * Node representing a labeled statement. In addition to {@link StatementNode} it contains identifier of a label which
+ * Node representing a labeled statement. In addition to {@link I4GLStatementNode} it contains identifier of a label which
  * prefixes it.
  */
-public class LabeledStatement extends StatementNode {
+public class LabeledStatement extends I4GLStatementNode {
 
-    @Child private StatementNode statement;
+    @Child private I4GLStatementNode statement;
     private final String label;
 
-    public LabeledStatement(StatementNode statement, String label) {
+    public LabeledStatement(I4GLStatementNode statement, String label) {
         this.statement = statement;
         this.label = label;
     }

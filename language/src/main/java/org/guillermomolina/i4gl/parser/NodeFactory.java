@@ -22,6 +22,7 @@ import org.guillermomolina.i4gl.nodes.arithmetic.DivideNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.ModuloNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.MultiplyNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.SubtractNodeGen;
+import org.guillermomolina.i4gl.nodes.call.CallNode;
 import org.guillermomolina.i4gl.nodes.call.InvokeNode;
 import org.guillermomolina.i4gl.nodes.call.ReadArgumentNode;
 import org.guillermomolina.i4gl.nodes.call.ReadFromReturnNodeGen;
@@ -48,10 +49,10 @@ import org.guillermomolina.i4gl.nodes.logic.NotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.root.MainFunctionRootNode;
-import org.guillermomolina.i4gl.nodes.statement.BlockNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.ConnectToDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNodeGen;
@@ -159,7 +160,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         return mainRootNode;
     }
 
-    private static void setSourceFromContext(StatementNode node, ParserRuleContext ctx) {
+    private static void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
         Interval sourceInterval = srcFromContext(ctx);
         node.setSourceSection(sourceInterval.a, sourceInterval.length());
     }
@@ -177,7 +178,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
-            BlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(), ctx.mainStatements());
+            I4GLBlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(), ctx.mainStatements());
             mainRootNode = new MainFunctionRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
             currentLexicalScope = currentLexicalScope.getOuterScope();
@@ -189,14 +190,14 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitMainStatements(final I4GLParser.MainStatementsContext ctx) {
-        final List<StatementNode> statementNodes = new ArrayList<>(ctx.children.size());
+        final List<I4GLStatementNode> statementNodes = new ArrayList<>(ctx.children.size());
         for (final ParseTree child : ctx.children) {
-            StatementNode statementNode = (StatementNode) visit(child);
+            I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
             if (statementNode != null) {
                 statementNodes.add(statementNode);
             }
         }
-        BlockNode node = new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
+        I4GLBlockNode node = new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
         setSourceFromContext(node, ctx);
         return node;
     }
@@ -215,7 +216,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
-            BlockNode bodyNode = createFunctionBody(sourceSection, parameteridentifiers, ctx.typeDeclarations(),
+            I4GLBlockNode bodyNode = createFunctionBody(sourceSection, parameteridentifiers, ctx.typeDeclarations(),
                     ctx.codeBlock());
             final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
@@ -227,12 +228,12 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private BlockNode createFunctionBody(SourceSection sourceSection, List<String> parameteridentifiers,
+    private I4GLBlockNode createFunctionBody(SourceSection sourceSection, List<String> parameteridentifiers,
             I4GLParser.TypeDeclarationsContext typeDeclarationsContext, ParserRuleContext codeBlockContext)
             throws LexicalException {
-        List<StatementNode> blockNodes = new ArrayList<>();
+        List<I4GLStatementNode> blockNodes = new ArrayList<>();
         if (typeDeclarationsContext != null) {
-            BlockNode initializationNode = (BlockNode) visit(typeDeclarationsContext);
+            I4GLBlockNode initializationNode = (I4GLBlockNode) visit(typeDeclarationsContext);
             if (initializationNode != null) {
                 blockNodes.addAll(initializationNode.getStatements());
             }
@@ -251,13 +252,13 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
 
         if (codeBlockContext != null) {
-            BlockNode blockNode = (BlockNode) visit(codeBlockContext);
+            I4GLBlockNode blockNode = (I4GLBlockNode) visit(codeBlockContext);
             if (blockNode != null) {
                 blockNodes.addAll(blockNode.getStatements());
             }
         }
 
-        final BlockNode bodyNode = new BlockNode(blockNodes.toArray(new StatementNode[blockNodes.size()]));
+        final I4GLBlockNode bodyNode = new I4GLBlockNode(blockNodes.toArray(new I4GLStatementNode[blockNodes.size()]));
         bodyNode.setSourceSection(sourceSection.getCharIndex(), sourceSection.getCharLength());
         bodyNode.addRootTag();
         return bodyNode;
@@ -295,14 +296,14 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitCodeBlock(final I4GLParser.CodeBlockContext ctx) {
-        final List<StatementNode> statementNodes = new ArrayList<>(ctx.children.size());
+        final List<I4GLStatementNode> statementNodes = new ArrayList<>(ctx.children.size());
         for (final ParseTree child : ctx.children) {
-            StatementNode statementNode = (StatementNode) visit(child);
+            I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
             if (statementNode != null) {
                 statementNodes.add(statementNode);
             }
         }
-        BlockNode node = new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
+        I4GLBlockNode node = new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -312,12 +313,8 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
         try {
             final String identifier = ctx.functionIdentifier().getText();
-            StatementNode node;
-            if (ctx.RETURNING() == null) {
-                node = createInvokeNode(identifier, ctx.actualParameter());
-            } else {
-                node = createCallNode(identifier, ctx.actualParameter(), ctx.identifier());
-            }
+            I4GLStatementNode node;
+            node = createCallNode(identifier, ctx.actualParameter(), ctx.identifier());
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
@@ -326,7 +323,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private BlockNode createCallNode(final String identifier,
+    private CallNode createCallNode(final String identifier,
             final List<I4GLParser.ActualParameterContext> parameterListCtx,
             final List<I4GLParser.IdentifierContext> resultVariableListCtx) throws LexicalException {
         final List<ExpressionNode> parameterNodes = new ArrayList<>(parameterListCtx.size());
@@ -335,9 +332,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
         final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
 
-        List<StatementNode> statements = new ArrayList<>(resultVariableListCtx.size() + 1);
-        InvokeNode invokeNode = new InvokeNode(language, identifier, arguments);
-        statements.add(invokeNode);
+        List<I4GLStatementNode> statements = new ArrayList<>(resultVariableListCtx.size());
         int index = 0;
         for (final I4GLParser.IdentifierContext resultVariableCtx : resultVariableListCtx) {
             final String resultIdentifier = resultVariableCtx.getText();
@@ -345,7 +340,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             ExpressionNode readNode = ReadFromReturnNodeGen.create(invokeNode, index++, descriptor);
             statements.add(createAssignmentNode(resultIdentifier, readNode));
         }
-        return new BlockNode(statements.toArray(new StatementNode[statements.size()]));
+        return new CallNode(language, identifier, arguments, statements.toArray(new I4GLStatementNode[statements.size()]));
     }
 
     @Override
@@ -388,7 +383,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         try {
             currentLexicalScope.increaseLoopDepth();
             ExpressionNode condition = (ExpressionNode) visit(ctx.ifCondition());
-            StatementNode loopBody = (StatementNode) visit(ctx.codeBlock());
+            I4GLStatementNode loopBody = (I4GLStatementNode) visit(ctx.codeBlock());
             WhileNode node = new WhileNode(condition, loopBody);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
@@ -413,7 +408,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 stepValue = IntLiteralNodeGen.create(1);
             }
 
-            StatementNode loopBody = ctx.codeBlock() == null ? new BlockNode() : (StatementNode) visit(ctx.codeBlock());
+            I4GLStatementNode loopBody = ctx.codeBlock() == null ? new I4GLBlockNode(null) : (I4GLStatementNode) visit(ctx.codeBlock());
             FrameSlot controlSlot = doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
             if (startValue.getType() != finalValue.getType()
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
@@ -449,10 +444,10 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitIfStatement(final I4GLParser.IfStatementContext ctx) {
         ExpressionNode condition = (ExpressionNode) visit(ctx.ifCondition());
-        StatementNode thenNode = (StatementNode) visit(ctx.codeBlock(0));
-        StatementNode elseNode = null;
+        I4GLStatementNode thenNode = (I4GLStatementNode) visit(ctx.codeBlock(0));
+        I4GLStatementNode elseNode = null;
         if (ctx.codeBlock().size() == 2) {
-            elseNode = (StatementNode) visit(ctx.codeBlock(1));
+            elseNode = (I4GLStatementNode) visit(ctx.codeBlock(1));
         }
         final IfNode node = new IfNode(condition, thenNode, elseNode);
         setSourceFromContext(node, ctx);
@@ -467,16 +462,16 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         ExpressionNode caseExpression = (ExpressionNode) visit(ctx.expression(expressionIndex++));
         final int whenCount = ctx.WHEN().size();
         List<ExpressionNode> indexNodes = new ArrayList<>(whenCount);
-        List<StatementNode> statementNodes = new ArrayList<>(whenCount);
+        List<I4GLStatementNode> statementNodes = new ArrayList<>(whenCount);
         for (int whenIndex = 0; whenIndex < whenCount; whenIndex++) {
             indexNodes.add((ExpressionNode) visit(ctx.expression(expressionIndex++)));
-            statementNodes.add((StatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
+            statementNodes.add((I4GLStatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
         }
         ExpressionNode[] indexNodesArray = indexNodes.toArray(new ExpressionNode[indexNodes.size()]);
-        StatementNode[] statementNodesArray = statementNodes.toArray(new StatementNode[statementNodes.size()]);
-        StatementNode otherwiseNode = null;
+        I4GLStatementNode[] statementNodesArray = statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]);
+        I4GLStatementNode otherwiseNode = null;
         if (ctx.OTHERWISE() != null) {
-            otherwiseNode = (StatementNode) visit(ctx.codeBlock(codeBlockIndex));
+            otherwiseNode = (I4GLStatementNode) visit(ctx.codeBlock(codeBlockIndex));
         }
         CaseNode node = new CaseNode(caseExpression, indexNodesArray, statementNodesArray, otherwiseNode);
         setSourceFromContext(node, ctx);
@@ -488,19 +483,19 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitCaseStatement2(final I4GLParser.CaseStatement2Context ctx) {
         final int whenCount = ctx.WHEN().size();
         List<ExpressionNode> conditionNodes = new ArrayList<>(whenCount);
-        List<StatementNode> statementNodes = new ArrayList<>(whenCount);
+        List<I4GLStatementNode> statementNodes = new ArrayList<>(whenCount);
         int codeBlockIndex = 0;
         for (I4GLParser.IfConditionContext conditionCtx : ctx.ifCondition()) {
             conditionNodes.add((ExpressionNode) visit(conditionCtx));
-            statementNodes.add((StatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
+            statementNodes.add((I4GLStatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
         }
-        StatementNode elseNode = null;
+        I4GLStatementNode elseNode = null;
         if (ctx.OTHERWISE() != null) {
-            elseNode = (StatementNode) visit(ctx.codeBlock(codeBlockIndex));
+            elseNode = (I4GLStatementNode) visit(ctx.codeBlock(codeBlockIndex));
         }
         for (int whenIndex = whenCount - 1; whenIndex >= 0; whenIndex--) {
             ExpressionNode condition = conditionNodes.get(whenIndex);
-            StatementNode thenNode = statementNodes.get(whenIndex);
+            I4GLStatementNode thenNode = statementNodes.get(whenIndex);
             elseNode = new IfNode(condition, thenNode, elseNode);
         }
         setSourceFromContext(elseNode, ctx);
@@ -652,21 +647,21 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         return node;
     }
 
-    private BlockNode mergeBlocks(Iterable<? extends ParserRuleContext> contextList) {
-        List<StatementNode> statementNodes = new ArrayList<>();
+    private I4GLBlockNode mergeBlocks(Iterable<? extends ParserRuleContext> contextList) {
+        List<I4GLStatementNode> statementNodes = new ArrayList<>();
         for (ParseTree variableDeclarationCtx : contextList) {
-            BlockNode blockNode = (BlockNode) visit(variableDeclarationCtx);
+            I4GLBlockNode blockNode = (I4GLBlockNode) visit(variableDeclarationCtx);
             assert blockNode != null;
-            if (blockNode instanceof BlockNode) {
+            if (blockNode instanceof I4GLBlockNode) {
                 statementNodes.addAll(blockNode.getStatements());
             }
         }
-        return new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
+        return new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
     }
 
     @Override
     public Node visitTypeDeclarations(final I4GLParser.TypeDeclarationsContext ctx) {
-        BlockNode node = mergeBlocks(ctx.typeDeclaration());
+        I4GLBlockNode node = mergeBlocks(ctx.typeDeclaration());
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -674,7 +669,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitTypeDeclaration(final I4GLParser.TypeDeclarationContext ctx) {
-        BlockNode node = mergeBlocks(ctx.variableDeclaration());
+        I4GLBlockNode node = mergeBlocks(ctx.variableDeclaration());
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -697,11 +692,11 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
                 identifierList.add(identifierCtx.getText());
             }
-            List<StatementNode> initializationNodes = new ArrayList<>();
+            List<I4GLStatementNode> initializationNodes = new ArrayList<>();
             final TypeDescriptor typeDescriptor = typeNode.descriptor;
             for (final String identifier : identifierList) {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
-                StatementNode initializationNode;
+                I4GLStatementNode initializationNode;
                 Object defaultValue = typeDescriptor.getDefaultValue();
                 if (defaultValue == null) {
                     throw new ParseException(source, ctx,
@@ -712,7 +707,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 initializationNodes.add(initializationNode);
             }
 
-            BlockNode node = new BlockNode(initializationNodes.toArray(new StatementNode[initializationNodes.size()]));
+            I4GLBlockNode node = new I4GLBlockNode(initializationNodes.toArray(new I4GLStatementNode[initializationNodes.size()]));
             node.addStatementTag();
             setSourceFromContext(node, ctx);
             return node;
@@ -820,7 +815,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 // Simple variable
                 final String identifier = variableCtx.identifier(0).getText();
                 final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expressionList().expression(0));
-                StatementNode node = createAssignmentNode(identifier, valueNode);
+                I4GLStatementNode node = createAssignmentNode(identifier, valueNode);
                 setSourceFromContext(node, ctx);
                 node.addStatementTag();
                 return node;
@@ -836,7 +831,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                                             foundInLexicalScope));
                 } else if (index == variableCtx.identifier().size() - 1 && variableCtx.indexingVariable() == null) {
                     final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expressionList().expression(0));
-                    StatementNode node = createAssignmentToRecordField(variableNode, identifier, valueNode);
+                    I4GLStatementNode node = createAssignmentToRecordField(variableNode, identifier, valueNode);
                     node.addStatementTag();
                     setSourceFromContext(node, ctx);
                     return node;
@@ -855,7 +850,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 indexNodes.add((ExpressionNode) visit(indexCtx));
             }
             final ExpressionNode valueNode = (ExpressionNode) visit(ctx.expressionList().expression(0));
-            StatementNode node = createAssignmentToArray(variableNode, indexNodes, valueNode);
+            I4GLStatementNode node = createAssignmentToArray(variableNode, indexNodes, valueNode);
             node.addStatementTag();
             setSourceFromContext(node, ctx);
             return node;
@@ -874,7 +869,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
      * @return the newly created node
      * @throws TypeMismatchException
      */
-    private StatementNode createAssignmentToRecordField(ExpressionNode recordExpression, String identifier,
+    private I4GLStatementNode createAssignmentToRecordField(ExpressionNode recordExpression, String identifier,
             ExpressionNode valueNode) throws LexicalException {
         TypeDescriptor expressionType = recordExpression.getType();
         if (!(expressionType instanceof RecordDescriptor)) {
@@ -893,10 +888,10 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
      * @return the newly created node
      * @throws TypeMismatchException
      */
-    private StatementNode createAssignmentToArray(ExpressionNode arrayExpression, List<ExpressionNode> indexNodes,
+    private I4GLStatementNode createAssignmentToArray(ExpressionNode arrayExpression, List<ExpressionNode> indexNodes,
             ExpressionNode valueNode) throws LexicalException {
         ExpressionNode readArrayNode = arrayExpression;
-        StatementNode result = null;
+        I4GLStatementNode result = null;
         final int lastIndex = indexNodes.size() - 1;
         for (int index = 0; index < indexNodes.size(); index++) {
             TypeDescriptor actualType = readArrayNode.getType();

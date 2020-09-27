@@ -19,7 +19,7 @@ import com.oracle.truffle.api.source.SourceSection;
  */
 @NodeInfo(language = "i4gl", description = "The abstract base node for all I4GL statements")
 @GenerateWrapper
-public abstract class StatementNode extends Node implements InstrumentableNode {
+public abstract class I4GLStatementNode extends Node implements InstrumentableNode {
     private static final int NO_SOURCE = -1;
     private static final int UNAVAILABLE_SOURCE = -2;
 
@@ -115,7 +115,7 @@ public abstract class StatementNode extends Node implements InstrumentableNode {
     }
 
     public WrapperNode createWrapper(ProbeNode probe) {
-        return new StatementNodeWrapper(this, probe);
+        return new I4GLStatementNodeWrapper(this, probe);
     }
 
     /**

@@ -1,39 +1,44 @@
 package org.guillermomolina.i4gl.nodes.statement;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import org.guillermomolina.i4gl.runtime.exceptions.GotoException;
 
-import java.util.*;
+import org.guillermomolina.i4gl.runtime.exceptions.GotoException;
 
 /**
  * Block node implementation with extended support of goto statements.
  */
 @NodeInfo(shortName = "block")
-public class ExtendedBlockNode extends StatementNode {
+public class ExtendedBlockNode extends I4GLStatementNode {
 
     @Children
-    private final StatementNode[] bodyNodes;
+    private final I4GLStatementNode[] bodyNodes;
 
     private final Map<String, Integer> labelToBlockIndex;
 
-    public ExtendedBlockNode(StatementNode[] bodyNodes) {
+    public ExtendedBlockNode(I4GLStatementNode[] bodyNodes) {
         this.labelToBlockIndex = new HashMap<>();
-        List<StatementNode> newBodyNodes = this.createNewBodyNodes(bodyNodes);
-        this.bodyNodes = newBodyNodes.toArray(new StatementNode[newBodyNodes.size()]);
+        List<I4GLStatementNode> newBodyNodes = this.createNewBodyNodes(bodyNodes);
+        this.bodyNodes = newBodyNodes.toArray(new I4GLStatementNode[newBodyNodes.size()]);
     }
 
-    private List<StatementNode> createNewBodyNodes(StatementNode[] bodyNodes) {
+    private List<I4GLStatementNode> createNewBodyNodes(I4GLStatementNode[] bodyNodes) {
         if (bodyNodes.length == 0) {
             return Collections.emptyList();
         }
 
-        List<StatementNode> newBodyNodes = new ArrayList<>();
-        List<StatementNode> currentBlockNodes;
+        List<I4GLStatementNode> newBodyNodes = new ArrayList<>();
+        List<I4GLStatementNode> currentBlockNodes;
 
         currentBlockNodes = startNewBlockWithNode(bodyNodes[0], 0);
         for (int i = 1; i < bodyNodes.length; ++i) {
-            StatementNode currentStatement = bodyNodes[i];
+            I4GLStatementNode currentStatement = bodyNodes[i];
             if (!(currentStatement instanceof LabeledStatement)) {
                 currentBlockNodes.add(currentStatement);
             } else {
@@ -46,8 +51,8 @@ public class ExtendedBlockNode extends StatementNode {
         return newBodyNodes;
     }
 
-    private List<StatementNode> startNewBlockWithNode(StatementNode newNode, int index) {
-        List<StatementNode> blockNodes = new ArrayList<>();
+    private List<I4GLStatementNode> startNewBlockWithNode(I4GLStatementNode newNode, int index) {
+        List<I4GLStatementNode> blockNodes = new ArrayList<>();
         blockNodes.add(newNode);
 
         if (newNode instanceof LabeledStatement) {
@@ -58,8 +63,8 @@ public class ExtendedBlockNode extends StatementNode {
         return blockNodes;
     }
 
-    private BlockNode createBlockNode(List<StatementNode> statementNodes) {
-        return new BlockNode(statementNodes.toArray(new StatementNode[statementNodes.size()]));
+    private I4GLBlockNode createBlockNode(List<I4GLStatementNode> statementNodes) {
+        return new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
     }
 
     @Override

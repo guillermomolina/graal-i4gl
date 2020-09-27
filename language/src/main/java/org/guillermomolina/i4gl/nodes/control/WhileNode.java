@@ -10,7 +10,7 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.BranchProfile;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.StatementNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.BreakException;
 import org.guillermomolina.i4gl.runtime.exceptions.ContinueException;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
@@ -19,19 +19,19 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
  * Node representing I4GL's while loop.
  */
 @NodeInfo(shortName = "while", description = "The node implementing a while loop")
-public class WhileNode extends StatementNode {
+public class WhileNode extends I4GLStatementNode {
 
     private static class WhileRepeatingNode extends Node implements RepeatingNode {
 
         @Child
         private ExpressionNode conditionNode;
         @Child
-        private StatementNode bodyNode;
+        private I4GLStatementNode bodyNode;
 
         private final BranchProfile continueTaken = BranchProfile.create();
         private final BranchProfile breakTaken = BranchProfile.create();
     
-        private WhileRepeatingNode(ExpressionNode conditionNode, StatementNode bodyNode) {
+        private WhileRepeatingNode(ExpressionNode conditionNode, I4GLStatementNode bodyNode) {
             this.conditionNode = conditionNode;
             this.bodyNode = bodyNode;
         }
@@ -76,7 +76,7 @@ public class WhileNode extends StatementNode {
     @Child
     private LoopNode loopNode;
 
-    public WhileNode(ExpressionNode conditionNode, StatementNode bodyNode) {
+    public WhileNode(ExpressionNode conditionNode, I4GLStatementNode bodyNode) {
         this.loopNode = Truffle.getRuntime().createLoopNode(new WhileRepeatingNode(conditionNode, bodyNode));
     }
 
