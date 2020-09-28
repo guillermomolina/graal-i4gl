@@ -1,24 +1,21 @@
 package org.guillermomolina.i4gl.nodes.call;
 
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "call")
 public final class CallNode extends I4GLStatementNode {
 
     private final FrameSlot[] resultSlots;
-    @Child private final ExpressionNode invokeNode;
+    @Child private ExpressionNode invokeNode;
 
 	public CallNode(ExpressionNode invokeNode, FrameSlot[] resultSlots) {
         this.invokeNode = invokeNode;
@@ -27,7 +24,7 @@ public final class CallNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Object returnValue = invokeNode.executeGeneric(frame);
+        ReturnValue returnValue = (ReturnValue) invokeNode.executeGeneric(frame);
         evaluateResult(frame, returnValue);
 	}
 
@@ -35,15 +32,31 @@ public final class CallNode extends I4GLStatementNode {
         if(returnValue.getSize() != resultSlots.length) {
             throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.getSize());
         }
-        try {
-            for (FrameSlot resultSlot : this.resultSlots) {
-                Object o = frame.getObject(resultSlot);
-                throw new NotImplementedException();
+        for (int index=0; index < resultSlots.length; index++) {
+            final Object result = returnValue.getValueAt(index);
+            final FrameSlot slot = resultSlots[index];
+            switch (slot.getKind()) {
+                case Int:
+                    frame.setInt(slot, (int)result);
+                    break;
+                case Long:
+                    frame.setLong(slot, (long)result);
+                    break;
+                case Float:
+                    frame.setFloat(slot, (float)result);
+                    break;
+                case Double:
+                    frame.setDouble(slot, (double)result);
+                    break;
+                case Byte:
+                    frame.setByte(slot, (byte)result);
+                    break;
+                case Object:
+                    frame.setObject(slot,result);
+                    break;
+                default:
             }
-
-        } catch (FrameSlotTypeException e) {
-            throw new I4GLRuntimeException("Unexpected accessing of non record type");
-        }
+            }
     }
 
     @Override

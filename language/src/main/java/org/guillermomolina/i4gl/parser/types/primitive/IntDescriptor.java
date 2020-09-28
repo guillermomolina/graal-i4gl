@@ -3,6 +3,7 @@ package org.guillermomolina.i4gl.parser.types.primitive;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.IntConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.LongConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.RealConstantDescriptor;
@@ -36,7 +37,7 @@ public class IntDescriptor implements PrimitiveDescriptor {
     public boolean convertibleTo(TypeDescriptor type) {
         return type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance() ||
                 type instanceof IntConstantDescriptor || type instanceof LongConstantDescriptor ||
-                type instanceof RealConstantDescriptor;
+                type instanceof RealConstantDescriptor || type instanceof VarcharDescriptor;
     }
 
 }

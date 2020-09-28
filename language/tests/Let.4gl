@@ -1,0 +1,7 @@
+MAIN
+    #DEFINE var1 VARCHAR(50)
+    #DEFINE var2 FLOAT
+    #LET var2=101
+    #DISPLAY var2
+    DISPLAY 24
+END MAIN

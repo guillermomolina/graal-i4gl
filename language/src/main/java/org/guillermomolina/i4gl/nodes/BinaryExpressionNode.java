@@ -9,7 +9,8 @@ import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 
 /**
- * Base node for each binary expression node. It also contains functions for static type checking.
+ * Base node for each binary expression node. It also contains functions for
+ * static type checking.
  */
 @NodeChild(value = "leftNode", type = ExpressionNode.class)
 @NodeChild(value = "rightNode", type = ExpressionNode.class)
@@ -26,19 +27,23 @@ public abstract class BinaryExpressionNode extends ExpressionNode {
     protected abstract ExpressionNode getRightNode();
 
     /**
-     * Each key is one allowed combination of arguments and value is resulting type of that one combination. Used for
-     * static type checking. Classes that derive from this need only to fill this table.
+     * Each key is one allowed combination of arguments and value is resulting type
+     * of that one combination. Used for static type checking. Classes that derive
+     * from this need only to fill this table.
      */
     protected Map<BinaryArgumentPrimitiveTypes, TypeDescriptor> typeTable = new HashMap<>();
 
     @Override
     public TypeDescriptor getType() {
-        TypeDescriptor primitiveType = this.typeTable.get(new BinaryArgumentPrimitiveTypes(getLeftNode().getType(), getRightNode().getType()));
-        return (primitiveType != null) ? primitiveType : this.getNonPrimitiveArgumentsResultingType(getLeftNode().getType(), getRightNode().getType());
+        TypeDescriptor primitiveType = this.typeTable
+                .get(new BinaryArgumentPrimitiveTypes(getLeftNode().getType(), getRightNode().getType()));
+        return (primitiveType != null) ? primitiveType
+                : this.getNonPrimitiveArgumentsResultingType(getLeftNode().getType(), getRightNode().getType());
     }
 
     /**
-     * Checks whether provided argument types are allowed for the operation. In that case it returns true.
+     * Checks whether provided argument types are allowed for the operation. In that
+     * case it returns true.
      */
     @Override
     public boolean verifyChildrenNodeTypes() {
@@ -60,16 +65,17 @@ public abstract class BinaryExpressionNode extends ExpressionNode {
     }
 
     /**
-     * Non primitive types cannot be compared as easily as the primitive ones so each node has to implement the verification
-     * of these types individually.
+     * Non primitive types cannot be compared as easily as the primitive ones so
+     * each node has to implement the verification of these types individually.
      */
     protected boolean verifyNonPrimitiveArgumentTypes(TypeDescriptor leftType, TypeDescriptor rightType) {
         return false;
     }
 
     /**
-     * Returns resulting type of the operation for specified types of arguments. This is used for non primitive types
-     * which cannot be stored in the types table.
+     * Returns resulting type of the operation for specified types of arguments.
+     * This is used for non primitive types which cannot be stored in the types
+     * table.
      */
     protected TypeDescriptor getNonPrimitiveArgumentsResultingType(TypeDescriptor leftType, TypeDescriptor rightType) {
         return null;

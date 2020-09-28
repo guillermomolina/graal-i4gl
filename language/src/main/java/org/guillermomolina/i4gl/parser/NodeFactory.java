@@ -25,8 +25,6 @@ import org.guillermomolina.i4gl.nodes.arithmetic.SubtractNodeGen;
 import org.guillermomolina.i4gl.nodes.call.CallNode;
 import org.guillermomolina.i4gl.nodes.call.InvokeNode;
 import org.guillermomolina.i4gl.nodes.call.ReadArgumentNode;
-import org.guillermomolina.i4gl.nodes.call.ReadFromReturnNode;
-import org.guillermomolina.i4gl.nodes.call.ReadFromReturnNodeGen;
 import org.guillermomolina.i4gl.nodes.call.ReturnNode;
 import org.guillermomolina.i4gl.nodes.control.CaseNode;
 import org.guillermomolina.i4gl.nodes.control.DebuggerNode;
@@ -51,7 +49,7 @@ import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.root.MainFunctionRootNode;
 import org.guillermomolina.i4gl.nodes.statement.ConnectToDatabaseNode;
-import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
+import org.guillermomolina.i4gl.nodes.statement.DisplayNode2;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
@@ -75,7 +73,6 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.ReturnDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 
@@ -316,23 +313,17 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
-        try {
-            InvokeNode invokeNode = (InvokeNode) visit(ctx.function());
-            List<I4GLStatementNode> statementNodes = new ArrayList<>(ctx.identifier().size());
-            int index = 0;
-            for (final I4GLParser.IdentifierContext resultVariableCtx : ctx.identifier()) {
-                final String resultIdentifier = resultVariableCtx.getText();
-                ExpressionNode readNode = createReadFromReturnNode(invokeNode, index);
-                statementNodes.add(createAssignmentNode(resultIdentifier, readNode));
-            }
-            CallNode node = new CallNode(
-                    statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
-            setSourceFromContext(node, ctx);
-            node.addStatementTag();
-            return node;
-        } catch (final LexicalException e) {
-            throw new ParseException(source, ctx, e.getMessage());
+        InvokeNode invokeNode = (InvokeNode) visit(ctx.function());
+        List<FrameSlot> returnSlots = new ArrayList<>(ctx.identifier().size());
+        for (final I4GLParser.IdentifierContext identifierCtx : ctx.identifier()) {
+            final String resultIdentifier = identifierCtx.getText();
+            FrameSlot recordSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
+            returnSlots.add(recordSlot);
         }
+        CallNode node = new CallNode(invokeNode, returnSlots.toArray(new FrameSlot[returnSlots.size()]));
+        setSourceFromContext(node, ctx);
+        node.addStatementTag();
+        return node;
     }
 
     @Override
@@ -629,7 +620,8 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         for (final I4GLParser.DisplayValueContext valueCtx : valueListCtx) {
             parameterNodes.add((ExpressionNode) visit(valueCtx));
         }
-        DisplayNode node = new DisplayNode(parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]));
+        //DisplayNode node = new DisplayNode(parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]));
+        DisplayNode2 node = DisplayNode2Gen.create(parameterNodes.get(0));
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -937,7 +929,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             throw new ParseException(source, ctx, e.getMessage());
         }
     }
-
+/*
     private ReadFromReturnNode createReadFromReturnNode(final ExpressionNode returnExpression, final int index)
             throws LexicalException {
         TypeDescriptor descriptor = returnExpression.getType();
@@ -950,7 +942,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         TypeDescriptor returnType = accessedReturnDescriptor.getValueDescriptor(index);
         return ReadFromReturnNodeGen.create(returnExpression, index, returnType);
     }
-
+*/
     private ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression, final String identifier)
             throws LexicalException {
         TypeDescriptor descriptor = recordExpression.getType();
