@@ -183,9 +183,7 @@ assignmentStatement:
 	) EOL;
 
 callStatement:
-	CALL functionIdentifier (
-		LPAREN (actualParameter (COMMA actualParameter)*)? RPAREN
-	)? (RETURNING identifier (COMMA identifier)*)? EOL;
+	CALL function (RETURNING identifier (COMMA identifier)*)? EOL;
 
 functionIdentifier: (
 		DAY

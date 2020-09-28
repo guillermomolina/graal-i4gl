@@ -8,11 +8,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.complex.FileDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 
 /**
@@ -112,24 +108,8 @@ public class LexicalScope {
         arguments.add(identifier);
     }
 
-    ArrayDescriptor createArrayType(int size, TypeDescriptor typeDescriptor) {
-        return this.localIdentifiers.createArray(size, typeDescriptor);
-    }
-
-    NCharDescriptor createNCharType(int size) {
-        return this.localIdentifiers.createNChar(size);
-    }
-
-    VarcharDescriptor createVarcharType(int size) {
-        return this.localIdentifiers.createVarchar(size);
-    }
-
-    FileDescriptor createFileDescriptor(TypeDescriptor contentTypeDescriptor) {
-        return this.localIdentifiers.createFileDescriptor(contentTypeDescriptor);
-    }
-
     RecordDescriptor createRecordDescriptor() {
-        return this.localIdentifiers.createRecordDescriptor(this);
+        return new RecordDescriptor(this);
     }
 
     public void registerType(String identifier, TypeDescriptor type) throws LexicalException {

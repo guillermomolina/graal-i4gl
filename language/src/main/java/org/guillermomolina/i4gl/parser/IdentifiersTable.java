@@ -12,13 +12,8 @@ import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.TypeTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.complex.DatabaseDescriptor;
-import org.guillermomolina.i4gl.parser.types.complex.FileDescriptor;
 import org.guillermomolina.i4gl.parser.types.complex.LabelDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
@@ -132,26 +127,6 @@ public class IdentifiersTable {
 
     public void addConstant(String identifier, ConstantDescriptor descriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, descriptor);
-    }
-
-    public FileDescriptor createFileDescriptor(TypeDescriptor contentTypeDescriptor) {
-        return new FileDescriptor(contentTypeDescriptor);
-    }
-
-    public RecordDescriptor createRecordDescriptor(LexicalScope recordScope) {
-        return new RecordDescriptor(recordScope);
-    }
-
-    public ArrayDescriptor createArray(int size, TypeDescriptor typeDescriptor) {
-        return new ArrayDescriptor(size, typeDescriptor);
-    }
-
-    public NCharDescriptor createNChar(int size) {
-        return new NCharDescriptor(size);
-    }
-
-    public VarcharDescriptor createVarchar(int size) {
-        return new VarcharDescriptor(size);
     }
 
     public ConstantDescriptor getConstant(String identifier) throws LexicalException {

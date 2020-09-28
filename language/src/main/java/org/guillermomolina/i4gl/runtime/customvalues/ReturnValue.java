@@ -2,9 +2,6 @@ package org.guillermomolina.i4gl.runtime.customvalues;
 
 import com.oracle.truffle.api.CompilerDirectives;
 
-/**
- * Representation of variables of Return type. It is a slight wrapper to Java's {@link String}.
- */
 @CompilerDirectives.ValueType
 public class ReturnValue implements I4GLArray {
 
