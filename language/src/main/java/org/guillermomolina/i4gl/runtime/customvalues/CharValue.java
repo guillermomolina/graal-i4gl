@@ -10,17 +10,17 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
  * Representation of variables of NChar type. It is a slight wrapper to Java's {@link String}.
  */
 @CompilerDirectives.ValueType
-public class NCharValue implements I4GLArray {
+public class CharValue implements ArrayValue {
 
     private String data;
 
-    public NCharValue(int size) {
+    public CharValue(int size) {
         char[] chars = new char[size];
         Arrays.fill(chars, ' ');
         this.data = new String(chars);
     }
 
-    private NCharValue(NCharValue source) {
+    private CharValue(CharValue source) {
         this.data = source.data;
     }
 
@@ -55,7 +55,7 @@ public class NCharValue implements I4GLArray {
 
     @Override
     public Object createDeepCopy() {
-        return new NCharValue(this);
+        return new CharValue(this);
     }
 
     private void checkArrayIndex(int index) {
@@ -70,7 +70,7 @@ public class NCharValue implements I4GLArray {
      * @param right the right argument of the concatenation operation
      * @return the NChar string
      */
-    public static NCharValue concat(NCharValue left, NCharValue right) {
+    public static CharValue concat(CharValue left, CharValue right) {
         throw new NotImplementedException();
     }
 

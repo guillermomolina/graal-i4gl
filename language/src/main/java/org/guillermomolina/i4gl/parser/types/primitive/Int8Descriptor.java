@@ -3,22 +3,22 @@ package org.guillermomolina.i4gl.parser.types.primitive;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 
 /**
  * Type descriptor representing the char type.
  */
-public class CharDescriptor implements PrimitiveDescriptor {
+public class Int8Descriptor implements PrimitiveDescriptor {
 
-    private static CharDescriptor instance = new CharDescriptor();
+    private static Int8Descriptor instance = new Int8Descriptor();
 
-    public static CharDescriptor getInstance() {
+    public static Int8Descriptor getInstance() {
         return instance;
     }
 
-    private CharDescriptor() {
+    private Int8Descriptor() {
 
     }
 
@@ -35,7 +35,7 @@ public class CharDescriptor implements PrimitiveDescriptor {
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type == TextDescriptor.getInstance() || type instanceof VarcharDescriptor
-                || type instanceof NCharDescriptor;
+                || type instanceof CharDescriptor;
     }
 
 }

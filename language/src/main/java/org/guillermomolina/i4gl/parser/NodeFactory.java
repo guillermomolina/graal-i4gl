@@ -31,12 +31,12 @@ import org.guillermomolina.i4gl.nodes.control.DebuggerNode;
 import org.guillermomolina.i4gl.nodes.control.ForNode;
 import org.guillermomolina.i4gl.nodes.control.IfNode;
 import org.guillermomolina.i4gl.nodes.control.WhileNode;
-import org.guillermomolina.i4gl.nodes.literals.DoubleLiteralNode;
-import org.guillermomolina.i4gl.nodes.literals.DoubleLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.I4GLStringLiteralNode;
-import org.guillermomolina.i4gl.nodes.literals.I4GLStringLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.RealLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.LongLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.BigIntLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.RealLiteralNode;
+import org.guillermomolina.i4gl.nodes.literals.TextLiteralNode;
+import org.guillermomolina.i4gl.nodes.literals.TextLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.EqualsNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanNodeGen;
@@ -70,11 +70,11 @@ import org.guillermomolina.i4gl.parser.exceptions.TypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -705,7 +705,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             if (!ctx.numericConstant().isEmpty()) {
                 size = Integer.parseInt(ctx.numericConstant(0).getText());
             }
-            return new TypeNode(new NCharDescriptor(size));
+            return new TypeNode(new CharDescriptor(size));
         }
     }
 
@@ -721,7 +721,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             return new TypeNode(RealDescriptor.getInstance());
         }
         if (ctx.INT8() != null) {
-            return new TypeNode(CharDescriptor.getInstance());
+            return new TypeNode(Int8Descriptor.getInstance());
         }
         throw new NotImplementedException();
     }
@@ -1003,7 +1003,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         assert literal.length() >= 2 && literal.startsWith("\"") && literal.endsWith("\"");
         literal = literal.substring(1, literal.length() - 1);
 
-        I4GLStringLiteralNode node = I4GLStringLiteralNodeGen.create(literal.intern());
+        TextLiteralNode node = TextLiteralNodeGen.create(literal.intern());
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;
@@ -1016,7 +1016,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         try {
             node = IntLiteralNodeGen.create(Integer.parseInt(literal));
         } catch (final NumberFormatException e) {
-            node = LongLiteralNodeGen.create(Long.parseLong(literal));
+            node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
         }
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
@@ -1026,7 +1026,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitReal(final I4GLParser.RealContext ctx) {
         final String literal = ctx.getText();
-        final DoubleLiteralNode node = DoubleLiteralNodeGen.create(Double.parseDouble(literal));
+        final RealLiteralNode node = RealLiteralNodeGen.create(Double.parseDouble(literal));
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;

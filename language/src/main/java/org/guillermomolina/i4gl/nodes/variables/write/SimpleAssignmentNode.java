@@ -19,16 +19,16 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLArray;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
-import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.exceptions.InvalidCastException;
 
@@ -64,7 +64,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     protected boolean isString() {
-        return getTypeDescriptor() instanceof NCharDescriptor
+        return getTypeDescriptor() instanceof CharDescriptor
                 || getTypeDescriptor() instanceof VarcharDescriptor
                 || getTypeDescriptor() == TextDescriptor.getInstance();
     }
@@ -90,7 +90,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isDouble()")
-    void writeDouble(VirtualFrame frame, I4GLString string) {
+    void writeDouble(VirtualFrame frame, TextValue string) {
         try {
             double value = Double.parseDouble(string.toString());
             getFrame(frame).setDouble(getSlot(), value);
@@ -105,13 +105,13 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isString()")
-    void assignString(VirtualFrame frame, I4GLString value) {
+    void assignString(VirtualFrame frame, TextValue value) {
         frame = getFrame(frame);
         Object targetObject = frame.getValue(getSlot());
-        if (targetObject instanceof I4GLString) {
+        if (targetObject instanceof TextValue) {
             frame.setObject(getSlot(), value);
-        } else if (targetObject instanceof NCharValue) {
-            NCharValue target = (NCharValue) targetObject;
+        } else if (targetObject instanceof CharValue) {
+            CharValue target = (CharValue) targetObject;
             target.assignString(value.toString());
         } else if (targetObject instanceof VarcharValue) {
             VarcharValue target = (VarcharValue) targetObject;
@@ -150,7 +150,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Specialization
-    void assignArray(VirtualFrame frame, I4GLArray array) {
+    void assignArray(VirtualFrame frame, ArrayValue array) {
         getFrame(frame).setObject(getSlot(), array.createDeepCopy());
     }
 

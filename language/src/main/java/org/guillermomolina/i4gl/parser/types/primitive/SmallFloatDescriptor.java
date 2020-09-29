@@ -8,34 +8,34 @@ import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 
 /**
- * Type descriptor representing the longint type.
+ * Type descriptor representing the real type.
  */
-public class LongDescriptor implements PrimitiveDescriptor {
+public class SmallFloatDescriptor implements PrimitiveDescriptor {
 
-    private static LongDescriptor instance = new LongDescriptor();
+    private static SmallFloatDescriptor instance = new SmallFloatDescriptor();
 
-    public static LongDescriptor getInstance() {
+    public static SmallFloatDescriptor getInstance() {
         return instance;
     }
 
-    private LongDescriptor() {
+    private SmallFloatDescriptor() {
 
     }
 
     @Override
     public FrameSlotKind getSlotKind() {
-        return FrameSlotKind.Long;
+        return FrameSlotKind.Float;
     }
 
     @Override
     public Object getDefaultValue() {
-        return 0L;
+        return 0.0f;
     }
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type == RealDescriptor.getInstance() || type instanceof VarcharDescriptor
-                || type instanceof CharDescriptor || type == TextDescriptor.getInstance();
+        return type instanceof VarcharDescriptor
+        || type instanceof CharDescriptor || type == TextDescriptor.getInstance();
     }
 
 }

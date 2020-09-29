@@ -8,6 +8,7 @@ import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
  * Node representing arithmetic division on numeric arguments.
@@ -19,13 +20,21 @@ import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 public abstract class DivideNode extends BinaryExpressionNode {
 
     DivideNode() {
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), RealDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), RealDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), RealDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), RealDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), RealDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), LongDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), LongDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), LongDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), LongDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), LongDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), LongDescriptor.getInstance()), RealDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), RealDescriptor.getInstance()), RealDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.getInstance(), LongDescriptor.getInstance()), SmallFloatDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), SmallFloatDescriptor.getInstance()), SmallFloatDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.getInstance(), SmallFloatDescriptor.getInstance()), SmallFloatDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), RealDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), SmallFloatDescriptor.getInstance()), RealDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.getInstance(), RealDescriptor.getInstance()), RealDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.getInstance(), RealDescriptor.getInstance()), RealDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), RealDescriptor.getInstance());
     }
 

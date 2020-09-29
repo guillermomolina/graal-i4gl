@@ -9,8 +9,8 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.I4GLString;
-import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
@@ -49,12 +49,12 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
     }
 
     @Specialization
-    char readString(I4GLString string, int index) {
+    char readString(TextValue string, int index) {
         return (char) string.getValueAt(index - 1);
     }
 
     @Specialization
-    char readNChar(NCharValue string, int index) {
+    char readNChar(CharValue string, int index) {
         return (char) string.getValueAt(index - 1);
     }
 

@@ -3,19 +3,19 @@ package org.guillermomolina.i4gl.parser.types.compound;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.NCharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 
 /**
  * Type descriptor representing the string type.
  */
-public class NCharDescriptor extends ArrayDescriptor {
+public class CharDescriptor extends ArrayDescriptor {
 
-    public NCharDescriptor(int size) {
-        super(size, CharDescriptor.getInstance());
+    public CharDescriptor(int size) {
+        super(size, Int8Descriptor.getInstance());
 
     }
 
@@ -26,13 +26,13 @@ public class NCharDescriptor extends ArrayDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new NCharValue(getSize());
+        return new CharValue(getSize());
     }
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type == TextDescriptor.getInstance()
-                || type instanceof VarcharDescriptor || type instanceof NCharDescriptor
+                || type instanceof VarcharDescriptor || type instanceof CharDescriptor
                 || type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance()
                 || type == IntDescriptor.getInstance();
     }

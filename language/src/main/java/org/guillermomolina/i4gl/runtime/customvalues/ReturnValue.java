@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.runtime.customvalues;
 import com.oracle.truffle.api.CompilerDirectives;
 
 @CompilerDirectives.ValueType
-public class ReturnValue implements I4GLArray {
+public class ReturnValue implements ArrayValue {
 
     private Object[] data;
 

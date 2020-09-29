@@ -3,20 +3,20 @@ package org.guillermomolina.i4gl.runtime.customvalues;
 /**
  * Representation of a string-type variable.
  */
-public class I4GLString implements I4GLArray {
+public class TextValue implements ArrayValue {
 
     private String value;
 
-    public I4GLString() {
+    public TextValue() {
         this.value = "";
     }
 
-    public I4GLString(String value) {
+    public TextValue(String value) {
         this.value = value;
     }
 
-    private I4GLString(I4GLString i4glString) {
-        this.value = i4glString.value;
+    private TextValue(TextValue text) {
+        this.value = text.value;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class I4GLString implements I4GLArray {
 
     @Override
     public Object createDeepCopy() {
-        return new I4GLString(this);
+        return new TextValue(this);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class I4GLString implements I4GLArray {
      * Returns a new string whose value is the current value concatenated with specified character.
      * @return the new string
      */
-    public I4GLString concatenate(char value) {
-        return new I4GLString(this.value.concat(String.valueOf(value)));
+    public TextValue concatenate(char value) {
+        return new TextValue(this.value.concat(String.valueOf(value)));
     }
 
     /**
@@ -53,8 +53,8 @@ public class I4GLString implements I4GLArray {
      * @param value the string to be appended to current value
      * @return the new string
      */
-    public I4GLString concatenate(I4GLString value) {
-        return new I4GLString(this.value.concat(value.value));
+    public TextValue concatenate(TextValue value) {
+        return new TextValue(this.value.concat(value.value));
     }
 
 }

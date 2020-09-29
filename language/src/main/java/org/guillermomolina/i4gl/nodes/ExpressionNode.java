@@ -13,10 +13,11 @@ import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -66,12 +67,16 @@ public abstract class ExpressionNode extends I4GLStatementNode {
         return getType() == LongDescriptor.getInstance();
     }
 
+    protected boolean isFloat() {
+        return getType() == SmallFloatDescriptor.getInstance();
+    }
+
     protected boolean isDouble() {
         return getType() == RealDescriptor.getInstance();
     }
 
     protected boolean isChar() {
-        return getType() == CharDescriptor.getInstance();
+        return getType() == Int8Descriptor.getInstance();
     }
 
     @Override

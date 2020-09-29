@@ -9,7 +9,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
  */
 @CompilerDirectives.ValueType
-public class VarcharValue implements I4GLArray {
+public class VarcharValue implements ArrayValue {
 
     private String data;
     private final int size;
