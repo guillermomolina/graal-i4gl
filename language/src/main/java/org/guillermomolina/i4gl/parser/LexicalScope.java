@@ -9,7 +9,6 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 
 /**
  * This class represents currently parsed lexical scope. It is a slight wrapper
@@ -68,10 +67,6 @@ public class LexicalScope {
         return this.localIdentifiers.getTypeDescriptor(identifier);
     }
 
-    ConstantDescriptor getConstant(String identifier) throws LexicalException {
-        return this.localIdentifiers.getConstant(identifier);
-    }
-
     public void setName(String identifier) {
         this.name = identifier;
     }
@@ -114,10 +109,6 @@ public class LexicalScope {
 
     public void registerType(String identifier, TypeDescriptor type) throws LexicalException {
         this.localIdentifiers.addType(identifier, type);
-    }
-
-    void registerConstant(String identifier, ConstantDescriptor constant) throws LexicalException {
-        this.localIdentifiers.addConstant(identifier, constant);
     }
 
     /**

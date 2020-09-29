@@ -52,7 +52,6 @@ import org.guillermomolina.i4gl.nodes.statement.ConnectToDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromArrayNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadFromRecordNode;
@@ -74,7 +73,6 @@ import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 
 public class NodeFactory extends I4GLBaseVisitor<Node> {
 
@@ -987,12 +985,8 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
         final TypeDescriptor type = scope.getIdentifierDescriptor(identifier);
         final boolean isLocal = scope == currentLexicalScope;
-        final boolean isConstant = type instanceof ConstantDescriptor;
 
-        if (isConstant) {
-            final ConstantDescriptor constantType = (ConstantDescriptor) type;
-            return ReadConstantNodeGen.create(constantType.getValue(), constantType);
-        } else if (isLocal) {
+        if (isLocal) {
             return ReadLocalVariableNodeGen.create(variableSlot, type);
         } else {
             return ReadGlobalVariableNodeGen.create(variableSlot, type);

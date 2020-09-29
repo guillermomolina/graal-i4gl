@@ -6,9 +6,6 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.IntConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.LongConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.RealConstantDescriptor;
 
 /**
  * Type descriptor representing the integer type.
@@ -38,9 +35,8 @@ public class IntDescriptor implements PrimitiveDescriptor {
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance()
-                || type instanceof IntConstantDescriptor || type instanceof LongConstantDescriptor
-                || type instanceof RealConstantDescriptor || type instanceof VarcharDescriptor
-                || type instanceof NCharDescriptor || type == TextDescriptor.getInstance();
+                || type instanceof VarcharDescriptor || type instanceof NCharDescriptor
+                || type == TextDescriptor.getInstance();
     }
 
 }

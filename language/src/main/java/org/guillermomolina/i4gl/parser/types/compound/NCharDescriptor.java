@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.parser.types.compound;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.CharConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
@@ -32,7 +31,7 @@ public class NCharDescriptor extends ArrayDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type instanceof CharConstantDescriptor || type == TextDescriptor.getInstance()
+        return type == TextDescriptor.getInstance()
                 || type instanceof VarcharDescriptor || type instanceof NCharDescriptor
                 || type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance()
                 || type == IntDescriptor.getInstance();

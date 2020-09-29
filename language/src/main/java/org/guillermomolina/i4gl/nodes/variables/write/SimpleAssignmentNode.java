@@ -22,9 +22,6 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.IntConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.LongConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.RealConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -55,18 +52,15 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     private int jumps = -1;
 
     protected boolean isInt() {
-        return getTypeDescriptor() == IntDescriptor.getInstance()
-                || getTypeDescriptor() instanceof IntConstantDescriptor;
+        return getTypeDescriptor() == IntDescriptor.getInstance();
     }
 
     protected boolean isLong() {
-        return getTypeDescriptor() == LongDescriptor.getInstance()
-                || getTypeDescriptor() instanceof LongConstantDescriptor;
+        return getTypeDescriptor() == LongDescriptor.getInstance();
     }
 
     protected boolean isDouble() {
-        return getTypeDescriptor() == RealDescriptor.getInstance()
-                || getTypeDescriptor() instanceof RealConstantDescriptor;
+        return getTypeDescriptor() == RealDescriptor.getInstance();
     }
 
     protected boolean isString() {

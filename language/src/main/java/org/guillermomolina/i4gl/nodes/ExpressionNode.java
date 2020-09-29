@@ -13,10 +13,6 @@ import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.CharConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.IntConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.LongConstantDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.RealConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
@@ -63,19 +59,19 @@ public abstract class ExpressionNode extends I4GLStatementNode {
 	}
 
     protected boolean isInt() {
-        return getType() == IntDescriptor.getInstance() || getType() instanceof IntConstantDescriptor;
+        return getType() == IntDescriptor.getInstance();
     }
 
     protected boolean isLong() {
-        return getType() == LongDescriptor.getInstance() || getType() instanceof LongConstantDescriptor;
+        return getType() == LongDescriptor.getInstance();
     }
 
     protected boolean isDouble() {
-        return getType() == RealDescriptor.getInstance() || getType() instanceof RealConstantDescriptor;
+        return getType() == RealDescriptor.getInstance();
     }
 
     protected boolean isChar() {
-        return getType() == CharDescriptor.getInstance() || getType() instanceof CharConstantDescriptor;
+        return getType() == CharDescriptor.getInstance();
     }
 
     @Override

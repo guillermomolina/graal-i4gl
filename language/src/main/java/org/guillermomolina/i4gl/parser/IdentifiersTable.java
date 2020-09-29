@@ -8,13 +8,11 @@ import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
-import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.TypeTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.complex.DatabaseDescriptor;
 import org.guillermomolina.i4gl.parser.types.complex.LabelDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.parser.types.constant.ConstantDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
@@ -123,21 +121,6 @@ public class IdentifiersTable {
 
     public void addVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, typeDescriptor);
-    }
-
-    public void addConstant(String identifier, ConstantDescriptor descriptor) throws LexicalException {
-        this.registerNewIdentifier(identifier, descriptor);
-    }
-
-    public ConstantDescriptor getConstant(String identifier) throws LexicalException {
-        TypeDescriptor descriptor = this.identifiersMap.get(identifier);
-        if (descriptor == null) {
-            throw new UnknownIdentifierException(identifier);
-        } else if (! (descriptor instanceof ConstantDescriptor)) {
-            throw new LexicalException("Not a constant: " + identifier);
-        } else {
-            return (ConstantDescriptor)descriptor;
-        }
     }
 
     FrameSlot registerNewIdentifier(String identifier, TypeDescriptor typeDescriptor) throws LexicalException,
