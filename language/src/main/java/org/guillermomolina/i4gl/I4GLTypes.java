@@ -18,6 +18,7 @@ public class I4GLTypes {
     public static long castIntToLong(int value) {
         return value;
     }
+    
 
     @ImplicitCast
     public static double castIntToDouble(int value) {
@@ -30,8 +31,50 @@ public class I4GLTypes {
     }
 
     @ImplicitCast
+    public static I4GLString castIntToString(int value) {
+        return new I4GLString(String.valueOf(value));
+    }
+
+    @ImplicitCast
+    public static I4GLString castLongToString(long value) {
+        return new I4GLString(String.valueOf(value));
+    }
+
+    @ImplicitCast
+    public static I4GLString castDoubleToString(double value) {
+        return new I4GLString(String.valueOf(value));
+    }
+
+    @ImplicitCast
     public static I4GLString castCharToString(char c) {
         return new I4GLString(String.valueOf(c));
     }
-    
+/*
+    @ImplicitCast
+    public static int castStringToInt(I4GLString value) {
+        try {
+            return Integer.parseInt(value.toString());
+        } catch(final NumberFormatException e) {
+            return 0;
+        }       
+    }
+
+    @ImplicitCast
+    public static long castStringToLong(I4GLString value) {
+        try {
+            return Long.parseLong(value.toString());
+        } catch(final NumberFormatException e) {
+            return 0;
+        }       
+    }
+
+    @ImplicitCast
+    public static double castStringToDouble(I4GLString value) {
+        try {
+            return Double.parseDouble(value.toString());
+        } catch(final NumberFormatException e) {
+            return Double.NaN;
+        }       
+    }
+*/
 }

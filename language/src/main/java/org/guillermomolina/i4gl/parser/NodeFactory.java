@@ -49,7 +49,7 @@ import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.root.MainFunctionRootNode;
 import org.guillermomolina.i4gl.nodes.statement.ConnectToDatabaseNode;
-import org.guillermomolina.i4gl.nodes.statement.DisplayNode2;
+import org.guillermomolina.i4gl.nodes.statement.DisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.ReadConstantNodeGen;
@@ -280,7 +280,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         checkTypesAreCompatible(valueNode.getType(), targetType);
         final FrameSlot targetSlot = doLookup(targetIdentifier, LexicalScope::getLocalSlot);
 
-        return SimpleAssignmentNodeGen.create(valueNode, targetSlot);
+        return SimpleAssignmentNodeGen.create(valueNode, targetSlot, targetType);
     }
 
     /**
@@ -620,8 +620,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         for (final I4GLParser.DisplayValueContext valueCtx : valueListCtx) {
             parameterNodes.add((ExpressionNode) visit(valueCtx));
         }
-        //DisplayNode node = new DisplayNode(parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]));
-        DisplayNode2 node = DisplayNode2Gen.create(parameterNodes.get(0));
+        DisplayNode node = new DisplayNode(parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]));
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
