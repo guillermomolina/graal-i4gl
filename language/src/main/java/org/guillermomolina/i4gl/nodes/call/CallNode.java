@@ -28,6 +28,7 @@ public final class CallNode extends I4GLStatementNode {
         evaluateResult(frame, returnValue);
 	}
 
+    @SuppressWarnings("deprecation")
     public void evaluateResult(VirtualFrame frame, ReturnValue returnValue) {
         if(returnValue.getSize() != resultSlots.length) {
             throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.getSize());

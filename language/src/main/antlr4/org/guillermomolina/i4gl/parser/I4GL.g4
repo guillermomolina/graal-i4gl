@@ -63,6 +63,7 @@ numberType: (
 		| INTEGER
 		| INT
 		| SMALLINT
+		| INT8
 		| REAL
 		| SMALLFLOAT
 	)
@@ -1350,6 +1351,8 @@ INTO: I N T O;
 //SQL & CURSOR 
 
 INT: I N T;
+
+INT8: I N T '8';
 
 INT_FLAG: I N T '_' F L A G;
 

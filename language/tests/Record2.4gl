@@ -1,7 +1,7 @@
 MAIN
   DEFINE myrecord RECORD
     anInteger INTEGER,
-    aFloat FLOAT,
+    aFloat REAL,
     aRecord RECORD
         aString TEXT,
         anArray ARRAY[10] OF INTEGER

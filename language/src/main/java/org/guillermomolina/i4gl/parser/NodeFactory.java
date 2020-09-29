@@ -72,7 +72,12 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.NCharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 
 public class NodeFactory extends I4GLBaseVisitor<Node> {
 
@@ -149,10 +154,6 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             }
         }
         return null;
-    }
-
-    public TypeDescriptor getTypeDescriptor(final String identifier) throws LexicalException {
-        return doLookup(identifier, LexicalScope::getTypeDescriptor);
     }
 
     public RootNode getRootNode() {
@@ -710,15 +711,19 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitNumberType(final I4GLParser.NumberTypeContext ctx) {
-        try {
-            if (ctx.numericConstant().isEmpty()) {
-                return new TypeNode(getTypeDescriptor(ctx.getText()));
-            } else {
-                throw new NotImplementedException();
-            }
-        } catch (LexicalException e) {
-            throw new ParseException(source, ctx, e.getMessage());
+        if (ctx.INTEGER() != null || ctx.INT() != null) {
+            return new TypeNode(IntDescriptor.getInstance());
         }
+        if (ctx.BIGINT() != null) {
+            return new TypeNode(LongDescriptor.getInstance());
+        }
+        if (ctx.REAL() != null) {
+            return new TypeNode(RealDescriptor.getInstance());
+        }
+        if (ctx.INT8() != null) {
+            return new TypeNode(CharDescriptor.getInstance());
+        }
+        throw new NotImplementedException();
     }
 
     @Override
@@ -735,11 +740,8 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
         if (ctx.BYTE() != null) {
             throw new NotImplementedException();
-        }
-        try {
-            return new TypeNode(getTypeDescriptor(ctx.getText()));
-        } catch (LexicalException e) {
-            throw new ParseException(source, ctx, e.getMessage());
+        } else /* if (ctx.TEXT() != null)  */ {
+            return new TypeNode(TextDescriptor.getInstance());
         }
     }
 
@@ -926,20 +928,20 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             throw new ParseException(source, ctx, e.getMessage());
         }
     }
-/*
-    private ReadFromReturnNode createReadFromReturnNode(final ExpressionNode returnExpression, final int index)
-            throws LexicalException {
-        TypeDescriptor descriptor = returnExpression.getType();
 
-        if (!(descriptor instanceof ReturnDescriptor)) {
-            throw new TypeMismatchException(descriptor.toString(), "Return");
-        }
-        ReturnDescriptor accessedReturnDescriptor = (ReturnDescriptor) descriptor;
-
-        TypeDescriptor returnType = accessedReturnDescriptor.getValueDescriptor(index);
-        return ReadFromReturnNodeGen.create(returnExpression, index, returnType);
-    }
-*/
+    /*
+     * private ReadFromReturnNode createReadFromReturnNode(final ExpressionNode
+     * returnExpression, final int index) throws LexicalException { TypeDescriptor
+     * descriptor = returnExpression.getType();
+     * 
+     * if (!(descriptor instanceof ReturnDescriptor)) { throw new
+     * TypeMismatchException(descriptor.toString(), "Return"); } ReturnDescriptor
+     * accessedReturnDescriptor = (ReturnDescriptor) descriptor;
+     * 
+     * TypeDescriptor returnType =
+     * accessedReturnDescriptor.getValueDescriptor(index); return
+     * ReadFromReturnNodeGen.create(returnExpression, index, returnType); }
+     */
     private ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression, final String identifier)
             throws LexicalException {
         TypeDescriptor descriptor = recordExpression.getType();

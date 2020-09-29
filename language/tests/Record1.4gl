@@ -1,7 +1,7 @@
 MAIN  
   DEFINE myrecord RECORD
     anInteger INTEGER,
-    aFloat FLOAT
+    aFloat REAL
   END RECORD
   LET myrecord.anInteger = 100
   LET myrecord.aFloat = 121.2

@@ -63,10 +63,6 @@ public class LexicalScope {
         return this.localIdentifiers.getIdentifierDescriptor(identifier);
     }
 
-    TypeDescriptor getTypeDescriptor(String identifier) {
-        return this.localIdentifiers.getTypeDescriptor(identifier);
-    }
-
     public void setName(String identifier) {
         this.name = identifier;
     }
@@ -77,10 +73,6 @@ public class LexicalScope {
 
     FrameSlot registerDatabase(String identifier) throws LexicalException {
         return this.localIdentifiers.addDatabase(identifier);
-    }
-
-    void registerNewType(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
-        this.localIdentifiers.addType(identifier, typeDescriptor);
     }
 
     boolean labelExists(String identifier) {
@@ -105,10 +97,6 @@ public class LexicalScope {
 
     RecordDescriptor createRecordDescriptor() {
         return new RecordDescriptor(this);
-    }
-
-    public void registerType(String identifier, TypeDescriptor type) throws LexicalException {
-        this.localIdentifiers.addType(identifier, type);
     }
 
     /**

@@ -1,6 +1,6 @@
 MAIN
     #DEFINE var1 VARCHAR(50)
-    DEFINE var2 FLOAT
+    DEFINE var2 REAL
     LET var2="101.2121"
     DISPLAY var2
 END MAIN

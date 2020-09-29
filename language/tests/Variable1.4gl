@@ -1,6 +1,6 @@
 MAIN
     DEFINE var1 INTEGER
-    DEFINE var2 FLOAT
+    DEFINE var2 REAL
     DEFINE var3 TEXT
     LET var1 = 1
     LET var2 = 1.0
