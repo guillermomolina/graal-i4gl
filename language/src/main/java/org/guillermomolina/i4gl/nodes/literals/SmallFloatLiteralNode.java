@@ -27,7 +27,7 @@ public abstract class SmallFloatLiteralNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return SmallFloatDescriptor.getInstance();
+        return SmallFloatDescriptor.SINGLETON;
     }
 
 }

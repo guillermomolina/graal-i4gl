@@ -10,16 +10,11 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 /**
  * Type descriptor representing the integer type.
  */
-public class IntDescriptor implements PrimitiveDescriptor {
+public class IntDescriptor implements TypeDescriptor {
 
-    private static IntDescriptor instance = new IntDescriptor();
-
-    public static IntDescriptor getInstance() {
-        return instance;
-    }
+    public static final IntDescriptor SINGLETON = new IntDescriptor();
 
     private IntDescriptor() {
-
     }
 
     @Override
@@ -29,14 +24,14 @@ public class IntDescriptor implements PrimitiveDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return 0;
+        return Integer.valueOf(0);
     }
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance()
+        return type == LongDescriptor.SINGLETON || type == RealDescriptor.SINGLETON
                 || type instanceof VarcharDescriptor || type instanceof CharDescriptor
-                || type == TextDescriptor.getInstance();
+                || type == TextDescriptor.SINGLETON;
     }
 
 }

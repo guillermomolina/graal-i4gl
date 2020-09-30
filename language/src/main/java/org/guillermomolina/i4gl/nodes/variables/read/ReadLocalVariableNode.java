@@ -1,17 +1,19 @@
 package org.guillermomolina.i4gl.nodes.variables.read;
 
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
+import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
+import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 /**
  * This node reads value of specified local variable (by its frame slot).
@@ -29,45 +31,47 @@ public abstract class ReadLocalVariableNode extends ExpressionNode {
 
 	protected abstract TypeDescriptor getTypeDescriptor();
 
-    @Specialization(guards = "isInt()")
-    int readInt(VirtualFrame frame) {
-        try {
-            return frame.getInt(getSlot());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+    @Specialization(guards = "frame.isInt(getSlot())")
+    protected int readInt(VirtualFrame frame) {
+        return FrameUtil.getIntSafe(frame, getSlot());
     }
 
-	@Specialization(guards = "isLong()")
-    long readLong(VirtualFrame frame) {
-        try {
-            return frame.getLong(getSlot());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+    @Specialization(guards = "frame.isLong(getSlot())")
+    protected long readLong(VirtualFrame frame) {
+        return FrameUtil.getLongSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "isFloat()")
-    float readFloat(VirtualFrame frame) {
-        try {
-            return frame.getFloat(getSlot());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+    @Specialization(guards = "frame.isFloat(getSlot())")
+    protected float readFloat(VirtualFrame frame) {
+        return FrameUtil.getFloatSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "isDouble()")
-    double readDouble(VirtualFrame frame) {
-        try {
-            return frame.getDouble(getSlot());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+    @Specialization(guards = "frame.isDouble(getSlot())")
+    protected double readDouble(VirtualFrame frame) {
+        return FrameUtil.getDoubleSafe(frame, getSlot());
     }
 
-    @Specialization
-    Object readGeneric(VirtualFrame frame) {
-	    return frame.getValue(getSlot());
+    @Specialization(replaces = {"readInt", "readLong", "readFloat", "readDouble"})
+    protected Object readObject(VirtualFrame frame) {
+        if (!frame.isObject(getSlot())) {
+            /*
+             * The FrameSlotKind has been set to Object, so from now on all writes to the local
+             * variable will be Object writes. However, now we are in a frame that still has an old
+             * non-Object value. This is a slow-path operation: we read the non-Object value, and
+             * write it immediately as an Object value so that we do not hit this path again
+             * multiple times for the same variable of the same frame.
+             */
+            CompilerDirectives.transferToInterpreter();
+            Object result = frame.getValue(getSlot());
+            frame.setObject(getSlot(), result);
+            return result;
+        }
+
+        Object result = FrameUtil.getObjectSafe(frame, getSlot());
+        if (result == NullValue.SINGLETON) {
+            throw new NotImplementedException();
+        }
+        return result;
     }
 
 

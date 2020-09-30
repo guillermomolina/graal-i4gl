@@ -6,7 +6,7 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 /**
  * Type descriptor representing the string type.
@@ -14,7 +14,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 public class CharDescriptor extends ArrayDescriptor {
 
     public CharDescriptor(int size) {
-        super(size, Char1Descriptor.getInstance());
+        super(size, Char1Descriptor.SINGLETON);
     }
 
     @Override
@@ -24,14 +24,14 @@ public class CharDescriptor extends ArrayDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new CharValue(getSize());
+        return NullValue.SINGLETON;
     }
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type == TextDescriptor.getInstance()
+        return type == TextDescriptor.SINGLETON
                 || type instanceof VarcharDescriptor || type instanceof CharDescriptor
-                || type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance()
-                || type == IntDescriptor.getInstance();
+                || type == LongDescriptor.SINGLETON || type == RealDescriptor.SINGLETON
+                || type == IntDescriptor.SINGLETON;
     }
 }

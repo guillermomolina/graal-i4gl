@@ -6,22 +6,17 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
+import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 /**
  * Type descriptor representing the string type.
  */
 public class TextDescriptor extends ArrayDescriptor {
 
-    private static TextDescriptor instance = new TextDescriptor();
-
-    public static TextDescriptor getInstance() {
-        return instance;
-    }
+    public static final TextDescriptor SINGLETON = new TextDescriptor();
 
     private TextDescriptor() {
-        super(Integer.MAX_VALUE, Char1Descriptor.getInstance());
-
+        super(Integer.MAX_VALUE, Char1Descriptor.SINGLETON);
     }
 
     @Override
@@ -31,13 +26,13 @@ public class TextDescriptor extends ArrayDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new TextValue();
+        return NullValue.SINGLETON;
     }
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type == TextDescriptor.getInstance() || type instanceof VarcharDescriptor
-                || type instanceof CharDescriptor || type == LongDescriptor.getInstance()
-                || type == RealDescriptor.getInstance() || type == IntDescriptor.getInstance();
+        return type == TextDescriptor.SINGLETON || type instanceof VarcharDescriptor
+                || type instanceof CharDescriptor || type == LongDescriptor.SINGLETON
+                || type == RealDescriptor.SINGLETON || type == IntDescriptor.SINGLETON;
     }
 }

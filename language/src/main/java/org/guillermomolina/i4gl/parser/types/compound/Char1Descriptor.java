@@ -5,9 +5,5 @@ public class Char1Descriptor extends CharDescriptor {
         super(1);
     }
 
-    private static Char1Descriptor instance = new Char1Descriptor();
-
-    public static Char1Descriptor getInstance() {
-        return instance;
-    }  
+    public static final Char1Descriptor SINGLETON = new Char1Descriptor();
 }

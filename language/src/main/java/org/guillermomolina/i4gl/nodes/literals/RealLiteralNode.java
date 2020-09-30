@@ -27,7 +27,7 @@ public abstract class RealLiteralNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return RealDescriptor.getInstance();
+        return RealDescriptor.SINGLETON;
     }
 
 }

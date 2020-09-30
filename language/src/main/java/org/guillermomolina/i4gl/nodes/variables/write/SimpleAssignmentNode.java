@@ -53,25 +53,25 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     private int jumps = -1;
 
     protected boolean isInt() {
-        return getTypeDescriptor() == IntDescriptor.getInstance();
+        return getTypeDescriptor() == IntDescriptor.SINGLETON;
     }
 
     protected boolean isLong() {
-        return getTypeDescriptor() == LongDescriptor.getInstance();
+        return getTypeDescriptor() == LongDescriptor.SINGLETON;
     }
 
     protected boolean isFloat() {
-        return getTypeDescriptor() == SmallFloatDescriptor.getInstance();
+        return getTypeDescriptor() == SmallFloatDescriptor.SINGLETON;
     }
 
     protected boolean isDouble() {
-        return getTypeDescriptor() == RealDescriptor.getInstance();
+        return getTypeDescriptor() == RealDescriptor.SINGLETON;
     }
 
     protected boolean isString() {
         return getTypeDescriptor() instanceof CharDescriptor
                 || getTypeDescriptor() instanceof VarcharDescriptor
-                || getTypeDescriptor() == TextDescriptor.getInstance();
+                || getTypeDescriptor() == TextDescriptor.SINGLETON;
     }
 
     @Specialization(guards = "isInt()")

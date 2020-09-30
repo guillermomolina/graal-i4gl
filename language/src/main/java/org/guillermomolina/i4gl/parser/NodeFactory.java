@@ -39,11 +39,11 @@ import org.guillermomolina.i4gl.nodes.literals.TextLiteralNode;
 import org.guillermomolina.i4gl.nodes.literals.TextLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.EqualsNodeGen;
+import org.guillermomolina.i4gl.nodes.logic.IsNullNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LessThanOrEqualNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.LikeNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.MatchesNodeGen;
-import org.guillermomolina.i4gl.nodes.logic.NotNode;
 import org.guillermomolina.i4gl.nodes.logic.NotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.OrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
@@ -552,15 +552,25 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitIfLogicalFactor(final I4GLParser.IfLogicalFactorContext ctx) {
-        if (ctx.LPAREN() != null) {
-            return visit(ctx.ifCondition());
+        ExpressionNode node = null;
+        if(ctx.ifCondition() != null) {
+            node = (ExpressionNode) visit(ctx.ifCondition());
         }
-        if (ctx.NOT() != null) {
-            NotNode node = NotNodeGen.create((ExpressionNode) visit(ctx.ifCondition()));
+        if(ctx.expression() != null) {
+            node = (ExpressionNode) visit(ctx.expression());
+        }
+        assert node != null;
+        if (ctx.IS() != null && ctx.NULL() != null) {
+            node = IsNullNodeGen.create(node);
             setSourceFromContext(node, ctx);
             node.addExpressionTag();
         }
-        return visit(ctx.expression());
+        if (ctx.NOT() != null) {
+            node = NotNodeGen.create(node);
+            setSourceFromContext(node, ctx);
+            node.addExpressionTag();
+        }
+        return node;
     }
 
     @Override
@@ -688,6 +698,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                             "Undefined default value for type " + typeDescriptor.toString());
                 }
                 FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
+                //initializationNode = new ObjectInitializationNode(frameSlot, defaultValue);
                 initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
                 initializationNodes.add(initializationNode);
             }
@@ -719,13 +730,13 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitNumberType(final I4GLParser.NumberTypeContext ctx) {
         if (ctx.INTEGER() != null || ctx.INT() != null) {
-            return new TypeNode(IntDescriptor.getInstance());
+            return new TypeNode(IntDescriptor.SINGLETON);
         }
         if (ctx.BIGINT() != null) {
-            return new TypeNode(LongDescriptor.getInstance());
+            return new TypeNode(LongDescriptor.SINGLETON);
         }
         if (ctx.REAL() != null) {
-            return new TypeNode(RealDescriptor.getInstance());
+            return new TypeNode(RealDescriptor.SINGLETON);
         }
         throw new NotImplementedException();
     }
@@ -745,7 +756,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         if (ctx.BYTE() != null) {
             throw new NotImplementedException();
         } else /* there is a ctx.TEXT() */ {
-            return new TypeNode(TextDescriptor.getInstance());
+            return new TypeNode(TextDescriptor.SINGLETON);
         }
     }
 

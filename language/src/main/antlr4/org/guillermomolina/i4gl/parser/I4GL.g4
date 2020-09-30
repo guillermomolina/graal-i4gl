@@ -5,8 +5,8 @@
 grammar I4GL;
 
 compilationUnit:
-	EOL* databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock? functionOrReportDefinitions
-		? EOF;
+	EOL* databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock?
+		functionOrReportDefinitions? EOF;
 
 identifier: IDENT;
 
@@ -316,8 +316,8 @@ ifLogicalTerm: ifLogicalFactor (AND ifLogicalFactor)*;
 
 ifLogicalFactor:
 	// Added "prior" to a comparison expression to support use of a condition in a connect_clause.
-	// (simpleExpression IS NOT? NULL) simpleExpression IS NOT? NULL
-	| /*(NOT ifCondition)*/ NOT ifCondition
+	expression IS NOT? NULL
+	| NOT ifCondition
 	| LPAREN ifCondition RPAREN
 	| expression;
 

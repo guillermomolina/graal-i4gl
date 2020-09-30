@@ -35,13 +35,13 @@ public class ArrayDescriptor implements TypeDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        if (valuesDescriptor == IntDescriptor.getInstance()) {
+        if (valuesDescriptor == IntDescriptor.SINGLETON) {
             return new int[size];
-        } else if (valuesDescriptor == LongDescriptor.getInstance()) {
+        } else if (valuesDescriptor == LongDescriptor.SINGLETON) {
             return new long[size];
-        } else if (valuesDescriptor == SmallFloatDescriptor.getInstance()) {
+        } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
             return new float[size];
-        } else if (valuesDescriptor == RealDescriptor.getInstance()) {
+        } else if (valuesDescriptor == RealDescriptor.SINGLETON) {
             return new double[size];
         } else {
             Object[] data = new Object[size];

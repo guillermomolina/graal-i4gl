@@ -10,16 +10,11 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 /**
  * Type descriptor representing the longint type.
  */
-public class LongDescriptor implements PrimitiveDescriptor {
+public class LongDescriptor implements TypeDescriptor {
 
-    private static LongDescriptor instance = new LongDescriptor();
-
-    public static LongDescriptor getInstance() {
-        return instance;
-    }
+    public static final LongDescriptor SINGLETON = new LongDescriptor();
 
     private LongDescriptor() {
-
     }
 
     @Override
@@ -29,13 +24,13 @@ public class LongDescriptor implements PrimitiveDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return 0L;
+        return Long.valueOf(0);
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
-        return type == RealDescriptor.getInstance() || type instanceof VarcharDescriptor
-                || type instanceof CharDescriptor || type == TextDescriptor.getInstance();
+    public boolean convertibleTo(final TypeDescriptor type) {
+        return type == RealDescriptor.SINGLETON || type instanceof VarcharDescriptor
+                || type instanceof CharDescriptor || type == TextDescriptor.SINGLETON;
     }
 
 }

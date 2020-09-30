@@ -2,7 +2,6 @@ package org.guillermomolina.i4gl.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -21,13 +20,11 @@ import org.junit.Ignore;
 public abstract class JUnitTest {
 
     protected ByteArrayOutputStream output;
-    private ByteArrayInputStream input;
     private Context context;
 
     @Before
     public void setUp() {
         output = new ByteArrayOutputStream();
-        input = new ByteArrayInputStream(new byte[0]);
         context = Context.newBuilder(I4GLLanguage.ID).allowExperimentalOptions(true).in(System.in).out(System.out)
                 .err(System.err).build();
         // assertTrue(engine.getLanguages().containsKey(I4GLLanguage.MIME_TYPE));

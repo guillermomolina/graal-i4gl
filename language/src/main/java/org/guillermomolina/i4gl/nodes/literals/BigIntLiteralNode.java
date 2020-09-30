@@ -27,7 +27,7 @@ public abstract class BigIntLiteralNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return LongDescriptor.getInstance();
+        return LongDescriptor.SINGLETON;
     }
 
 }

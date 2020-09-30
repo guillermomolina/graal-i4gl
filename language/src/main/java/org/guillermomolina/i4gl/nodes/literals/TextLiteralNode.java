@@ -28,7 +28,7 @@ public abstract class TextLiteralNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return TextDescriptor.getInstance();
+        return TextDescriptor.SINGLETON;
     }
 
 }

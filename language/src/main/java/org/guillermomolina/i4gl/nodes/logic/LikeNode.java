@@ -28,6 +28,6 @@ public abstract class LikeNode extends BinaryExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return IntDescriptor.getInstance();
+        return IntDescriptor.SINGLETON;
     }
 }

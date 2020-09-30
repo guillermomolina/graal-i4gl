@@ -10,16 +10,11 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 /**
  * Type descriptor representing the real type.
  */
-public class SmallFloatDescriptor implements PrimitiveDescriptor {
+public class SmallFloatDescriptor implements TypeDescriptor {
 
-    private static SmallFloatDescriptor instance = new SmallFloatDescriptor();
-
-    public static SmallFloatDescriptor getInstance() {
-        return instance;
-    }
+    public static final SmallFloatDescriptor SINGLETON = new SmallFloatDescriptor();
 
     private SmallFloatDescriptor() {
-
     }
 
     @Override
@@ -29,13 +24,13 @@ public class SmallFloatDescriptor implements PrimitiveDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return 0.0f;
+        return Float.valueOf(0.0f);
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
+    public boolean convertibleTo(final TypeDescriptor type) {
         return type instanceof VarcharDescriptor
-        || type instanceof CharDescriptor || type == TextDescriptor.getInstance();
+        || type instanceof CharDescriptor || type == TextDescriptor.SINGLETON;
     }
 
 }

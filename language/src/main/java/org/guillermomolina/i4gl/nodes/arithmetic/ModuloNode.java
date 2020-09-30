@@ -18,10 +18,10 @@ import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 public abstract class ModuloNode extends BinaryExpressionNode {
 
     ModuloNode() {
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), LongDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), LongDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), LongDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, IntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, IntDescriptor.SINGLETON), LongDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, LongDescriptor.SINGLETON), LongDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, LongDescriptor.SINGLETON), LongDescriptor.SINGLETON);
     }
 
     @Specialization

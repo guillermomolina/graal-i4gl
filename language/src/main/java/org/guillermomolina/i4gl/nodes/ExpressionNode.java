@@ -59,19 +59,19 @@ public abstract class ExpressionNode extends I4GLStatementNode {
 	}
 
     protected boolean isInt() {
-        return getType() == IntDescriptor.getInstance();
+        return getType() == IntDescriptor.SINGLETON;
     }
 
     protected boolean isLong() {
-        return getType() == LongDescriptor.getInstance();
+        return getType() == LongDescriptor.SINGLETON;
     }
 
     protected boolean isFloat() {
-        return getType() == SmallFloatDescriptor.getInstance();
+        return getType() == SmallFloatDescriptor.SINGLETON;
     }
 
     protected boolean isDouble() {
-        return getType() == RealDescriptor.getInstance();
+        return getType() == RealDescriptor.SINGLETON;
     }
 
     @Override

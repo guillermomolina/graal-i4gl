@@ -20,13 +20,13 @@ import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 public abstract class LessThanNode extends BinaryExpressionNode {
 
     LessThanNode() {
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, IntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, LongDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, IntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, LongDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, LongDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, RealDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, RealDescriptor.SINGLETON), IntDescriptor.SINGLETON);
     }
 
     @Specialization
@@ -51,7 +51,7 @@ public abstract class LessThanNode extends BinaryExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return IntDescriptor.getInstance();
+        return IntDescriptor.SINGLETON;
     }
 
 }
