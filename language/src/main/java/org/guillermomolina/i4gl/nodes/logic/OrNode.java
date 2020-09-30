@@ -6,7 +6,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -29,7 +28,6 @@ public abstract class OrNode extends BinaryExpressionNode {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(Int8Descriptor.getInstance(), Int8Descriptor.getInstance()), IntDescriptor.getInstance());
     }
 
     @Specialization
@@ -43,13 +41,13 @@ public abstract class OrNode extends BinaryExpressionNode {
 	}
 
 	@Specialization
-	int or(double left, double right) {
-		return (left != 0 || right != 0) ? 1 : 0;
+	int or(float left, float right) {
+		return (left != '0' || right != '0') ? 1 : 0;
 	}
 
 	@Specialization
-	int or(char left, char right) {
-		return (left != '0' || right != '0') ? 1 : 0;
+	int or(double left, double right) {
+		return (left != 0 || right != 0) ? 1 : 0;
 	}
 
     @Override

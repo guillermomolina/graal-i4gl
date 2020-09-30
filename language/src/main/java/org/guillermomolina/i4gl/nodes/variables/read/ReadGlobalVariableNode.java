@@ -48,19 +48,19 @@ public abstract class ReadGlobalVariableNode extends ExpressionNode {
         }
     }
 
-    @Specialization(guards = "isDouble()")
-    double readDouble(VirtualFrame frame) {
+    @Specialization(guards = "isFloat()")
+    float readFloat(VirtualFrame frame) {
         try {
-            return getFrame(frame).getDouble(getSlot());
+            return getFrame(frame).getFloat(getSlot());
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }
     }
 
-    @Specialization(guards = "isChar()")
-    char readChar(VirtualFrame frame) {
+    @Specialization(guards = "isDouble()")
+    double readDouble(VirtualFrame frame) {
         try {
-            return (char) getFrame(frame).getByte(getSlot());
+            return getFrame(frame).getDouble(getSlot());
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }

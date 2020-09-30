@@ -49,12 +49,12 @@ public abstract class AndNode extends BinaryExpressionNode {
 	}
 
 	@Specialization
-	int and(double left, double right) {
-		return (left != 0 && right != 0) ? 1 : 0;
+	int and(float left, float right) {
+		return (left != '0' && right != '0') ? 1 : 0;
 	}
 
 	@Specialization
-	int and(char left, char right) {
-		return (left != '0' && right != '0') ? 1 : 0;
+	int and(double left, double right) {
+		return (left != 0 && right != 0) ? 1 : 0;
 	}
 }

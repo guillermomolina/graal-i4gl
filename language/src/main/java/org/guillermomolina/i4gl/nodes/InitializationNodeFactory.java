@@ -2,6 +2,7 @@ package org.guillermomolina.i4gl.nodes;
 
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
+
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 
 /**
@@ -23,8 +24,8 @@ public class InitializationNodeFactory {
                     new LongInitializationNode(frameSlot, (long) value) : new LongInitializationWithFrameNode(frameSlot, (long) value, frame);
             case Double: return (frame == null)?
                     new DoubleInitializationNode(frameSlot, (double) value) : new DoubleInitializationWithFrameNode(frameSlot, (double) value, frame);
-            case Byte: return (frame == null)?
-                    new CharInitializationNode(frameSlot, (char) value) : new CharInitializationWithFrameNode(frameSlot, (char) value, frame);
+            case Float: return (frame == null)?
+                    new FloatInitializationNode(frameSlot, (float) value) : new FloatInitializationWithFrameNode(frameSlot, (float) value, frame);
             default: return (frame == null)?
                     new ObjectInitializationNode(frameSlot, value) : new ObjectInitializationWithFrameNode(frameSlot, value, frame);
         }
@@ -125,40 +126,40 @@ class LongInitializationWithFrameNode extends LongInitializationNode {
 }
 
 /**
- * Initialization node for char type variables. It looks for the variable the current frame.
+ * Initialization node for float type variables. It looks for the variable the current frame.
  */
-class CharInitializationNode extends InitializationNode {
+class FloatInitializationNode extends InitializationNode {
 
-	protected final char value;
+	protected final float value;
 	
-	CharInitializationNode(FrameSlot slot, char value) {
+	FloatInitializationNode(FrameSlot slot, float value) {
 		super(slot);
 		this.value = value;
 	}
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        frame.setByte(slot, (byte)value);
+        frame.setFloat(slot, value);
     }
 
 }
 
 /**
- * Initialization node for char type variables. It looks for the variable the specified frame. It is used to
+ * Initialization node for float type variables. It looks for the variable the specified frame. It is used to
  * initialize variables inside a unit.
  */
-class CharInitializationWithFrameNode extends CharInitializationNode {
+class FloatInitializationWithFrameNode extends FloatInitializationNode {
 
     private final VirtualFrame frame;
 
-    CharInitializationWithFrameNode(FrameSlot slot, char value, VirtualFrame frame) {
+    FloatInitializationWithFrameNode(FrameSlot slot, float value, VirtualFrame frame) {
         super(slot, value);
         this.frame = frame;
     }
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        this.frame.setByte(slot, (byte) value);
+        this.frame.setFloat(slot, value);
     }
 
 }

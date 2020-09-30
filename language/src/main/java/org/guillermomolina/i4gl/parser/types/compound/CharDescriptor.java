@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.parser.types.compound;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -15,8 +14,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 public class CharDescriptor extends ArrayDescriptor {
 
     public CharDescriptor(int size) {
-        super(size, Int8Descriptor.getInstance());
-
+        super(size, Char1Descriptor.getInstance());
     }
 
     @Override
@@ -36,5 +34,4 @@ public class CharDescriptor extends ArrayDescriptor {
                 || type == LongDescriptor.getInstance() || type == RealDescriptor.getInstance()
                 || type == IntDescriptor.getInstance();
     }
-
 }

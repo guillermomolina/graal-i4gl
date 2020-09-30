@@ -6,7 +6,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -21,7 +20,6 @@ import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 public abstract class LessThanNode extends BinaryExpressionNode {
 
     LessThanNode() {
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(Int8Descriptor.getInstance(), Int8Descriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
@@ -48,11 +46,6 @@ public abstract class LessThanNode extends BinaryExpressionNode {
 
 	@Specialization
 	int lessThan(double left, double right) {
-		return left < right ? 1 : 0;
-	}
-
-	@Specialization
-	int lessThan(char left, char right) {
 		return left < right ? 1 : 0;
 	}
 

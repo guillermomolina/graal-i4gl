@@ -63,8 +63,8 @@ public class ForNode extends I4GLStatementNode {
                         hasEndedNode = hasEndedDescendingNode;
                     }
                     break;
-                case Byte:
-                    if (this.initialValue.executeChar(frame) >= this.finalValue.executeChar(frame)) {
+                case Float:
+                    if (this.initialValue.executeFloat(frame) >= this.finalValue.executeFloat(frame)) {
                         hasEndedNode = hasEndedDescendingNode;
                     }
                     break;

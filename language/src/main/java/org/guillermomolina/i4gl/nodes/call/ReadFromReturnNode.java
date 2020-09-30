@@ -44,9 +44,9 @@ public abstract class ReadFromReturnNode extends ExpressionNode {
         return (double) valuenode.getValueAt(getIndex());
     }
 
-    @Specialization(guards = "isChar()")
-    char readChar(ReturnValue valuenode) {
-        return (char) valuenode.getValueAt(getIndex());
+    @Specialization(guards = "isFloat()")
+    float readFloat(ReturnValue valuenode) {
+        return (float) valuenode.getValueAt(getIndex());
     }
 
     @Specialization

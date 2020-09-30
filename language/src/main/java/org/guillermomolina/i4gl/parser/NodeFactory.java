@@ -31,10 +31,10 @@ import org.guillermomolina.i4gl.nodes.control.DebuggerNode;
 import org.guillermomolina.i4gl.nodes.control.ForNode;
 import org.guillermomolina.i4gl.nodes.control.IfNode;
 import org.guillermomolina.i4gl.nodes.control.WhileNode;
-import org.guillermomolina.i4gl.nodes.literals.RealLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.BigIntLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.RealLiteralNode;
+import org.guillermomolina.i4gl.nodes.literals.RealLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.TextLiteralNode;
 import org.guillermomolina.i4gl.nodes.literals.TextLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
@@ -74,7 +74,6 @@ import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -162,6 +161,8 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     private static void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
         Interval sourceInterval = srcFromContext(ctx);
+        assert sourceInterval != null;
+        assert node != null;
         node.setSourceSection(sourceInterval.a, sourceInterval.length());
     }
 
@@ -720,9 +721,6 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         if (ctx.REAL() != null) {
             return new TypeNode(RealDescriptor.getInstance());
         }
-        if (ctx.INT8() != null) {
-            return new TypeNode(Int8Descriptor.getInstance());
-        }
         throw new NotImplementedException();
     }
 
@@ -740,7 +738,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
         if (ctx.BYTE() != null) {
             throw new NotImplementedException();
-        } else /* if (ctx.TEXT() != null)  */ {
+        } else /* there is a ctx.TEXT() */ {
             return new TypeNode(TextDescriptor.getInstance());
         }
     }
@@ -874,6 +872,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         I4GLStatementNode result = null;
         final int lastIndex = indexNodes.size() - 1;
         for (int index = 0; index < indexNodes.size(); index++) {
+            assert readArrayNode != null;
             TypeDescriptor actualType = readArrayNode.getType();
             if (!(actualType instanceof ArrayDescriptor)) {
                 throw new TypeMismatchException(actualType.toString(), "Array");

@@ -63,7 +63,6 @@ numberType: (
 		| INTEGER
 		| INT
 		| SMALLINT
-		| INT8
 		| REAL
 		| SMALLFLOAT
 	)

@@ -49,9 +49,6 @@ public final class CallNode extends I4GLStatementNode {
                 case Double:
                     frame.setDouble(slot, (double)result);
                     break;
-                case Byte:
-                    frame.setByte(slot, (byte)result);
-                    break;
                 case Object:
                     frame.setObject(slot,result);
                     break;

@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
+import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
@@ -40,13 +40,13 @@ public abstract class AssignToRecordField extends I4GLStatementNode {
     }
 
     @Specialization
-    void assignDouble(RecordValue record, double value) {
-        record.getFrame().setDouble(record.getSlot(this.identifier), value);
+    void assignFloat(RecordValue record, float value) {
+        record.getFrame().setFloat(record.getSlot(this.identifier), value);
     }
 
     @Specialization
-    void assignChar(RecordValue record, char value) {
-        record.getFrame().setByte(record.getSlot(this.identifier), (byte) value);
+    void assignDouble(RecordValue record, double value) {
+        record.getFrame().setDouble(record.getSlot(this.identifier), value);
     }
 
     @Specialization

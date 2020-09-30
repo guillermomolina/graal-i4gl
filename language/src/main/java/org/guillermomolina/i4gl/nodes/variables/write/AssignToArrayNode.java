@@ -34,22 +34,17 @@ public abstract class AssignToArrayNode extends I4GLStatementNode {
     }
 
     @Specialization
+    void assigFloat(float[] array, int index, float value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization
     void assignDouble(double[] array, int index, double value) {
         array[index - 1] = value;
     }
 
     @Specialization
-    void assignChar(char[] array, int index, char value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void assignToString(TextValue string, int index, char value) {
-        string.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToString(TextValue string, int index, TextValue value) {
+    void assignToText(TextValue string, int index, TextValue value) {
         string.setValueAt(index - 1, value.getValueAt(0));
     }
 

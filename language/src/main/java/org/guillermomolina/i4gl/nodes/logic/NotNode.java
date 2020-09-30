@@ -30,11 +30,6 @@ public abstract class NotNode extends UnaryNode {
 		return child == 0 ? 1 : 0;
 	}
 
-	@Specialization
-	int logicalNot(char child) {
-		return child == '0' ? 1 : 0;
-	}
-
     @Override
     public TypeDescriptor getType() {
         return IntDescriptor.getInstance();

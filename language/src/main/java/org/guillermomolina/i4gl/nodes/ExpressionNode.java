@@ -13,7 +13,6 @@ import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -51,12 +50,12 @@ public abstract class ExpressionNode extends I4GLStatementNode {
 		return I4GLTypesGen.expectLong(executeGeneric(frame));
 	}
 
-	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
-		return I4GLTypesGen.expectDouble(executeGeneric(frame));
+	public double executeFloat(VirtualFrame frame) throws UnexpectedResultException {
+		return I4GLTypesGen.expectFloat(executeGeneric(frame));
 	}
 
-	public char executeChar(VirtualFrame frame) throws UnexpectedResultException {
-		return I4GLTypesGen.expectCharacter(executeGeneric(frame));
+	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
+		return I4GLTypesGen.expectDouble(executeGeneric(frame));
 	}
 
     protected boolean isInt() {
@@ -73,10 +72,6 @@ public abstract class ExpressionNode extends I4GLStatementNode {
 
     protected boolean isDouble() {
         return getType() == RealDescriptor.getInstance();
-    }
-
-    protected boolean isChar() {
-        return getType() == Int8Descriptor.getInstance();
     }
 
     @Override

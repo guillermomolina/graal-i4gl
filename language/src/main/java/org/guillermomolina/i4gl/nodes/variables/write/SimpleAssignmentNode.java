@@ -25,6 +25,7 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
@@ -59,6 +60,10 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
         return getTypeDescriptor() == LongDescriptor.getInstance();
     }
 
+    protected boolean isFloat() {
+        return getTypeDescriptor() == SmallFloatDescriptor.getInstance();
+    }
+
     protected boolean isDouble() {
         return getTypeDescriptor() == RealDescriptor.getInstance();
     }
@@ -74,14 +79,44 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
         getFrame(frame).setInt(getSlot(), value);
     }
 
+    @Specialization(guards = "isInt()")
+    void writeInt(VirtualFrame frame, TextValue string) {
+        try {
+            int value = Integer.parseInt(string.toString());
+            getFrame(frame).setInt(getSlot(), value);
+        } catch(final NumberFormatException e) {
+            throw new InvalidCastException(string, getTypeDescriptor());
+        }       
+    }
+
     @Specialization(guards = "isLong()")
     void writeLong(VirtualFrame frame, long value) {
         getFrame(frame).setLong(getSlot(), value);
     }
 
-    @Specialization
-    void writeChar(VirtualFrame frame, char value) {
-        getFrame(frame).setByte(getSlot(), (byte) value);
+    @Specialization(guards = "isLong()")
+    void writeLong(VirtualFrame frame, TextValue string) {
+        try {
+            long value = Long.parseLong(string.toString());
+            getFrame(frame).setLong(getSlot(), value);
+        } catch(final NumberFormatException e) {
+            throw new InvalidCastException(string, getTypeDescriptor());
+        }       
+    }
+
+    @Specialization(guards = "isFloat()")
+    void writeFloat(VirtualFrame frame, float value) {
+        getFrame(frame).setFloat(getSlot(), value);
+    }
+
+    @Specialization(guards = "isFloat()")
+    void writeFloat(VirtualFrame frame, TextValue string) {
+        try {
+            float value = Float.parseFloat(string.toString());
+            getFrame(frame).setFloat(getSlot(), value);
+        } catch(final NumberFormatException e) {
+            throw new InvalidCastException(string, getTypeDescriptor());
+        }       
     }
 
     @Specialization(guards = "isDouble()")
@@ -132,12 +167,12 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Specialization
-    void assignDoubleArray(VirtualFrame frame, double[] array) {
+    void assignFloatArray(VirtualFrame frame, float[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
-    void assignCharArray(VirtualFrame frame, char[] array) {
+    void assignDoubleArray(VirtualFrame frame, double[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 

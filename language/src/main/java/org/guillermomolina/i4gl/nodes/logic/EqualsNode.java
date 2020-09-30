@@ -6,7 +6,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.Int8Descriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
@@ -24,7 +23,6 @@ public abstract class EqualsNode extends BinaryExpressionNode {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.getInstance(), IntDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.getInstance(), LongDescriptor.getInstance()), IntDescriptor.getInstance());
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.getInstance(), RealDescriptor.getInstance()), IntDescriptor.getInstance());
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(Int8Descriptor.getInstance(), Int8Descriptor.getInstance()), IntDescriptor.getInstance());
     }
 
     @Specialization
@@ -38,14 +36,14 @@ public abstract class EqualsNode extends BinaryExpressionNode {
     }
 
 	@Specialization
+    protected int equals(float left, float right) {
+	    return left == right ? 1 : 0;
+    }
+
+	@Specialization
 	protected int equals(double left, double right) {
 		return left == right ? 1 : 0;
 	}
-
-	@Specialization
-    protected int equals(char left, char right) {
-	    return left == right ? 1 : 0;
-    }
 
     @Override
     public TypeDescriptor getType() {

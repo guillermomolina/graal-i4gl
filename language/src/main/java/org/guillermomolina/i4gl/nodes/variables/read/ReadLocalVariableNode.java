@@ -47,19 +47,19 @@ public abstract class ReadLocalVariableNode extends ExpressionNode {
         }
     }
 
-    @Specialization(guards = "isDouble()")
-    double readDouble(VirtualFrame frame) {
+    @Specialization(guards = "isFloat()")
+    float readFloat(VirtualFrame frame) {
         try {
-            return frame.getDouble(getSlot());
+            return frame.getFloat(getSlot());
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }
     }
 
-    @Specialization(guards = "isChar()")
-    char readChar(VirtualFrame frame) {
+    @Specialization(guards = "isDouble()")
+    double readDouble(VirtualFrame frame) {
         try {
-            return (char) frame.getByte(getSlot());
+            return frame.getDouble(getSlot());
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }

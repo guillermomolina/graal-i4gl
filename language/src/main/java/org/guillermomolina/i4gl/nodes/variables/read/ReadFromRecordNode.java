@@ -51,21 +51,21 @@ public abstract class ReadFromRecordNode extends ExpressionNode {
         }
     }
 
-    @Specialization(guards = "isDouble()")
-    double readDouble(RecordValue record) {
+    @Specialization(guards = "isFloat()")
+    float readFloat(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
         try {
-            return record.getFrame().getDouble(slot);
+            return record.getFrame().getFloat(slot);
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }
     }
 
-    @Specialization(guards = "isChar()")
-    char readChar(RecordValue record) {
+    @Specialization(guards = "isDouble()")
+    double readDouble(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
         try {
-            return (char) record.getFrame().getByte(slot);
+            return record.getFrame().getDouble(slot);
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }

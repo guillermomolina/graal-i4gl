@@ -1,8 +1,11 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
+import com.oracle.truffle.api.CompilerDirectives;
+
 /**
  * Representation of a string-type variable.
  */
+@CompilerDirectives.ValueType
 public class TextValue implements ArrayValue {
 
     private String value;
@@ -41,7 +44,9 @@ public class TextValue implements ArrayValue {
     }
 
     /**
-     * Returns a new string whose value is the current value concatenated with specified character.
+     * Returns a new string whose value is the current value concatenated with
+     * specified character.
+     * 
      * @return the new string
      */
     public TextValue concatenate(char value) {
@@ -49,7 +54,9 @@ public class TextValue implements ArrayValue {
     }
 
     /**
-     * Returns a new string whose value is the current value concatenated with another string.
+     * Returns a new string whose value is the current value concatenated with
+     * another string.
+     * 
      * @param value the string to be appended to current value
      * @return the new string
      */

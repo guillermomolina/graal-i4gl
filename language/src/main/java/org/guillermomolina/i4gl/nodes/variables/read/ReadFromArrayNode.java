@@ -39,12 +39,12 @@ public abstract class ReadFromArrayNode extends ExpressionNode {
     }
 
     @Specialization
-    double readDouble(double[] array, int index) {
+    float readFloat(float[] array, int index) {
         return array[index - 1];
     }
 
     @Specialization
-    char readChar(char[] array, int index) {
+    double readDouble(double[] array, int index) {
         return array[index - 1];
     }
 
