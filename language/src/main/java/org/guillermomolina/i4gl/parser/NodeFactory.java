@@ -313,14 +313,20 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
-        InvokeNode invokeNode = (InvokeNode) visit(ctx.function());
+        final String functionIdentifier = ctx.function().functionIdentifier().getText();
+        final List<ExpressionNode> parameterNodes = new ArrayList<>(ctx.function().actualParameter().size());
+        for (final I4GLParser.ActualParameterContext parameterCtx : ctx.function().actualParameter()) {
+            parameterNodes.add((ExpressionNode) visit(parameterCtx));
+        }
+        final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
         List<FrameSlot> returnSlots = new ArrayList<>(ctx.identifier().size());
         for (final I4GLParser.IdentifierContext identifierCtx : ctx.identifier()) {
             final String resultIdentifier = identifierCtx.getText();
             FrameSlot recordSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
             returnSlots.add(recordSlot);
         }
-        CallNode node = new CallNode(invokeNode, returnSlots.toArray(new FrameSlot[returnSlots.size()]));
+        CallNode node = new CallNode(language, functionIdentifier, arguments,
+                returnSlots.toArray(new FrameSlot[returnSlots.size()]));
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -328,13 +334,13 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitFunction(final I4GLParser.FunctionContext ctx) {
-        final String identifier = ctx.functionIdentifier().getText();
+        final String functionIdentifier = ctx.functionIdentifier().getText();
         final List<ExpressionNode> parameterNodes = new ArrayList<>(ctx.actualParameter().size());
         for (final I4GLParser.ActualParameterContext parameterCtx : ctx.actualParameter()) {
             parameterNodes.add((ExpressionNode) visit(parameterCtx));
         }
         final ExpressionNode[] arguments = parameterNodes.toArray(new ExpressionNode[parameterNodes.size()]);
-        InvokeNode node = new InvokeNode(language, identifier, arguments);
+        InvokeNode node = new InvokeNode(language, functionIdentifier, arguments);
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;

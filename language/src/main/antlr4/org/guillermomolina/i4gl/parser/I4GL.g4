@@ -5,7 +5,7 @@
 grammar I4GL;
 
 compilationUnit:
-	databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock? functionOrReportDefinitions
+	EOL* databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock? functionOrReportDefinitions
 		? EOF;
 
 identifier: IDENT;

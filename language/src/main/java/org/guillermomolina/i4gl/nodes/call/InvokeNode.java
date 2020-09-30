@@ -11,9 +11,11 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
+import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "invoke")
 public final class InvokeNode extends ExpressionNode {
@@ -33,7 +35,7 @@ public final class InvokeNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-	    return null;
+        throw new NotImplementedException();
     }
 
     private CallTarget getFunction() {
@@ -48,11 +50,10 @@ public final class InvokeNode extends ExpressionNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
         ReturnValue returnValue = (ReturnValue) function.call(argumentValues);
-        return returnValue;
-        /*if(returnValue.getSize() != 1) {
+        if(returnValue.getSize() != 1) {
             throw new IncorrectNumberOfReturnValuesException(1, returnValue.getSize());
         }
-        return returnValue.getValueAt(0);*/
+        return returnValue.getValueAt(0);
 	}
 
     @ExplodeLoop
