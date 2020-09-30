@@ -49,6 +49,11 @@ public abstract class DivideNode extends BinaryExpressionNode {
     }
 
 	@Specialization
+	protected float divideFloat(float left, float right) {
+		return left / right;
+	}
+
+	@Specialization
 	protected double divideDouble(double left, double right) {
 		return left / right;
 	}

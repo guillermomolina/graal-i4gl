@@ -24,6 +24,11 @@ public abstract class NegationNode extends UnaryNode {;
 	}
 
 	@Specialization
+	float neg(float argument) {
+		return -argument;
+	}
+
+	@Specialization
 	double neg(double argument) {
 		return -argument;
 	}

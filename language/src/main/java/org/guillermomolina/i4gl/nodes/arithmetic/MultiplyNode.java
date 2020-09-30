@@ -50,6 +50,11 @@ public abstract class MultiplyNode extends BinaryExpressionNode {
     }
 
 	@Specialization
+	float mul(float left, float right) {
+		return left * right;
+	}
+
+	@Specialization
 	double mul(double left, double right) {
 		return left * right;
 	}

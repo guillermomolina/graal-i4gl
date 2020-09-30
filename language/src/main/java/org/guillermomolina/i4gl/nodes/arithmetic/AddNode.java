@@ -49,6 +49,11 @@ public abstract class AddNode extends BinaryExpressionNode {
     }
 
 	@Specialization
+	protected float add(float left, float right) {
+		return left + right;
+	}
+
+	@Specialization
 	protected double add(double left, double right) {
 		return left + right;
 	}
