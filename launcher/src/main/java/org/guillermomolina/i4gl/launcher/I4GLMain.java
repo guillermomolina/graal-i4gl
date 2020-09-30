@@ -86,6 +86,22 @@ public final class I4GLMain {
     }
 
     private static int executeSource(String file, Source source, InputStream in, PrintStream out, Map<String, String> options) {
+        Context context = Context.create();
+        // @formatter:off
+        context.eval("i4gl", "\n" +
+            "FUNCTION fac(n)\n" + 
+            "    DEFINE n INTEGER\n" + 
+            "    IF n <= 1 THEN\n" + 
+            "        RETURN 1\n" + 
+            "    END IF\n" +
+            "    RETURN n * fac(n -1)\n" +
+            "END FUNCTION\n"
+        );
+        // @formatter:on
+        Value factorial = context.getBindings("i4gl").getMember("fac");
+        return 0;
+    }
+    private static int executeSource2(String file, Source source, InputStream in, PrintStream out, Map<String, String> options) {
         Context context;
         PrintStream err = System.err;
         try {
