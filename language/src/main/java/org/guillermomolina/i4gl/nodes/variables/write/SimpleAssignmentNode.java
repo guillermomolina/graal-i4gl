@@ -15,7 +15,6 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.I4GLTypes;
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
@@ -27,9 +26,9 @@ import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.runtime.customvalues.StringValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.runtime.exceptions.InvalidCastException;
 
 /**
@@ -72,109 +71,114 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isInt()")
-    void writeInt(VirtualFrame frame, int value) {
+    void writeInt(final VirtualFrame frame, final int value) {
         getFrame(frame).setInt(getSlot(), value);
     }
 
     @Specialization(guards = "isInt()")
-    void writeInt(VirtualFrame frame, TextValue string) {
+    void writeInt(final VirtualFrame frame, final TextValue string) {
         try {
-            int value = Integer.parseInt(string.toString());
+            final int value = Integer.parseInt(string.toString());
             getFrame(frame).setInt(getSlot(), value);
-        } catch(final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new InvalidCastException(string, getTypeDescriptor());
-        }       
+        }
     }
 
     @Specialization(guards = "isLong()")
-    void writeLong(VirtualFrame frame, long value) {
+    void writeLong(final VirtualFrame frame, final long value) {
         getFrame(frame).setLong(getSlot(), value);
     }
 
     @Specialization(guards = "isLong()")
-    void writeLong(VirtualFrame frame, TextValue string) {
+    void writeLong(final VirtualFrame frame, final TextValue string) {
         try {
-            long value = Long.parseLong(string.toString());
+            final long value = Long.parseLong(string.toString());
             getFrame(frame).setLong(getSlot(), value);
-        } catch(final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new InvalidCastException(string, getTypeDescriptor());
-        }       
+        }
     }
 
     @Specialization(guards = "isFloat()")
-    void writeFloat(VirtualFrame frame, float value) {
+    void writeFloat(final VirtualFrame frame, final float value) {
         getFrame(frame).setFloat(getSlot(), value);
     }
 
     @Specialization(guards = "isFloat()")
-    void writeFloat(VirtualFrame frame, TextValue string) {
+    void writeFloat(final VirtualFrame frame, final TextValue string) {
         try {
-            float value = Float.parseFloat(string.toString());
+            final float value = Float.parseFloat(string.toString());
             getFrame(frame).setFloat(getSlot(), value);
-        } catch(final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new InvalidCastException(string, getTypeDescriptor());
-        }       
+        }
     }
 
     @Specialization(guards = "isDouble()")
-    void writeDouble(VirtualFrame frame, double value) {
+    void writeDouble(final VirtualFrame frame, final double value) {
         getFrame(frame).setDouble(getSlot(), value);
     }
 
     @Specialization(guards = "isDouble()")
-    void writeDouble(VirtualFrame frame, TextValue string) {
+    void writeDouble(final VirtualFrame frame, final TextValue string) {
         try {
-            double value = Double.parseDouble(string.toString());
+            final double value = Double.parseDouble(string.toString());
             getFrame(frame).setDouble(getSlot(), value);
-        } catch(final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new InvalidCastException(string, getTypeDescriptor());
-        }       
-    }
-
-    @Specialization
-    void assignRecord(VirtualFrame frame, RecordValue record) {
-        getFrame(frame).setObject(getSlot(), record.getCopy());
-    }
-
-    @Specialization(guards = "isString()")
-    void assignString(VirtualFrame frame, TextValue value) {
-        frame = getFrame(frame);
-        Object targetObject = frame.getValue(getSlot());
-        if (targetObject instanceof TextValue) {
-            frame.setObject(getSlot(), value);
-        } else if (targetObject instanceof CharValue) {
-            CharValue target = (CharValue) targetObject;
-            target.assignString(value.toString());
-        } else if (targetObject instanceof VarcharValue) {
-            VarcharValue target = (VarcharValue) targetObject;
-            target.assignString(value.toString());
-        } else {
-            throw new NotImplementedException();
         }
     }
 
     @Specialization
-    void assignNull(VirtualFrame frame, NullValue value) {
+    void assignRecord(final VirtualFrame frame, final RecordValue record) {
+        getFrame(frame).setObject(getSlot(), record.getCopy());
+    }
+
+    @Specialization(guards = "isString()")
+    void assignString(VirtualFrame frame, final TextValue value) {
+        frame = getFrame(frame);
+
+        Object targetObject = frame.getValue(getSlot());
+        if (targetObject instanceof NullValue) {
+            targetObject = getTypeDescriptor().getDefaultValue();
+        }
+
+        if (targetObject instanceof CharValue) {
+            final CharValue target = (CharValue) targetObject;
+            target.assignString(value.toString());
+        } else if (targetObject instanceof VarcharValue) {
+            final VarcharValue target = (VarcharValue) targetObject;
+            target.assignString(value.toString());
+        } else if (targetObject instanceof TextValue) {
+            frame.setObject(getSlot(), value);
+        } else {
+            throw new I4GLRuntimeException("Can not assign to a non string variable");
+        }
+    }
+
+    @Specialization
+    void assignNull(final VirtualFrame frame, final NullValue value) {
         getFrame(frame).setObject(getSlot(), value);
     }
 
     @Specialization
-    void assignIntArray(VirtualFrame frame, int[] array) {
+    void assignIntArray(final VirtualFrame frame, final int[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
-    void assignLongArray(VirtualFrame frame, long[] array) {
+    void assignLongArray(final VirtualFrame frame, final long[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
-    void assignFloatArray(VirtualFrame frame, float[] array) {
+    void assignFloatArray(final VirtualFrame frame, final float[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
-    void assignDoubleArray(VirtualFrame frame, double[] array) {
+    void assignDoubleArray(final VirtualFrame frame, final double[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
@@ -182,12 +186,12 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
      * This is used for multidimensional arrays
      */
     @Specialization
-    void assignArray(VirtualFrame frame, Object[] array) {
+    void assignArray(final VirtualFrame frame, final Object[] array) {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
-    void assignArray(VirtualFrame frame, StringValue array) {
+    void assignArray(final VirtualFrame frame, final TextValue array) {
         getFrame(frame).setObject(getSlot(), array.createDeepCopy());
     }
 
@@ -206,7 +210,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Override
-    public boolean hasTag(Class<? extends Tag> tag) {
+    public boolean hasTag(final Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);
     }
 }

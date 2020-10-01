@@ -7,7 +7,6 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
-import org.guillermomolina.i4gl.runtime.customvalues.StringValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
@@ -15,8 +14,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
  * The type system of our interpreter. It specifies which variable types we will
  * be using and implicit casts.
  */
-@TypeSystem({ int.class, long.class, float.class, double.class, TextValue.class, VarcharValue.class, CharValue.class,
-        StringValue.class })
+@TypeSystem({ int.class, long.class, float.class, double.class, VarcharValue.class, CharValue.class, TextValue.class })
 public class I4GLTypes {
 
     protected I4GLTypes() {
@@ -24,9 +22,9 @@ public class I4GLTypes {
 
     /**
      * Example of a manually specified type check that replaces the automatically
-     * generated type check that the Truffle DSL would generate. For {@link NullValue},
-     * we do not need an {@code instanceof} check, because we know that there is
-     * only a {@link NullValue#SINGLETON singleton} instance.
+     * generated type check that the Truffle DSL would generate. For
+     * {@link NullValue}, we do not need an {@code instanceof} check, because we
+     * know that there is only a {@link NullValue#SINGLETON singleton} instance.
      */
     @TypeCheck(NullValue.class)
     public static boolean isNullValue(Object value) {
@@ -35,9 +33,9 @@ public class I4GLTypes {
 
     /**
      * Example of a manually specified type cast that replaces the automatically
-     * generated type cast that the Truffle DSL would generate. For {@link NullValue},
-     * we do not need an actual cast, because we know that there is only a
-     * {@link NullValue#SINGLETON singleton} instance.
+     * generated type cast that the Truffle DSL would generate. For
+     * {@link NullValue}, we do not need an actual cast, because we know that there
+     * is only a {@link NullValue#SINGLETON singleton} instance.
      */
     @TypeCast(NullValue.class)
     public static NullValue asNullValue(Object value) {
@@ -47,6 +45,16 @@ public class I4GLTypes {
 
     @ImplicitCast
     public static long castIntToLong(int value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static float castIntToFloat(int value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static float castLongToFloat(long value) {
         return value;
     }
 
@@ -61,17 +69,22 @@ public class I4GLTypes {
     }
 
     @ImplicitCast
-    public static TextValue castIntToString(int value) {
+    public static double castFloatToDouble(float value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static TextValue castIntToText(int value) {
         return new TextValue(String.valueOf(value));
     }
 
     @ImplicitCast
-    public static TextValue castLongToString(long value) {
+    public static TextValue castLongToText(long value) {
         return new TextValue(String.valueOf(value));
     }
 
     @ImplicitCast
-    public static TextValue castDoubleToString(double value) {
+    public static TextValue castDoubleToText(double value) {
         return new TextValue(String.valueOf(value));
     }
 }

@@ -7,9 +7,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -45,16 +43,6 @@ public abstract class AssignToArrayNode extends I4GLStatementNode {
 
     @Specialization
     void assignToText(TextValue string, int index, TextValue value) {
-        string.setValueAt(index - 1, value.getValueAt(0));
-    }
-
-    @Specialization
-    void assignToNChar(CharValue string, int index, TextValue value) {
-        string.setValueAt(index - 1, value.getValueAt(0));
-    }
-
-    @Specialization
-    void assignToVarchar(VarcharValue string, int index, TextValue value) {
         string.setValueAt(index - 1, value.getValueAt(0));
     }
 

@@ -9,9 +9,8 @@ import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
  */
 @CompilerDirectives.ValueType
-public class VarcharValue implements StringValue {
+public class VarcharValue extends TextValue {
 
-    private String data;
     private final int size;
 
     public VarcharValue(int size) {
@@ -26,11 +25,6 @@ public class VarcharValue implements StringValue {
 
     public void assignString(String value) {
         data = value.substring(0, Math.min(size, value.length()));
-    }
-
-    @Override
-    public String toString() {
-        return data;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
@@ -22,7 +23,7 @@ public abstract class StringDescriptor extends ArrayDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type instanceof StringDescriptor || type == LongDescriptor.SINGLETON
-        || type == SmallFloatDescriptor.SINGLETON || type == IntDescriptor.SINGLETON;
+        return type instanceof StringDescriptor || type == IntDescriptor.SINGLETON || type == LongDescriptor.SINGLETON
+                || type == SmallFloatDescriptor.SINGLETON || type == RealDescriptor.SINGLETON;
     }
 }

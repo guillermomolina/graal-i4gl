@@ -10,9 +10,7 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
  * Representation of variables of NChar type. It is a slight wrapper to Java's {@link String}.
  */
 @CompilerDirectives.ValueType
-public class CharValue implements StringValue {
-
-    private String data;
+public class CharValue extends TextValue {
 
     public CharValue(int size) {
         char[] chars = new char[size];
@@ -38,19 +36,14 @@ public class CharValue implements StringValue {
     }
 
     @Override
-    public String toString() {
-        return data;
-    }
-
-    @Override
     public Object getValueAt(int index) {
-        return this.data.charAt(index);
+        return data.charAt(index);
     }
 
     @Override
     public void setValueAt(int index, Object value) {
-        this.checkArrayIndex(index);
-        this.data = this.data.substring(0, index) + value + this.data.substring(index + 1);
+        checkArrayIndex(index);
+        data = this.data.substring(0, index) + value + this.data.substring(index + 1);
     }
 
     @Override
@@ -59,7 +52,7 @@ public class CharValue implements StringValue {
     }
 
     private void checkArrayIndex(int index) {
-        if (index >= this.data.length()) {
+        if (index >= data.length()) {
             throw new IndexOutOfBoundsException();
         }
     }

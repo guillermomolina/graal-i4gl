@@ -21,22 +21,23 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 public class ForNode extends I4GLStatementNode {
     private final FrameSlot controlSlot;
     @Child
-    private SimpleAssignmentNode assignment;
+    private final SimpleAssignmentNode assignment;
     @Child
-    private I4GLStatementNode body;
+    private final I4GLStatementNode body;
     @Child
-    private ExpressionNode hasEndedAscendingNode;
+    private final ExpressionNode hasEndedAscendingNode;
     @Child
-    private ExpressionNode hasEndedDescendingNode;
+    private final ExpressionNode hasEndedDescendingNode;
     @Child
-    private ExpressionNode initialValue;
+    private final ExpressionNode initialValue;
     @Child
-    private ExpressionNode finalValue;
+    private final ExpressionNode finalValue;
     @Child
-    private SimpleAssignmentNode step;
+    private final SimpleAssignmentNode step;
 
-    public ForNode(SimpleAssignmentNode assignment, FrameSlot controlSlot, ExpressionNode initialValue, ExpressionNode finalValue,
-    SimpleAssignmentNode step, ExpressionNode readControlVariableNode, I4GLStatementNode body) {
+    public ForNode(final SimpleAssignmentNode assignment, final FrameSlot controlSlot,
+            final ExpressionNode initialValue, final ExpressionNode finalValue, final SimpleAssignmentNode step,
+            final ExpressionNode readControlVariableNode, final I4GLStatementNode body) {
         this.assignment = assignment;
         this.controlSlot = controlSlot;
         this.initialValue = initialValue;
@@ -48,7 +49,7 @@ public class ForNode extends I4GLStatementNode {
     }
 
     @Override
-    public void executeVoid(VirtualFrame frame) {
+    public void executeVoid(final VirtualFrame frame) {
         try {
             final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(controlSlot);
             ExpressionNode hasEndedNode = hasEndedAscendingNode;
@@ -78,12 +79,12 @@ public class ForNode extends I4GLStatementNode {
             }
 
             this.execute(frame, hasEndedNode);
-        } catch (UnexpectedResultException e) {
+        } catch (final UnexpectedResultException e) {
             throw new I4GLRuntimeException("Something went wrong.");
         }
     }
 
-    private void execute(VirtualFrame frame, ExpressionNode hasEndedNode) throws UnexpectedResultException {
+    private void execute(final VirtualFrame frame, final ExpressionNode hasEndedNode) throws UnexpectedResultException {
         assignment.executeVoid(frame);
 
         while (hasEndedNode.executeInt(frame) != 0) {

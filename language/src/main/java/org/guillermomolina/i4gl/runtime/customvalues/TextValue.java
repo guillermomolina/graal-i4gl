@@ -6,62 +6,46 @@ import com.oracle.truffle.api.CompilerDirectives;
  * Representation of a string-type variable.
  */
 @CompilerDirectives.ValueType
-public class TextValue implements StringValue {
+public class TextValue {
 
-    private String value;
+    protected String data;
 
     public TextValue() {
-        this.value = "";
+        this.data = "";
     }
 
     public TextValue(String value) {
-        this.value = value;
+        this.data = value;
     }
 
     private TextValue(TextValue text) {
-        this.value = text.value;
+        this.data = text.data;
     }
 
-    @Override
     public Object getValueAt(int index) {
-        return this.value.charAt(index);
+        return data.charAt(index);
     }
 
-    @Override
     public void setValueAt(int index, Object value) {
         char newChar = (Character) value;
-        this.value = this.value.substring(0, index) + newChar + this.value.substring(++index);
+        data = data.substring(0, index) + newChar + data.substring(++index);
     }
 
-    @Override
     public Object createDeepCopy() {
         return new TextValue(this);
     }
 
     @Override
     public String toString() {
-        return this.value;
+        return data;
     }
 
-    /**
-     * Returns a new string whose value is the current value concatenated with
-     * specified character.
-     * 
-     * @return the new string
-     */
     public TextValue concatenate(char value) {
-        return new TextValue(this.value.concat(String.valueOf(value)));
+        return new TextValue(data.concat(String.valueOf(value)));
     }
 
-    /**
-     * Returns a new string whose value is the current value concatenated with
-     * another string.
-     * 
-     * @param value the string to be appended to current value
-     * @return the new string
-     */
     public TextValue concatenate(TextValue value) {
-        return new TextValue(this.value.concat(value.value));
+        return new TextValue(data.concat(value.data));
     }
 
 }
