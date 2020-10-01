@@ -177,10 +177,27 @@ runStatement:
 	)? EOL+;
 
 assignmentStatement:
-	LET (
-		variable EQUAL (expressionList | NULL)
-		| identifier DOT STAR EQUAL identifier DOT STAR
-	) EOL+;
+	LET (simpleAssignmentStatement | multipleAssignmentStatement) EOL+;
+
+//Exploded for an easier visitor
+simpleAssignmentStatement:
+	assignSimpleVariable
+	| assignRecordVariable
+	| assignArrayVariable
+	| assignRecordArrayVariable;
+
+assignSimpleVariable: identifier EQUAL assignmentValue;
+
+assignRecordVariable: identifier (DOT identifier)+ EQUAL assignmentValue;
+
+assignArrayVariable: identifier variableIndex EQUAL assignmentValue;
+
+assignRecordArrayVariable: identifier (DOT identifier)+ variableIndex EQUAL assignmentValue;
+
+assignmentValue: expressionList | NULL;
+
+multipleAssignmentStatement:
+	identifier DOT STAR EQUAL identifier DOT STAR;
 
 callStatement:
 	CALL function (RETURNING identifier (COMMA identifier)*)? EOL+;
@@ -349,9 +366,9 @@ constant: numericConstant | string;
 
 numericConstant: integer | real;
 
-variable: identifier (DOT identifier)* indexingVariable?;
+variable: identifier (DOT identifier)* variableIndex?;
 
-indexingVariable: LBRACK expressionList RBRACK;
+variableIndex: LBRACK expressionList RBRACK;
 
 /*
  thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
@@ -378,7 +395,8 @@ repetetiveStatement:
 	| forEachStatement
 	| forStatement;
 
-whileStatement: WHILE ifCondition EOL+ codeBlock? END WHILE EOL+;
+whileStatement:
+	WHILE ifCondition EOL+ codeBlock? END WHILE EOL+;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
@@ -619,7 +637,8 @@ menuInsideStatement:
 
 menuGroupStatement: menuEvents codeBlock?;
 
-menuStatement: MENU expression menuGroupStatement* END MENU EOL+;
+menuStatement:
+	MENU expression menuGroupStatement* END MENU EOL+;
 
 reservedLinePosition:
 	FIRST (PLUS numericConstant)?
@@ -778,7 +797,7 @@ sqlSelectStatement: mainSelectStatement;
 
 columnsTableId:
 	STAR
-	| (tableIdentifier indexingVariable?) (
+	| (tableIdentifier variableIndex?) (
 		DOT STAR
 		| DOT columnsTableId
 	)?;

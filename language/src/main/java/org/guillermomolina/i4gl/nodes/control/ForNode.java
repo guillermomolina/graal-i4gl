@@ -21,19 +21,19 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 public class ForNode extends I4GLStatementNode {
     private final FrameSlot controlSlot;
     @Child
-    private final SimpleAssignmentNode assignment;
+    private SimpleAssignmentNode assignment;
     @Child
-    private final I4GLStatementNode body;
+    private I4GLStatementNode body;
     @Child
-    private final ExpressionNode hasEndedAscendingNode;
+    private ExpressionNode hasEndedAscendingNode;
     @Child
-    private final ExpressionNode hasEndedDescendingNode;
+    private ExpressionNode hasEndedDescendingNode;
     @Child
-    private final ExpressionNode initialValue;
+    private ExpressionNode initialValue;
     @Child
-    private final ExpressionNode finalValue;
+    private ExpressionNode finalValue;
     @Child
-    private final SimpleAssignmentNode step;
+    private SimpleAssignmentNode step;
 
     public ForNode(final SimpleAssignmentNode assignment, final FrameSlot controlSlot,
             final ExpressionNode initialValue, final ExpressionNode finalValue, final SimpleAssignmentNode step,
