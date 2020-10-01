@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.runtime.customvalues;
 import com.oracle.truffle.api.CompilerDirectives;
 
 @CompilerDirectives.ValueType
-public class ReturnValue implements ArrayValue {
+public class ReturnValue {
 
     private Object[] data;
 
@@ -19,17 +19,14 @@ public class ReturnValue implements ArrayValue {
         return data.length;
     }
 
-    @Override
     public Object getValueAt(int index) {
         return data[index];
     }
 
-    @Override
     public void setValueAt(int index, Object value) {
         data[index] = value;
     }
 
-    @Override
     public Object createDeepCopy() {
         return new ReturnValue(this);
     }

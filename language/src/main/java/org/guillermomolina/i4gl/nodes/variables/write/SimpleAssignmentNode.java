@@ -26,9 +26,9 @@ import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.customvalues.StringValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.exceptions.InvalidCastException;
@@ -185,7 +185,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     @Specialization
-    void assignArray(VirtualFrame frame, ArrayValue array) {
+    void assignArray(VirtualFrame frame, StringValue array) {
         getFrame(frame).setObject(getSlot(), array.createDeepCopy());
     }
 

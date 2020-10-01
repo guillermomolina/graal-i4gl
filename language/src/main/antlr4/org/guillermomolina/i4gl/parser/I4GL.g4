@@ -11,7 +11,7 @@ compilationUnit:
 identifier: IDENT;
 
 mainBlock:
-	MAIN EOL typeDeclarations? mainStatements? END MAIN EOL;
+	MAIN EOL+ typeDeclarations? mainStatements? END MAIN EOL+;
 
 mainStatements: (
 		databaseDeclaration
@@ -19,29 +19,29 @@ mainStatements: (
 		| statement
 	)+;
 
-deferStatement: DEFER (INTERRUPT | QUIT) EOL;
+deferStatement: DEFER (INTERRUPT | QUIT) EOL+;
 
 functionOrReportDefinitions: (
 		reportDefinition
 		| functionDefinition
 	)+;
 
-returnStatement: RETURN expressionList? EOL;
+returnStatement: RETURN expressionList? EOL+;
 
 functionDefinition:
-	FUNCTION identifier parameterList? EOL typeDeclarations? codeBlock? END FUNCTION EOL;
+	FUNCTION identifier parameterList? EOL+ typeDeclarations? codeBlock? END FUNCTION EOL+;
 
 parameterList: LPAREN parameterGroup* RPAREN;
 
 parameterGroup: identifier (COMMA identifier)*;
 
 globalDeclaration:
-	GLOBALS (string | EOL typeDeclarations END GLOBALS) EOL;
+	GLOBALS (string | EOL+ typeDeclarations END GLOBALS) EOL+;
 
 typeDeclarations: typeDeclaration+;
 
 typeDeclaration:
-	DEFINE variableDeclaration (COMMA variableDeclaration)* EOL;
+	DEFINE variableDeclaration (COMMA variableDeclaration)* EOL+;
 
 variableDeclaration: identifier (COMMA identifier)* type;
 //| identifier type (COMMA identifier type)*
@@ -122,9 +122,9 @@ structuredType: recordType | arrayType | dynArrayType;
 
 recordType:
 	RECORD (
-		EOL (
-			variableDeclaration (COMMA EOL variableDeclaration)*
-		) EOL END RECORD
+		EOL+ (
+			variableDeclaration (COMMA EOL+ variableDeclaration)*
+		) EOL+ END RECORD
 		| (LIKE tableIdentifier DOT STAR)
 	);
 
@@ -166,7 +166,7 @@ simpleStatement:
 	| inputInsideStatement
 	| debugStatement;
 
-debugStatement: DEBUG EOL;
+debugStatement: DEBUG EOL+;
 
 DEBUG: D E B U G;
 
@@ -174,16 +174,16 @@ runStatement:
 	RUN (variable | string) (IN FORM MODE | IN LINE MODE)? (
 		WITHOUT WAITING
 		| RETURNING variable
-	)? EOL;
+	)? EOL+;
 
 assignmentStatement:
 	LET (
 		variable EQUAL (expressionList | NULL)
 		| identifier DOT STAR EQUAL identifier DOT STAR
-	) EOL;
+	) EOL+;
 
 callStatement:
-	CALL function (RETURNING identifier (COMMA identifier)*)? EOL;
+	CALL function (RETURNING identifier (COMMA identifier)*)? EOL+;
 
 functionIdentifier: (
 		DAY
@@ -208,7 +208,7 @@ functionIdentifier: (
 
 actualParameter: STAR | expression;
 
-gotoStatement: GOTO COLON? label EOL;
+gotoStatement: GOTO COLON? label EOL+;
 
 condition: (TRUE | FALSE) | logicalTerm (OR logicalTerm)*;
 
@@ -371,19 +371,19 @@ structuredStatement: conditionalStatement | repetetiveStatement;
 conditionalStatement: ifStatement | caseStatement;
 
 ifStatement:
-	IF ifCondition THEN EOL codeBlock? (ELSE EOL codeBlock?)? END IF EOL;
+	IF ifCondition THEN EOL+ codeBlock? (ELSE EOL+ codeBlock?)? END IF EOL+;
 
 repetetiveStatement:
 	whileStatement
 	| forEachStatement
 	| forStatement;
 
-whileStatement: WHILE ifCondition EOL codeBlock? END WHILE EOL;
+whileStatement: WHILE ifCondition EOL+ codeBlock? END WHILE EOL+;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
 		STEP numericConstant
-	)? EOL codeBlock? END FOR EOL;
+	)? EOL+ codeBlock? END FOR EOL+;
 
 controlVariable: identifier;
 
@@ -394,7 +394,7 @@ finalValue: expression;
 forEachStatement:
 	FOREACH identifier (USING variableList)? (INTO variableList)? (
 		WITH REOPTIMIZATION
-	)? EOL codeBlock? END FOREACH;
+	)? EOL+ codeBlock? END FOREACH;
 
 variableList: variable (COMMA variable)*;
 
@@ -403,14 +403,14 @@ variableOrConstantList: expression (COMMA expression)*;
 caseStatement: caseStatement1 | caseStatement2;
 
 caseStatement1:
-	CASE expression EOL (WHEN expression EOL codeBlock)+ (
-		OTHERWISE EOL codeBlock
-	)? END CASE EOL;
+	CASE expression EOL+ (WHEN expression EOL+ codeBlock)+ (
+		OTHERWISE EOL+ codeBlock
+	)? END CASE EOL+;
 
 caseStatement2:
-	CASE EOL (WHEN ifCondition EOL codeBlock)+ (
-		OTHERWISE EOL codeBlock
-	)? END CASE EOL;
+	CASE EOL+ (WHEN ifCondition EOL+ codeBlock)+ (
+		OTHERWISE EOL+ codeBlock
+	)? END CASE EOL+;
 
 otherI4GLStatement:
 	otherProgramFlowStatement
@@ -488,7 +488,7 @@ reportStatement:
 	| NEED expression LINES EOL
 	| PRINT (printExpressionList SEMI? | FILE string)? EOL
 	| SKIP2 (expression (LINE | LINES) | TO TOP OF PAGE) EOL
-	| OUTPUT TO REPORT identifier LPAREN expressionList? RPAREN EOL;
+	| OUTPUT TO REPORT identifier LPAREN expressionList? RPAREN EOL+;
 
 fieldName: ((identifier (LBRACK numericConstant RBRACK)?) DOT)? identifier
 	| (identifier (LBRACK numericConstant RBRACK)?) DOT (
@@ -541,7 +541,7 @@ constructStatement:
 		| variable ON columnsList FROM fieldList
 	) attributeList? (HELP numericConstant)? (
 		constructGroupStatement+ END CONSTRUCT
-	)? EOL;
+	)? EOL+;
 
 displayArrayStatement:
 	DISPLAY ARRAY expression TO expression attributeList? displayEvents* (
@@ -559,22 +559,22 @@ displayStatement:
 			TO fieldList
 			| AT expression COMMA expression
 		)?
-	) attributeList? EOL;
+	) attributeList? EOL+;
 
 displayValue:
 	expression (CLIPPED | USING string)?
 	| ASCII UNSIGNED_INTEGER;
 
-errorStatement: ERROR expressionList attributeList? EOL;
+errorStatement: ERROR expressionList attributeList? EOL+;
 
-messageStatement: MESSAGE expressionList attributeList? EOL;
+messageStatement: MESSAGE expressionList attributeList? EOL+;
 
 promptStatement:
 	PROMPT expressionList attributeList? FOR CHAR? variable (
 		HELP numericConstant
 	)? attributeList? (
 		(ON KEY LPAREN keyList RPAREN codeBlock?)* END PROMPT
-	)? EOL;
+	)? EOL+;
 
 inputEvents: (BEFORE | AFTER) (INPUT | ROW | INSERT | DELETE)
 	| BEFORE FIELD fieldList
@@ -593,7 +593,7 @@ inputStatement:
 		| expressionList (WITHOUT DEFAULTS)? FROM fieldList
 	) attributeList? (HELP numericConstant)? (
 		inputGroupStatement+ END INPUT
-	)? EOL;
+	)? EOL+;
 
 inputArrayStatement:
 	INPUT ARRAY expression (WITHOUT DEFAULTS)? FROM expression (
@@ -619,7 +619,7 @@ menuInsideStatement:
 
 menuGroupStatement: menuEvents codeBlock?;
 
-menuStatement: MENU expression menuGroupStatement* END MENU EOL;
+menuStatement: MENU expression menuGroupStatement* END MENU EOL+;
 
 reservedLinePosition:
 	FIRST (PLUS numericConstant)?
@@ -669,10 +669,10 @@ optionStatement: (
 		| DISPLAY attributeList
 		| SQL INTERRUPT (ON | OFF)
 		| FIELD ORDER (CONSTRAINED | UNCONSTRAINED)
-	) EOL;
+	) EOL+;
 
 optionsStatement:
-	OPTIONS optionStatement (COMMA optionStatement)* EOL;
+	OPTIONS optionStatement (COMMA optionStatement)* EOL+;
 
 screenStatement:
 	CLEAR (FORM | WINDOW identifier | WINDOW? SCREEN | fieldList) EOL
@@ -697,7 +697,7 @@ screenStatement:
 	| optionsStatement
 	| SCROLL fieldList (COMMA fieldList)* (UP | DOWN) (
 		BY numericConstant
-	)? EOL;
+	)? EOL+;
 
 sqlStatements:
 	cursorManipulationStatement
@@ -887,7 +887,7 @@ queryOptimizationStatement:
 	| SET BUFFERED? LOG;
 
 databaseDeclaration:
-	DATABASE (identifier (ATSYMBOL identifier)?) EXCLUSIVE? SEMI? EOL;
+	DATABASE (identifier (ATSYMBOL identifier)?) EXCLUSIVE? SEMI? EOL+;
 
 clientServerStatement: CLOSE DATABASE;
 
@@ -1815,10 +1815,10 @@ HEX_DIGIT: ('0' .. '9' | 'a' .. 'f');
 // Single-line comments
 
 SL_COMMENT:
-	'#' (~('\r' | '\n'))* (EOL | EOF) -> channel(HIDDEN);
+	'#' (~('\r' | '\n'))* (EOL+ | EOF) -> channel(HIDDEN);
 
 SL_COMMENT_2:
-	'--' (~('\r' | '\n'))* (EOL | EOF) -> channel(HIDDEN);
+	'--' (~('\r' | '\n'))* (EOL+ | EOF) -> channel(HIDDEN);
 
 EOL: [\r\n]+;
 

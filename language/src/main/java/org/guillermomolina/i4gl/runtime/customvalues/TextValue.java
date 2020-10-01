@@ -6,7 +6,7 @@ import com.oracle.truffle.api.CompilerDirectives;
  * Representation of a string-type variable.
  */
 @CompilerDirectives.ValueType
-public class TextValue implements ArrayValue {
+public class TextValue implements StringValue {
 
     private String value;
 

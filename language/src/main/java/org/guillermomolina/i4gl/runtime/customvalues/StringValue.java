@@ -1,10 +1,9 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
 /**
- * Interface for all array-type variables. Currently it is used only for {@link CharValue} and {@link TextValue}.
- * Other arrays are stored as Object[] or arrays of primitive types for better performance.
+ * Interface for all string-type variables..
  */
-public interface ArrayValue {
+public interface StringValue {
 
     /**
      * Gets value at specified index.

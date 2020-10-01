@@ -15,7 +15,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
  */
 public class ArrayDescriptor implements TypeDescriptor {
 
-    private final int size;
+    protected final int size;
     private final TypeDescriptor valuesDescriptor;
 
     /**

@@ -5,9 +5,9 @@ import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
-import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.runtime.customvalues.StringValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
@@ -16,7 +16,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
  * be using and implicit casts.
  */
 @TypeSystem({ int.class, long.class, float.class, double.class, TextValue.class, VarcharValue.class, CharValue.class,
-        ArrayValue.class })
+        StringValue.class })
 public class I4GLTypes {
 
     protected I4GLTypes() {

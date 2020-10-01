@@ -10,7 +10,7 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
  * Representation of variables of NChar type. It is a slight wrapper to Java's {@link String}.
  */
 @CompilerDirectives.ValueType
-public class CharValue implements ArrayValue {
+public class CharValue implements StringValue {
 
     private String data;
 

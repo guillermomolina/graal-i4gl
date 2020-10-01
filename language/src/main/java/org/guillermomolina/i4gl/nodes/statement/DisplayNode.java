@@ -45,6 +45,10 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
+import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.StringDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 @NodeInfo(shortName = "DISPLAY", description = "The node implementing the DISPLAY statement")
 public final class DisplayNode extends I4GLStatementNode {
@@ -69,10 +73,19 @@ public final class DisplayNode extends I4GLStatementNode {
                 System.out.printf("11d ", (long)value);
             } else if (value instanceof Double) {
                 System.out.printf("%11.2f", (double)value);
-            } else {
+            } else if (value == NullValue.SINGLETON) {
+                TypeDescriptor type = argumentNodes[i].getType();
+                if (type instanceof StringDescriptor) {
+                    System.out.print(type.getDefaultValue());
+                } else {
+                    throw new I4GLRuntimeException("Variable is NULL and is not a String");
+                }
+            } else {       
                 System.out.print(value.toString());
             }
         }
         System.out.printf("%n");
     }
 }
+
+

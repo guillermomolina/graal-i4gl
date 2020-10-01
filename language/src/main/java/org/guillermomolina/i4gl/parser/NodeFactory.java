@@ -72,11 +72,13 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.StringDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 public class NodeFactory extends I4GLBaseVisitor<Node> {
 
@@ -692,13 +694,15 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             for (final String identifier : identifierList) {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
                 I4GLStatementNode initializationNode;
-                Object defaultValue = typeDescriptor.getDefaultValue();
-                if (defaultValue == null) {
-                    throw new ParseException(source, ctx,
-                            "Undefined default value for type " + typeDescriptor.toString());
+                Object defaultValue;
+                if(typeDescriptor instanceof StringDescriptor) {
+                    // This is hacky, but that is what c4gl compiler does
+                    defaultValue = NullValue.SINGLETON;
+                } else {
+                    defaultValue = typeDescriptor.getDefaultValue();
                 }
+                assert defaultValue != null;
                 FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
-                //initializationNode = new ObjectInitializationNode(frameSlot, defaultValue);
                 initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
                 initializationNodes.add(initializationNode);
             }
