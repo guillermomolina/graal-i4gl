@@ -24,3 +24,11 @@ MAIN
   END IF
   DISPLAY "|", another_char_10, "|"
 END MAIN
+
+# Expected output
+# "|          0|"
+# "|          0|"
+# "a_char_10 is null"
+# "|          |"
+# "another_char_10 is null"
+# "|          |"

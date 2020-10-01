@@ -19,14 +19,13 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.StringDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 import org.guillermomolina.i4gl.runtime.customvalues.StringValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
@@ -69,9 +68,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     protected boolean isString() {
-        return getTypeDescriptor() instanceof CharDescriptor
-                || getTypeDescriptor() instanceof VarcharDescriptor
-                || getTypeDescriptor() == TextDescriptor.SINGLETON;
+        return getTypeDescriptor() instanceof StringDescriptor;
     }
 
     @Specialization(guards = "isInt()")
@@ -154,6 +151,11 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
         } else {
             throw new NotImplementedException();
         }
+    }
+
+    @Specialization
+    void assignNull(VirtualFrame frame, NullValue value) {
+        getFrame(frame).setObject(getSlot(), value);
     }
 
     @Specialization
