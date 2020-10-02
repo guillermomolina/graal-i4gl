@@ -8,6 +8,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -38,6 +39,17 @@ public abstract class I4GLAddNode extends I4GLBinaryExpressionNode {
     @Specialization
     protected double add(double left, double right) {
         return left + right;
+    }
+
+    /* Adding strings does not actually work in c4gl */
+    @Specialization(guards = "isText(left, right)")
+    @TruffleBoundary
+    protected TextValue add(TextValue left, TextValue right) {
+        return left.concatenate(right);
+    }
+
+    protected boolean isText(Object a, Object b) {
+        return a instanceof TextValue || b instanceof TextValue;
     }
 
     @Fallback

@@ -7,8 +7,8 @@ import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 
 /**
  * Node representing logical or operation.
@@ -25,9 +25,9 @@ public abstract class OrNode extends BinaryExpressionNode {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, IntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, RealDescriptor.SINGLETON), IntDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, RealDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(FloatDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, FloatDescriptor.SINGLETON), IntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(FloatDescriptor.SINGLETON, FloatDescriptor.SINGLETON), IntDescriptor.SINGLETON);
     }
 
     @Specialization

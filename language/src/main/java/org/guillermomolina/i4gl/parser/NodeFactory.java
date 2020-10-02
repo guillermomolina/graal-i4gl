@@ -76,8 +76,8 @@ import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 public class NodeFactory extends I4GLBaseVisitor<Node> {
@@ -741,7 +741,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             return new TypeNode(BigIntDescriptor.SINGLETON);
         }
         if (ctx.REAL() != null) {
-            return new TypeNode(RealDescriptor.SINGLETON);
+            return new TypeNode(FloatDescriptor.SINGLETON);
         }
         throw new NotImplementedException();
     }

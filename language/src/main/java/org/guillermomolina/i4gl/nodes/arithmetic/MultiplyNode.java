@@ -6,8 +6,8 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
@@ -27,16 +27,16 @@ public abstract class MultiplyNode extends BinaryExpressionNode {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), BigIntDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), BigIntDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), BigIntDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), RealDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, RealDescriptor.SINGLETON), RealDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(FloatDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, FloatDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), SmallFloatDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, SmallFloatDescriptor.SINGLETON), SmallFloatDescriptor.SINGLETON);
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.SINGLETON, SmallFloatDescriptor.SINGLETON), SmallFloatDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, RealDescriptor.SINGLETON), RealDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, SmallFloatDescriptor.SINGLETON), RealDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.SINGLETON, RealDescriptor.SINGLETON), RealDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.SINGLETON, RealDescriptor.SINGLETON), RealDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(RealDescriptor.SINGLETON, RealDescriptor.SINGLETON), RealDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(FloatDescriptor.SINGLETON, FloatDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(FloatDescriptor.SINGLETON, SmallFloatDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.SINGLETON, FloatDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(SmallFloatDescriptor.SINGLETON, FloatDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(FloatDescriptor.SINGLETON, FloatDescriptor.SINGLETON), FloatDescriptor.SINGLETON);
     }
 
     @Specialization

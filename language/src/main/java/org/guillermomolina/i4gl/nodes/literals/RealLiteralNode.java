@@ -4,7 +4,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 
 /**
  * Node representing real literal.
@@ -27,7 +27,7 @@ public abstract class RealLiteralNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return RealDescriptor.SINGLETON;
+        return FloatDescriptor.SINGLETON;
     }
 
 }

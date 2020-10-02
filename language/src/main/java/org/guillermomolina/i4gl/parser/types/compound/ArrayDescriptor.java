@@ -4,8 +4,8 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
@@ -41,7 +41,7 @@ public class ArrayDescriptor implements TypeDescriptor {
             return new long[size];
         } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
             return new float[size];
-        } else if (valuesDescriptor == RealDescriptor.SINGLETON) {
+        } else if (valuesDescriptor == FloatDescriptor.SINGLETON) {
             return new double[size];
         } else {
             Object[] data = new Object[size];

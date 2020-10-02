@@ -14,8 +14,8 @@ import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
@@ -91,6 +91,6 @@ public abstract class ExpressionNode extends I4GLStatementNode {
     }
 
     protected boolean isDouble() {
-        return getType() == RealDescriptor.SINGLETON;
+        return getType() == FloatDescriptor.SINGLETON;
     }
 }

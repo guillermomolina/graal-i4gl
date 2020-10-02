@@ -4,8 +4,8 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 
@@ -32,7 +32,7 @@ public class TextDescriptor implements TypeDescriptor {
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return type instanceof TextDescriptor || type == IntDescriptor.SINGLETON || type == BigIntDescriptor.SINGLETON
-                || type == SmallFloatDescriptor.SINGLETON || type == RealDescriptor.SINGLETON;
+                || type == SmallFloatDescriptor.SINGLETON || type == FloatDescriptor.SINGLETON;
     }
 
     @Override

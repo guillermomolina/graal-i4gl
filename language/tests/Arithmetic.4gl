@@ -5,7 +5,7 @@ MAIN
   DISPLAY "|", myvar - 2, "|"
   DISPLAY "|", myvar + 2147483648, "|"
   DISPLAY "|", myvar + 1.1, "|"
-  DISPLAY "|", myvar + 1.1, "|"
+  DISPLAY "|", myvar + "Hola", "|"
 END MAIN 
 
 # Expected output
@@ -13,4 +13,4 @@ END MAIN
 # "|         -1|"
 # "|          2147483649|"
 # "|          2,10|"
-# "|          2,10|"
+# "|1Hola|"
