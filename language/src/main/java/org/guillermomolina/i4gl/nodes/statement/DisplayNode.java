@@ -70,9 +70,11 @@ public final class DisplayNode extends I4GLStatementNode {
             if (value instanceof Integer) {
                 System.out.printf("%11d", (int)value);
             } else if (value instanceof Long) {
-                System.out.printf("11d ", (long)value);
+                System.out.printf("%20d", (long)value);
+            } else if (value instanceof Float) {
+                System.out.printf("%14.2f", (float)value);
             } else if (value instanceof Double) {
-                System.out.printf("%11.2f", (double)value);
+                System.out.printf("%14.2f", (double)value);
             } else if (value == NullValue.SINGLETON) {
                 TypeDescriptor type = argumentNodes[i].getType();
                 if (type instanceof TextDescriptor) {

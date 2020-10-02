@@ -19,6 +19,7 @@ import org.guillermomolina.i4gl.nodes.InitializationNodeFactory;
 import org.guillermomolina.i4gl.nodes.arithmetic.AddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.DivideIntegerNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.DivideNodeGen;
+import org.guillermomolina.i4gl.nodes.arithmetic.I4GLAddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.ModuloNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.MultiplyNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.SubtractNodeGen;
@@ -279,7 +280,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     private SimpleAssignmentNode createAssignmentNode(final String targetIdentifier, final ExpressionNode valueNode)
             throws LexicalException {
         final TypeDescriptor targetType = doLookup(targetIdentifier, LexicalScope::getIdentifierDescriptor);
-        checkTypesAreCompatible(valueNode.getType(), targetType);
+        //checkTypesAreCompatible(valueNode.getType(), targetType);
         final FrameSlot targetSlot = doLookup(targetIdentifier, LexicalScope::getLocalSlot);
 
         return SimpleAssignmentNodeGen.create(valueNode, targetSlot, targetType);
@@ -586,7 +587,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             } else {
                 final I4GLParser.AddingOperatorContext operatorCtx = ctx.addingOperator(index++);
                 if (operatorCtx.PLUS() != null) {
-                    leftNode = AddNodeGen.create(leftNode, rightNode);
+                    leftNode = I4GLAddNodeGen.create(leftNode, rightNode);
                 } else /* operatorCtx.MINUS() != null */ {
                     leftNode = SubtractNodeGen.create(leftNode, rightNode);
                 }

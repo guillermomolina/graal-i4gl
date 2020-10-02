@@ -30,6 +30,16 @@ public abstract class I4GLAddNode extends I4GLBinaryExpressionNode {
         return Math.addExact(left, right);
     }
 
+    @Specialization
+    protected float add(float left, float right) {
+        return left + right;
+    }
+
+    @Specialization
+    protected double add(double left, double right) {
+        return left + right;
+    }
+
     @Fallback
     protected Object typeError(Object left, Object right) {
         throw new I4GLRuntimeException("Type error doing: " + left + " + " + right);

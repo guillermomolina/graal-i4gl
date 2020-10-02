@@ -8,5 +8,5 @@ import com.oracle.truffle.api.dsl.NodeChild;
  */
 @NodeChild("leftNode")
 @NodeChild("rightNode")
-public abstract class I4GLBinaryExpressionNode extends I4GLExpressionNode {
+public abstract class I4GLBinaryExpressionNode extends ExpressionNode {
 }
