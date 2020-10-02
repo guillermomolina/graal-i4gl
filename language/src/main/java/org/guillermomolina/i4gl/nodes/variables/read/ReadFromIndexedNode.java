@@ -22,7 +22,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
         @NodeChild(value = "indexNode", type = ExpressionNode.class)
 })
 @NodeField(name = "returnType", type = TypeDescriptor.class)
-public abstract class ReadFromArrayNode extends ExpressionNode {
+public abstract class ReadFromIndexedNode extends ExpressionNode {
 
     protected abstract TypeDescriptor getReturnType();
 

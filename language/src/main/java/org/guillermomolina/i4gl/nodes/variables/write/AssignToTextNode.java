@@ -37,7 +37,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 })
 @TypeSystemReference(I4GLTypes.class)
-public abstract class AssignToStringNode extends I4GLStatementNode {
+public abstract class AssignToTextNode extends I4GLStatementNode {
 
     protected abstract FrameSlot getSlot();
 
@@ -48,12 +48,12 @@ public abstract class AssignToStringNode extends I4GLStatementNode {
 
     @Specialization
     void assignString(VirtualFrame frame, final int index, final TextValue value) {
-        frame = getFrame(frame);
+        final VirtualFrame actualFrame = getFrame(frame);
 
-        Object targetObject = frame.getValue(getSlot());
+        Object targetObject = actualFrame.getValue(getSlot());
         if (targetObject instanceof NullValue) {
             targetObject = getTypeDescriptor().getDefaultValue();
-            frame.setObject(getSlot(), targetObject);
+            actualFrame.setObject(getSlot(), targetObject);
         }
 
         if (targetObject instanceof TextValue) {

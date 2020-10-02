@@ -19,3 +19,10 @@ MAIN
   LET myrecord.aRecord.aChar[3] = "X"
   DISPLAY myrecord.aRecord.aChar[3]
 END MAIN
+
+# Expected output
+# "        100"
+# "     121,20"
+# "Hola como estas"
+# "        123"
+# "X"

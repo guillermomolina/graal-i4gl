@@ -19,7 +19,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 @NodeChild(value = "arrayNode", type = ExpressionNode.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-public abstract class AssignToArrayNode extends I4GLStatementNode {
+public abstract class AssignToIndexedNode extends I4GLStatementNode {
 
     @Specialization
     void assignInt(int[] array, int index, int value) {

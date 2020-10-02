@@ -21,11 +21,11 @@ import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
         @NodeChild(value = "recordNode", type = ExpressionNode.class),
         @NodeChild(value = "valueNode", type = ExpressionNode.class)
 })
-public abstract class AssignToRecordField extends I4GLStatementNode {
+public abstract class AssignToRecordFieldNode extends I4GLStatementNode {
 
     private final String identifier;
 
-    AssignToRecordField(String identifier) {
+    AssignToRecordFieldNode(String identifier) {
         this.identifier = identifier;
     }
 
