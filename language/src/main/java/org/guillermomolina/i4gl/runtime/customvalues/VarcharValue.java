@@ -9,8 +9,9 @@ import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
  */
 @CompilerDirectives.ValueType
-public class VarcharValue extends TextValue {
+public class VarcharValue {
 
+    protected String data;
     private final int size;
 
     public VarcharValue(int size) {
@@ -23,19 +24,16 @@ public class VarcharValue extends TextValue {
         this.data = source.data;
     }
 
-    @Override
     public void assignString(String value) {
         data = value.substring(0, Math.min(size, value.length()));
     }
 
-    @Override
-    public Object getValueAt(int index) {
+    public char getCharAt(int index) {
         checkArrayIndex(index);
         return data.charAt(index);
     }
 
-    @Override
-    public void setValueAt(int index, Object value) {
+    public void setCharAt(int index, char value) {
         checkArrayIndex(index);
         if(index > data.length()) {
             final StringBuilder str = new StringBuilder(data);
@@ -50,7 +48,6 @@ public class VarcharValue extends TextValue {
         }
     }
 
-    @Override
     public Object createDeepCopy() {
         return new VarcharValue(this);
     }
@@ -61,12 +58,6 @@ public class VarcharValue extends TextValue {
         }
     }
 
-    /**
-     * Creates and returns a new Varchar string which is created by concatenation of two Varchar strings.
-     * @param left the left argument of the concatenation operation
-     * @param right the right argument of the concatenation operation
-     * @return the Varchar string
-     */
     public static VarcharValue concat(VarcharValue left, VarcharValue right) {
         throw new NotImplementedException();
     }

@@ -8,7 +8,8 @@ import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 
 /**
- * Type descriptor representing the real type.
+ * Type descriptor representing the float type.
+ * Uses java Double
  */
 public class FloatDescriptor implements TypeDescriptor {
 

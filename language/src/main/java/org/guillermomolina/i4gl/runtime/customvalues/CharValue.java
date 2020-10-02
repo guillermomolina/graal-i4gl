@@ -11,7 +11,8 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
  * {@link String}.
  */
 @CompilerDirectives.ValueType
-public class CharValue extends TextValue {
+public class CharValue {
+    protected String data;
 
     public CharValue(int size) {
         char[] chars = new char[size];
@@ -23,7 +24,6 @@ public class CharValue extends TextValue {
         this.data = source.data;
     }
 
-    @Override
     public void assignString(String value) {
         final int size = data.length();
         if (value.length() > size) {
@@ -37,18 +37,15 @@ public class CharValue extends TextValue {
         }
     }
 
-    @Override
-    public Object getValueAt(int index) {
+    public char getCharAt(int index) {
         return data.charAt(index);
     }
 
-    @Override
-    public void setValueAt(int index, Object value) {
+    public void setCharAt(int index, char value) {
         checkArrayIndex(index);
         data = this.data.substring(0, index) + value + this.data.substring(index + 1);
     }
 
-    @Override
     public Object createDeepCopy() {
         return new CharValue(this);
     }
@@ -59,14 +56,6 @@ public class CharValue extends TextValue {
         }
     }
 
-    /**
-     * Creates and returns a new NChar string which is created by concatenation of
-     * two NChar strings.
-     * 
-     * @param left  the left argument of the concatenation operation
-     * @param right the right argument of the concatenation operation
-     * @return the NChar string
-     */
     public static CharValue concat(CharValue left, CharValue right) {
         throw new NotImplementedException();
     }

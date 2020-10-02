@@ -17,9 +17,11 @@ import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
-import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
+import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -46,22 +48,57 @@ public abstract class AssignToTextNode extends I4GLStatementNode {
     @CompilerDirectives.CompilationFinal
     private int jumps = -1;
 
-    @Specialization
-    void assignString(VirtualFrame frame, final int index, final TextValue value) {
+    protected boolean isText() {
+        return getTypeDescriptor() instanceof TextDescriptor;
+    }
+
+    @Specialization(guards = "isText()")
+    void assignText(VirtualFrame frame, final int index, final String value) {
         final VirtualFrame actualFrame = getFrame(frame);
 
         Object targetObject = actualFrame.getValue(getSlot());
-        if (targetObject instanceof NullValue) {
+        if (!(targetObject instanceof String)) {
+            targetObject = "";
+        }
+        StringBuilder builder = new StringBuilder((String)targetObject);
+        builder.setCharAt(index, value.charAt(0));
+        actualFrame.setObject(getSlot(), builder.toString());
+    }
+   
+    protected boolean isChar() {
+        return getTypeDescriptor() instanceof CharDescriptor;
+    }
+ 
+    @Specialization(guards = "isChar()")
+    void assignChar(VirtualFrame frame, final int index, final String value) {
+        final VirtualFrame actualFrame = getFrame(frame);
+
+        Object targetObject = actualFrame.getValue(getSlot());
+        if (!(targetObject instanceof CharValue)) {
             targetObject = getTypeDescriptor().getDefaultValue();
             actualFrame.setObject(getSlot(), targetObject);
         }
 
-        if (targetObject instanceof TextValue) {
-            final TextValue target = (TextValue) targetObject;
-            target.setValueAt(index -1, value.toString());
-        } else {
-            throw new I4GLRuntimeException("Can not assign to a non string variable");
+        final CharValue target = (CharValue) targetObject;
+        target.setCharAt(index - 1, value.charAt(0));
+    }
+   
+    protected boolean isVarchar() {
+        return getTypeDescriptor() instanceof VarcharDescriptor;
+    }
+   
+    @Specialization(guards = "isVarchar()")
+    void assignVarchar(VirtualFrame frame, final int index, final String value) {
+        final VirtualFrame actualFrame = getFrame(frame);
+
+        Object targetObject = actualFrame.getValue(getSlot());
+        if (!(targetObject instanceof VarcharValue)) {
+            targetObject = getTypeDescriptor().getDefaultValue();
+            actualFrame.setObject(getSlot(), targetObject);
         }
+
+        final VarcharValue target = (VarcharValue) targetObject;
+        target.setCharAt(index - 1, value.charAt(0));
     }
 
     @ExplodeLoop

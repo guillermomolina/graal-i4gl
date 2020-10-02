@@ -37,7 +37,6 @@ import org.guillermomolina.i4gl.nodes.literals.IntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.RealLiteralNode;
 import org.guillermomolina.i4gl.nodes.literals.RealLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.TextLiteralNode;
-import org.guillermomolina.i4gl.nodes.literals.TextLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.AndNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.EqualsNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.IsNullNodeGen;
@@ -1096,7 +1095,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         assert literal.length() >= 2 && literal.startsWith("\"") && literal.endsWith("\"");
         literal = literal.substring(1, literal.length() - 1);
 
-        TextLiteralNode node = TextLiteralNodeGen.create(literal.intern());
+        TextLiteralNode node = new TextLiteralNode(literal.intern());
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;

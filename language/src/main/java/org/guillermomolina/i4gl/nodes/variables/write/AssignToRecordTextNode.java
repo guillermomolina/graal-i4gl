@@ -10,10 +10,12 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
 
 /**
@@ -37,26 +39,65 @@ public abstract class AssignToRecordTextNode extends I4GLStatementNode {
         this.descriptor = descriptor;
     }
 
-    @Specialization
-    void assignText(RecordValue record, int index, TextValue value) {
+    protected boolean isText() {
+        return descriptor instanceof TextDescriptor;
+    }
+
+    @Specialization(guards = "isText()")
+    void assignText(RecordValue record, int index, String value) {
         try {
             Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
-            if (targetObject instanceof NullValue) {
-                targetObject = descriptor.getDefaultValue();
-                record.getFrame().setObject(record.getSlot(this.identifier), targetObject);
+            if (!(targetObject instanceof String)) {
+                targetObject = "";
             }
-
-            if (targetObject instanceof TextValue) {
-                final TextValue target = (TextValue) targetObject;
-                target.setValueAt(index - 1, value.toString());
-            } else {
-                throw new I4GLRuntimeException("Can not assign to a non string variable");
-            }
+            StringBuilder builder = new StringBuilder((String)targetObject);
+            builder.setCharAt(index, value.charAt(0));
+            record.getFrame().setObject(record.getSlot(this.identifier), builder.toString());
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }
     }
+   
+    protected boolean isChar() {
+        return descriptor instanceof CharDescriptor;
+    }
+   
+    @Specialization(guards = "isChar()")
+    void assignChar(RecordValue record, int index, String value) {
+        try {
+            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
+            if (!(targetObject instanceof CharValue)) {
+                targetObject = descriptor.getDefaultValue();
+                record.getFrame().setObject(record.getSlot(this.identifier), targetObject);
+            }
 
+            final CharValue target = (CharValue) targetObject;
+            target.setCharAt(index - 1, value.charAt(0));
+        } catch (FrameSlotTypeException e) {
+            throw new UnexpectedRuntimeException();
+        }
+    }
+   
+    protected boolean isVarchar() {
+        return descriptor instanceof VarcharDescriptor;
+    }
+   
+    @Specialization(guards = "isVarchar()")
+    void assignVarchar(RecordValue record, int index, String value) {
+        try {
+            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
+            if (!(targetObject instanceof VarcharValue)) {
+                targetObject = descriptor.getDefaultValue();
+                record.getFrame().setObject(record.getSlot(this.identifier), targetObject);
+            }
+
+            final VarcharValue target = (VarcharValue) targetObject;
+            target.setCharAt(index - 1, value.charAt(0));
+        } catch (FrameSlotTypeException e) {
+            throw new UnexpectedRuntimeException();
+        }
+    }
+ 
     @Override
     public boolean hasTag(Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);

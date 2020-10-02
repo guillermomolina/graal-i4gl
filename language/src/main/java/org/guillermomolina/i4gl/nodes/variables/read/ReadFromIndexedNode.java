@@ -9,7 +9,8 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * This nodes read value from an array at specified index.
@@ -47,8 +48,18 @@ public abstract class ReadFromIndexedNode extends ExpressionNode {
     }
 
     @Specialization
-    char readString(TextValue string, int index) {
-        return (char) string.getValueAt(index - 1);
+    String readString(String string, int index) {
+        return Character.toString((string.charAt(index - 1)));
+    }
+
+    @Specialization
+    String readString(CharValue charValue, int index) {
+        return Character.toString(charValue.getCharAt(index - 1));
+    }
+
+    @Specialization
+    String readString(VarcharValue varchar, int index) {
+        return Character.toString(varchar.getCharAt(index - 1));
     }
 
     @Specialization

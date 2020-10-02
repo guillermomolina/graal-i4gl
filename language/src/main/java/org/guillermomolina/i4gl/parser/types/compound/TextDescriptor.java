@@ -7,7 +7,6 @@ import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
 
 /**
  * Type descriptor representing the string type.
@@ -21,7 +20,7 @@ public class TextDescriptor implements TypeDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new TextValue();
+        return "";
     }
 
     @Override

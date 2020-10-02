@@ -1,20 +1,16 @@
 package org.guillermomolina.i4gl;
 
-import com.oracle.truffle.api.dsl.ImplicitCast;
 import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
-import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * The type system of our interpreter. It specifies which variable types we will
  * be using and implicit casts.
  */
-@TypeSystem({ int.class, long.class, float.class, double.class, VarcharValue.class, CharValue.class, TextValue.class })
+@TypeSystem({  })
 public class I4GLTypes {
 
     protected I4GLTypes() {
@@ -41,50 +37,5 @@ public class I4GLTypes {
     public static NullValue asNullValue(Object value) {
         assert isNullValue(value);
         return NullValue.SINGLETON;
-    }
-
-    @ImplicitCast
-    public static long castIntToLong(int value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static float castIntToFloat(int value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static float castLongToFloat(long value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static double castIntToDouble(int value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static double castLongToDouble(long value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static double castFloatToDouble(float value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static TextValue castIntToText(int value) {
-        return new TextValue(String.valueOf(value));
-    }
-
-    @ImplicitCast
-    public static TextValue castLongToText(long value) {
-        return new TextValue(String.valueOf(value));
-    }
-
-    @ImplicitCast
-    public static TextValue castDoubleToText(double value) {
-        return new TextValue(String.valueOf(value));
     }
 }
