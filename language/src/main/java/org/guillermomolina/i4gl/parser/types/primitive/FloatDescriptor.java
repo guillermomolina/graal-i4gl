@@ -10,11 +10,11 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 /**
  * Type descriptor representing the real type.
  */
-public class RealDescriptor implements TypeDescriptor {
+public class FloatDescriptor implements TypeDescriptor {
 
-    public static final RealDescriptor SINGLETON = new RealDescriptor();
+    public static final FloatDescriptor SINGLETON = new FloatDescriptor();
 
-    private RealDescriptor() {
+    private FloatDescriptor() {
     }
 
     @Override
@@ -35,6 +35,6 @@ public class RealDescriptor implements TypeDescriptor {
 
     @Override
     public String toString() {
-        return "REAL";
+        return "FLOAT";
     }
 }
