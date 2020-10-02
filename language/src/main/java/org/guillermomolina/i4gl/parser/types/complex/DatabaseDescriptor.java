@@ -32,7 +32,6 @@ public class DatabaseDescriptor implements TypeDescriptor {
 
     @Override
     public String toString() {
-        return identifier;
+        return "DATABASE " + identifier;
     }
-
 }

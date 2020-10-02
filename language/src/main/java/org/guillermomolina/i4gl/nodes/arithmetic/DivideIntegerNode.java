@@ -5,8 +5,8 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.BinaryExpressionNode;
 import org.guillermomolina.i4gl.nodes.utils.BinaryArgumentPrimitiveTypes;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 
 /**
  * Node representing I4GL's div operation which is division on whole numbers.
@@ -19,9 +19,9 @@ public abstract class DivideIntegerNode extends BinaryExpressionNode {
 
 	DivideIntegerNode() {
         this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, IntDescriptor.SINGLETON), IntDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, LongDescriptor.SINGLETON), LongDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, IntDescriptor.SINGLETON), LongDescriptor.SINGLETON);
-        this.typeTable.put(new BinaryArgumentPrimitiveTypes(LongDescriptor.SINGLETON, LongDescriptor.SINGLETON), LongDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(IntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), BigIntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, IntDescriptor.SINGLETON), BigIntDescriptor.SINGLETON);
+        this.typeTable.put(new BinaryArgumentPrimitiveTypes(BigIntDescriptor.SINGLETON, BigIntDescriptor.SINGLETON), BigIntDescriptor.SINGLETON);
     }
 
     @Specialization

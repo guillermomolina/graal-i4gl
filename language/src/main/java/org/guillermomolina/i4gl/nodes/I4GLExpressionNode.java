@@ -13,10 +13,6 @@ import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -26,7 +22,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 @TypeSystemReference(I4GLTypes.class)
 @NodeInfo(description = "Abstract class for all nodes that return value")
 @GenerateWrapper
-public abstract class ExpressionNode extends I4GLStatementNode {
+public abstract class I4GLExpressionNode extends I4GLStatementNode {
 
     private boolean hasExpressionTag;
 
@@ -44,7 +40,7 @@ public abstract class ExpressionNode extends I4GLStatementNode {
 
     @Override
     public WrapperNode createWrapper(ProbeNode probe) {
-        return new ExpressionNodeWrapper(this, probe);
+        return new I4GLExpressionNodeWrapper(this, probe);
     }
 
     @Override
@@ -77,20 +73,4 @@ public abstract class ExpressionNode extends I4GLStatementNode {
 	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypesGen.expectDouble(executeGeneric(frame));
 	}
-
-    protected boolean isInt() {
-        return getType() == IntDescriptor.SINGLETON;
-    }
-
-    protected boolean isLong() {
-        return getType() == BigIntDescriptor.SINGLETON;
-    }
-
-    protected boolean isFloat() {
-        return getType() == SmallFloatDescriptor.SINGLETON;
-    }
-
-    protected boolean isDouble() {
-        return getType() == RealDescriptor.SINGLETON;
-    }
 }

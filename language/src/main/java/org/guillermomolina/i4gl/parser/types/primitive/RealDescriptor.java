@@ -33,4 +33,8 @@ public class RealDescriptor implements TypeDescriptor {
                 || type == TextDescriptor.SINGLETON;
     }
 
+    @Override
+    public String toString() {
+        return "REAL";
+    }
 }

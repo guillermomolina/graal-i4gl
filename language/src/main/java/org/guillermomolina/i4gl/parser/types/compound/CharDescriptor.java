@@ -16,4 +16,9 @@ public class CharDescriptor extends TextDescriptor {
     public Object getDefaultValue() {
         return new CharValue(size);
     }
+
+    @Override
+    public String toString() {
+        return "CHAR(" + size + ")";
+    }
 }

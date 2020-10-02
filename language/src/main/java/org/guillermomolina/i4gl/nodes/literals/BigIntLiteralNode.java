@@ -4,7 +4,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 
 /**
  * Node representing long literal.
@@ -27,7 +27,7 @@ public abstract class BigIntLiteralNode extends ExpressionNode {
 
     @Override
     public TypeDescriptor getType() {
-        return LongDescriptor.SINGLETON;
+        return BigIntDescriptor.SINGLETON;
     }
 
 }

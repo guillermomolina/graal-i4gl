@@ -33,4 +33,9 @@ public class SmallFloatDescriptor implements TypeDescriptor {
         || type instanceof CharDescriptor || type == TextDescriptor.SINGLETON;
     }
 
+    @Override
+    public String toString() {
+        return "SMALLFLOAT";
+    }
+
 }

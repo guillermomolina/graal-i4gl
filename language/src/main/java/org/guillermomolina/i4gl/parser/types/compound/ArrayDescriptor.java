@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.parser.types.compound;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
@@ -37,7 +37,7 @@ public class ArrayDescriptor implements TypeDescriptor {
     public Object getDefaultValue() {
         if (valuesDescriptor == IntDescriptor.SINGLETON) {
             return new int[size];
-        } else if (valuesDescriptor == LongDescriptor.SINGLETON) {
+        } else if (valuesDescriptor == BigIntDescriptor.SINGLETON) {
             return new long[size];
         } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
             return new float[size];
@@ -63,6 +63,11 @@ public class ArrayDescriptor implements TypeDescriptor {
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "ARRAY[" + size + "] OF " + valuesDescriptor;
     }
 
 }

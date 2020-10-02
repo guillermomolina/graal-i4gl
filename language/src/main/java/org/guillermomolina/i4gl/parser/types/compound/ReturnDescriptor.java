@@ -46,4 +46,15 @@ public class ReturnDescriptor implements TypeDescriptor {
         return false;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i < valueDescriptors.length; i++) {
+            if (i!=0) {
+                builder.append(", ");
+            }
+            builder.append(valueDescriptors[i].toString());
+        }
+        return builder.toString();
+    }
 }

@@ -29,9 +29,13 @@ public class IntDescriptor implements TypeDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type == LongDescriptor.SINGLETON || type == RealDescriptor.SINGLETON
+        return type == BigIntDescriptor.SINGLETON || type == RealDescriptor.SINGLETON
                 || type instanceof VarcharDescriptor || type instanceof CharDescriptor
                 || type == TextDescriptor.SINGLETON;
     }
 
+    @Override
+    public String toString() {
+        return "INTEGER";
+    }
 }

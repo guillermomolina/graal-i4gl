@@ -10,11 +10,11 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 /**
  * Type descriptor representing the longint type.
  */
-public class LongDescriptor implements TypeDescriptor {
+public class BigIntDescriptor implements TypeDescriptor {
 
-    public static final LongDescriptor SINGLETON = new LongDescriptor();
+    public static final BigIntDescriptor SINGLETON = new BigIntDescriptor();
 
-    private LongDescriptor() {
+    private BigIntDescriptor() {
     }
 
     @Override
@@ -33,4 +33,8 @@ public class LongDescriptor implements TypeDescriptor {
                 || type instanceof CharDescriptor || type == TextDescriptor.SINGLETON;
     }
 
+    @Override
+    public String toString() {
+        return "BIGINT";
+    }
 }

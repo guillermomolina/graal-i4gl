@@ -16,4 +16,10 @@ public class VarcharDescriptor extends TextDescriptor {
     public Object getDefaultValue() {
         return new VarcharValue(size);
     }
+
+    @Override
+    public String toString() {
+        return "VARCHAR(" + size + ")";
+    }
+
 }

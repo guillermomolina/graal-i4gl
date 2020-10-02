@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.parser.types.compound;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
@@ -31,7 +31,12 @@ public class TextDescriptor implements TypeDescriptor {
 
     @Override
     public boolean convertibleTo(TypeDescriptor type) {
-        return type instanceof TextDescriptor || type == IntDescriptor.SINGLETON || type == LongDescriptor.SINGLETON
+        return type instanceof TextDescriptor || type == IntDescriptor.SINGLETON || type == BigIntDescriptor.SINGLETON
                 || type == SmallFloatDescriptor.SINGLETON || type == RealDescriptor.SINGLETON;
+    }
+
+    @Override
+    public String toString() {
+        return "TEXT";
     }
 }

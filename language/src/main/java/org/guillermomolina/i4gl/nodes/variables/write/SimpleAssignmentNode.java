@@ -19,8 +19,8 @@ import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
@@ -53,7 +53,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     protected boolean isLong() {
-        return getTypeDescriptor() == LongDescriptor.SINGLETON;
+        return getTypeDescriptor() == BigIntDescriptor.SINGLETON;
     }
 
     protected boolean isFloat() {
