@@ -7,7 +7,8 @@ import com.oracle.truffle.api.CompilerDirectives;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 
 /**
- * Representation of variables of NChar type. It is a slight wrapper to Java's {@link String}.
+ * Representation of variables of NChar type. It is a slight wrapper to Java's
+ * {@link String}.
  */
 @CompilerDirectives.ValueType
 public class CharValue extends TextValue {
@@ -22,6 +23,7 @@ public class CharValue extends TextValue {
         this.data = source.data;
     }
 
+    @Override
     public void assignString(String value) {
         final int size = data.length();
         if (value.length() > size) {
@@ -31,7 +33,7 @@ public class CharValue extends TextValue {
             for (int i = value.length(); i < size; ++i) {
                 str.append(' ');
             }
-            data = str.toString();    
+            data = str.toString();
         }
     }
 
@@ -58,8 +60,10 @@ public class CharValue extends TextValue {
     }
 
     /**
-     * Creates and returns a new NChar string which is created by concatenation of two NChar strings.
-     * @param left the left argument of the concatenation operation
+     * Creates and returns a new NChar string which is created by concatenation of
+     * two NChar strings.
+     * 
+     * @param left  the left argument of the concatenation operation
      * @param right the right argument of the concatenation operation
      * @return the NChar string
      */

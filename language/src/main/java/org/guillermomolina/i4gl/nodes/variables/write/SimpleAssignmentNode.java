@@ -18,16 +18,14 @@ import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.StringDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.LongDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.RealDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 import org.guillermomolina.i4gl.runtime.customvalues.TextValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.runtime.exceptions.InvalidCastException;
 
@@ -67,7 +65,7 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
     }
 
     protected boolean isString() {
-        return getTypeDescriptor() instanceof StringDescriptor;
+        return getTypeDescriptor() instanceof TextDescriptor;
     }
 
     @Specialization(guards = "isInt()")
@@ -142,16 +140,11 @@ public abstract class SimpleAssignmentNode extends I4GLStatementNode {
         Object targetObject = frame.getValue(getSlot());
         if (targetObject instanceof NullValue) {
             targetObject = getTypeDescriptor().getDefaultValue();
+            frame.setObject(getSlot(), targetObject);
         }
-
-        if (targetObject instanceof CharValue) {
-            final CharValue target = (CharValue) targetObject;
+        if (targetObject instanceof TextValue) {
+            final TextValue target = (TextValue) targetObject;
             target.assignString(value.toString());
-        } else if (targetObject instanceof VarcharValue) {
-            final VarcharValue target = (VarcharValue) targetObject;
-            target.assignString(value.toString());
-        } else if (targetObject instanceof TextValue) {
-            frame.setObject(getSlot(), value);
         } else {
             throw new I4GLRuntimeException("Can not assign to a non string variable");
         }

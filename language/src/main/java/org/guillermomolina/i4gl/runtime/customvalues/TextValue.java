@@ -22,6 +22,10 @@ public class TextValue {
         this.data = text.data;
     }
 
+    public void assignString(String value) {
+        data = value;
+    }
+
     public Object getValueAt(int index) {
         return data.charAt(index);
     }

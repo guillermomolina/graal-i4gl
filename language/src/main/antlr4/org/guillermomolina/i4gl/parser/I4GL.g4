@@ -176,6 +176,33 @@ runStatement:
 		| RETURNING variable
 	)? EOL+;
 
+//Exploded for an easier visitor
+//variable: identifier (DOT identifier)* variableIndex?;
+variable: notIndexedVariable | indexedVariable;
+
+notIndexedVariable: simpleVariable | recordVariable;
+
+simpleVariable: identifier;
+
+recordVariable: simpleVariable (DOT identifier)+;
+
+indexedVariable: notIndexedVariable variableIndex;
+
+variableIndex: LBRACK expressionList RBRACK;
+
+/*
+ thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
+ */
+componentVariable:
+	identifier (
+		(DOT STAR)
+		| (
+			DOT componentVariable (
+				(THROUGH | THRU) componentVariable
+			)?
+		)
+	);
+
 assignmentStatement:
 	LET (simpleAssignmentStatement | multipleAssignmentStatement) EOL+;
 
@@ -183,16 +210,16 @@ assignmentStatement:
 simpleAssignmentStatement:
 	assignSimpleVariable
 	| assignRecordVariable
-	| assignArrayVariable
-	| assignRecordArrayVariable;
+	| assignIndexedVariable
+	| assignIndexedRecordVariable;
 
 assignSimpleVariable: identifier EQUAL assignmentValue;
 
-assignRecordVariable: identifier (DOT identifier)+ EQUAL assignmentValue;
+assignRecordVariable: simpleVariable (DOT identifier)+ EQUAL assignmentValue;
 
-assignArrayVariable: identifier variableIndex EQUAL assignmentValue;
+assignIndexedVariable: identifier variableIndex EQUAL assignmentValue;
 
-assignRecordArrayVariable: identifier (DOT identifier)+ variableIndex EQUAL assignmentValue;
+assignIndexedRecordVariable: simpleVariable (DOT identifier)+ variableIndex EQUAL assignmentValue;
 
 assignmentValue: expressionList | NULL;
 
@@ -365,23 +392,6 @@ function:
 constant: numericConstant | string;
 
 numericConstant: integer | real;
-
-variable: identifier (DOT identifier)* variableIndex?;
-
-variableIndex: LBRACK expressionList RBRACK;
-
-/*
- thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
- */
-componentVariable:
-	identifier (
-		(DOT STAR)
-		| (
-			DOT componentVariable (
-				(THROUGH | THRU) componentVariable
-			)?
-		)
-	);
 
 structuredStatement: conditionalStatement | repetetiveStatement;
 

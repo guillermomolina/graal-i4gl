@@ -23,6 +23,7 @@ public class VarcharValue extends TextValue {
         this.data = source.data;
     }
 
+    @Override
     public void assignString(String value) {
         data = value.substring(0, Math.min(size, value.length()));
     }

@@ -46,7 +46,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.StringDescriptor;
+import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
@@ -75,7 +75,7 @@ public final class DisplayNode extends I4GLStatementNode {
                 System.out.printf("%11.2f", (double)value);
             } else if (value == NullValue.SINGLETON) {
                 TypeDescriptor type = argumentNodes[i].getType();
-                if (type instanceof StringDescriptor) {
+                if (type instanceof TextDescriptor) {
                     System.out.print(type.getDefaultValue());
                 } else {
                     throw new I4GLRuntimeException("Variable is NULL and is not a String");

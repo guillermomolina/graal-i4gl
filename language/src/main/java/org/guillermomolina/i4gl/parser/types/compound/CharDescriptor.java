@@ -5,10 +5,11 @@ import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 /**
  * Type descriptor representing the string type.
  */
-public class CharDescriptor extends StringDescriptor {
+public class CharDescriptor extends TextDescriptor {
+    private final int size;
 
     public CharDescriptor(int size) {
-        super(size, Char1Descriptor.SINGLETON);
+        this.size = size;
     }
 
     @Override

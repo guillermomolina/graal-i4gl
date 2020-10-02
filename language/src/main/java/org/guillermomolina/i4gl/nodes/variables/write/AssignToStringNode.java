@@ -58,7 +58,7 @@ public abstract class AssignToStringNode extends I4GLStatementNode {
 
         if (targetObject instanceof TextValue) {
             final TextValue target = (TextValue) targetObject;
-            target.setValueAt(index, value.toString());
+            target.setValueAt(index -1, value.toString());
         } else {
             throw new I4GLRuntimeException("Can not assign to a non string variable");
         }

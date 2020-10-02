@@ -73,7 +73,6 @@ import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.ArrayDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.StringDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
@@ -198,9 +197,10 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         final List<I4GLStatementNode> statementNodes = new ArrayList<>(ctx.children.size());
         for (final ParseTree child : ctx.children) {
             I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
-            if (statementNode != null) {
-                statementNodes.add(statementNode);
+            if (statementNode == null) {
+                throw new ParseException(source, ctx, "Visitied an unimplemented Node");
             }
+            statementNodes.add(statementNode);
         }
         I4GLBlockNode node = new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
         setSourceFromContext(node, ctx);
@@ -696,7 +696,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                 currentLexicalScope.registerLocalVariable(identifier, typeDescriptor);
                 I4GLStatementNode initializationNode;
                 Object defaultValue;
-                if (typeDescriptor instanceof StringDescriptor) {
+                if (typeDescriptor instanceof TextDescriptor) {
                     // This is hacky, but that is what c4gl compiler does
                     defaultValue = NullValue.SINGLETON;
                 } else {
@@ -815,6 +815,14 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitAssignmentStatement(final I4GLParser.AssignmentStatementContext ctx) {
+        if( ctx.simpleAssignmentStatement() != null) {
+            return visit(ctx.simpleAssignmentStatement());
+        }
+        return visit(ctx.multipleAssignmentStatement());
+    }
+
+    @Override
     public Node visitAssignSimpleVariable(final I4GLParser.AssignSimpleVariableContext ctx) {
         try {
             final String identifier = ctx.identifier().getText();
@@ -830,11 +838,32 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitAssignRecordVariable(final I4GLParser.AssignRecordVariableContext ctx) {
-        throw new NotImplementedException();
+        try {
+            ExpressionNode variableNode = (ExpressionNode) visit(ctx.simpleVariable());
+            int index = 0;
+            while (index < ctx.identifier().size() - 1) {
+                String identifier = ctx.identifier(index++).getText();
+                variableNode = createReadFromRecordNode(variableNode, identifier);
+            }
+            final ExpressionNode valueNode = (ExpressionNode) visit(ctx.assignmentValue());
+            TypeDescriptor expressionType = variableNode.getType();
+            I4GLStatementNode node;
+            if (expressionType instanceof RecordDescriptor) {
+                String identifier = ctx.identifier(index).getText();
+                node = AssignToRecordFieldNodeGen.create(identifier, variableNode, valueNode);
+            } else {
+                throw new TypeMismatchException(expressionType.toString(), "Record");
+            }
+            node.addStatementTag();
+            setSourceFromContext(node, ctx);
+            return node;    
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
     }
 
     @Override
-    public Node visitAssignArrayVariable(final I4GLParser.AssignArrayVariableContext ctx) {
+    public Node visitAssignIndexedVariable(final I4GLParser.AssignIndexedVariableContext ctx) {
         try {
             final String identifier = ctx.identifier().getText();
             final TypeDescriptor targetType = doLookup(identifier, LexicalScope::getIdentifierDescriptor);
@@ -842,7 +871,15 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             ExpressionNode indexNode = (ExpressionNode) visit(ctx.variableIndex().expressionList().expression(0));
             final ExpressionNode valueNode = (ExpressionNode) visit(ctx.assignmentValue());
             checkTypesAreCompatible(valueNode.getType(), targetType);
-            I4GLStatementNode node = AssignToStringNodeGen.create(indexNode, valueNode, targetSlot, targetType);
+            I4GLStatementNode node;
+            if (targetType instanceof ArrayDescriptor) {
+                throw new NotImplementedException();
+            } else if (targetType instanceof TextDescriptor) {
+                node = AssignToStringNodeGen.create(indexNode, valueNode, targetSlot, targetType);
+            } else {
+                throw new ParseException(source, ctx, "Variable " + identifier + " must be indexed (string or array) to use []");
+            }
+            assert node != null;
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
@@ -852,8 +889,41 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitAssignRecordArrayVariable(final I4GLParser.AssignRecordArrayVariableContext ctx) {
-        throw new NotImplementedException();
+    public Node visitAssignIndexedRecordVariable(final I4GLParser.AssignIndexedRecordVariableContext ctx) {
+        try {
+            ExpressionNode variableNode = (ExpressionNode) visit(ctx.simpleVariable());
+            int index = 0;
+            while (index < ctx.identifier().size() - 1) {
+                String identifier = ctx.identifier(index++).getText();
+                variableNode = createReadFromRecordNode(variableNode, identifier);
+            }
+            TypeDescriptor expressionType = variableNode.getType();
+            I4GLStatementNode node;
+            if (expressionType instanceof RecordDescriptor) {
+                final ExpressionNode valueNode = (ExpressionNode) visit(ctx.assignmentValue());
+                String identifier = ctx.identifier(index).getText();
+                RecordDescriptor accessedRecordDescriptor = (RecordDescriptor) expressionType;
+                if (!accessedRecordDescriptor.containsIdentifier(identifier)) {
+                    throw new UnknownIdentifierException("The record does not contain this identifier");
+                }   
+                TypeDescriptor recordType = accessedRecordDescriptor.getLexicalScope().getIdentifierDescriptor(identifier);
+                if (recordType instanceof ArrayDescriptor) {
+                    node = null;
+                } else if (recordType instanceof TextDescriptor) {
+                    node = null;
+                } else {
+                    throw new ParseException(source, ctx, "Variable must be indexed (string or array) to assign to []");
+                }
+                assert node != null;
+                node.addStatementTag();
+                setSourceFromContext(node, ctx);
+                return node;
+            } else {
+                throw new TypeMismatchException(expressionType.toString(), "Record");
+            }
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
     }
 
     @Override
@@ -976,37 +1046,58 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         assert result != null;
         return result;
     }
-    
+ 
     @Override
-    public Node visitVariable(final I4GLParser.VariableContext ctx) {
+    public Node visitSimpleVariable(final I4GLParser.SimpleVariableContext ctx) {
         try {
-            ExpressionNode variableNode = null;
+            final String identifier = ctx.identifier().getText();
+            ExpressionNode variableNode = doLookup(identifier,
+            (final LexicalScope foundInLexicalScope,
+                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier,
+                            foundInLexicalScope));
+            setSourceFromContext(variableNode, ctx);
+            variableNode.addExpressionTag();
+            return variableNode;
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
+    }
+        
+    @Override
+    public Node visitRecordVariable(final I4GLParser.RecordVariableContext ctx) {
+        try {
+            ExpressionNode variableNode = (ExpressionNode) visit(ctx.simpleVariable());
             for (int index = 0; index < ctx.identifier().size(); index++) {
                 final String identifier = ctx.identifier(index).getText();
-                if (index == 0) {
-                    // simple variable
-                    variableNode = doLookup(identifier,
-                            (final LexicalScope foundInLexicalScope,
-                                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier,
-                                            foundInLexicalScope));
-                } else {
-                    // RECORD
-                    variableNode = createReadFromRecordNode(variableNode, identifier);
-                }
+                variableNode = createReadFromRecordNode(variableNode, identifier);
             }
-            assert variableNode != null;
-            if (ctx.variableIndex() != null) {
-                // array
-                final List<I4GLParser.ExpressionContext> indexList = ctx.variableIndex().expressionList()
-                        .expression();
-                if (indexList.size() > 3) {
-                    throw new ParseException(source, ctx, "Dimensions can not be " + indexList.size());
-                }
-                List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
-                for (I4GLParser.ExpressionContext indexCtx : indexList) {
-                    indexNodes.add((ExpressionNode) visit(indexCtx));
-                }
+            setSourceFromContext(variableNode, ctx);
+            variableNode.addExpressionTag();
+            return variableNode;
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
+    }
+        
+    @Override
+    public Node visitIndexedVariable(final I4GLParser.IndexedVariableContext ctx) {
+        try {
+            ExpressionNode variableNode = (ExpressionNode) visit(ctx.notIndexedVariable());
+            final List<I4GLParser.ExpressionContext> indexList = ctx.variableIndex().expressionList()
+                    .expression();
+            if (indexList.size() > 3) {
+                throw new ParseException(source, ctx, "Dimensions can not be " + indexList.size());
+            }
+            List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
+            for (I4GLParser.ExpressionContext indexCtx : indexList) {
+                indexNodes.add((ExpressionNode) visit(indexCtx));
+            }
+            if( variableNode.getType() instanceof ArrayDescriptor) {
                 variableNode = createReadFromArrayNode(variableNode, indexNodes);
+            } else if (variableNode.getType() instanceof TextDescriptor) {
+                throw new NotImplementedException();
+            } else {
+                throw new ParseException(source, ctx, "Variable must be indexed (string or array) to use []");
             }
             setSourceFromContext(variableNode, ctx);
             variableNode.addExpressionTag();
@@ -1016,19 +1107,6 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    /*
-     * private ReadFromReturnNode createReadFromReturnNode(final ExpressionNode
-     * returnExpression, final int index) throws LexicalException { TypeDescriptor
-     * descriptor = returnExpression.getType();
-     * 
-     * if (!(descriptor instanceof ReturnDescriptor)) { throw new
-     * TypeMismatchException(descriptor.toString(), "Return"); } ReturnDescriptor
-     * accessedReturnDescriptor = (ReturnDescriptor) descriptor;
-     * 
-     * TypeDescriptor returnType =
-     * accessedReturnDescriptor.getValueDescriptor(index); return
-     * ReadFromReturnNodeGen.create(returnExpression, index, returnType); }
-     */
     private ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression, final String identifier)
             throws LexicalException {
         TypeDescriptor descriptor = recordExpression.getType();

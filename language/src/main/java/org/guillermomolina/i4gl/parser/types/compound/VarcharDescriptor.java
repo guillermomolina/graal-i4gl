@@ -5,10 +5,11 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 /**
  * Type descriptor representing the string type.
  */
-public class VarcharDescriptor extends StringDescriptor {
+public class VarcharDescriptor extends TextDescriptor {
+    private final int size;
 
     public VarcharDescriptor(int size) {
-        super(size, Char1Descriptor.SINGLETON);
+        this.size = size;
     }
 
     @Override
