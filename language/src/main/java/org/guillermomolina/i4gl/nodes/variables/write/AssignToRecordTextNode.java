@@ -38,25 +38,6 @@ public abstract class AssignToRecordTextNode extends I4GLStatementNode {
         this.identifier = identifier;
         this.descriptor = descriptor;
     }
-
-    protected boolean isText() {
-        return descriptor instanceof TextDescriptor;
-    }
-
-    @Specialization(guards = "isText()")
-    void assignText(RecordValue record, int index, String value) {
-        try {
-            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
-            if (!(targetObject instanceof String)) {
-                targetObject = "";
-            }
-            StringBuilder builder = new StringBuilder((String)targetObject);
-            builder.setCharAt(index, value.charAt(0));
-            record.getFrame().setObject(record.getSlot(this.identifier), builder.toString());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
-    }
    
     protected boolean isChar() {
         return descriptor instanceof CharDescriptor;
@@ -93,6 +74,25 @@ public abstract class AssignToRecordTextNode extends I4GLStatementNode {
 
             final VarcharValue target = (VarcharValue) targetObject;
             target.setCharAt(index - 1, value.charAt(0));
+        } catch (FrameSlotTypeException e) {
+            throw new UnexpectedRuntimeException();
+        }
+    }
+
+    protected boolean isText() {
+        return descriptor instanceof TextDescriptor;
+    }
+
+    @Specialization(guards = "isText()")
+    void assignText(RecordValue record, int index, String value) {
+        try {
+            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
+            if (!(targetObject instanceof String)) {
+                targetObject = "";
+            }
+            StringBuilder builder = new StringBuilder((String)targetObject);
+            builder.setCharAt(index, value.charAt(0));
+            record.getFrame().setObject(record.getSlot(this.identifier), builder.toString());
         } catch (FrameSlotTypeException e) {
             throw new UnexpectedRuntimeException();
         }

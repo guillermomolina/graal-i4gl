@@ -62,4 +62,8 @@ public class VarcharValue {
         throw new NotImplementedException();
     }
 
+    @Override
+    public String toString() {
+        return data;
+    }
 }

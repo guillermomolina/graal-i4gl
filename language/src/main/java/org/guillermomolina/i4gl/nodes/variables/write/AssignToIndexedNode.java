@@ -9,6 +9,7 @@ import org.guillermomolina.i4gl.nodes.ExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -28,32 +29,37 @@ public abstract class AssignToIndexedNode extends I4GLStatementNode {
     }
 
     @Specialization
-    void assignLong(long[] array, int index, long value) {
+    void assignBigInt(long[] array, int index, long value) {
         array[index - 1] = value;
     }
 
     @Specialization
-    void assigFloat(float[] array, int index, float value) {
+    void assigSmallFloat(float[] array, int index, float value) {
         array[index - 1] = value;
     }
 
     @Specialization
-    void assignDouble(double[] array, int index, double value) {
+    void assignFloat(double[] array, int index, double value) {
         array[index - 1] = value;
     }
 
     @Specialization
-    void assignToText(CharValue string, int index, String value) {
+    void assignToText(String string, int index, String value) {
+        throw new I4GLRuntimeException("Strings are inmutable");
+    }
+
+    @Specialization
+    void assignToChar(CharValue string, int index, String value) {
         string.setCharAt(index - 1, value.charAt(0));
     }
 
     @Specialization
-    void assignToText(VarcharValue string, int index, String value) {
+    void assignToVarchar(VarcharValue string, int index, String value) {
         string.setCharAt(index - 1, value.charAt(0));
     }
 
     @Specialization
-    void assignObject(Object[] array, int index, Object value) {
+    void assign(Object[] array, int index, Object value) {
         array[index - 1] = value;
     }
 

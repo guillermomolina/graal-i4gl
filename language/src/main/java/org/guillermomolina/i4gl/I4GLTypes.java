@@ -1,5 +1,6 @@
 package org.guillermomolina.i4gl;
 
+import com.oracle.truffle.api.dsl.ImplicitCast;
 import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
@@ -10,7 +11,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
  * The type system of our interpreter. It specifies which variable types we will
  * be using and implicit casts.
  */
-@TypeSystem({  })
+@TypeSystem({ int.class, long.class, float.class, double.class })
 public class I4GLTypes {
 
     protected I4GLTypes() {
@@ -37,5 +38,50 @@ public class I4GLTypes {
     public static NullValue asNullValue(Object value) {
         assert isNullValue(value);
         return NullValue.SINGLETON;
+    }
+
+    @ImplicitCast
+    public static long castIntToBigInt(int value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static float castIntToSmallFloat(int value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static float castBigIntToSmallFloat(long value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static double castIntToFloat(int value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static double castBigIntToFloat(long value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static double castSmallFloatToFloat(float value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static String castIntToText(int value) {
+        return String.valueOf(value);
+    }
+
+    @ImplicitCast
+    public static String castBigIntToText(long value) {
+        return String.valueOf(value);
+    }
+
+    @ImplicitCast
+    public static String castFloatToText(double value) {
+        return String.valueOf(value);
     }
 }

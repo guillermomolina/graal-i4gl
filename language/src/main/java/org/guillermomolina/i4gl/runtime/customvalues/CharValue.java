@@ -60,4 +60,8 @@ public class CharValue {
         throw new NotImplementedException();
     }
 
+    @Override
+    public String toString() {
+        return data;
+    }
 }

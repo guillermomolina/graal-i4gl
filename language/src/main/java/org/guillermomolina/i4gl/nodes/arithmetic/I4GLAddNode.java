@@ -41,13 +41,13 @@ public abstract class I4GLAddNode extends I4GLBinaryExpressionNode {
     }
 
     /* Adding strings does not actually work in c4gl */
-    @Specialization(guards = "isString(left, right)")
+    @Specialization(guards = "isText(left, right)")
     @TruffleBoundary
     protected String add(Object left, Object right) {
         return left.toString() + right.toString();
     }
 
-    protected boolean isString(Object a, Object b) {
+    protected boolean isText(Object a, Object b) {
         return a instanceof String || b instanceof String;
     }
 

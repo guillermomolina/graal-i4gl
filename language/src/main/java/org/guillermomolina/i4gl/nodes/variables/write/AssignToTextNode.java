@@ -47,23 +47,6 @@ public abstract class AssignToTextNode extends I4GLStatementNode {
 
     @CompilerDirectives.CompilationFinal
     private int jumps = -1;
-
-    protected boolean isText() {
-        return getTypeDescriptor() instanceof TextDescriptor;
-    }
-
-    @Specialization(guards = "isText()")
-    void assignText(VirtualFrame frame, final int index, final String value) {
-        final VirtualFrame actualFrame = getFrame(frame);
-
-        Object targetObject = actualFrame.getValue(getSlot());
-        if (!(targetObject instanceof String)) {
-            targetObject = "";
-        }
-        StringBuilder builder = new StringBuilder((String)targetObject);
-        builder.setCharAt(index, value.charAt(0));
-        actualFrame.setObject(getSlot(), builder.toString());
-    }
    
     protected boolean isChar() {
         return getTypeDescriptor() instanceof CharDescriptor;
@@ -99,6 +82,23 @@ public abstract class AssignToTextNode extends I4GLStatementNode {
 
         final VarcharValue target = (VarcharValue) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
+    }
+
+    protected boolean isText() {
+        return getTypeDescriptor() instanceof TextDescriptor;
+    }
+
+    @Specialization(guards = "isText()")
+    void assignText(VirtualFrame frame, final int index, final String value) {
+        final VirtualFrame actualFrame = getFrame(frame);
+
+        Object targetObject = actualFrame.getValue(getSlot());
+        if (!(targetObject instanceof String)) {
+            targetObject = "";
+        }
+        StringBuilder builder = new StringBuilder((String)targetObject);
+        builder.setCharAt(index, value.charAt(0));
+        actualFrame.setObject(getSlot(), builder.toString());
     }
 
     @ExplodeLoop
