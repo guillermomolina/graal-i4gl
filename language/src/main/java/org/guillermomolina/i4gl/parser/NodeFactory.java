@@ -16,7 +16,6 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.InitializationNodeFactory;
-import org.guillermomolina.i4gl.nodes.arithmetic.I4GLAddNode;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLAddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideIntegerNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideNodeGen;
@@ -46,11 +45,11 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLLikeNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLMatchesNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLNotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLOrNodeGen;
-import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLMainRootNode;
+import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLConnectToDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
-import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
@@ -75,7 +74,7 @@ import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
@@ -740,7 +739,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             return new TypeNode(BigIntDescriptor.SINGLETON);
         }
         if (ctx.REAL() != null) {
-            return new TypeNode(FloatDescriptor.SINGLETON);
+            return new TypeNode(DoubleDescriptor.SINGLETON);
         }
         throw new NotImplementedException();
     }

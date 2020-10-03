@@ -61,8 +61,8 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
         }
     }
 
-    @Specialization(guards = "isFloat()")
-    double readFloat(RecordValue record) {
+    @Specialization(guards = "isDouble()")
+    double readDouble(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
         try {
             return record.getFrame().getDouble(slot);

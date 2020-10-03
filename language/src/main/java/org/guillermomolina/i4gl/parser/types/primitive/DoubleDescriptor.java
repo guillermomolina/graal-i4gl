@@ -11,11 +11,11 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
  * Type descriptor representing the float type.
  * Uses java Double
  */
-public class FloatDescriptor implements I4GLTypeDescriptor {
+public class DoubleDescriptor implements I4GLTypeDescriptor {
 
-    public static final FloatDescriptor SINGLETON = new FloatDescriptor();
+    public static final DoubleDescriptor SINGLETON = new DoubleDescriptor();
 
-    private FloatDescriptor() {
+    private DoubleDescriptor() {
     }
 
     @Override

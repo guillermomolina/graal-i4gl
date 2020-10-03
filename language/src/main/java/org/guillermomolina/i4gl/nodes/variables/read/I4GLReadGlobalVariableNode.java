@@ -57,8 +57,8 @@ public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
         }
     }
 
-    @Specialization(guards = "isFloat()")
-    double readFloat(VirtualFrame frame) {
+    @Specialization(guards = "isDouble()")
+    double readDouble(VirtualFrame frame) {
         try {
             return getFrame(frame).getDouble(getSlot());
         } catch (FrameSlotTypeException e) {

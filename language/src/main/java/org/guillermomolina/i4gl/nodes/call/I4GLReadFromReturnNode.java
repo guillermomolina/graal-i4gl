@@ -43,8 +43,8 @@ public abstract class I4GLReadFromReturnNode extends I4GLExpressionNode {
         return (float) valuenode[getIndex()];
     }
 
-    @Specialization(guards = "isFloat()")
-    double readFloat(Object[] valuenode) {
+    @Specialization(guards = "isDouble()")
+    double readDouble(Object[] valuenode) {
         return (double) valuenode[getIndex()];
     }
 

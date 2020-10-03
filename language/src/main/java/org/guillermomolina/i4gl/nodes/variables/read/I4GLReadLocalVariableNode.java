@@ -43,11 +43,11 @@ public abstract class I4GLReadLocalVariableNode extends I4GLExpressionNode {
     }
 
     @Specialization(guards = "frame.isDouble(getSlot())")
-    protected double readFloat(final VirtualFrame frame) {
+    protected double readDouble(final VirtualFrame frame) {
         return FrameUtil.getDoubleSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readFloat" })
+    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readDouble" })
     protected Object readObject(final VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             /*

@@ -69,7 +69,7 @@ numberType: (
 	| (DECIMAL | DEC | NUMERIC | MONEY) (
 		LPAREN numericConstant (COMMA numericConstant)? RPAREN
 	)?
-	| (FLOAT | DOUBLE) (LPAREN numericConstant RPAREN)?;
+	| (FLOAT | DOUBLE PRECISION) (LPAREN numericConstant RPAREN)?;
 
 charType:
 	varchar LPAREN numericConstant (COMMA numericConstant)? RPAREN

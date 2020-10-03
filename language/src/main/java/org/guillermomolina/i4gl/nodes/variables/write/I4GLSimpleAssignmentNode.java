@@ -21,7 +21,7 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
@@ -73,12 +73,12 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
         getFrame(frame).setFloat(getSlot(), value);
     }
 
-    protected boolean isFloat() {
-        return getTypeDescriptor() == FloatDescriptor.SINGLETON;
+    protected boolean isDouble() {
+        return getTypeDescriptor() == DoubleDescriptor.SINGLETON;
     }
 
-    @Specialization(guards = "isFloat()")
-    void writeFloat(final VirtualFrame frame, final double value) {
+    @Specialization(guards = "isDouble()")
+    void writeDouble(final VirtualFrame frame, final double value) {
         getFrame(frame).setDouble(getSlot(), value);
     }
 
@@ -137,7 +137,7 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
-    @Specialization(replaces = {"writeInt", "writeBigInt", "writeSmallFloat", "writeFloat", "assignChar", "assignVarchar", "assignRecord", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
+    @Specialization(replaces = {"writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
     void assign(final VirtualFrame frame, final Object value) {
         getFrame(frame).setObject(getSlot(), value);
     }

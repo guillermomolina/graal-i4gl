@@ -29,7 +29,7 @@ public class BigIntDescriptor implements I4GLTypeDescriptor {
 
     @Override
     public boolean convertibleTo(final I4GLTypeDescriptor type) {
-        return type == FloatDescriptor.SINGLETON || type instanceof VarcharDescriptor
+        return type == DoubleDescriptor.SINGLETON || type instanceof VarcharDescriptor
                 || type instanceof CharDescriptor || type == TextDescriptor.SINGLETON;
     }
 

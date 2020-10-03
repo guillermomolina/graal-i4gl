@@ -8,6 +8,25 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 /**
+ * I4GL Type System
+ * INT, INTEGER - IntDescriptor - int
+ * BIGINT - BigIntDescriptor - long
+ * REAL, SMALLFLOAT - SmallFloatDescriptor - float
+ * DOUBLE PRECISION, FLOAT - DoubleDescriptor - double
+ * TEXT - TextDescriptor - String
+ * CHAR - CharDescriptor, Char1Descriptor - CharValue
+ * VARCHAR - VarcharDescriptor - VarcharValue
+ * RECORD - RecordDescriptor - RecordValue
+ * ARRAY - ArrayDescriptor - int[], long[], float[], double[], String[], CharValue[], VarcharValue[], RecordValue[]
+ * 
+ * Pseudo types:
+ *  - LabelDescriptor - 
+ *  - ReturnDescriptor - Object[]
+ * NULL - - NullValue
+ * DATABASE - DatabaseDescriptor - DatabaseValue
+ */
+
+/**
  * The type system of our interpreter. It specifies which variable types we will
  * be using and implicit casts.
  */
