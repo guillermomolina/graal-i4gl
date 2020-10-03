@@ -22,6 +22,7 @@ import org.guillermomolina.i4gl.parser.I4GLLexer;
 import org.guillermomolina.i4gl.parser.I4GLParser;
 import org.guillermomolina.i4gl.parser.NodeFactory;
 import org.guillermomolina.i4gl.parser.exceptions.BailoutErrorListener;
+import org.guillermomolina.i4gl.runtime.I4GLLanguageView;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the
@@ -116,6 +117,12 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
 
     public void setInput(InputStream is) {
         this.input = new Scanner(is);
+    }
+
+
+    @Override
+    protected Object getLanguageView(I4GLContext context, Object value) {
+        return I4GLLanguageView.create(value);
     }
 
     public static I4GLContext getCurrentContext() {
