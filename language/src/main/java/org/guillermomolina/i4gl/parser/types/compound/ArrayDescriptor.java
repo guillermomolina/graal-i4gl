@@ -2,7 +2,7 @@ package org.guillermomolina.i4gl.parser.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
@@ -13,17 +13,17 @@ import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
  * stored in a chain of these descriptors. It contains additional information about the type of the inner values and
  * the universe of the indices stored inside an ordinal descriptor.
  */
-public class ArrayDescriptor implements TypeDescriptor {
+public class ArrayDescriptor implements I4GLTypeDescriptor {
 
     protected final int size;
-    private final TypeDescriptor valuesDescriptor;
+    private final I4GLTypeDescriptor valuesDescriptor;
 
     /**
      * Default constructor.
      * @param dimension universe of the indices
      * @param valuesDescriptor type descriptor of the inner values
      */
-    public ArrayDescriptor(int size, TypeDescriptor valuesDescriptor) {
+    public ArrayDescriptor(int size, I4GLTypeDescriptor valuesDescriptor) {
         this.size = size;
         this.valuesDescriptor = valuesDescriptor;
     }
@@ -56,12 +56,12 @@ public class ArrayDescriptor implements TypeDescriptor {
         return size;
     }
 
-    public TypeDescriptor getValuesDescriptor() {
+    public I4GLTypeDescriptor getValuesDescriptor() {
         return this.valuesDescriptor;
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
+    public boolean convertibleTo(I4GLTypeDescriptor type) {
         return false;
     }
 

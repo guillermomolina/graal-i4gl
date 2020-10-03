@@ -12,7 +12,11 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.FloatDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -29,7 +33,7 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
     /**
      * Returns type of the expression. This method is mainly used for compile time type checking.
      */
-    public abstract TypeDescriptor getType();
+    public abstract I4GLTypeDescriptor getType();
 
 	public abstract Object executeGeneric(VirtualFrame frame);
 
@@ -62,15 +66,31 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
 	    return I4GLTypesGen.expectInteger(executeGeneric(frame));
     }
 
-	public long executeLong(VirtualFrame frame) throws UnexpectedResultException {
+	public long executeBigInt(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypesGen.expectLong(executeGeneric(frame));
 	}
 
-	public double executeFloat(VirtualFrame frame) throws UnexpectedResultException {
+	public double executeSmallFloat(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypesGen.expectFloat(executeGeneric(frame));
 	}
 
-	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
+	public double executeFloat(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypesGen.expectDouble(executeGeneric(frame));
 	}
+
+    protected boolean isInt() {
+        return getType() == IntDescriptor.SINGLETON;
+    }
+
+    protected boolean isBigInt() {
+        return getType() == BigIntDescriptor.SINGLETON;
+    }
+
+    protected boolean isSmallFloat() {
+        return getType() == SmallFloatDescriptor.SINGLETON;
+    }
+
+    protected boolean isFloat() {
+        return getType() == FloatDescriptor.SINGLETON;
+    }
 }

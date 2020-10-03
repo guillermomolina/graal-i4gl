@@ -8,7 +8,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.complex.DatabaseDescriptor;
 import org.guillermomolina.i4gl.parser.types.complex.LabelDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
@@ -22,7 +22,7 @@ public class IdentifiersTable {
      * Map of all identifiers: e.g.: variable names, function names, types names,
      * ...
      */
-    private Map<String, TypeDescriptor> identifiersMap;
+    private Map<String, I4GLTypeDescriptor> identifiersMap;
 
     private FrameDescriptor frameDescriptor;
 
@@ -60,11 +60,11 @@ public class IdentifiersTable {
         return this.frameDescriptor;
     }
 
-    public TypeDescriptor getIdentifierDescriptor(String identifier) {
+    public I4GLTypeDescriptor getIdentifierDescriptor(String identifier) {
         return this.identifiersMap.get(identifier);
     }
 
-    public Map<String, TypeDescriptor> getAllIdentifiers() {
+    public Map<String, I4GLTypeDescriptor> getAllIdentifiers() {
         return this.identifiersMap;
     }
 
@@ -84,11 +84,11 @@ public class IdentifiersTable {
         return this.registerNewIdentifier("_database", new DatabaseDescriptor(identifier));
     }
 
-    public void addVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    public void addVariable(String identifier, I4GLTypeDescriptor typeDescriptor) throws LexicalException {
         this.registerNewIdentifier(identifier, typeDescriptor);
     }
 
-    FrameSlot registerNewIdentifier(String identifier, TypeDescriptor typeDescriptor) throws LexicalException,
+    FrameSlot registerNewIdentifier(String identifier, I4GLTypeDescriptor typeDescriptor) throws LexicalException,
             DuplicitIdentifierException {
         if (this.identifiersMap.containsKey(identifier)){
             throw new DuplicitIdentifierException(identifier);

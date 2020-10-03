@@ -19,6 +19,22 @@ public class ReturnValue {
         return data.length;
     }
 
+    public int getIntAt(int index) {
+        return (int) data[index];
+    }
+
+    public long getBigIntAt(int index) {
+        return (long) data[index];
+    }
+
+    public float getSmallFloatAt(int index) {
+        return (float) data[index];
+    }
+
+    public double getFloatAt(int index) {
+        return (double) data[index];
+    }
+
     public Object getValueAt(int index) {
         return data[index];
     }

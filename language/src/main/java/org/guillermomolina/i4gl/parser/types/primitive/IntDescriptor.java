@@ -2,7 +2,7 @@ package org.guillermomolina.i4gl.parser.types.primitive;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
@@ -10,7 +10,7 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 /**
  * Type descriptor representing the integer type.
  */
-public class IntDescriptor implements TypeDescriptor {
+public class IntDescriptor implements I4GLTypeDescriptor {
 
     public static final IntDescriptor SINGLETON = new IntDescriptor();
 
@@ -28,7 +28,7 @@ public class IntDescriptor implements TypeDescriptor {
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
+    public boolean convertibleTo(I4GLTypeDescriptor type) {
         return type == BigIntDescriptor.SINGLETON || type == FloatDescriptor.SINGLETON
                 || type instanceof VarcharDescriptor || type instanceof CharDescriptor
                 || type == TextDescriptor.SINGLETON;

@@ -2,7 +2,7 @@ package org.guillermomolina.i4gl.parser.types.primitive;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
@@ -11,7 +11,7 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
  * Type descriptor representing the float type.
  * Uses java Double
  */
-public class FloatDescriptor implements TypeDescriptor {
+public class FloatDescriptor implements I4GLTypeDescriptor {
 
     public static final FloatDescriptor SINGLETON = new FloatDescriptor();
 
@@ -29,7 +29,7 @@ public class FloatDescriptor implements TypeDescriptor {
     }
 
     @Override
-    public boolean convertibleTo(final TypeDescriptor type) {
+    public boolean convertibleTo(final I4GLTypeDescriptor type) {
         return type instanceof VarcharDescriptor || type instanceof CharDescriptor
                 || type == TextDescriptor.SINGLETON;
     }

@@ -5,9 +5,7 @@ import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -36,8 +34,13 @@ public abstract class I4GLAddNode extends I4GLBinaryExpressionNode {
     }
 
     @Specialization
+    @TruffleBoundary
     protected double add(double left, double right) {
         return left + right;
+    }
+
+    protected boolean isText(Object a, Object b) {
+        return a instanceof String || b instanceof String;
     }
 
     /* Adding strings does not actually work in c4gl */
@@ -47,17 +50,8 @@ public abstract class I4GLAddNode extends I4GLBinaryExpressionNode {
         return left.toString() + right.toString();
     }
 
-    protected boolean isText(Object a, Object b) {
-        return a instanceof String || b instanceof String;
-    }
-
     @Fallback
     protected Object typeError(Object left, Object right) {
         throw new I4GLRuntimeException("Type error doing: " + left + " + " + right);
-    }
-
-    @Override
-    public TypeDescriptor getType() {
-        throw new NotImplementedException();
     }
 }

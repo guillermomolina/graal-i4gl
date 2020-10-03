@@ -7,7 +7,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
 
 /**
@@ -59,7 +59,7 @@ public class LexicalScope {
         return this.localIdentifiers.getFrameSlot(identifier);
     }
 
-    TypeDescriptor getIdentifierDescriptor(String identifier) {
+    I4GLTypeDescriptor getIdentifierDescriptor(String identifier) {
         return this.localIdentifiers.getIdentifierDescriptor(identifier);
     }
 
@@ -87,7 +87,7 @@ public class LexicalScope {
         return this.containsLocalIdentifier(identifier);
     }
 
-    void registerLocalVariable(String identifier, TypeDescriptor typeDescriptor) throws LexicalException {
+    void registerLocalVariable(String identifier, I4GLTypeDescriptor typeDescriptor) throws LexicalException {
         this.localIdentifiers.addVariable(identifier, typeDescriptor);
     }
 

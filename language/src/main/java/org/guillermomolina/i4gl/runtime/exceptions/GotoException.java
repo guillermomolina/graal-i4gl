@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.runtime.exceptions;
 import com.oracle.truffle.api.nodes.ControlFlowException;
 
 /**
- * Exception is thrown when I4GL's goto statement is executed. It is caught inside a {@link org.guillermomolina.i4gl.nodes.statement.LabeledStatement}
- * or {@link org.guillermomolina.i4gl.nodes.statement.ExtendedBlockNode}.
+ * Exception is thrown when I4GL's goto statement is executed. It is caught inside a {@link org.guillermomolina.i4gl.nodes.statement.I4GLLabeledStatement}
+ * or {@link org.guillermomolina.i4gl.nodes.statement.I4GLExtendedBlockNode}.
  */
 public class GotoException extends ControlFlowException {
 

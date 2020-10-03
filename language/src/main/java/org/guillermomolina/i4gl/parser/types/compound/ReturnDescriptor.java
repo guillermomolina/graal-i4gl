@@ -2,20 +2,20 @@ package org.guillermomolina.i4gl.parser.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Type descriptor for I4GL's returns types. It contains additional information about the variables it contains.
  */
-public class ReturnDescriptor implements TypeDescriptor {
-    private final TypeDescriptor[] valueDescriptors;
+public class ReturnDescriptor implements I4GLTypeDescriptor {
+    private final I4GLTypeDescriptor[] valueDescriptors;
 
     /**
      * The default descriptor.
      * @param innerScope lexical scope containing the identifiers of the variables this return contains
      */
-    public ReturnDescriptor(TypeDescriptor[] valueDescriptors) {
+    public ReturnDescriptor(I4GLTypeDescriptor[] valueDescriptors) {
         this.valueDescriptors = valueDescriptors;
     }
 
@@ -37,12 +37,12 @@ public class ReturnDescriptor implements TypeDescriptor {
         return valueDescriptors.length == 0;
     }
 
-    public TypeDescriptor getValueDescriptor(final int index) {
+    public I4GLTypeDescriptor getValueDescriptor(final int index) {
         return this.valueDescriptors[index];
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
+    public boolean convertibleTo(I4GLTypeDescriptor type) {
         return false;
     }
 

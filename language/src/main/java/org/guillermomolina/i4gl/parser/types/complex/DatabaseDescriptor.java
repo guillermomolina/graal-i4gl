@@ -2,13 +2,13 @@ package org.guillermomolina.i4gl.parser.types.complex;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.DatabaseValue;
 
 /**
  * Specialized type descriptor for text-file values.
  */
-public class DatabaseDescriptor implements TypeDescriptor {
+public class DatabaseDescriptor implements I4GLTypeDescriptor {
     private final String identifier;
 
     public DatabaseDescriptor(String identifier) {
@@ -26,7 +26,7 @@ public class DatabaseDescriptor implements TypeDescriptor {
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
+    public boolean convertibleTo(I4GLTypeDescriptor type) {
         return false;
     }
 

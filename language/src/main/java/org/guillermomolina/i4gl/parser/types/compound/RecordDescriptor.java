@@ -7,13 +7,13 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.LexicalScope;
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
 /**
  * Type descriptor for I4GL's records types. It contains additional information about the variables it contains.
  */
-public class RecordDescriptor implements TypeDescriptor {
+public class RecordDescriptor implements I4GLTypeDescriptor {
 
     private final LexicalScope innerScope;
 
@@ -44,7 +44,7 @@ public class RecordDescriptor implements TypeDescriptor {
     }
 
     @Override
-    public boolean convertibleTo(TypeDescriptor type) {
+    public boolean convertibleTo(I4GLTypeDescriptor type) {
         return false;
     }
 
@@ -53,7 +53,7 @@ public class RecordDescriptor implements TypeDescriptor {
         StringBuilder builder = new StringBuilder();
         builder.append("RECORD ");
         FrameDescriptor frameDescriptor = innerScope.getFrameDescriptor();
-        Map<String, TypeDescriptor> types = innerScope.getIdentifiersTable().getAllIdentifiers();
+        Map<String, I4GLTypeDescriptor> types = innerScope.getIdentifiersTable().getAllIdentifiers();
         int i = 0;
         for (final FrameSlot slot : frameDescriptor.getSlots()) {
             if (i++!=0) {

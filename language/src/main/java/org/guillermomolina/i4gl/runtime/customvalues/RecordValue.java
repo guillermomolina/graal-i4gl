@@ -9,7 +9,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import org.guillermomolina.i4gl.parser.types.TypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -28,7 +28,7 @@ public class RecordValue {
      * @param types map of the record's identifiers and their types
      */
     // TODO: can't the frame descriptor be created from the second argument?
-    public RecordValue(final FrameDescriptor frameDescriptor, final Map<String, TypeDescriptor> types) {
+    public RecordValue(final FrameDescriptor frameDescriptor, final Map<String, I4GLTypeDescriptor> types) {
         this(frameDescriptor);
         this.initValues(frameDescriptor, types);
     }
@@ -38,14 +38,14 @@ public class RecordValue {
         this.frame = Truffle.getRuntime().createVirtualFrame(new Object[frameDescriptor.getSize()], frameDescriptor);
     }
 
-    private void initValues(final FrameDescriptor frameDescriptor, final Map<String, TypeDescriptor> types) {
+    private void initValues(final FrameDescriptor frameDescriptor, final Map<String, I4GLTypeDescriptor> types) {
         for (final FrameSlot slot : frameDescriptor.getSlots()) {
-            final TypeDescriptor slotsType = types.get(slot.getIdentifier().toString());
+            final I4GLTypeDescriptor slotsType = types.get(slot.getIdentifier().toString());
             this.initValue(slot, slotsType);
         }
     }
 
-    private void initValue(final FrameSlot slot, final TypeDescriptor descriptor) {
+    private void initValue(final FrameSlot slot, final I4GLTypeDescriptor descriptor) {
         this.setValue(slot, descriptor.getDefaultValue());
     }
 
