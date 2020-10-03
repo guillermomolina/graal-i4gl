@@ -14,7 +14,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "call")
@@ -49,7 +48,7 @@ public final class I4GLCallNode extends I4GLStatementNode {
             function = getFunction();
         }
         Object[] argumentValues = this.evaluateArguments(frame);
-        ReturnValue returnValue = (ReturnValue) function.call(argumentValues);
+        Object[] returnValue = (Object[]) function.call(argumentValues);
         evaluateResult(frame, returnValue);
     }
 
@@ -67,12 +66,12 @@ public final class I4GLCallNode extends I4GLStatementNode {
     }
 
     @SuppressWarnings("deprecation")
-    public void evaluateResult(VirtualFrame frame, ReturnValue returnValue) {
-        if (returnValue.getSize() != resultSlots.length) {
-            throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.getSize());
+    public void evaluateResult(VirtualFrame frame, Object[] returnValue) {
+        if (returnValue.length != resultSlots.length) {
+            throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.length);
         }
         for (int index = 0; index < resultSlots.length; index++) {
-            final Object result = returnValue.getValueAt(index);
+            final Object result = returnValue[index];
             final FrameSlot slot = resultSlots[index];
             switch (slot.getKind()) {
                 case Int:

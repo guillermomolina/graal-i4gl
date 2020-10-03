@@ -45,7 +45,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
 @NodeInfo(shortName = "return", description = "The node implementing a return statement")
@@ -59,9 +58,9 @@ public final class I4GLReturnNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        ReturnValue result = new ReturnValue(valueNodes.length);
+        Object[] result = new Object[valueNodes.length];
         for (int i = 0; i < valueNodes.length; i++) {
-            result.setValueAt(i, valueNodes[i].executeGeneric(frame));
+            result[i] = valueNodes[i].executeGeneric(frame);
         }
         throw new ReturnException(result);
     }

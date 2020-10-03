@@ -10,7 +10,6 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 
 /**
  * This node reads value from an valuenode with specified identifier.
@@ -30,28 +29,28 @@ public abstract class I4GLReadFromReturnNode extends I4GLExpressionNode {
     protected abstract int getIndex();
 
     @Specialization(guards = "isInt()")
-    int readInt(ReturnValue valuenode) {
-        return valuenode.getIntAt(getIndex());
+    int readInt(Object[] valuenode) {
+        return (int) valuenode[getIndex()];
     }
 
     @Specialization(guards = "isBigInt()")
-    long readBigInt(ReturnValue valuenode) {
-        return valuenode.getBigIntAt(getIndex());
+    long readBigInt(Object[] valuenode) {
+        return (long) valuenode[getIndex()];
     }
 
     @Specialization(guards = "isSmallFloat()")
-    float readSmallFloat(ReturnValue valuenode) {
-        return valuenode.getSmallFloatAt(getIndex());
+    float readSmallFloat(Object[] valuenode) {
+        return (float) valuenode[getIndex()];
     }
 
     @Specialization(guards = "isFloat()")
-    double readFloat(ReturnValue valuenode) {
-        return valuenode.getFloatAt(getIndex());
+    double readFloat(Object[] valuenode) {
+        return (double) valuenode[getIndex()];
     }
 
     @Specialization
-    Object readGeneric(ReturnValue valuenode) {
-        return valuenode.getValueAt(getIndex());
+    Object readGeneric(Object[] valuenode) {
+        return valuenode[getIndex()];
     }
 
     @Override

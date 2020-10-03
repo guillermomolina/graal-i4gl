@@ -14,7 +14,6 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "invoke")
@@ -49,11 +48,11 @@ public final class I4GLInvokeNode extends I4GLExpressionNode {
 	        function = getFunction();
         }
         Object[] argumentValues = this.evaluateArguments(frame);
-        ReturnValue returnValue = (ReturnValue) function.call(argumentValues);
-        if(returnValue.getSize() != 1) {
-            throw new IncorrectNumberOfReturnValuesException(1, returnValue.getSize());
+        Object[] returnValue = (Object[]) function.call(argumentValues);
+        if(returnValue.length != 1) {
+            throw new IncorrectNumberOfReturnValuesException(1, returnValue.length);
         }
-        return returnValue.getValueAt(0);
+        return returnValue[0];
 	}
 
     @ExplodeLoop

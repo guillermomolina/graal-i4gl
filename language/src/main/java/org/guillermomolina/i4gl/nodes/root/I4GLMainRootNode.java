@@ -6,7 +6,6 @@ import com.oracle.truffle.api.source.SourceSection;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.ReturnValue;
 import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
 
 public class I4GLMainRootNode extends I4GLRootNode {
@@ -18,8 +17,8 @@ public class I4GLMainRootNode extends I4GLRootNode {
     @Override
     public Object execute(VirtualFrame frame) {
         try {
-            ReturnValue result = (ReturnValue) super.execute(frame);
-            return result.getValueAt(0);
+            Object[] result = (Object[]) super.execute(frame);
+            return result[0];
         } catch (HaltException e) {
             return e.getExitCode();
         } catch (IndexOutOfBoundsException e) {
