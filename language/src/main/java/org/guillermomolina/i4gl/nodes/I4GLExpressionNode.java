@@ -70,11 +70,11 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
 		return I4GLTypesGen.expectLong(executeGeneric(frame));
 	}
 
-	public double executeSmallFloat(VirtualFrame frame) throws UnexpectedResultException {
+	public float executeSmallFloat(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypesGen.expectFloat(executeGeneric(frame));
 	}
 
-	public double executeFloat(VirtualFrame frame) throws UnexpectedResultException {
+	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypesGen.expectDouble(executeGeneric(frame));
 	}
 

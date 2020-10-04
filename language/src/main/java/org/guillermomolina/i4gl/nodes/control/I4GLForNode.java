@@ -70,7 +70,7 @@ public class I4GLForNode extends I4GLStatementNode {
                     }
                     break;
                 case Double:
-                    if (this.initialValue.executeFloat(frame) >= this.finalValue.executeFloat(frame)) {
+                    if (this.initialValue.executeDouble(frame) >= this.finalValue.executeDouble(frame)) {
                         hasEndedNode = hasEndedDescendingNode;
                     }
                     break;

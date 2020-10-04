@@ -3,6 +3,7 @@ package org.guillermomolina.i4gl.nodes.call;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.instrumentation.Tag;
@@ -14,19 +15,18 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "invoke")
 public final class I4GLInvokeNode extends I4GLExpressionNode {
 
-    private final I4GLLanguage language;
     private final String functionIdentifier;
     @Children private final I4GLExpressionNode[] argumentNodes;
-    @CompilerDirectives.CompilationFinal private CallTarget function;
+    @CompilationFinal private I4GLFunction cachedFunction;
     @Child private InteropLibrary library;
 
-	public I4GLInvokeNode(I4GLLanguage language, String identifier, I4GLExpressionNode[] argumentNodes) {
-        this.language = language;
+	public I4GLInvokeNode(String identifier, I4GLExpressionNode[] argumentNodes) {
         this.functionIdentifier = identifier;
         this.argumentNodes = argumentNodes;
         this.library = InteropLibrary.getFactory().createDispatched(3);
@@ -37,17 +37,18 @@ public final class I4GLInvokeNode extends I4GLExpressionNode {
         throw new NotImplementedException();
     }
 
-    private CallTarget getFunction() {
-        return language.getFunction(this.functionIdentifier);
+    private I4GLFunction getFunction() {
+        return lookupContextReference(I4GLLanguage.class).get().getFunctionRegistry().lookup(functionIdentifier, true);
     }
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-	    if (function == null) {
+	    if (cachedFunction == null) {
 	        CompilerDirectives.transferToInterpreterAndInvalidate();
-	        function = getFunction();
+	        cachedFunction = getFunction();
         }
         Object[] argumentValues = this.evaluateArguments(frame);
+        CallTarget function = cachedFunction.getCallTarget();
         Object[] returnValue = (Object[]) function.call(argumentValues);
         if(returnValue.length != 1) {
             throw new IncorrectNumberOfReturnValuesException(1, returnValue.length);

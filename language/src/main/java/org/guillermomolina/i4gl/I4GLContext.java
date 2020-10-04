@@ -15,16 +15,21 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
 
-class I4GLContext {
+import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
+import org.guillermomolina.i4gl.runtime.I4GLFunctionRegistry;
+
+public final class I4GLContext {
     private final Env env;
     private final BufferedReader input;
     private final PrintWriter output;
+    private final I4GLFunctionRegistry functionRegistry;
     private final AllocationReporter allocationReporter;
 
     public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env) {
         this.env = env;
         this.input = new BufferedReader(new InputStreamReader(env.in()));
         this.output = new PrintWriter(env.out(), true);
+        this.functionRegistry = new I4GLFunctionRegistry(language);
         this.allocationReporter = env.lookup(AllocationReporter.class);
         installBuiltins();
     }
@@ -51,12 +56,19 @@ class I4GLContext {
     public PrintWriter getOutput() {
         return output;
     }
+    /**
+     * Returns the registry of all functions that are currently defined.
+     */
+    public I4GLFunctionRegistry getFunctionRegistry() {
+        return functionRegistry;
+    }
 
     /**
      * Adds all builtin functions to the {@link I4GLFunctionRegistry}. This method lists all
      * {@link I4GLBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
+        // TODO: add builtins
     }
 
     public static NodeInfo lookupNodeInfo(Class<?> clazz) {

@@ -1,11 +1,14 @@
 package org.guillermomolina.i4gl.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.oracle.truffle.api.RootCallTarget;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.nodes.Node;
-import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
@@ -78,25 +81,26 @@ import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
-public class NodeFactory extends I4GLBaseVisitor<Node> {
+public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
     /* State while parsing a source unit. */
     private final Source source;
-    private RootNode mainRootNode;
+    private final Map<String, RootCallTarget> allFunctions;
 
     /* State while parsing a block. */
     private final I4GLLanguage language;
     private LexicalScope currentLexicalScope;
 
-    public NodeFactory(final I4GLLanguage language, final Source source) {
+    public I4GLNodeFactory(final I4GLLanguage language, final Source source) {
         this.language = language;
         this.source = source;
         this.currentLexicalScope = new LexicalScope(null, "GLOBAL");
+        this.allFunctions = new HashMap<>();
     }
 
     /**
      * Lambda interface used in
-     * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function.
+     * {@link I4GLNodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function.
      * The function looks up specified identifier and calls
      * {@link GlobalObjectLookup#onFound(LexicalScope, String)} function with the
      * found identifier and lexical sccope in which it was found.
@@ -132,7 +136,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
 
     /**
      * Helper function for
-     * {@link NodeFactory#doLookup(String, GlobalObjectLookup, boolean)}. Does the
+     * {@link I4GLNodeFactory#doLookup(String, GlobalObjectLookup, boolean)}. Does the
      * looking up to the topmost lexical scope.
      * 
      * @param scope          scope to begin the lookup in
@@ -154,9 +158,9 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
         }
         return null;
     }
-
-    public RootNode getRootNode() {
-        return mainRootNode;
+    
+    public Map<String, RootCallTarget> getAllFunctions() {
+        return allFunctions;
     }
 
     private static void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
@@ -181,10 +185,11 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(),
                     ctx.mainStatements());
-            mainRootNode = new I4GLMainRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode,
+            I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
+            allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
             currentLexicalScope = currentLexicalScope.getOuterScope();
-            return mainRootNode;
+            return rootNode;
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
         }
@@ -223,7 +228,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
                     ctx.codeBlock());
             final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
-            language.addFunction(functionIdentifier, rootNode);
+            allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
             currentLexicalScope = currentLexicalScope.getOuterScope();
             return rootNode;
         } catch (final LexicalException e) {
@@ -326,7 +331,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             FrameSlot recordSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
             returnSlots.add(recordSlot);
         }
-        I4GLCallNode node = new I4GLCallNode(language, functionIdentifier, arguments,
+        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments,
                 returnSlots.toArray(new FrameSlot[returnSlots.size()]));
         setSourceFromContext(node, ctx);
         node.addStatementTag();
@@ -341,7 +346,7 @@ public class NodeFactory extends I4GLBaseVisitor<Node> {
             parameterNodes.add((I4GLExpressionNode) visit(parameterCtx));
         }
         final I4GLExpressionNode[] arguments = parameterNodes.toArray(new I4GLExpressionNode[parameterNodes.size()]);
-        I4GLInvokeNode node = new I4GLInvokeNode(language, functionIdentifier, arguments);
+        I4GLInvokeNode node = new I4GLInvokeNode(functionIdentifier, arguments);
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;

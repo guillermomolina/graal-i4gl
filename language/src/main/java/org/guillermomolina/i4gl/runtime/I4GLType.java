@@ -15,27 +15,31 @@ import com.oracle.truffle.api.library.ExportMessage;
 import org.guillermomolina.i4gl.I4GLLanguage;
 
 /**
- * The isInstance type checks are declared using an functional interface and are expressed using the
- * interoperability libraries. The advantage of this is type checks automatically work for foreign
- * values or primitive values like byte or short.
+ * The isInstance type checks are declared using an functional interface and are
+ * expressed using the interoperability libraries. The advantage of this is type
+ * checks automatically work for foreign values or primitive values like byte or
+ * short.
  * <p>
- * The class implements the interop contracts for {@link InteropLibrary#isMetaObject(Object)} and
- * {@link InteropLibrary#isMetaInstance(Object, Object)}. The latter allows other languages and
- * tools to perform type checks using types of i4gl.
+ * The class implements the interop contracts for
+ * {@link InteropLibrary#isMetaObject(Object)} and
+ * {@link InteropLibrary#isMetaInstance(Object, Object)}. The latter allows
+ * other languages and tools to perform type checks using types of i4gl.
  * <p>
  * In order to assign types to guest language values, I4GL values implement
- * {@link InteropLibrary#getMetaObject(Object)}. The interop contracts for primitive values cannot
- * be overriden, so in order to assign meta-objects to primitive values, the primitive values are
- * assigned using language views. See {@link I4GLLanguage#getLanguageView}.
+ * {@link InteropLibrary#getMetaObject(Object)}. The interop contracts for
+ * primitive values cannot be overriden, so in order to assign meta-objects to
+ * primitive values, the primitive values are assigned using language views. See
+ * {@link I4GLLanguage#getLanguageView}.
  */
 @ExportLibrary(InteropLibrary.class)
 @SuppressWarnings("static-method")
 public final class I4GLType implements TruffleObject {
 
     /*
-     * These are the sets of builtin types in simple languages. In case of i4gl the types
-     * nicely match those of the types in InteropLibrary. This might not be the case and more
-     * additional checks need to be performed (similar to number checking for I4GLBigNumber).
+     * These are the sets of builtin types in simple languages. In case of i4gl the
+     * types nicely match those of the types in InteropLibrary. This might not be
+     * the case and more additional checks need to be performed (similar to number
+     * checking for I4GLBigNumber).
      */
     public static final I4GLType INT = new I4GLType("INT", (l, v) -> l.fitsInInt(v));
     public static final I4GLType BIGINT = new I4GLType("BIGINT", (l, v) -> l.fitsInLong(v));
@@ -43,21 +47,25 @@ public final class I4GLType implements TruffleObject {
     public static final I4GLType DOUBLE = new I4GLType("REAL", (l, v) -> v instanceof Double);
     public static final I4GLType NULL = new I4GLType("NULL", (l, v) -> l.isNull(v));
     public static final I4GLType TEXT = new I4GLType("TEXT", (l, v) -> l.isString(v));
+    public static final I4GLType FUNCTION = new I4GLType("FUNCTION", (l, v) -> l.isExecutable(v));
+    public static final I4GLType OBJECT = new I4GLType("OBJECT", (l, v) -> l.hasMembers(v));
 
     /*
-     * This array is used when all types need to be checked in a certain order. While most interop
-     * types like number or string are exclusive, others traits like members might not be. For
-     * example, an object might be a function. In SimpleLanguage we decided to make functions,
-     * functions and not objects.
+     * This array is used when all types need to be checked in a certain order.
+     * While most interop types like number or string are exclusive, others traits
+     * like members might not be. For example, an object might be a function. In
+     * SimpleLanguage we decided to make functions, functions and not objects.
      */
-    @CompilationFinal(dimensions = 1) public static final I4GLType[] PRECEDENCE = new I4GLType[]{NULL, INT, BIGINT, REAL, DOUBLE, TEXT};
+    @CompilationFinal(dimensions = 1)
+    public static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, REAL, DOUBLE, TEXT, FUNCTION,
+            OBJECT };
 
     private final String name;
     private final TypeCheck isInstance;
 
     /*
-     * We don't allow dynamic instances of I4GLType. Real languages might want to expose this for
-     * types that are user defined.
+     * We don't allow dynamic instances of I4GLType. Real languages might want to
+     * expose this for types that are user defined.
      */
     private I4GLType(String name, TypeCheck isInstance) {
         this.name = name;
@@ -65,8 +73,8 @@ public final class I4GLType implements TruffleObject {
     }
 
     /**
-     * Checks whether this type is of a certain instance. If used on fast-paths it is required to
-     * cast {@link I4GLType} to a constant.
+     * Checks whether this type is of a certain instance. If used on fast-paths it
+     * is required to cast {@link I4GLType} to a constant.
      */
     public boolean isInstance(Object value, InteropLibrary interop) {
         CompilerAsserts.partialEvaluationConstant(this);
@@ -84,8 +92,8 @@ public final class I4GLType implements TruffleObject {
     }
 
     /*
-     * All I4GLTypes are declared as interop meta-objects. Other example for meta-objects are Java
-     * classes, or JavaScript prototypes.
+     * All I4GLTypes are declared as interop meta-objects. Other example for
+     * meta-objects are Java classes, or JavaScript prototypes.
      */
     @ExportMessage
     boolean isMetaObject() {
@@ -93,8 +101,8 @@ public final class I4GLType implements TruffleObject {
     }
 
     /*
-     * I4GL does not have the notion of a qualified or simple name, so we return the same type name
-     * for both.
+     * I4GL does not have the notion of a qualified or simple name, so we return the
+     * same type name for both.
      */
     @ExportMessage(name = "getMetaQualifiedName")
     @ExportMessage(name = "getMetaSimpleName")
@@ -113,25 +121,25 @@ public final class I4GLType implements TruffleObject {
     }
 
     /*
-     * The interop message isMetaInstance might be used from other languages or by the {@link
-     * I4GLIsInstanceBuiltin isInstance} builtin. It checks whether a given value, which might be a
-     * primitive, foreign or I4GL value is of a given I4GL type. This allows other languages to make
-     * their instanceOf interopable with foreign values.
+     * The interop message isMetaInstance might be used from other languages or by
+     * the {@link I4GLIsInstanceBuiltin isInstance} builtin. It checks whether a
+     * given value, which might be a primitive, foreign or I4GL value is of a given
+     * I4GL type. This allows other languages to make their instanceOf interopable
+     * with foreign values.
      */
     @ExportMessage
     static class IsMetaInstance {
-
         /*
-         * We assume that the same type is checked at a source location. Therefore we use an inline
-         * cache to specialize for observed types to be constant. The limit of "3" specifies that we
-         * specialize for 3 different types until we rewrite to the doGeneric case. The limit in
-         * this example is somewhat arbitrary and should be determined using careful tuning with
-         * real world benchmarks.
+         * We assume that the same type is checked at a source location. Therefore we
+         * use an inline cache to specialize for observed types to be constant. The
+         * limit of "3" specifies that we specialize for 3 different types until we
+         * rewrite to the doGeneric case. The limit in this example is somewhat
+         * arbitrary and should be determined using careful tuning with real world
+         * benchmarks.
          */
         @Specialization(guards = "type == cachedType", limit = "3")
         static boolean doCached(@SuppressWarnings("unused") I4GLType type, Object value,
-                        @Cached("type") I4GLType cachedType,
-                        @CachedLibrary("value") InteropLibrary valueLib) {
+                @Cached("type") I4GLType cachedType, @CachedLibrary("value") InteropLibrary valueLib) {
             return cachedType.isInstance.check(valueLib, value);
         }
 
@@ -143,8 +151,8 @@ public final class I4GLType implements TruffleObject {
     }
 
     /*
-     * A convenience interface for type checks. Alternatively this could have been solved using
-     * subtypes of I4GLType.
+     * A convenience interface for type checks. Alternatively this could have been
+     * solved using subtypes of I4GLType.
      */
     @FunctionalInterface
     interface TypeCheck {

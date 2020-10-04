@@ -1,27 +1,27 @@
 package org.guillermomolina.i4gl;
 
-import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import com.oracle.truffle.api.CallTarget;
+import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
 import com.oracle.truffle.api.debug.DebuggerTags;
+import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.instrumentation.ProvidedTags;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
-import org.guillermomolina.i4gl.parser.I4GLLexer;
-import org.guillermomolina.i4gl.parser.I4GLParser;
-import org.guillermomolina.i4gl.parser.NodeFactory;
-import org.guillermomolina.i4gl.parser.exceptions.BailoutErrorListener;
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
+import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
+import org.guillermomolina.i4gl.parser.I4GLParserFactory;
 import org.guillermomolina.i4gl.runtime.I4GLLanguageView;
 
 /**
@@ -33,20 +33,12 @@ import org.guillermomolina.i4gl.runtime.I4GLLanguageView;
 @ProvidedTags({ StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class,
         StandardTags.RootBodyTag.class, StandardTags.ExpressionTag.class, DebuggerTags.AlwaysHalt.class,
         StandardTags.ReadVariableTag.class, StandardTags.WriteVariableTag.class })
-public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
+public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     public static final String ID = "i4gl";
     public static final String MIME_TYPE = "application/x-i4gl";
 
     // To make the linter happy, remove it
     public static final I4GLLanguage INSTANCE = null;
-
-    private Map<String, CallTarget> functions;
-    private Scanner input = new Scanner(System.in);
-
-    public I4GLLanguage() {
-        functions = new HashMap<>();
-        input = new Scanner(System.in);
-    }
 
     @Override
     protected I4GLContext createContext(Env environment) {
@@ -90,20 +82,47 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     @Override
     protected CallTarget parse(ParsingRequest request) throws Exception {
         Source source = request.getSource();
-        I4GLLexer lexer = new I4GLLexer(CharStreams.fromString(source.getCharacters().toString()));
-        I4GLParser parser = new I4GLParser(new CommonTokenStream(lexer));
-        lexer.removeErrorListeners();
-        parser.removeErrorListeners();
-        BailoutErrorListener listener = new BailoutErrorListener(source);
-        lexer.addErrorListener(listener);
-        parser.addErrorListener(listener);
-        I4GLParser.CompilationUnitContext tree = parser.compilationUnit();
-        NodeFactory visitor = new NodeFactory(this, source);
-        visitor.visit(tree);
-        return Truffle.getRuntime().createCallTarget(visitor.getRootNode());
+        if (!request.getArgumentNames().isEmpty()) {
+            throw new NotImplementedException();
+        }
+        Map<String, RootCallTarget> functions = I4GLParserFactory.parseI4GL(this, source);
+        RootCallTarget main = functions.get("main");
+        RootNode evalMain;
+        if (main != null) {
+            /*
+             * We have a main function, so "evaluating" the parsed source means invoking that main
+             * function. However, we need to lazily register functions into the I4GLContext first, so
+             * we cannot use the original I4GLRootNode for the main function. Instead, we create a new
+             * I4GLEvalRootNode that does everything we need.
+             */
+            evalMain = new I4GLEvalRootNode(this, main, functions);
+        } else {
+            /*
+             * Even without a main function, "evaluating" the parsed source needs to register the
+             * functions into the I4GLContext.
+             */
+            evalMain = new I4GLEvalRootNode(this, null, functions);
+        }
+        return Truffle.getRuntime().createCallTarget(evalMain);
     }
 
-    public void addFunction(String functionIdentifier, I4GLRootNode rootNode) {
+
+    private static final List<NodeFactory<? extends I4GLBuiltinNode>> EXTERNAL_BUILTINS = Collections.synchronizedList(new ArrayList<>());
+
+    public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
+        EXTERNAL_BUILTINS.add(builtin);
+    }
+
+    @Override
+    protected Object getLanguageView(I4GLContext context, Object value) {
+        return I4GLLanguageView.create(value);
+    }
+
+    public static I4GLContext getCurrentContext() {
+        return getCurrentContext(I4GLLanguage.class);
+    }
+
+    /*public void addFunction(String functionIdentifier, I4GLRootNode rootNode) {
         this.functions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
     }
 
@@ -117,16 +136,7 @@ public class I4GLLanguage extends TruffleLanguage<I4GLContext> {
 
     public void setInput(InputStream is) {
         this.input = new Scanner(is);
-    }
+    }*/
 
-
-    @Override
-    protected Object getLanguageView(I4GLContext context, Object value) {
-        return I4GLLanguageView.create(value);
-    }
-
-    public static I4GLContext getCurrentContext() {
-        return getCurrentContext(I4GLLanguage.class);
-    }
 
 }
