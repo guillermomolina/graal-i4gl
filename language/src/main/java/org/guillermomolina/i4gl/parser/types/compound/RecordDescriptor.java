@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.LexicalScope;
+import org.guillermomolina.i4gl.parser.I4GLLexicalScope;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
@@ -15,13 +15,13 @@ import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
  */
 public class RecordDescriptor implements I4GLTypeDescriptor {
 
-    private final LexicalScope innerScope;
+    private final I4GLLexicalScope innerScope;
 
     /**
      * The default descriptor.
      * @param innerScope lexical scope containing the identifiers of the variables this record contains
      */
-    public RecordDescriptor(LexicalScope innerScope) {
+    public RecordDescriptor(I4GLLexicalScope innerScope) {
         this.innerScope = innerScope;
     }
 
@@ -32,15 +32,15 @@ public class RecordDescriptor implements I4GLTypeDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new RecordValue(innerScope.getFrameDescriptor(), innerScope.getIdentifiersTable().getAllIdentifiers());
+        return new RecordValue(innerScope.getFrameDescriptor(), innerScope.getAllIdentifiers());
     }
 
-    public LexicalScope getLexicalScope() {
+    public I4GLLexicalScope getLexicalScope() {
         return innerScope;
     }
 
     public boolean containsIdentifier(String identifier) {
-        return innerScope.getIdentifiersTable().containsIdentifier(identifier);
+        return innerScope.containsIdentifier(identifier);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class RecordDescriptor implements I4GLTypeDescriptor {
         StringBuilder builder = new StringBuilder();
         builder.append("RECORD ");
         FrameDescriptor frameDescriptor = innerScope.getFrameDescriptor();
-        Map<String, I4GLTypeDescriptor> types = innerScope.getIdentifiersTable().getAllIdentifiers();
+        Map<String, I4GLTypeDescriptor> types = innerScope.getAllIdentifiers();
         int i = 0;
         for (final FrameSlot slot : frameDescriptor.getSlots()) {
             if (i++!=0) {

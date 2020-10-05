@@ -98,11 +98,12 @@ public final class I4GLMain {
             + " " + context.getEngine().getVersion() + " ==");
 
         try {
-            if (context.getBindings(LANGUAGE_ID).getMember("MAIN") == null) {
-                err.println("No function main() defined in 4gl source file.");
+            final Value result = context.eval(source);
+            final Value bindings = context.getBindings(LANGUAGE_ID);
+            if (bindings.getMember("MAIN") == null) {
+                err.println("No MAIN defined in 4gl source file.");
                 return 1;
             }
-            Value result = context.eval(source);
             if (!result.isNull()) {
                 out.println("== Exit code " + result.toString() + " ==");
             }

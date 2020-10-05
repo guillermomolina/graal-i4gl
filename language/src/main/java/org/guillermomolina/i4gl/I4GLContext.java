@@ -5,9 +5,11 @@ import static com.oracle.truffle.api.CompilerDirectives.shouldNotReachHere;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.Scope;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.instrumentation.AllocationReporter;
@@ -24,6 +26,7 @@ public final class I4GLContext {
     private final PrintWriter output;
     private final I4GLFunctionRegistry functionRegistry;
     private final AllocationReporter allocationReporter;
+    private final Iterable<Scope> topScopes; // Cache the top scopes
 
     public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env) {
         this.env = env;
@@ -31,6 +34,7 @@ public final class I4GLContext {
         this.output = new PrintWriter(env.out(), true);
         this.functionRegistry = new I4GLFunctionRegistry(language);
         this.allocationReporter = env.lookup(AllocationReporter.class);
+        this.topScopes = Collections.singleton(Scope.newBuilder("global", functionRegistry.getFunctionsObject()).build());
         installBuiltins();
     }
 
@@ -61,6 +65,10 @@ public final class I4GLContext {
      */
     public I4GLFunctionRegistry getFunctionRegistry() {
         return functionRegistry;
+    }
+
+    public Iterable<Scope> getTopScopes() {
+        return topScopes;
     }
 
     /**

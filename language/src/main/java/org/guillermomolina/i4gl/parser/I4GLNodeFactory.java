@@ -89,12 +89,12 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
     /* State while parsing a block. */
     private final I4GLLanguage language;
-    private LexicalScope currentLexicalScope;
+    private I4GLLexicalScope currentLexicalScope;
 
     public I4GLNodeFactory(final I4GLLanguage language, final Source source) {
         this.language = language;
         this.source = source;
-        this.currentLexicalScope = new LexicalScope(null, "GLOBAL");
+        this.currentLexicalScope = new I4GLLexicalScope(null, "GLOBAL");
         this.allFunctions = new HashMap<>();
     }
 
@@ -102,19 +102,19 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
      * Lambda interface used in
      * {@link I4GLNodeFactory#doLookup(String, GlobalObjectLookup, boolean)} function.
      * The function looks up specified identifier and calls
-     * {@link GlobalObjectLookup#onFound(LexicalScope, String)} function with the
+     * {@link GlobalObjectLookup#onFound(I4GLLexicalScope, String)} function with the
      * found identifier and lexical sccope in which it was found.
      * 
      * @param <T>
      */
     private interface GlobalObjectLookup<T> {
-        T onFound(LexicalScope foundInScope, String foundIdentifier) throws LexicalException;
+        T onFound(I4GLLexicalScope foundInScope, String foundIdentifier) throws LexicalException;
     }
 
     /**
      * Looks up the specified identifier (in current scope and its parent scope up
      * to the topmost scope. If the identifier is found it calls the
-     * {@link GlobalObjectLookup#onFound(LexicalScope, String)} function with the
+     * {@link GlobalObjectLookup#onFound(I4GLLexicalScope, String)} function with the
      * found identifier and lexical scope in which it was found as arguments. It
      * firstly looks ups to the topmost lexical scope and if the identifier is not
      * found then it looks up in the unit scopes.
@@ -123,7 +123,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
      * @param lookupFunction the function to be called when the identifier is found
      * @param <T>            type of the returned object
      * @return the value return from the
-     *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
+     *         {@link GlobalObjectLookup#onFound(I4GLLexicalScope, String)} function
      */
     private <T> T doLookup(final String identifier, final GlobalObjectLookup<T> lookupFunction)
             throws LexicalException {
@@ -144,10 +144,10 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
      * @param lookupFunction function that is called when the identifier is found
      * @param <T>            type of the returned object
      * @return the value return from the
-     *         {@link GlobalObjectLookup#onFound(LexicalScope, String)} function
+     *         {@link GlobalObjectLookup#onFound(I4GLLexicalScope, String)} function
      * @throws LexicalException
      */
-    private <T> T lookupToParentScope(LexicalScope scope, final String identifier,
+    private <T> T lookupToParentScope(I4GLLexicalScope scope, final String identifier,
             final GlobalObjectLookup<T> lookupFunction, final boolean onlyPublic) throws LexicalException {
         while (scope != null) {
             if ((onlyPublic) ? scope.containsPublicIdentifier(identifier) : scope.containsLocalIdentifier(identifier)) {
@@ -180,7 +180,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitMainBlock(final I4GLParser.MainBlockContext ctx) {
         try {
             final String functionIdentifier = "MAIN";
-            currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
+            currentLexicalScope = new I4GLLexicalScope(currentLexicalScope, functionIdentifier);
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(),
@@ -223,7 +223,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             }
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
-            currentLexicalScope = new LexicalScope(currentLexicalScope, functionIdentifier);
+            currentLexicalScope = new I4GLLexicalScope(currentLexicalScope, functionIdentifier);
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, parameteridentifiers, ctx.typeDeclarations(),
                     ctx.codeBlock());
             final I4GLRootNode rootNode = new I4GLRootNode(language, currentLexicalScope.getFrameDescriptor(), bodyNode,
@@ -282,9 +282,9 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
      */
     private I4GLSimpleAssignmentNode createAssignmentNode(final String targetIdentifier, final I4GLExpressionNode valueNode)
             throws LexicalException {
-        final I4GLTypeDescriptor targetType = doLookup(targetIdentifier, LexicalScope::getIdentifierDescriptor);
+        final I4GLTypeDescriptor targetType = doLookup(targetIdentifier, I4GLLexicalScope::getIdentifierDescriptor);
         //checkTypesAreCompatible(valueNode.getType(), targetType);
-        final FrameSlot targetSlot = doLookup(targetIdentifier, LexicalScope::getLocalSlot);
+        final FrameSlot targetSlot = doLookup(targetIdentifier, I4GLLexicalScope::getLocalSlot);
 
         return I4GLSimpleAssignmentNodeGen.create(valueNode, targetSlot, targetType);
     }
@@ -400,7 +400,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
             I4GLStatementNode loopBody = ctx.codeBlock() == null ? new I4GLBlockNode(null)
                     : (I4GLStatementNode) visit(ctx.codeBlock());
-            FrameSlot controlSlot = doLookup(iteratingIdentifier, LexicalScope::getLocalSlot);
+            FrameSlot controlSlot = doLookup(iteratingIdentifier, I4GLLexicalScope::getLocalSlot);
             if (startValue.getType() != finalValue.getType()
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
                 throw new ParseException(source, ctx, "Type mismatch in beginning and last value of for loop.");
@@ -428,7 +428,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
      * @throws UnknownIdentifierException
      */
     private I4GLExpressionNode createReadVariableNode(final String identifier) throws LexicalException {
-        return doLookup(identifier, (final LexicalScope foundInScope,
+        return doLookup(identifier, (final I4GLLexicalScope foundInScope,
                 final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
     }
 
@@ -706,7 +706,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
                     defaultValue = typeDescriptor.getDefaultValue();
                 }
                 assert defaultValue != null;
-                FrameSlot frameSlot = currentLexicalScope.localIdentifiers.getFrameSlot(identifier);
+                FrameSlot frameSlot = currentLexicalScope.getFrameSlot(identifier);
                 initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
                 initializationNodes.add(initializationNode);
             }
@@ -869,8 +869,8 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitAssignIndexedVariable(final I4GLParser.AssignIndexedVariableContext ctx) {
         try {
             final String identifier = ctx.identifier().getText();
-            final I4GLTypeDescriptor targetType = doLookup(identifier, LexicalScope::getIdentifierDescriptor);
-            final FrameSlot targetSlot = doLookup(identifier, LexicalScope::getLocalSlot);
+            final I4GLTypeDescriptor targetType = doLookup(identifier, I4GLLexicalScope::getIdentifierDescriptor);
+            final FrameSlot targetSlot = doLookup(identifier, I4GLLexicalScope::getLocalSlot);
             final List<I4GLParser.ExpressionContext> indexList = ctx.variableIndex().expressionList().expression();
             List<I4GLExpressionNode> indexNodes = new ArrayList<>(indexList.size());
             for (I4GLParser.ExpressionContext indexCtx : indexList) {
@@ -883,7 +883,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
                     throw new ParseException(source, ctx, "Dimensions can not be " + indexList.size());
                 }
                 I4GLExpressionNode variableNode = doLookup(identifier,
-                        (final LexicalScope foundInLexicalScope,
+                        (final I4GLLexicalScope foundInLexicalScope,
                                 final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier,
                                         foundInLexicalScope));
                 node = createAssignmentToArray(variableNode, indexNodes, valueNode);
@@ -990,7 +990,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitSimpleVariable(final I4GLParser.SimpleVariableContext ctx) {
         try {
             final String identifier = ctx.identifier().getText();
-            I4GLExpressionNode variableNode = doLookup(identifier, (final LexicalScope foundInLexicalScope,
+            I4GLExpressionNode variableNode = doLookup(identifier, (final I4GLLexicalScope foundInLexicalScope,
                     final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInLexicalScope));
             setSourceFromContext(variableNode, ctx);
             variableNode.addExpressionTag();
@@ -1079,7 +1079,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         return readIndexedNode;
     }
 
-    private I4GLExpressionNode createReadVariableFromScope(final String identifier, final LexicalScope scope) {
+    private I4GLExpressionNode createReadVariableFromScope(final String identifier, final I4GLLexicalScope scope) {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
         final I4GLTypeDescriptor type = scope.getIdentifierDescriptor(identifier);
         final boolean isLocal = scope == currentLexicalScope;

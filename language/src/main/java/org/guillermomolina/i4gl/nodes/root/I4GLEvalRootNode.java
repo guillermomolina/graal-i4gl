@@ -31,10 +31,10 @@ public final class I4GLEvalRootNode extends RootNode {
 
     @Child private DirectCallNode mainCallNode;
 
-    public I4GLEvalRootNode(I4GLLanguage language, RootCallTarget rootFunction, Map<String, RootCallTarget> functions) {
+    public I4GLEvalRootNode(I4GLLanguage language, RootCallTarget mainFunction, Map<String, RootCallTarget> functions) {
         super(language);
         this.functions = functions;
-        this.mainCallNode = rootFunction != null ? DirectCallNode.create(rootFunction) : null;
+        this.mainCallNode = mainFunction != null ? DirectCallNode.create(mainFunction) : null;
     }
 
     @Override

@@ -7,14 +7,17 @@ import java.util.Map;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.RootCallTarget;
+import com.oracle.truffle.api.Scope;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
 import com.oracle.truffle.api.debug.DebuggerTags;
 import com.oracle.truffle.api.dsl.NodeFactory;
+import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.instrumentation.ProvidedTags;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -45,33 +48,6 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         return new I4GLContext(this, environment);
     }
 
-    @Override
-    protected boolean isVisible(I4GLContext context, Object value) {
-        return !InteropLibrary.getFactory().getUncached(value).isNull(value);
-    }
-
-    /**
-     * Does some thing in old style.
-     *
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    protected Object findExportedSymbol(I4GLContext context, String globalName, boolean onlyExplicit) {
-        return null;
-    }
-
-    /**
-     * Does some thing in old style.
-     *
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    protected Object getLanguageGlobal(I4GLContext i4glContext) {
-        return i4glContext;
-    }
-
     /**
      * Gets source from the request, parses it and return call target that, if
      * called, executes given script in I4GL language.
@@ -86,7 +62,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
             throw new NotImplementedException();
         }
         Map<String, RootCallTarget> functions = I4GLParserFactory.parseI4GL(this, source);
-        RootCallTarget main = functions.get("main");
+        RootCallTarget main = functions.get("MAIN");
         RootNode evalMain;
         if (main != null) {
             /*
@@ -106,37 +82,44 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         return Truffle.getRuntime().createCallTarget(evalMain);
     }
 
-
-    private static final List<NodeFactory<? extends I4GLBuiltinNode>> EXTERNAL_BUILTINS = Collections.synchronizedList(new ArrayList<>());
-
-    public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
-        EXTERNAL_BUILTINS.add(builtin);
-    }
-
     @Override
     protected Object getLanguageView(I4GLContext context, Object value) {
         return I4GLLanguageView.create(value);
+    }
+
+    /**
+     * Does some thing in old style.
+     *
+     * @deprecated
+     */
+    @Deprecated
+    @Override
+    protected Object findExportedSymbol(I4GLContext context, String globalName, boolean onlyExplicit) {
+        return null;
+    }
+
+    @Override
+    protected boolean isVisible(I4GLContext context, Object value) {
+        return !InteropLibrary.getFactory().getUncached(value).isNull(value);
+    }
+
+    @Override
+    public Iterable<Scope> findLocalScopes(I4GLContext context, Node node, Frame frame) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    protected Iterable<Scope> findTopScopes(I4GLContext context) {
+        return context.getTopScopes();
     }
 
     public static I4GLContext getCurrentContext() {
         return getCurrentContext(I4GLLanguage.class);
     }
 
-    /*public void addFunction(String functionIdentifier, I4GLRootNode rootNode) {
-        this.functions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
+    private static final List<NodeFactory<? extends I4GLBuiltinNode>> EXTERNAL_BUILTINS = Collections.synchronizedList(new ArrayList<>());
+
+    public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
+        EXTERNAL_BUILTINS.add(builtin);
     }
-
-    public CallTarget getFunction(String functionIdentifier) {
-        return this.functions.get(functionIdentifier);
-    }
-
-    public Scanner getInput() {
-        return this.input;
-    }
-
-    public void setInput(InputStream is) {
-        this.input = new Scanner(is);
-    }*/
-
-
 }

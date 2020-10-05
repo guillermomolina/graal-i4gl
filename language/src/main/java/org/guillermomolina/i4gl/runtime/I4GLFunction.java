@@ -23,7 +23,6 @@ import com.oracle.truffle.api.utilities.CyclicAssumption;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
-import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
 @SuppressWarnings("static-method")
