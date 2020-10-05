@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) Current File",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
+            "projectName": "launcher",
+            "args": "${file}",
+            "vmArgs": "-Dtruffle.class.path.append=./language/target/i4gl.jar",
+            "stepFilters": {
+                "skipClasses": [
+                    "$JDK",
+                    "junit.*"
+                ],
+                "skipSynthetics": true,
+                "skipStaticInitializers": true,
+                "skipConstructors": false
+            },
+            "console": "internalConsole"
+        },
+        {
+            "type": "antlr-debug",
+            "name": "Debug ANTLR4 grammar Current File",
+            "request": "launch",
+            "input": "${file}",
+            "grammar": "language/src/main/antlr4/org/guillermomolina/i4gl/parser/I4GL.g4",
+            "startRule": "compilationUnit",
+            "printParseTree": true,
+            "visualParseTree": true
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch) I4GLMain Arithmetic.4gl",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
+            "projectName": "launcher",
+            "args": "./language/tests/Arithmetic.4gl",
+            "vmArgs": "-Dtruffle.class.path.append=./language/target/i4gl.jar",
+            "stepFilters": {
+                "skipClasses": [
+                    "$JDK",
+                    "junit.*"
+                ],
+                "skipSynthetics": true,
+                "skipStaticInitializers": true,
+                "skipConstructors": false
+            },
+            "console": "internalConsole"
+        }
+    ]
+}

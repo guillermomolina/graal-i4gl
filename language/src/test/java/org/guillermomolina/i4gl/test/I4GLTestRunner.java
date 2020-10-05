@@ -13,10 +13,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -286,13 +284,6 @@ public class I4GLTestRunner extends ParentRunner<TestCase> {
     }
 
     private static void run(Context context, Path path, PrintWriter out) throws IOException {
-        try {
-            //String output = testCase.name.toString() + " " +  testCase.expectedOutput + " " + actualOutput;
-            String output = "dfgksdjgsdksdfokj";
-            Files.write(Paths.get("/tmp/log.txt"), output.getBytes(), StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            //exception handling left as an exercise for the reader
-        }
         try {
             /* Parse the I4GL source file. */
             Source source = Source.newBuilder(I4GLLanguage.ID, path.toFile()).interactive(true).build();

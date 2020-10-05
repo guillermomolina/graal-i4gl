@@ -1,0 +1,25 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "maven.view": "flat",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "window.zoomLevel": 1,
+    "explorer.confirmDelete": false,
+    "git.enableSmartCommit": true,
+    "java.refactor.renameFromFileExplorer": "autoApply",
+    "git.autofetch": true,
+    "editor.minimap.enabled": false,
+    "java.saveActions.organizeImports": true,
+    "java.home": "",
+    "java.test.config": {
+        "vmargs": [
+            "-Dgraalvm.locatorDisabled=true"
+        ]
+    }
+}
