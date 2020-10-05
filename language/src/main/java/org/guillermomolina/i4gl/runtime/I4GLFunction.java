@@ -21,11 +21,11 @@ import com.oracle.truffle.api.nodes.IndirectCallNode;
 import com.oracle.truffle.api.source.SourceSection;
 import com.oracle.truffle.api.utilities.CyclicAssumption;
 
+import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
 
 @ExportLibrary(InteropLibrary.class)
-@SuppressWarnings("static-method")
 public final class I4GLFunction implements TruffleObject {
 
     public static final int INLINE_CACHE_SIZE = 2;
@@ -88,21 +88,19 @@ public final class I4GLFunction implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<?>> getLanguage() {
+    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
         return I4GLLanguage.class;
     }
 
     /**
      * {@link I4GLFunction} instances are always visible as executable to other languages.
      */
-    @SuppressWarnings("static-method")
     @ExportMessage
     @TruffleBoundary
     SourceSection getSourceLocation() {
         return getCallTarget().getRootNode().getSourceSection();
     }
 
-    @SuppressWarnings("static-method")
     @ExportMessage
     boolean hasSourceLocation() {
         return true;
@@ -127,7 +125,7 @@ public final class I4GLFunction implements TruffleObject {
     }
 
     @ExportMessage
-    Object toDisplayString(@SuppressWarnings("unused") boolean allowSideEffects) {
+    Object toDisplayString(boolean allowSideEffects) {
         return name;
     }
 
@@ -146,6 +144,9 @@ public final class I4GLFunction implements TruffleObject {
     @ReportPolymorphism
     @ExportMessage
     abstract static class Execute {
+
+        private Execute() {
+        }
 
         /**
          * Inline cached specialization of the dispatch.
@@ -190,15 +191,13 @@ public final class I4GLFunction implements TruffleObject {
         @Specialization(limit = "INLINE_CACHE_SIZE", //
                         guards = "function.getCallTarget() == cachedTarget", //
                         assumptions = "callTargetStable")
-        @SuppressWarnings("unused")
         protected static Object doDirect(I4GLFunction function, Object[] arguments,
                         @Cached("function.getCallTargetStable()") Assumption callTargetStable,
                         @Cached("function.getCallTarget()") RootCallTarget cachedTarget,
                         @Cached("create(cachedTarget)") DirectCallNode callNode) {
 
             /* Inline cache hit, we are safe to execute the cached call target. */
-            Object returnValue = callNode.call(arguments);
-            return returnValue;
+            return callNode.call(arguments);
         }
 
         /**

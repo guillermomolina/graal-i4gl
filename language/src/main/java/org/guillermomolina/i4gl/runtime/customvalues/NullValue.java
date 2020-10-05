@@ -7,11 +7,11 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.utilities.TriState;
 
+import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 
 @ExportLibrary(InteropLibrary.class)
-@SuppressWarnings("static-method")
 public final class NullValue implements TruffleObject {
 
     /**
@@ -42,7 +42,7 @@ public final class NullValue implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<?>> getLanguage() {
+    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -65,7 +65,7 @@ public final class NullValue implements TruffleObject {
     }
 
     @ExportMessage
-    static TriState isIdenticalOrUndefined(@SuppressWarnings("unused") NullValue receiver, Object other) {
+    static TriState isIdenticalOrUndefined(NullValue receiver, Object other) {
         /*
          * NullValue values are identical to other NullValue values.
          */
@@ -73,7 +73,7 @@ public final class NullValue implements TruffleObject {
     }
 
     @ExportMessage
-    static int identityHashCode(@SuppressWarnings("unused") NullValue receiver) {
+    static int identityHashCode(NullValue receiver) {
         /*
          * We do not use 0, as we want consistency with System.identityHashCode(receiver).
          */
@@ -81,7 +81,7 @@ public final class NullValue implements TruffleObject {
     }
 
     @ExportMessage
-    Object toDisplayString(@SuppressWarnings("unused") boolean allowSideEffects) {
+    Object toDisplayString(boolean allowSideEffects) {
         return "NULL";
     }
     

@@ -12,10 +12,10 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
+import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 
 @ExportLibrary(InteropLibrary.class)
-@SuppressWarnings("static-method")
 final class FunctionsObject implements TruffleObject {
 
     final Map<String, I4GLFunction> functions = new HashMap<>();
@@ -29,7 +29,7 @@ final class FunctionsObject implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<?>> getLanguage() {
+    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -52,7 +52,7 @@ final class FunctionsObject implements TruffleObject {
 
     @ExportMessage
     @TruffleBoundary
-    Object getMembers(@SuppressWarnings("unused") boolean includeInternal) {
+    Object getMembers(boolean includeInternal) {
         return new FunctionNamesObject(functions.keySet().toArray());
     }
 
@@ -68,7 +68,7 @@ final class FunctionsObject implements TruffleObject {
 
     @ExportMessage
     @TruffleBoundary
-    Object toDisplayString(@SuppressWarnings("unused") boolean allowSideEffects) {
+    Object toDisplayString(boolean allowSideEffects) {
         return functions.toString();
     }
 

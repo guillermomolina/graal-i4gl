@@ -12,6 +12,7 @@ import com.oracle.truffle.api.library.CachedLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
+import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 
 /**
@@ -32,7 +33,6 @@ import org.guillermomolina.i4gl.I4GLLanguage;
  * {@link I4GLLanguage#getLanguageView}.
  */
 @ExportLibrary(InteropLibrary.class)
-@SuppressWarnings("static-method")
 public final class I4GLType implements TruffleObject {
 
     /*
@@ -57,7 +57,7 @@ public final class I4GLType implements TruffleObject {
      * SimpleLanguage we decided to make functions, functions and not objects.
      */
     @CompilationFinal(dimensions = 1)
-    public static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, REAL, DOUBLE, TEXT, FUNCTION,
+    protected static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, REAL, DOUBLE, TEXT, FUNCTION,
             OBJECT };
 
     private final String name;
@@ -87,7 +87,7 @@ public final class I4GLType implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<?>> getLanguage() {
+    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -111,7 +111,7 @@ public final class I4GLType implements TruffleObject {
     }
 
     @ExportMessage(name = "toDisplayString")
-    Object toDisplayString(@SuppressWarnings("unused") boolean allowSideEffects) {
+    Object toDisplayString(boolean allowSideEffects) {
         return name;
     }
 
@@ -129,6 +129,9 @@ public final class I4GLType implements TruffleObject {
      */
     @ExportMessage
     static class IsMetaInstance {
+
+        private IsMetaInstance() {
+        }
         /*
          * We assume that the same type is checked at a source location. Therefore we
          * use an inline cache to specialize for observed types to be constant. The
@@ -138,7 +141,7 @@ public final class I4GLType implements TruffleObject {
          * benchmarks.
          */
         @Specialization(guards = "type == cachedType", limit = "3")
-        static boolean doCached(@SuppressWarnings("unused") I4GLType type, Object value,
+        static boolean doCached(I4GLType type, Object value,
                 @Cached("type") I4GLType cachedType, @CachedLibrary("value") InteropLibrary valueLib) {
             return cachedType.isInstance.check(valueLib, value);
         }

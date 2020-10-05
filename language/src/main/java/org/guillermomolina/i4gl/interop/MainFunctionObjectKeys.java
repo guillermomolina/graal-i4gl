@@ -58,19 +58,16 @@ public final class MainFunctionObjectKeys implements TruffleObject {
     }
 
     @ExportMessage
-    @SuppressWarnings("static-method")
     boolean hasArrayElements() {
         return true;
     }
 
     @ExportMessage
-    @SuppressWarnings("static-method")
     boolean isArrayElementReadable(long index) {
         return index >= 0 && index < 1;
     }
 
     @ExportMessage
-    @SuppressWarnings("static-method")
     long getArraySize() {
         return 1;
     }

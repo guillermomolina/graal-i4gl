@@ -65,12 +65,8 @@ public final class I4GLMain {
         Map<String, String> options = new HashMap<>();
         String file = null;
         for (String arg : args) {
-            if (parseOption(options, arg)) {
-                continue;
-            } else {
-                if (file == null) {
+            if (!parseOption(options, arg) && file == null) {
                     file = arg;
-                }
             }
         }
 
@@ -144,7 +140,7 @@ public final class I4GLMain {
         if (index >= 0) {
             group = group.substring(0, index);
         }
-        options.put(key, value);
+        options.put(group, value);
         return true;
     }
 

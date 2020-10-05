@@ -11,10 +11,10 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
+import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 
 @ExportLibrary(value = InteropLibrary.class, delegateTo = "delegate")
-@SuppressWarnings("static-method")
 public final class I4GLLanguageView implements TruffleObject {
 
     final Object delegate;
@@ -33,7 +33,7 @@ public final class I4GLLanguageView implements TruffleObject {
      * tooling to take a primitive or foreign value and create a value of i4gl of it.
      */
     @ExportMessage
-    Class<? extends TruffleLanguage<?>> getLanguage() {
+    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -74,7 +74,7 @@ public final class I4GLLanguageView implements TruffleObject {
 
     @ExportMessage
     @ExplodeLoop
-    Object toDisplayString(@SuppressWarnings("unused") boolean allowSideEffects, @CachedLibrary("this.delegate") InteropLibrary interop) {
+    Object toDisplayString(boolean allowSideEffects, @CachedLibrary("this.delegate") InteropLibrary interop) {
         for (I4GLType type : I4GLType.PRECEDENCE) {
             if (type.isInstance(this.delegate, interop)) {
                 try {
@@ -126,7 +126,9 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     public static Object create(Object value) {
-        assert isPrimitiveOrFromOtherLanguage(value);
+        if (!isPrimitiveOrFromOtherLanguage(value)) {
+            throw new AssertionError();
+        }
         return new I4GLLanguageView(value);
     }
 

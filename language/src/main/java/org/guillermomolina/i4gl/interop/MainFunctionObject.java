@@ -103,8 +103,7 @@ public abstract class MainFunctionObject implements TruffleObject {
         }
 
         @ExportMessage
-        @SuppressWarnings("static-method")
-        Object getMembers(@SuppressWarnings("unused") boolean includeInternal) {
+        Object getMembers(boolean includeInternal) {
             return KEYS_READ;
         }
 
@@ -128,7 +127,6 @@ public abstract class MainFunctionObject implements TruffleObject {
         }
 
         @ExportMessage
-        @SuppressWarnings("static-method")
         boolean hasMembers() {
             return true;
         }
@@ -140,8 +138,7 @@ public abstract class MainFunctionObject implements TruffleObject {
         }
 
         @ExportMessage
-        @SuppressWarnings("static-method")
-        Object getMembers(@SuppressWarnings("unused") boolean includeInternal) {
+        Object getMembers(boolean includeInternal) {
             return KEYS_WRITE;
         }
 
@@ -165,7 +162,6 @@ public abstract class MainFunctionObject implements TruffleObject {
         }
 
         @ExportMessage
-        @SuppressWarnings("static-method")
         boolean isString() {
             return true;
         }
