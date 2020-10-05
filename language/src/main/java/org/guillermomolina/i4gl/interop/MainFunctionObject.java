@@ -92,7 +92,6 @@ public abstract class MainFunctionObject implements TruffleObject {
         }
 
         @ExportMessage
-        @SuppressWarnings("static-method")
         boolean hasMembers() {
             return true;
         }

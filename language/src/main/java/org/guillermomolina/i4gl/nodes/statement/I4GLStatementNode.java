@@ -89,7 +89,7 @@ public abstract class I4GLStatementNode extends Node implements InstrumentableNo
 
     // invoked by the parser to set the source
     public final void setSourceSection(int charIndex, int length) {
-        assert sourceCharIndex == NO_SOURCE : "source must only be set once";
+        //assert sourceCharIndex == NO_SOURCE : "source must only be set once";
         if (charIndex < 0) {
             throw new IllegalArgumentException("charIndex < 0");
         } else if (length < 0) {
@@ -100,7 +100,7 @@ public abstract class I4GLStatementNode extends Node implements InstrumentableNo
     }
 
     public final void setUnavailableSourceSection() {
-        assert sourceCharIndex == NO_SOURCE : "source must only be set once";
+        //assert sourceCharIndex == NO_SOURCE : "source must only be set once";
         this.sourceCharIndex = UNAVAILABLE_SOURCE;
     }
 

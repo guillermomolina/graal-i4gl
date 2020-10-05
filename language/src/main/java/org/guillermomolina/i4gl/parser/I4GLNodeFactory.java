@@ -294,13 +294,14 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
      * 
      * @throws LexicalException
      */
+    /*
     private boolean checkTypesAreCompatible(final I4GLTypeDescriptor leftType, final I4GLTypeDescriptor rightType)
             throws LexicalException {
         if ((leftType != rightType) && (!leftType.convertibleTo(rightType))) {
             throw new TypeMismatchException(leftType.toString(), rightType.toString());
         }
         return true;
-    }
+    }*/
 
     @Override
     public Node visitCodeBlock(final I4GLParser.CodeBlockContext ctx) {
