@@ -9,7 +9,7 @@ import com.oracle.truffle.api.utilities.TriState;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class NullValue implements TruffleObject {
@@ -56,12 +56,12 @@ public final class NullValue implements TruffleObject {
 
     @ExportMessage
     boolean hasMetaObject() {
-        return false;
+        return true;
     }
 
     @ExportMessage
     Object getMetaObject() {
-        throw new NotImplementedException();
+        return I4GLType.NULL;
     }
 
     @ExportMessage
