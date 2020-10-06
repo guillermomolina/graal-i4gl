@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
-import org.guillermomolina.i4gl.parser.I4GLLexicalScope;
+import org.guillermomolina.i4gl.parser.I4GLParseScope;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
@@ -15,13 +15,13 @@ import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
  */
 public class RecordDescriptor implements I4GLTypeDescriptor {
 
-    private final I4GLLexicalScope innerScope;
+    private final I4GLParseScope innerScope;
 
     /**
      * The default descriptor.
      * @param innerScope lexical scope containing the identifiers of the variables this record contains
      */
-    public RecordDescriptor(I4GLLexicalScope innerScope) {
+    public RecordDescriptor(I4GLParseScope innerScope) {
         this.innerScope = innerScope;
     }
 
@@ -35,7 +35,7 @@ public class RecordDescriptor implements I4GLTypeDescriptor {
         return new RecordValue(innerScope.getFrameDescriptor(), innerScope.getAllIdentifiers());
     }
 
-    public I4GLLexicalScope getLexicalScope() {
+    public I4GLParseScope getLexicalScope() {
         return innerScope;
     }
 

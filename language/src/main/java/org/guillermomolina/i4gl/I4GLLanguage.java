@@ -2,8 +2,10 @@ package org.guillermomolina.i4gl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.RootCallTarget;
@@ -22,6 +24,7 @@ import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.nodes.I4GLLexicalScope;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
 import org.guillermomolina.i4gl.parser.I4GLParserFactory;
@@ -105,7 +108,42 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
 
     @Override
     public Iterable<Scope> findLocalScopes(I4GLContext context, Node node, Frame frame) {
-        throw new NotImplementedException();
+        final I4GLLexicalScope scope = I4GLLexicalScope.createScope(node);
+        return new Iterable<Scope>() {
+            @Override
+            public Iterator<Scope> iterator() {
+                return new Iterator<Scope>() {
+                    private I4GLLexicalScope previousScope;
+                    private I4GLLexicalScope nextScope = scope;
+
+                    @Override
+                    public boolean hasNext() {
+                        if (nextScope == null) {
+                            nextScope = previousScope.findParent();
+                        }
+                        return nextScope != null;
+                    }
+
+                    @Override
+                    public Scope next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
+                        Object functionObject = findFunctionObject();
+                        Scope vscope = Scope.newBuilder(nextScope.getName(), nextScope.getVariables(frame)).node(nextScope.getNode()).arguments(nextScope.getArguments(frame)).rootInstance(
+                                        functionObject).build();
+                        previousScope = nextScope;
+                        nextScope = null;
+                        return vscope;
+                    }
+
+                    private Object findFunctionObject() {
+                        String name = node.getRootNode().getName();
+                        return context.getFunctionRegistry().getFunction(name);
+                    }
+                };
+            }
+        };
     }
 
     @Override

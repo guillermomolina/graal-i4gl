@@ -2,13 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "java",
-            "name": "CodeLens (Launch) - GraalI4GLMain",
-            "request": "launch",
-            "mainClass": "org.guillermomolina.i4gl.shell.GraalI4GLMain",
-            "projectName": "shell"
-        },
-        {
             "type": "graalvm",
             "request": "attach",
             "name": "Attach",
@@ -49,7 +42,10 @@
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
-            "args": "./language/tests/Fibonacci1.4gl",
+            "args": [
+                "--inspect",
+                "./language/tests/Fibonacci1.4gl"
+            ],
             "vmArgs": "-Dtruffle.class.path.append=./language/target/i4gl.jar",
             "stepFilters": {
                 "skipClasses": [

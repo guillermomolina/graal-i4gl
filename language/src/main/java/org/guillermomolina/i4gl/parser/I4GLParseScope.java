@@ -19,7 +19,7 @@ import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
  * This class represents currently parsed lexical scope. Lexical scope
  * of i4gl are scopes of functions.
  */
-public class I4GLLexicalScope {
+public class I4GLParseScope {
 
     /**
      * Map of all identifiers: e.g.: variable names, function names, types names,
@@ -29,7 +29,7 @@ public class I4GLLexicalScope {
     private Map<String, I4GLTypeDescriptor> identifiersMap;
     final List<String> arguments;
     private FrameDescriptor frameDescriptor;
-    private final I4GLLexicalScope outer;
+    private final I4GLParseScope outer;
     private int loopDepth;
 
     /**
@@ -40,7 +40,7 @@ public class I4GLLexicalScope {
      * @param usingTPExtension a flag whether support for Turbo I4GL extensions is
      *                         turned on
      */
-    I4GLLexicalScope(I4GLLexicalScope outer, String name) {
+    I4GLParseScope(I4GLParseScope outer, String name) {
         this.identifiersMap = new HashMap<>();
         this.frameDescriptor = new FrameDescriptor();
         this.name = name;
@@ -103,7 +103,7 @@ public class I4GLLexicalScope {
         return name;
     }
 
-    I4GLLexicalScope getOuterScope() {
+    I4GLParseScope getOuterScope() {
         return outer;
     }
 
