@@ -145,7 +145,7 @@ public final class I4GLFunction implements TruffleObject {
     @ExportMessage
     abstract static class Execute {
 
-        private Execute() {
+        protected Execute() {
         }
 
         /**

@@ -130,7 +130,7 @@ public final class I4GLType implements TruffleObject {
     @ExportMessage
     static class IsMetaInstance {
 
-        private IsMetaInstance() {
+        protected IsMetaInstance() {
         }
         /*
          * We assume that the same type is checked at a source location. Therefore we
