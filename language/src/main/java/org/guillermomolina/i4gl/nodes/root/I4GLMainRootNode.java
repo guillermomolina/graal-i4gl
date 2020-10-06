@@ -18,8 +18,11 @@ public class I4GLMainRootNode extends I4GLRootNode {
     @Override
     public Object execute(VirtualFrame frame) {
         try {
-            Object[] result = (Object[]) super.execute(frame);
-            return result[0];
+            Object result = super.execute(frame);
+            if(result instanceof Object[]) {
+                return ((Object[])result)[0];
+            }
+            return result;
         } catch (HaltException e) {
             return e.getExitCode();
         } catch (IndexOutOfBoundsException e) {

@@ -5,6 +5,7 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.instrumentation.Tag;
@@ -48,49 +49,56 @@ public final class I4GLCallNode extends I4GLStatementNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
         CallTarget function = cachedFunction.getCallTarget();
-        Object[] returnValue = (Object[]) function.call(argumentValues);
-        evaluateResult(frame, returnValue);
+        evaluateResult(frame, function.call(argumentValues));
     }
 
     @ExplodeLoop
     private Object[] evaluateArguments(VirtualFrame frame) {
         CompilerAsserts.compilationConstant(argumentNodes.length);
-
-        Object[] argumentValues = new Object[argumentNodes.length + 1];
-        argumentValues[0] = frame;
+        
+        Object[] argumentValues = new Object[argumentNodes.length];
         for (int i = 0; i < argumentNodes.length; i++) {
-            argumentValues[i + 1] = argumentNodes[i].executeGeneric(frame);
+            argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
 
         return argumentValues;
     }
 
-    @SuppressWarnings("deprecation")
-    public void evaluateResult(VirtualFrame frame, Object[] returnValue) {
-        if (returnValue.length != resultSlots.length) {
-            throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.length);
-        }
-        for (int index = 0; index < resultSlots.length; index++) {
-            final Object result = returnValue[index];
-            final FrameSlot slot = resultSlots[index];
-            switch (slot.getKind()) {
-                case Int:
-                    frame.setInt(slot, (int) result);
-                    break;
-                case Long:
-                    frame.setLong(slot, (long) result);
-                    break;
-                case Float:
-                    frame.setFloat(slot, (float) result);
-                    break;
-                case Double:
-                    frame.setDouble(slot, (double) result);
-                    break;
-                case Object:
-                    frame.setObject(slot, result);
-                    break;
-                default:
+    public void evaluateResult(VirtualFrame frame, Object callOutput) {
+        if (resultSlots.length != 0) {
+            Object[] returnValue;
+            if(callOutput instanceof Object[]) {
+                returnValue = (Object[]) callOutput;
+            } else {
+                returnValue = new Object[1];
+                returnValue[0] = callOutput;
             }
+            if (returnValue.length != resultSlots.length) {
+                throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.length);
+            }
+            for (int index = 0; index < resultSlots.length; index++) {
+                final Object result = returnValue[index];
+                final FrameSlot slot = resultSlots[index];
+                final FrameSlotKind slotKind = frame.getFrameDescriptor().getFrameSlotKind(slot);
+                switch (slotKind) {
+                    case Int:
+                        frame.setInt(slot, (int) result);
+                        break;
+                    case Long:
+                        frame.setLong(slot, (long) result);
+                        break;
+                    case Float:
+                        frame.setFloat(slot, (float) result);
+                        break;
+                    case Double:
+                        frame.setDouble(slot, (double) result);
+                        break;
+                    case Object:
+                        frame.setObject(slot, result);
+                        break;
+                    default:
+                }
+            }    
         }
     }
 

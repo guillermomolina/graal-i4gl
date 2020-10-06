@@ -62,6 +62,9 @@ public final class I4GLReturnNode extends I4GLStatementNode {
         for (int i = 0; i < valueNodes.length; i++) {
             result[i] = valueNodes[i].executeGeneric(frame);
         }
+        if(valueNodes.length == 1) {
+            throw new ReturnException(result[0]);
+        }
         throw new ReturnException(result);
     }
 }

@@ -19,7 +19,7 @@ public class I4GLReadArgumentNode extends I4GLExpressionNode {
 	private final I4GLTypeDescriptor argumentType;
 
 	public I4GLReadArgumentNode(int index, I4GLTypeDescriptor argumentType) {
-		this.index = index + 1;
+		this.index = index;
         this.argumentType = argumentType;
     }
 

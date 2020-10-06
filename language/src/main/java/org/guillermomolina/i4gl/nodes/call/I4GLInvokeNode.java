@@ -49,21 +49,21 @@ public final class I4GLInvokeNode extends I4GLExpressionNode {
         }
         Object[] argumentValues = this.evaluateArguments(frame);
         CallTarget function = cachedFunction.getCallTarget();
-        Object[] returnValue = (Object[]) function.call(argumentValues);
-        if(returnValue.length != 1) {
-            throw new IncorrectNumberOfReturnValuesException(1, returnValue.length);
+        Object returnValue = function.call(argumentValues);
+        if(returnValue instanceof Object[]) {
+            final Object[] returnValues = (Object[]) returnValue;
+            throw new IncorrectNumberOfReturnValuesException(1, returnValues.length);
         }
-        return returnValue[0];
+        return returnValue;
 	}
 
     @ExplodeLoop
     private Object[] evaluateArguments(VirtualFrame frame) {
         CompilerAsserts.compilationConstant(argumentNodes.length);
         
-        Object[] argumentValues = new Object[argumentNodes.length + 1];
-        argumentValues[0] = frame;
+        Object[] argumentValues = new Object[argumentNodes.length];
         for (int i = 0; i < argumentNodes.length; i++) {
-            argumentValues[i+1] = argumentNodes[i].executeGeneric(frame);
+            argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
 
         return argumentValues;
