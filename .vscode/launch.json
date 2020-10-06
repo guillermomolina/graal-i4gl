@@ -3,6 +3,19 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - GraalI4GLMain",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.shell.GraalI4GLMain",
+            "projectName": "shell"
+        },
+        {
+            "type": "graalvm",
+            "request": "attach",
+            "name": "Attach",
+            "port": 9229
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch) Current File",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
