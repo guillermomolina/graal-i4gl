@@ -38,13 +38,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) I4GLMain Fibonacci1.4gl",
+            "name": "Debug (Launch) I4GLMain Let.4gl",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--inspect",
-                "./language/tests/Fibonacci1.4gl"
+                "./language/tests/Let.4gl"
             ],
             "vmArgs": "-Dtruffle.class.path.append=./language/target/i4gl.jar",
             "stepFilters": {

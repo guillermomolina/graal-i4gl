@@ -1,7 +1,9 @@
 package org.guillermomolina.i4gl.nodes;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.frame.Frame;
@@ -14,13 +16,16 @@ import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.nodes.Node;
+import com.oracle.truffle.api.nodes.NodeUtil;
 import com.oracle.truffle.api.nodes.NodeVisitor;
 import com.oracle.truffle.api.nodes.RootNode;
 
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.nodes.call.I4GLReadArgumentNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLSimpleAssignmentNode;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 /**
@@ -207,11 +212,11 @@ public final class I4GLLexicalScope {
     }
 
     private Map<String, FrameSlot> collectVars(Node varsBlock, Node currentNode) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
         // Variables are slot-based.
         // To collect declared variables, traverse the block's AST and find slots associated
-        // with I4GLWriteLocalVariableNode. The traversal stops when we hit the current node.
-        /*Map<String, FrameSlot> slots = new LinkedHashMap<>(4);
+        // with I4GLSimpleAssignmentNode. The traversal stops when we hit the current node.
+        Map<String, FrameSlot> slots = new LinkedHashMap<>(4);
         NodeUtil.forEachChild(varsBlock, new NodeVisitor() {
             @Override
             public boolean visit(Node node) {
@@ -226,8 +231,8 @@ public final class I4GLLexicalScope {
                     }
                 }
                 // Write to a variable is a declaration unless it exists already in a parent scope.
-                if (node instanceof I4GLWriteLocalVariableNode) {
-                    I4GLWriteLocalVariableNode wn = (I4GLWriteLocalVariableNode) node;
+                if (node instanceof I4GLSimpleAssignmentNode) {
+                    I4GLSimpleAssignmentNode wn = (I4GLSimpleAssignmentNode) node;
                     String name = Objects.toString(wn.getSlot().getIdentifier());
                     if (!hasParentVar(name)) {
                         slots.put(name, wn.getSlot());
@@ -236,24 +241,23 @@ public final class I4GLLexicalScope {
                 return true;
             }
         });
-        return slots;*/
+        return slots;
     }
 
     private static Map<String, FrameSlot> collectArgs(Node block) {
-        throw new NotImplementedException();
         // Arguments are pushed to frame slots at the beginning of the function block.
         // To collect argument slots, search for I4GLReadArgumentNode inside of
-        // I4GLWriteLocalVariableNode.
-        /*Map<String, FrameSlot> args = new LinkedHashMap<>(4);
+        // I4GLSimpleAssignmentNode.
+        Map<String, FrameSlot> args = new LinkedHashMap<>(4);
         NodeUtil.forEachChild(block, new NodeVisitor() {
 
-            private I4GLWriteLocalVariableNode wn; // The current write node containing a slot
+            private I4GLSimpleAssignmentNode wn; // The current write node containing a slot
 
             @Override
             public boolean visit(Node node) {
                 // When there is a write node, search for I4GLReadArgumentNode among its children:
-                if (node instanceof I4GLWriteLocalVariableNode) {
-                    wn = (I4GLWriteLocalVariableNode) node;
+                if (node instanceof I4GLSimpleAssignmentNode) {
+                    wn = (I4GLSimpleAssignmentNode) node;
                     boolean all = NodeUtil.forEachChild(node, this);
                     wn = null;
                     return all;
@@ -271,7 +275,7 @@ public final class I4GLLexicalScope {
                 }
             }
         });
-        return args;*/
+        return args;
     }
 
     @ExportLibrary(InteropLibrary.class)

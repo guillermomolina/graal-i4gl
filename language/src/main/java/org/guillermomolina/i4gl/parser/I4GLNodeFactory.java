@@ -79,6 +79,7 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 
 public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
@@ -744,7 +745,10 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         if (ctx.BIGINT() != null) {
             return new TypeNode(BigIntDescriptor.SINGLETON);
         }
-        if (ctx.REAL() != null) {
+        if (ctx.SMALLFLOAT() != null || ctx.REAL() != null) {
+            return new TypeNode(SmallFloatDescriptor.SINGLETON);
+        }
+        if (ctx.FLOAT() != null || ctx.DOUBLE() != null) {
             return new TypeNode(DoubleDescriptor.SINGLETON);
         }
         throw new NotImplementedException();
@@ -771,7 +775,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitRecordType(final I4GLParser.RecordTypeContext ctx) {
-        currentLexicalScope = new RecordLexicalScope(currentLexicalScope);
+        currentLexicalScope = new I4GLParseScope(currentLexicalScope, "_record");
 
         if (ctx.LIKE() != null) {
             throw new NotImplementedException();

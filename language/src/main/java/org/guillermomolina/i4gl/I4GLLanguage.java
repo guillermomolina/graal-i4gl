@@ -69,16 +69,17 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         RootNode evalMain;
         if (main != null) {
             /*
-             * We have a main function, so "evaluating" the parsed source means invoking that main
-             * function. However, we need to lazily register functions into the I4GLContext first, so
-             * we cannot use the original I4GLRootNode for the main function. Instead, we create a new
-             * I4GLEvalRootNode that does everything we need.
+             * We have a main function, so "evaluating" the parsed source means invoking
+             * that main function. However, we need to lazily register functions into the
+             * I4GLContext first, so we cannot use the original I4GLRootNode for the main
+             * function. Instead, we create a new I4GLEvalRootNode that does everything we
+             * need.
              */
             evalMain = new I4GLEvalRootNode(this, main, functions);
         } else {
             /*
-             * Even without a main function, "evaluating" the parsed source needs to register the
-             * functions into the I4GLContext.
+             * Even without a main function, "evaluating" the parsed source needs to
+             * register the functions into the I4GLContext.
              */
             evalMain = new I4GLEvalRootNode(this, null, functions);
         }
@@ -130,8 +131,9 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
                             throw new NoSuchElementException();
                         }
                         Object functionObject = findFunctionObject();
-                        Scope vscope = Scope.newBuilder(nextScope.getName(), nextScope.getVariables(frame)).node(nextScope.getNode()).arguments(nextScope.getArguments(frame)).rootInstance(
-                                        functionObject).build();
+                        Scope vscope = Scope.newBuilder(nextScope.getName(), nextScope.getVariables(frame))
+                                .node(nextScope.getNode()).arguments(nextScope.getArguments(frame))
+                                .rootInstance(functionObject).build();
                         previousScope = nextScope;
                         nextScope = null;
                         return vscope;
@@ -155,7 +157,8 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         return getCurrentContext(I4GLLanguage.class);
     }
 
-    private static final List<NodeFactory<? extends I4GLBuiltinNode>> EXTERNAL_BUILTINS = Collections.synchronizedList(new ArrayList<>());
+    private static final List<NodeFactory<? extends I4GLBuiltinNode>> EXTERNAL_BUILTINS = Collections
+            .synchronizedList(new ArrayList<>());
 
     public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
         EXTERNAL_BUILTINS.add(builtin);

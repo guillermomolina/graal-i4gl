@@ -40,7 +40,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 @TypeSystemReference(I4GLTypes.class)
 public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
 
-    protected abstract FrameSlot getSlot();
+    public abstract FrameSlot getSlot();
 
     protected abstract I4GLTypeDescriptor getTypeDescriptor();
 
