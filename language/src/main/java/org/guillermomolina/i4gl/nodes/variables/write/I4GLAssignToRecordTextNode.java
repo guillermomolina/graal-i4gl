@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
@@ -16,7 +15,6 @@ import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
-import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
 
 /**
  * Node representing assignment to a record. Compared to
@@ -45,18 +43,14 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
    
     @Specialization(guards = "isChar()")
     void assignChar(RecordValue record, int index, String value) {
-        try {
-            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
-            if (!(targetObject instanceof CharValue)) {
-                targetObject = descriptor.getDefaultValue();
-                record.getFrame().setObject(record.getSlot(this.identifier), targetObject);
-            }
-
-            final CharValue target = (CharValue) targetObject;
-            target.setCharAt(index - 1, value.charAt(0));
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
+        Object targetObject = record.get(identifier);
+        if (!(targetObject instanceof CharValue)) {
+            targetObject = descriptor.getDefaultValue();
+            record.put(identifier, targetObject);
         }
+
+        final CharValue target = (CharValue) targetObject;
+        target.setCharAt(index - 1, value.charAt(0));
     }
    
     protected boolean isVarchar() {
@@ -65,18 +59,14 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
    
     @Specialization(guards = "isVarchar()")
     void assignVarchar(RecordValue record, int index, String value) {
-        try {
-            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
-            if (!(targetObject instanceof VarcharValue)) {
-                targetObject = descriptor.getDefaultValue();
-                record.getFrame().setObject(record.getSlot(this.identifier), targetObject);
-            }
-
-            final VarcharValue target = (VarcharValue) targetObject;
-            target.setCharAt(index - 1, value.charAt(0));
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
+        Object targetObject = record.get(identifier);
+        if (!(targetObject instanceof VarcharValue)) {
+            targetObject = descriptor.getDefaultValue();
+            record.put(identifier, targetObject);
         }
+
+        final VarcharValue target = (VarcharValue) targetObject;
+        target.setCharAt(index - 1, value.charAt(0));
     }
 
     protected boolean isText() {
@@ -85,17 +75,13 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
 
     @Specialization(guards = "isText()")
     void assignText(RecordValue record, int index, String value) {
-        try {
-            Object targetObject = record.getFrame().getObject(record.getSlot(this.identifier));
-            if (!(targetObject instanceof String)) {
-                targetObject = "";
-            }
-            StringBuilder builder = new StringBuilder((String)targetObject);
-            builder.setCharAt(index, value.charAt(0));
-            record.getFrame().setObject(record.getSlot(this.identifier), builder.toString());
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
+        Object targetObject = record.get(identifier);
+        if (!(targetObject instanceof String)) {
+            targetObject = "";
         }
+        StringBuilder builder = new StringBuilder((String)targetObject);
+        builder.setCharAt(index, value.charAt(0));
+        record.put(identifier, targetObject);
     }
  
     @Override

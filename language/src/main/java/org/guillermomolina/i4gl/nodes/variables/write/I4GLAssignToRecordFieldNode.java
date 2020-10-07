@@ -41,8 +41,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isInt()")
-    void assignInt(RecordValue record, int value) {
-        record.getFrame().setInt(record.getSlot(this.identifier), value);
+    void assignInt(RecordValue record, Object value) {
+        record.put(identifier, (int)value);
     }
 
     protected boolean isBigInt() {
@@ -50,8 +50,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isBigInt()")
-    void assignBigInt(RecordValue record, long value) {
-        record.getFrame().setLong(record.getSlot(this.identifier), value);
+    void assignBigInt(RecordValue record, Object value) {
+        record.put(identifier, (long)value);
     }
 
     protected boolean isSmallFloat() {
@@ -59,8 +59,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isSmallFloat()")
-    void assignSmallFloat(RecordValue record, float value) {
-        record.getFrame().setFloat(record.getSlot(this.identifier), value);
+    void assignSmallFloat(RecordValue record, Object value) {
+        record.put(identifier, (float)value);
     }
 
     protected boolean isDouble() {
@@ -68,13 +68,13 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isDouble()")
-    void assignDouble(RecordValue record, double value) {
-        record.getFrame().setDouble(record.getSlot(this.identifier), value);
+    void assignDouble(RecordValue record, Object value) {
+        record.put(identifier, (double)value);
     }
 
     @Specialization
     void assignGeneric(RecordValue record, Object value) {
-        record.getFrame().setObject(record.getSlot(this.identifier), value);
+        record.put(identifier, value);
     }
 
     @Override

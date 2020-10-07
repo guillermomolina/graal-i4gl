@@ -1,5 +1,6 @@
 package org.guillermomolina.i4gl.parser.types.compound;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -32,7 +33,12 @@ public class RecordDescriptor implements I4GLTypeDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new RecordValue(innerScope.getFrameDescriptor(), innerScope.getAllIdentifiers());
+        Map<String, I4GLTypeDescriptor> types = innerScope.getAllIdentifiers();
+        Map<String, Object> values = new LinkedHashMap<String, Object>();
+        for (Map.Entry<String, I4GLTypeDescriptor> entry : types.entrySet()) {
+            values.put(entry.getKey(), entry.getValue().getDefaultValue());
+        }
+        return new RecordValue(values);
     }
 
     public I4GLParseScope getLexicalScope() {

@@ -1,13 +1,12 @@
 package org.guillermomolina.i4gl.nodes.variables;
 
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
-import com.oracle.truffle.api.frame.VirtualFrame;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
-
 import java.util.List;
+
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.VirtualFrame;
+
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 
 /**
  * Representation of I4GL's with statement. It steps into frame of provided record values and executes the inner
@@ -26,7 +25,8 @@ public class I4GLWithNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        try {
+        throw new NotImplementedException();
+        /*try {
             for (FrameSlot recordSlot : this.recordSlots) {
                 RecordValue record = (RecordValue) frame.getObject(recordSlot);
                 frame = record.getFrame();
@@ -35,6 +35,6 @@ public class I4GLWithNode extends I4GLStatementNode {
             innerStatement.executeVoid(frame);
         } catch (FrameSlotTypeException e) {
             throw new I4GLRuntimeException("Unexpected accessing of non record type");
-        }
+        }*/
     }
 }

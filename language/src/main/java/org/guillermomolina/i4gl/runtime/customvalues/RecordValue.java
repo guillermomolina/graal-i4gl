@@ -2,126 +2,81 @@ package org.guillermomolina.i4gl.runtime.customvalues;
 
 import java.util.Map;
 
-import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.frame.FrameDescriptor;
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
-import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.TruffleObject;
+import com.oracle.truffle.api.interop.UnknownIdentifierException;
+import com.oracle.truffle.api.library.ExportLibrary;
+import com.oracle.truffle.api.library.ExportMessage;
 
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
+@ExportLibrary(InteropLibrary.class)
+public class RecordValue implements TruffleObject {
 
-/**
- * Representation of record-type variables. It contains its own frame where its
- * content is stored and a descriptor of its own type.
- */
-@CompilerDirectives.ValueType
-public class RecordValue {
+    private final Map<String, Object> properties;
 
-    private final VirtualFrame frame;
-    private final FrameDescriptor frameDescriptor;
-
-    /**
-     * The default constructor.
-     * 
-     * @param frameDescriptor frame descriptor from which the record's frame will be
-     *                        created
-     * @param types           map of the record's identifiers and their types
-     */
-    // TODO: can't the frame descriptor be created from the second argument?
-    public RecordValue(final FrameDescriptor frameDescriptor, final Map<String, I4GLTypeDescriptor> types) {
-        this(frameDescriptor);
-        this.initValues(frameDescriptor, types);
+    public RecordValue(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
-    private RecordValue(final FrameDescriptor frameDescriptor) {
-        this.frameDescriptor = frameDescriptor;
-        this.frame = Truffle.getRuntime().createVirtualFrame(new Object[frameDescriptor.getSize()], frameDescriptor);
+    public RecordValue(RecordValue source) {
+        this.properties = source.properties;
     }
 
-    private void initValues(final FrameDescriptor frameDescriptor, final Map<String, I4GLTypeDescriptor> types) {
-        for (final FrameSlot slot : frameDescriptor.getSlots()) {
-            final I4GLTypeDescriptor slotsType = types.get(slot.getIdentifier().toString());
-            this.initValue(slot, slotsType);
+    public Object get(String name) {
+        return properties.get(name);
+    }
+
+    public void put(String name, Object value) {
+        properties.put(name, value);
+    }
+
+    public Object createDeepCopy() {
+        return new RecordValue(this);
+    }
+
+    @ExportMessage
+    boolean hasMembers() {
+        return true;
+    }
+
+    @ExportMessage(name = "isMemberReadable")
+    @ExportMessage(name = "isMemberModifiable")
+    @ExportMessage(name = "isMemberRemovable")
+    @TruffleBoundary
+    boolean hasMember(String name) {
+        return properties.containsKey(name);
+    }
+
+    @ExportMessage
+    boolean isMemberInsertable(String name) {
+        return !hasMember(name);
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    Object readMember(String name) throws UnknownIdentifierException {
+        Object value = properties.get(name);
+        if (value == null) {
+            throw UnknownIdentifierException.create(name);
         }
+        return value;
     }
 
-    private void initValue(final FrameSlot slot, final I4GLTypeDescriptor descriptor) {
-        this.setValue(slot, descriptor.getDefaultValue());
+    @ExportMessage
+    @TruffleBoundary
+    void writeMember(String name, Object value) {
+        properties.put(name, value);
     }
 
-    @SuppressWarnings("deprecation")
-    private void setValue(final FrameSlot slot, final Object value) {
-        // TODO: whole initialization process is weird
-        // this switch is surely a duplicity and is also somewhere else in the code
-        switch (slot.getKind()) {
-            case Int:
-                frame.setInt(slot, (int) value);
-                break;
-            case Long:
-                frame.setLong(slot, (long) value);
-                break;
-            case Float:
-                frame.setFloat(slot, (float) value);
-                break;
-            case Double:
-                frame.setDouble(slot, (double) value);
-                break;
-            case Object:
-                frame.setObject(slot, value);
-                break;
-            default:
-        }
+    @ExportMessage
+    @TruffleBoundary
+    void removeMember(String name) {
+        properties.remove(name);
     }
 
-    @SuppressWarnings("deprecation")
-    private void copySlotValue(final VirtualFrame fromFrame, final VirtualFrame toFrame, final FrameSlot slot)
-            throws FrameSlotTypeException {
-        // TODO: this switch is surely a duplicity and is also somewhere else in the
-        // code
-        switch (slot.getKind()) {
-            case Int:
-                toFrame.setInt(slot, fromFrame.getInt(slot));
-                break;
-            case Long:
-                toFrame.setLong(slot, fromFrame.getLong(slot));
-                break;
-            case Float:
-                toFrame.setFloat(slot, fromFrame.getFloat(slot));
-                break;
-            case Double:
-                toFrame.setDouble(slot, fromFrame.getDouble(slot));
-                break;
-            case Object:
-                toFrame.setObject(slot, fromFrame.getObject(slot));
-                break;
-            default:
-        }
-    }
-
-    public FrameSlot getSlot(final String identifier) {
-        return this.frameDescriptor.findFrameSlot(identifier);
-    }
-
-    public VirtualFrame getFrame() {
-        return this.frame;
-    }
-
-    /**
-     * Creates a deep copy of the record.
-     */
-    public RecordValue getCopy() {
-        final RecordValue copy = new RecordValue(this.frameDescriptor);
-        for (final FrameSlot slot : this.frameDescriptor.getSlots()) {
-            try {
-                this.copySlotValue(this.frame, copy.frame, slot);
-            } catch (final FrameSlotTypeException e) {
-                throw new I4GLRuntimeException("Unexpected type in record copying");
-            }
-        }
-
-        return copy;
-    }
-
+    @ExportMessage
+    @TruffleBoundary
+    Object getMembers(@SuppressWarnings("unused") boolean includeInternal) {
+        return properties.keySet().toArray();
+    }    
 }

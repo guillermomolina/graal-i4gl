@@ -107,7 +107,7 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
 
     @Specialization
     void assignRecord(final VirtualFrame frame, final RecordValue record) {
-        getFrame(frame).setObject(getSlot(), record.getCopy());
+        getFrame(frame).setObject(getSlot(), record.createDeepCopy());
     }
 
     @Specialization
