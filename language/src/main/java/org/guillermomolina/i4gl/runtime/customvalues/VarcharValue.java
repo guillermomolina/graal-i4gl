@@ -1,6 +1,9 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
-import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.TruffleObject;
+import com.oracle.truffle.api.library.ExportLibrary;
+import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
@@ -8,10 +11,11 @@ import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
 /**
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
  */
-@CompilerDirectives.ValueType
-public class VarcharValue {
+@ExportLibrary(InteropLibrary.class)
+@SuppressWarnings("static-method")
+public class VarcharValue implements TruffleObject {
 
-    protected String data;
+    private String data;
     private final int size;
 
     public VarcharValue(int size) {
@@ -22,6 +26,11 @@ public class VarcharValue {
     private VarcharValue(VarcharValue source) {
         this.size = source.size;
         this.data = source.data;
+    }
+
+    public VarcharValue(String value) {
+        this.size = value.length();
+        this.data = value;
     }
 
     public void assignString(String value) {
@@ -65,5 +74,15 @@ public class VarcharValue {
     @Override
     public String toString() {
         return data;
+    }
+
+    @ExportMessage
+    public String asString() {
+        return data;
+    }
+
+    @ExportMessage
+    boolean isString() {
+        return true;
     }
 }

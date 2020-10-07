@@ -14,6 +14,8 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
  * The isInstance type checks are declared using an functional interface and are
@@ -43,9 +45,11 @@ public final class I4GLType implements TruffleObject {
      */
     public static final I4GLType INT = new I4GLType("INT", (l, v) -> l.fitsInInt(v));
     public static final I4GLType BIGINT = new I4GLType("BIGINT", (l, v) -> l.fitsInLong(v));
-    public static final I4GLType REAL = new I4GLType("DOUBLE", (l, v) -> v instanceof Float);
-    public static final I4GLType DOUBLE = new I4GLType("REAL", (l, v) -> v instanceof Double);
+    public static final I4GLType SMALLFLOAT = new I4GLType("SMALLFLOAT", (l, v) -> v instanceof Float);
+    public static final I4GLType DOUBLE = new I4GLType("DOUBLE", (l, v) -> v instanceof Double);
     public static final I4GLType NULL = new I4GLType("NULL", (l, v) -> l.isNull(v));
+    public static final I4GLType CHAR = new I4GLType("CHAR", (l, v) -> v instanceof CharValue);
+    public static final I4GLType VARCHAR = new I4GLType("VARCHAR", (l, v) -> v instanceof VarcharValue);
     public static final I4GLType TEXT = new I4GLType("TEXT", (l, v) -> l.isString(v));
     public static final I4GLType FUNCTION = new I4GLType("FUNCTION", (l, v) -> l.isExecutable(v));
     public static final I4GLType OBJECT = new I4GLType("OBJECT", (l, v) -> l.hasMembers(v));
@@ -57,8 +61,8 @@ public final class I4GLType implements TruffleObject {
      * SimpleLanguage we decided to make functions, functions and not objects.
      */
     @CompilationFinal(dimensions = 1)
-    protected static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, REAL, DOUBLE, TEXT, FUNCTION,
-            OBJECT };
+    protected static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, SMALLFLOAT, DOUBLE, CHAR,
+            VARCHAR, TEXT, FUNCTION, OBJECT };
 
     private final String name;
     private final TypeCheck isInstance;
@@ -132,6 +136,7 @@ public final class I4GLType implements TruffleObject {
 
         protected IsMetaInstance() {
         }
+
         /*
          * We assume that the same type is checked at a source location. Therefore we
          * use an inline cache to specialize for observed types to be constant. The
@@ -141,8 +146,8 @@ public final class I4GLType implements TruffleObject {
          * benchmarks.
          */
         @Specialization(guards = "type == cachedType", limit = "3")
-        static boolean doCached(I4GLType type, Object value,
-                @Cached("type") I4GLType cachedType, @CachedLibrary("value") InteropLibrary valueLib) {
+        static boolean doCached(I4GLType type, Object value, @Cached("type") I4GLType cachedType,
+                @CachedLibrary("value") InteropLibrary valueLib) {
             return cachedType.isInstance.check(valueLib, value);
         }
 

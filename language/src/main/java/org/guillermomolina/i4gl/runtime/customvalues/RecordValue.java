@@ -13,8 +13,8 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
- * Representation of record-type variables. It contains its own frame where its content is stored and a descriptor of
- * its own type.
+ * Representation of record-type variables. It contains its own frame where its
+ * content is stored and a descriptor of its own type.
  */
 @CompilerDirectives.ValueType
 public class RecordValue {
@@ -24,8 +24,10 @@ public class RecordValue {
 
     /**
      * The default constructor.
-     * @param frameDescriptor frame descriptor from which the record's frame will be created
-     * @param types map of the record's identifiers and their types
+     * 
+     * @param frameDescriptor frame descriptor from which the record's frame will be
+     *                        created
+     * @param types           map of the record's identifiers and their types
      */
     // TODO: can't the frame descriptor be created from the second argument?
     public RecordValue(final FrameDescriptor frameDescriptor, final Map<String, I4GLTypeDescriptor> types) {
@@ -54,11 +56,21 @@ public class RecordValue {
         // TODO: whole initialization process is weird
         // this switch is surely a duplicity and is also somewhere else in the code
         switch (slot.getKind()) {
-            case Int: frame.setInt(slot, (int) value); break;
-            case Long: frame.setLong(slot, (long) value); break;
-            case Float: frame.setFloat(slot, (float) value); break;
-            case Double: frame.setDouble(slot, (double) value); break;
-            case Object: frame.setObject(slot, value); break;
+            case Int:
+                frame.setInt(slot, (int) value);
+                break;
+            case Long:
+                frame.setLong(slot, (long) value);
+                break;
+            case Float:
+                frame.setFloat(slot, (float) value);
+                break;
+            case Double:
+                frame.setDouble(slot, (double) value);
+                break;
+            case Object:
+                frame.setObject(slot, value);
+                break;
             default:
         }
     }

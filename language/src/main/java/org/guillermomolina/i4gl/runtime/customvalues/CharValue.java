@@ -2,7 +2,10 @@ package org.guillermomolina.i4gl.runtime.customvalues;
 
 import java.util.Arrays;
 
-import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.TruffleObject;
+import com.oracle.truffle.api.library.ExportLibrary;
+import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 
@@ -10,9 +13,10 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
  * Representation of variables of NChar type. It is a slight wrapper to Java's
  * {@link String}.
  */
-@CompilerDirectives.ValueType
-public class CharValue {
-    protected String data;
+@ExportLibrary(InteropLibrary.class)
+@SuppressWarnings("static-method")
+public class CharValue implements TruffleObject {
+    private String data;
 
     public CharValue(int size) {
         char[] chars = new char[size];
@@ -22,6 +26,10 @@ public class CharValue {
 
     private CharValue(CharValue source) {
         this.data = source.data;
+    }
+
+    public CharValue(String value) {
+        this.data = value;
     }
 
     public void assignString(String value) {
@@ -63,5 +71,15 @@ public class CharValue {
     @Override
     public String toString() {
         return data;
+    }
+
+    @ExportMessage
+    public String asString() {
+        return data;
+    }
+
+    @ExportMessage
+    boolean isString() {
+        return true;
     }
 }

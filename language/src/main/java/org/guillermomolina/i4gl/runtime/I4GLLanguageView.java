@@ -86,12 +86,12 @@ public final class I4GLLanguageView implements TruffleObject {
                         return intToString(interop.asInt(delegate));
                     } else if (type == I4GLType.BIGINT) {
                         return longToString(interop.asLong(delegate));
-                    } else if (type == I4GLType.REAL) {
+                    } else if (type == I4GLType.SMALLFLOAT) {
                         return floatToString(interop.asFloat(delegate));
                     } else if (type == I4GLType.DOUBLE) {
                         return doubleToString(interop.asDouble(delegate));
-                    } else if (type == I4GLType.TEXT) {
-                        return interop.asString(delegate);
+                    } else if (type == I4GLType.TEXT || type == I4GLType.CHAR || type == I4GLType.VARCHAR) {
+                        return addQuotes(interop.asString(delegate));
                     } else {
                         /* We use the type name as fallback for any other type */
                         return type.getName();
@@ -103,6 +103,10 @@ public final class I4GLLanguageView implements TruffleObject {
             }
         }
         return "Unsupported";
+    }
+
+    private static String addQuotes(String text) {
+        return '"' + text + '"';
     }
 
     @TruffleBoundary
