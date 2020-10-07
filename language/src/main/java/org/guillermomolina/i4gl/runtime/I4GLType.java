@@ -14,6 +14,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
@@ -53,18 +54,18 @@ public final class I4GLType implements TruffleObject {
     public static final I4GLType VARCHAR = new I4GLType("VARCHAR", (l, v) -> v instanceof VarcharValue);
     public static final I4GLType TEXT = new I4GLType("TEXT", (l, v) -> l.isString(v));
     public static final I4GLType FUNCTION = new I4GLType("FUNCTION", (l, v) -> l.isExecutable(v));
+    public static final I4GLType ARRAY = new I4GLType("ARRAY", (l, v) -> l.hasArrayElements(v));
     public static final I4GLType RECORD = new I4GLType("RECORD", (l, v) -> v instanceof RecordValue);
     public static final I4GLType OBJECT = new I4GLType("OBJECT", (l, v) -> l.hasMembers(v));
 
     /*
      * This array is used when all types need to be checked in a certain order.
      * While most interop types like number or string are exclusive, others traits
-     * like members might not be. For example, an object might be a function. In
-     * SimpleLanguage we decided to make functions, functions and not objects.
+     * like members might not be. For example, an object might be a function.
      */
     @CompilationFinal(dimensions = 1)
     protected static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, SMALLFLOAT, DOUBLE, CHAR,
-            VARCHAR, TEXT, FUNCTION, RECORD, OBJECT };
+            VARCHAR, TEXT, FUNCTION, ARRAY, RECORD, OBJECT };
 
     private final String name;
     private final TypeCheck isInstance;

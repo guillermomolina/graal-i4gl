@@ -9,6 +9,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.interop.UnknownIdentifierException;
+import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
@@ -75,10 +76,15 @@ public class RecordValue implements TruffleObject {
         properties.put(name, value);
     }
 
+    @TruffleBoundary
+    private static UnsupportedMessageException unsupported() {
+        return UnsupportedMessageException.create();
+    }
+
     @ExportMessage
     @TruffleBoundary
-    void removeMember(String name) {
-        properties.remove(name);
+    void removeMember(String name) throws UnsupportedMessageException {
+        throw unsupported();
     }
 
     @ExportMessage
