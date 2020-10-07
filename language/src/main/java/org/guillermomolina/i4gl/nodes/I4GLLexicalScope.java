@@ -231,8 +231,8 @@ public final class I4GLLexicalScope {
                     }
                 }
                 // Write to a variable is a declaration unless it exists already in a parent scope.
-                if (node instanceof I4GLSimpleAssignmentNode) {
-                    I4GLSimpleAssignmentNode wn = (I4GLSimpleAssignmentNode) node;
+                if (node instanceof InitializationNode) {
+                    InitializationNode wn = (InitializationNode) node;
                     String name = Objects.toString(wn.getSlot().getIdentifier());
                     if (!hasParentVar(name)) {
                         slots.put(name, wn.getSlot());

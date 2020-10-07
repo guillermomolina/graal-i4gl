@@ -42,7 +42,11 @@ abstract class InitializationNode extends I4GLStatementNode {
 	InitializationNode(FrameSlot slot) {
 		this.slot = slot;
 	}
-	
+    
+    public FrameSlot getSlot() {
+        return slot;
+    }
+
 	@Override
 	public abstract void executeVoid(VirtualFrame frame);
 }
