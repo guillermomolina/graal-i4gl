@@ -1,18 +1,19 @@
 package org.guillermomolina.i4gl.nodes.variables.read;
 
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
+import com.oracle.truffle.api.frame.FrameUtil;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
 
 /**
  * This node reads value from an record with specified identifier.
@@ -34,47 +35,46 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
     @Specialization(guards = "isInt()")
     int readInt(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
-        try {
-            return record.getFrame().getInt(slot);
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+        return FrameUtil.getIntSafe(record.getFrame(), slot);
     }
 
     @Specialization(guards = "isBigInt()")
     long readBigInt(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
-        try {
-            return record.getFrame().getLong(slot);
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+        return FrameUtil.getLongSafe(record.getFrame(), slot);
     }
 
     @Specialization(guards = "isSmallFloat()")
     float readSmallFloat(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
-        try {
-            return record.getFrame().getFloat(slot);
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+        return FrameUtil.getFloatSafe(record.getFrame(), slot);
     }
 
     @Specialization(guards = "isDouble()")
     double readDouble(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
-        try {
-            return record.getFrame().getDouble(slot);
-        } catch (FrameSlotTypeException e) {
-            throw new UnexpectedRuntimeException();
-        }
+        return FrameUtil.getDoubleSafe(record.getFrame(), slot);
     }
 
-    @Specialization
+    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readDouble" })
     Object readGeneric(RecordValue record) {
         FrameSlot slot = record.getSlot(this.getIdentifier());
-        return record.getFrame().getValue(slot);
+        VirtualFrame frame = record.getFrame();
+        if (!frame.isObject(slot)) {
+            /*
+             * The FrameSlotKind has been set to Object, so from now on all writes to the
+             * local variable will be Object writes. However, now we are in a frame that
+             * still has an old non-Object value. This is a slow-path operation: we read the
+             * non-Object value, and write it immediately as an Object value so that we do
+             * not hit this path again multiple times for the same variable of the same
+             * frame.
+             */
+            CompilerDirectives.transferToInterpreter();
+            final Object result = record.getFrame().getValue(slot);
+            frame.setObject(slot, result);
+            return result;
+        }
+        return FrameUtil.getObjectSafe(frame, slot);
     }
 
     @Override

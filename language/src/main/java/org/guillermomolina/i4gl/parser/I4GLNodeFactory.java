@@ -36,8 +36,8 @@ import org.guillermomolina.i4gl.nodes.control.I4GLIfNode;
 import org.guillermomolina.i4gl.nodes.control.I4GLWhileNode;
 import org.guillermomolina.i4gl.nodes.literals.I4GLBigIntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.I4GLIntLiteralNodeGen;
-import org.guillermomolina.i4gl.nodes.literals.I4GLRealLiteralNode;
-import org.guillermomolina.i4gl.nodes.literals.I4GLRealLiteralNodeGen;
+import org.guillermomolina.i4gl.nodes.literals.I4GLSmallFloatLiteralNode;
+import org.guillermomolina.i4gl.nodes.literals.I4GLSmallFloatLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.I4GLTextLiteralNode;
 import org.guillermomolina.i4gl.nodes.logic.I4GLAndNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLEqualsNodeGen;
@@ -858,7 +858,10 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             I4GLStatementNode node;
             if (expressionType instanceof RecordDescriptor) {
                 String identifier = ctx.identifier(index).getText();
-                node = I4GLAssignToRecordFieldNodeGen.create(identifier, variableNode, valueNode);
+                RecordDescriptor accessedRecordDescriptor = (RecordDescriptor) expressionType;
+                I4GLTypeDescriptor recordType = accessedRecordDescriptor.getLexicalScope()
+                        .getIdentifierDescriptor(identifier);
+                node = I4GLAssignToRecordFieldNodeGen.create(identifier, recordType, variableNode, valueNode);
             } else {
                 throw new TypeMismatchException(expressionType.toString(), "Record");
             }
@@ -1127,7 +1130,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
     @Override
     public Node visitReal(final I4GLParser.RealContext ctx) {
         final String literal = ctx.getText();
-        final I4GLRealLiteralNode node = I4GLRealLiteralNodeGen.create(Double.parseDouble(literal));
+        final I4GLSmallFloatLiteralNode node = I4GLSmallFloatLiteralNodeGen.create(Float.parseFloat(literal));
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;

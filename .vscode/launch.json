@@ -42,6 +42,25 @@
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
+            "args": "./language/tests/Let.4gl",
+            "vmArgs": "-Dtruffle.class.path.append=./language/target/i4gl.jar",
+            "stepFilters": {
+                "skipClasses": [
+                    "$JDK",
+                    "junit.*"
+                ],
+                "skipSynthetics": true,
+                "skipStaticInitializers": true,
+                "skipConstructors": false
+            },
+            "console": "internalConsole"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch and Wait) I4GLMain Let.4gl",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
+            "projectName": "launcher",
             "args": [
                 "--inspect",
                 "./language/tests/Let.4gl"

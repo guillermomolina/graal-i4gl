@@ -55,6 +55,7 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
     void writeInt(final VirtualFrame frame, final int value) {
         getFrame(frame).setInt(getSlot(), value);
     }
+    
     protected boolean isBigInt() {
         return getTypeDescriptor() == BigIntDescriptor.SINGLETON;
     }

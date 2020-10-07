@@ -8,6 +8,11 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 
 /**
@@ -24,27 +29,45 @@ import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
 public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
 
     private final String identifier;
+    private final I4GLTypeDescriptor descriptor;
 
-    I4GLAssignToRecordFieldNode(String identifier) {
+    I4GLAssignToRecordFieldNode(String identifier, I4GLTypeDescriptor descriptor) {
         this.identifier = identifier;
+        this.descriptor = descriptor;
     }
 
-    @Specialization
+    protected boolean isInt() {
+        return descriptor == IntDescriptor.SINGLETON;
+    }
+
+    @Specialization(guards = "isInt()")
     void assignInt(RecordValue record, int value) {
         record.getFrame().setInt(record.getSlot(this.identifier), value);
     }
 
-    @Specialization
-    void assignLong(RecordValue record, long value) {
+    protected boolean isBigInt() {
+        return descriptor == BigIntDescriptor.SINGLETON;
+    }
+
+    @Specialization(guards = "isBigInt()")
+    void assignBigInt(RecordValue record, long value) {
         record.getFrame().setLong(record.getSlot(this.identifier), value);
     }
 
-    @Specialization
-    void assignFloat(RecordValue record, float value) {
+    protected boolean isSmallFloat() {
+        return descriptor == SmallFloatDescriptor.SINGLETON;
+    }
+
+    @Specialization(guards = "isSmallFloat()")
+    void assignSmallFloat(RecordValue record, float value) {
         record.getFrame().setFloat(record.getSlot(this.identifier), value);
     }
 
-    @Specialization
+    protected boolean isDouble() {
+        return descriptor == DoubleDescriptor.SINGLETON;
+    }
+
+    @Specialization(guards = "isDouble()")
     void assignDouble(RecordValue record, double value) {
         record.getFrame().setDouble(record.getSlot(this.identifier), value);
     }
