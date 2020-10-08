@@ -13,7 +13,6 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 
 @ExportLibrary(value = InteropLibrary.class, delegateTo = "delegate")
 public final class I4GLLanguageView implements TruffleObject {
@@ -168,9 +167,9 @@ public final class I4GLLanguageView implements TruffleObject {
             if (lib.hasLanguage(value) && lib.getLanguage(value) == I4GLLanguage.class) {
                 return value;
             } else {
-                if (value.getClass().isArray()) {
+                /*if (value.getClass().isArray()) {
                     return new ArrayValue(value);
-                }
+                }*/
                 return create(value);
             }
         } catch (UnsupportedMessageException e) {
