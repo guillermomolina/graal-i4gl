@@ -13,6 +13,7 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 
 @ExportLibrary(value = InteropLibrary.class, delegateTo = "delegate")
 public final class I4GLLanguageView implements TruffleObject {
@@ -29,8 +30,9 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     /*
-     * Language views must always associate with the language they were created for. This allows
-     * tooling to take a primitive or foreign value and create a value of i4gl of it.
+     * Language views must always associate with the language they were created for.
+     * This allows tooling to take a primitive or foreign value and create a value
+     * of i4gl of it.
      */
     @ExportMessage
     Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
@@ -41,14 +43,14 @@ public final class I4GLLanguageView implements TruffleObject {
     @ExplodeLoop
     boolean hasMetaObject(@CachedLibrary("this.delegate") InteropLibrary interop) {
         /*
-         * We use the isInstance method to find out whether one of the builtin i4gl types
-         * apply. If yes, then we can provide a meta object in getMetaObject. The interop contract
-         * requires to be precise.
+         * We use the isInstance method to find out whether one of the builtin i4gl
+         * types apply. If yes, then we can provide a meta object in getMetaObject. The
+         * interop contract requires to be precise.
          *
-         * Since language views are only created for primitive values and values of other languages,
-         * values from i4gl itself directly implement has/getMetaObject. For example
-         * I4GLFunction is already associated with the I4GLLanguage and therefore the language view will
-         * not be used.
+         * Since language views are only created for primitive values and values of
+         * other languages, values from i4gl itself directly implement
+         * has/getMetaObject. For example I4GLFunction is already associated with the
+         * I4GLLanguage and therefore the language view will not be used.
          */
         for (I4GLType type : I4GLType.PRECEDENCE) {
             if (type.isInstance(delegate, interop)) {
@@ -137,7 +139,8 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     /*
-     * Language views are intended to be used only for primitives and other language values.
+     * Language views are intended to be used only for primitives and other language
+     * values.
      */
     private static boolean isPrimitiveOrFromOtherLanguage(Object value) {
         InteropLibrary interop = InteropLibrary.getFactory().getUncached(value);
@@ -150,9 +153,10 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     /**
-     * Returns a language view for primitive or foreign values. Returns the same value for values
-     * that are already originating from SimpleLanguage. This is useful to view values from the
-     * perspective of i4gl in slow paths, for example, printing values in error messages.
+     * Returns a language view for primitive or foreign values. Returns the same
+     * value for values that are already originating from SimpleLanguage. This is
+     * useful to view values from the perspective of i4gl in slow paths, for
+     * example, printing values in error messages.
      */
     @TruffleBoundary
     public static Object forValue(Object value) {
@@ -164,6 +168,9 @@ public final class I4GLLanguageView implements TruffleObject {
             if (lib.hasLanguage(value) && lib.getLanguage(value) == I4GLLanguage.class) {
                 return value;
             } else {
+                if (value.getClass().isArray()) {
+                    return new ArrayValue(value);
+                }
                 return create(value);
             }
         } catch (UnsupportedMessageException e) {
@@ -171,5 +178,4 @@ public final class I4GLLanguageView implements TruffleObject {
             throw new AssertionError(e);
         }
     }
-
 }

@@ -14,7 +14,7 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
  */
 public class I4GLWithNode extends I4GLStatementNode {
 
-    private final List<FrameSlot> recordSlots;
+    @SuppressWarnings("unused") final List<FrameSlot> recordSlots;
 
     @Child private I4GLStatementNode innerStatement;
 

@@ -54,7 +54,7 @@ public final class I4GLType implements TruffleObject {
     public static final I4GLType VARCHAR = new I4GLType("VARCHAR", (l, v) -> v instanceof VarcharValue);
     public static final I4GLType TEXT = new I4GLType("TEXT", (l, v) -> l.isString(v));
     public static final I4GLType FUNCTION = new I4GLType("FUNCTION", (l, v) -> l.isExecutable(v));
-    public static final I4GLType ARRAY = new I4GLType("ARRAY", (l, v) -> l.hasArrayElements(v));
+    public static final I4GLType ARRAY = new I4GLType("ARRAY", (l, v) -> v instanceof ArrayValue);
     public static final I4GLType RECORD = new I4GLType("RECORD", (l, v) -> v instanceof RecordValue);
     public static final I4GLType OBJECT = new I4GLType("OBJECT", (l, v) -> l.hasMembers(v));
 

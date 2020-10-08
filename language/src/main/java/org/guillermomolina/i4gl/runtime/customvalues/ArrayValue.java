@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.runtime.customvalues;
 
-import java.util.Arrays;
+import java.lang.reflect.Array;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
@@ -18,18 +18,10 @@ import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
 public class ArrayValue implements TruffleObject {
-    private final Object[] data;
+    private final Object data;
 
-    public ArrayValue(Object[] data) {
+    public ArrayValue(Object data) {
         this.data = data;
-    }
-
-    public Object getValueAt(int index) {
-        return data[index];
-    }
-
-    public void setValueAt(int index, final Object value) {
-        data[index] = value;
     }
 
     @ExportMessage
@@ -55,7 +47,8 @@ public class ArrayValue implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-        return Arrays.toString(data);
+//        return Arrays.toString(data);
+        return "[]";
     }
 
     @ExportMessage
@@ -65,7 +58,7 @@ public class ArrayValue implements TruffleObject {
 
     @ExportMessage
     long getArraySize() {
-        return data.length;
+        return Array.getLength(data);
     }
 
     @ExportMessage
@@ -85,11 +78,12 @@ public class ArrayValue implements TruffleObject {
 
     @ExportMessage
     public Object readArrayElement(long index) throws InvalidArrayIndexException {
-        if (!isArrayElementReadable(index)) {
+        try{
+            return Array.get(data, (int)index);
+        } catch(ArrayIndexOutOfBoundsException e) {
             CompilerDirectives.transferToInterpreter();
             throw InvalidArrayIndexException.create(index);
         }
-        return data[(int) index];
     }
 
     @TruffleBoundary

@@ -88,7 +88,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
 
     @Override
     protected Object getLanguageView(I4GLContext context, Object value) {
-        return I4GLLanguageView.create(value);
+        return I4GLLanguageView.forValue(value);
     }
 
     /**
@@ -96,7 +96,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
      *
      * @deprecated
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @Override
     protected Object findExportedSymbol(I4GLContext context, String globalName, boolean onlyExplicit) {
         return null;
