@@ -28,7 +28,7 @@ public final class NullValue implements TruffleObject {
     }
 
     /**
-     * This method is, e.g., called when using the {@code null} value in a string concatenation. So
+     * This method is, e.g., called when using the {@code NULL} value in a string concatenation. So
      * changing it has an effect on SL programs.
      */
     @Override

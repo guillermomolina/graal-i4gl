@@ -18,11 +18,19 @@ import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
 public class ArrayValue implements TruffleObject {
-    private final Object data;
+    private final Object[] data;
 
-    public ArrayValue(Object data) {
+    public ArrayValue(Object[] data) {
         this.data = data;
     }
+
+    public Object getValueAt(int index) {
+        return data[index];
+    } 
+
+    public void setValueAt(int index, Object value) {
+        data[index] = value;
+    } 
 
     @ExportMessage
     boolean hasLanguage() {
@@ -47,8 +55,8 @@ public class ArrayValue implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-//        return Arrays.toString(data);
-        return "[]";
+
+        return "[" + data.length + "]";
     }
 
     @ExportMessage
@@ -58,7 +66,7 @@ public class ArrayValue implements TruffleObject {
 
     @ExportMessage
     long getArraySize() {
-        return Array.getLength(data);
+        return data.length;
     }
 
     @ExportMessage

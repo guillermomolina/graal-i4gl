@@ -7,6 +7,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
@@ -56,6 +57,26 @@ public abstract class I4GLAssignToIndexedNode extends I4GLStatementNode {
     @Specialization
     void assignToVarchar(VarcharValue string, int index, String value) {
         string.setCharAt(index - 1, value.charAt(0));
+    }
+
+    @Specialization
+    void assignToArray(ArrayValue array, int index, int value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignToArray(ArrayValue array, int index, long value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignToArray(ArrayValue array, int index, float value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignToArray(ArrayValue array, int index, double value) {
+        array.setValueAt(index - 1, value);
     }
 
     @Specialization

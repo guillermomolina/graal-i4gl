@@ -86,9 +86,9 @@ public final class I4GLLanguageView implements TruffleObject {
                     if (type == I4GLType.INT) {
                         return intToString(interop.asInt(delegate));
                     } else if (type == I4GLType.BIGINT) {
-                        return longToString(interop.asLong(delegate));
+                        return bigIntToString(interop.asLong(delegate));
                     } else if (type == I4GLType.SMALLFLOAT) {
-                        return floatToString(interop.asFloat(delegate));
+                        return smallFloatToString(interop.asFloat(delegate));
                     } else if (type == I4GLType.DOUBLE) {
                         return doubleToString(interop.asDouble(delegate));
                     } else if (type == I4GLType.TEXT) {
@@ -107,27 +107,27 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     private static String addQuotes(String text) {
-        return '"' + text + '"';
+        return '"' + "AAAA" + text + '"';
     }
 
     @TruffleBoundary
     private static String intToString(int i) {
-        return Integer.toString(i);
+        return "INTEGER " + Integer.toString(i);
     }
 
     @TruffleBoundary
-    private static String longToString(long l) {
-        return Long.toString(l);
+    private static String bigIntToString(long l) {
+        return "BIGINT " + Long.toString(l);
     }
 
     @TruffleBoundary
-    private static String floatToString(float f) {
-        return Float.toString(f);
+    private static String smallFloatToString(float f) {
+        return "SMALLFLOAT " + Float.toString(f);
     }
 
     @TruffleBoundary
     private static String doubleToString(double d) {
-        return Double.toString(d);
+        return "DOUBLE " + Double.toString(d);
     }
 
     public static Object create(Object value) {
@@ -167,9 +167,6 @@ public final class I4GLLanguageView implements TruffleObject {
             if (lib.hasLanguage(value) && lib.getLanguage(value) == I4GLLanguage.class) {
                 return value;
             } else {
-                /*if (value.getClass().isArray()) {
-                    return new ArrayValue(value);
-                }*/
                 return create(value);
             }
         } catch (UnsupportedMessageException e) {

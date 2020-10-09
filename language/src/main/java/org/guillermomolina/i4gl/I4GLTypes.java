@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
  * CHAR - CharDescriptor, Char1Descriptor - CharValue
  * VARCHAR - VarcharDescriptor - VarcharValue
  * RECORD - RecordDescriptor - RecordValue
- * ARRAY - ArrayDescriptor - int[], long[], float[], double[], String[], CharValue[], VarcharValue[], RecordValue[]
+ * ARRAY - ArrayDescriptor - ArrayValue
  * 
  * Pseudo types:
  *  - LabelDescriptor - 

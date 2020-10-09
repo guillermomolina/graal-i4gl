@@ -7,6 +7,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be
@@ -33,23 +34,55 @@ public class ArrayDescriptor implements I4GLTypeDescriptor {
         return FrameSlotKind.Object;
     }
 
-    @Override
     public Object getDefaultValue() {
+        Object[] data;
         if (valuesDescriptor == IntDescriptor.SINGLETON) {
-            return new int[size];
+            data = getDefaultIntValue();
         } else if (valuesDescriptor == BigIntDescriptor.SINGLETON) {
-            return new long[size];
+            data = getDefaultBigIntValue();
         } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
-            return new float[size];
+            data = getDefaultSmallFloatValue();
         } else if (valuesDescriptor == DoubleDescriptor.SINGLETON) {
-            return new double[size];
+            data = getDefaultDoubleValue();
         } else {
-            Object[] data = new Object[size];
+            data = new Object[size];
             for (int i = 0; i < data.length; ++i) {
                 data[i] = valuesDescriptor.getDefaultValue();
             }
-            return data;
         }
+        return new ArrayValue(data);
+    }
+
+    private Object[] getDefaultIntValue() {
+        Integer[] data = new Integer[size];
+        for (int i = 0; i < data.length; ++i) {
+            data[i] = 0;
+        }
+        return data;
+    }
+
+    private Object[] getDefaultBigIntValue() {
+        Long[] data = new Long[size];
+        for (int i = 0; i < data.length; ++i) {
+            data[i] = 0l;
+        }
+        return data;
+    }
+
+    private Object[] getDefaultSmallFloatValue() {
+        Float[] data = new Float[size];
+        for (int i = 0; i < data.length; ++i) {
+            data[i] = 0f;
+        }
+        return data;
+    }
+
+    private Object[] getDefaultDoubleValue() {
+        Double[] data = new Double[size];
+        for (int i = 0; i < data.length; ++i) {
+            data[i] = 0d;
+        }
+        return data;
     }
 
     public int getSize() {

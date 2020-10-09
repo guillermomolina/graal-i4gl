@@ -8,16 +8,19 @@ import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
+import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.runtime.I4GLFunctionRegistry;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
- * Base class for all builtin functions. It contains the Truffle DI4GL annotation {@link NodeChild}
- * that defines the function arguments.<br>
- * The builtin functions are registered in {@link I4GLContext#installBuiltins}. Every builtin node
- * subclass is instantiated there, wrapped into a function, and added to the
- * {@link I4GLFunctionRegistry}. This ensures that builtin functions can be called like user-defined
- * functions; there is no special function lookup or call node for builtin functions.
+ * Base class for all builtin functions. It contains the Truffle DSL annotation
+ * {@link NodeChild} that defines the function arguments.<br>
+ * The builtin functions are registered in {@link I4GLContext#installBuiltins}.
+ * Every builtin node subclass is instantiated there, wrapped into a function,
+ * and added to the {@link I4GLFunctionRegistry}. This ensures that builtin
+ * functions can be called like user-defined functions; there is no special
+ * function lookup or call node for builtin functions.
  */
 @NodeChild(value = "arguments", type = I4GLExpressionNode[].class)
 @GenerateNodeFactory
@@ -28,7 +31,8 @@ public abstract class I4GLBuiltinNode extends I4GLExpressionNode {
         try {
             return execute(frame);
         } catch (UnsupportedSpecializationException e) {
-            throw new I4GLRuntimeException("Type error " + e.getNode().toString() + Arrays.toString(e.getSuppliedValues()));
+            throw new I4GLRuntimeException(
+                    "Type error " + e.getNode().toString() + Arrays.toString(e.getSuppliedValues()));
         }
     }
 

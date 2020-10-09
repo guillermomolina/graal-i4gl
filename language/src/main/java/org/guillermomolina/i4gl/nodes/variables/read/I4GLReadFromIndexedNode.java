@@ -9,6 +9,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
@@ -60,6 +61,31 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     @Specialization
     String readVarchar(VarcharValue varchar, int index) {
         return Character.toString(varchar.getCharAt(index - 1));
+    }
+
+    @Specialization
+    int readArray(ArrayValue array, int index) {
+        return (int)array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    long readArray(ArrayValue array, int index) {
+        return (int)array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    int readArray(ArrayValue array, int index) {
+        return (int)array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    int readArray(ArrayValue array, int index) {
+        return (int)array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    int readArray(ArrayValue array, int index) {
+        return (int)array.getValueAt(index - 1);
     }
 
     @Specialization
