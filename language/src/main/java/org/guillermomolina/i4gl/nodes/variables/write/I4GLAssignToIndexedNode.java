@@ -7,6 +7,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
@@ -26,62 +27,71 @@ public abstract class I4GLAssignToIndexedNode extends I4GLStatementNode {
 
     @Specialization
     void assignInt(int[] array, int index, int value) {
-        array[index - 1] = value;
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assignBigInt(long[] array, int index, long value) {
-        array[index - 1] = value;
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assigSmallFloat(float[] array, int index, float value) {
-        array[index - 1] = value;
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assignFloat(double[] array, int index, double value) {
-        array[index - 1] = value;
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assignToText(String string, int index, String value) {
-        throw new I4GLRuntimeException("Strings are inmutable");
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assignToChar(CharValue string, int index, String value) {
-        string.setCharAt(index - 1, value.charAt(0));
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assignToVarchar(VarcharValue string, int index, String value) {
-        string.setCharAt(index - 1, value.charAt(0));
-    }
-
-    @Specialization
-    void assignToArray(ArrayValue array, int index, int value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToArray(ArrayValue array, int index, long value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToArray(ArrayValue array, int index, float value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToArray(ArrayValue array, int index, double value) {
-        array.setValueAt(index - 1, value);
+        throw new I4GLRuntimeException("Should not be here");
     }
 
     @Specialization
     void assign(Object[] array, int index, Object value) {
-        array[index - 1] = value;
+        throw new I4GLRuntimeException("Should not be here");
+    }
+
+    protected boolean isInt(ArrayValue array) {
+        return descriptor == IntDescriptor.SINGLETON;
+    }
+
+    @Specialization(guards = "isInt(array)")
+    void assignIntToArray(ArrayValue array, int index, int value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignBigIntToArray(ArrayValue array, int index, long value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignFloatToArray(ArrayValue array, int index, float value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignDoubleToArray(ArrayValue array, int index, double value) {
+        array.setValueAt(index - 1, value);
+    }
+
+    @Specialization
+    void assignObjectToArray(ArrayValue array, int index, Object value) {
+        array.setValueAt(index - 1, value);
     }
 
     @Override

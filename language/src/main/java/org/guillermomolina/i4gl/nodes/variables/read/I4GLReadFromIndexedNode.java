@@ -64,28 +64,8 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     }
 
     @Specialization
-    int readArray(ArrayValue array, int index) {
-        return (int)array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    long readArray(ArrayValue array, int index) {
-        return (int)array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    int readArray(ArrayValue array, int index) {
-        return (int)array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    int readArray(ArrayValue array, int index) {
-        return (int)array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    int readArray(ArrayValue array, int index) {
-        return (int)array.getValueAt(index - 1);
+    Object readArray(ArrayValue array, int index) {
+        return array.getValueAt(index - 1);
     }
 
     @Specialization
