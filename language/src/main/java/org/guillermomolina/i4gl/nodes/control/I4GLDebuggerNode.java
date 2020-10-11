@@ -50,7 +50,7 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 /**
  * Implementation of the I4GL debugger statement. When under the debugger, execution suspends here.
  */
-@NodeInfo(shortName = "debugger", description = "The node implementing a debugger statement")
+@NodeInfo(shortName = "DEBUGGER", description = "The node implementing a debugger statement")
 public class I4GLDebuggerNode extends I4GLStatementNode {
 
     @Override

@@ -56,44 +56,13 @@
       </activation>
       <properties>
         <jar.dir>${project.build.directory}/jars</jar.dir>
-        <test.argLine> --upgrade-module-path='${jar.dir}/truffle-api.jar' 
+        <test.argLine> 
           --add-opens org.graalvm.sdk/org.graalvm.polyglot=ALL-UNNAMED 
           --add-exports java.base/jdk.internal.module=ALL-UNNAMED
         </test.argLine>
         <antlr4.visitor>true</antlr4.visitor>
         <antlr4.listener>false</antlr4.listener>
       </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.10</version>
-            <executions>
-              <execution>
-                <id>copy</id>
-                <phase>process-test-classes</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.graalvm.truffle</groupId>
-                      <artifactId>truffle-api</artifactId>
-                      <version>${graalvm.version}</version>
-                      <type>jar</type>
-                      <overWrite>true</overWrite>
-                      <destFileName>truffle-api.jar</destFileName>
-                    </artifactItem>
-                  </artifactItems>
-                  <outputDirectory>${jar.dir}</outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
     <profile>
       <id>jdk8-graalvm</id>

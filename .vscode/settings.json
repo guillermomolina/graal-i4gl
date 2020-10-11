@@ -18,8 +18,7 @@
     "java.home": "",
     "java.test.config": {
         "vmargs": [
-            "-Dgraalvm.locatorDisabled=true"
+            "-Dgraalvm.locatorDisabled=true --add-opens org.graalvm.sdk/org.graalvm.polyglot=ALL-UNNAMED --add-exports java.base/jdk.internal.module=ALL-UNNAMED"
         ]
-    },
-    "python.pythonPath": "/bin/python"
+    }
 }

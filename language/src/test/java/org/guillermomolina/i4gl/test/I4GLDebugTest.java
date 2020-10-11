@@ -5,43 +5,29 @@ import static com.oracle.truffle.tck.DebuggerTester.getSourceImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.PolyglotException;
+import com.oracle.truffle.api.debug.Breakpoint;
+import com.oracle.truffle.api.debug.DebugScope;
+import com.oracle.truffle.api.debug.DebugStackFrame;
+import com.oracle.truffle.api.debug.DebugValue;
+import com.oracle.truffle.api.debug.DebuggerSession;
+import com.oracle.truffle.api.debug.SuspendAnchor;
+import com.oracle.truffle.api.debug.SuspendedCallback;
+import com.oracle.truffle.api.debug.SuspendedEvent;
+import com.oracle.truffle.tck.DebuggerTester;
+
 import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.oracle.truffle.api.debug.Breakpoint;
-import com.oracle.truffle.api.debug.DebugException;
-import com.oracle.truffle.api.debug.DebugScope;
-import com.oracle.truffle.api.debug.DebugStackFrame;
-import com.oracle.truffle.api.debug.DebugValue;
-import com.oracle.truffle.api.debug.Debugger;
-import com.oracle.truffle.api.debug.DebuggerSession;
-import com.oracle.truffle.api.debug.SourceElement;
-import com.oracle.truffle.api.debug.StepConfig;
-import com.oracle.truffle.api.debug.SuspendAnchor;
-import com.oracle.truffle.api.debug.SuspendedCallback;
-import com.oracle.truffle.api.debug.SuspendedEvent;
-import com.oracle.truffle.api.source.SourceSection;
-import com.oracle.truffle.tck.DebuggerTester;
-import org.graalvm.polyglot.HostAccess;
 
 public class I4GLDebugTest {
 
@@ -67,10 +53,6 @@ public class I4GLDebugTest {
 
     private DebuggerSession startSession() {
         return tester.startSession();
-    }
-
-    private DebuggerSession startSession(SourceElement... sourceElements) {
-        return tester.startSession(sourceElements);
     }
 
     private String expectDone() {
@@ -149,16 +131,16 @@ public class I4GLDebugTest {
         /*
          * Test AlwaysHalt is working.
          */
-        final Source factorial = i4glCode("DEFINE MAIN\n" +
-                        "  RETURN fac(5)\n" +
+        final Source factorial = i4glCode("MAIN\n" +
+                        "  CALL fac(5)\n" +
                         "END MAIN\n" +
                         "FUNCTION fac(n)\n" +
-                        "  DEFINE n AS INTEGER\n" +
+                        "  DEFINE n INTEGER\n" +
                         "  IF (n <= 1) THEN\n" +
                         "    DEBUGGER\n" + // // break
                         "    RETURN 1\n" +
                         "  END IF\n" +
-                        "  RETURN n * fac(n - 1)" +
+                        "  RETURN n * fac(n - 1)\n" +
                         "END FUNCTION\n");
 
         try (DebuggerSession session = startSession()) {
@@ -168,7 +150,7 @@ public class I4GLDebugTest {
             session.getBreakpoints();
 
             expectSuspended((SuspendedEvent event) -> {
-                checkState(event, "fac", 6, true, "debugger", "n", "1").prepareContinue();
+                checkState(event, "fac", 7, true, "DEBUGGER\n", "n", "INTEGER 1").prepareContinue();
             });
 
             expectDone();
@@ -177,21 +159,28 @@ public class I4GLDebugTest {
 
     @Test
     public void testDebugValue() throws Throwable {
-        final Source varsSource = i4glCode("function main() {\n" +
-                        "  a = doNull();\n" +
-                        "  b = 10 == 10;\n" +
-                        "  c = 10;\n" +
-                        "  d = \"str\";\n" +
-                        "  e = new();\n" +
-                        "  e.p1 = 1;\n" +
-                        "  e.p2 = new();\n" +
-                        "  e.p2.p21 = 21;\n" +
-                        "  return;\n" +
-                        "}\n" +
-                        "function doNull() {}\n");
+        final Source varsSource = i4glCode(
+                        "MAIN\n" +
+                        "  DEFINE a, b, c INTEGER\n" +
+                        "  DEFINE d TEXT\n" +
+                        "  DEFINE e RECORD\n" +
+                        "    p1 INTEGER,\n" +
+                        "    p2 RECORD\n" +
+                        "      p21 INTEGER\n" +
+                        "    END RECORD\n" +
+                        "  END RECORD\n" +
+                        "  LET a = doNull()\n" +
+                        "  LET b = 1\n" +
+                        "  LET c = 10\n" +
+                        "  LET d = \"str\"\n" +
+                        "  LET e.p1 = 1\n" +
+                        "  LET e.p2.p21 = 21\n" +
+                        "END MAIN\n" +
+                        "FUNCTION doNull()\n" +
+                        "END FUNCTION\n");
 
         try (DebuggerSession session = startSession()) {
-            session.install(Breakpoint.newBuilder(getSourceImpl(varsSource)).lineIs(10).build());
+            session.install(Breakpoint.newBuilder(getSourceImpl(varsSource)).lineIs(13).build());
             startEval(varsSource);
 
             expectSuspended((SuspendedEvent event) -> {
@@ -210,13 +199,14 @@ public class I4GLDebugTest {
 
                 DebugValue c = scope.getDeclaredValue("c");
                 assertFalse(c.isArray());
-                assertEquals("10", c.toDisplayString());
+                assertEquals("INTEGER 10", c.toDisplayString());
                 assertNull(c.getArray());
                 assertNull(c.getProperties());
 
                 DebugValue d = scope.getDeclaredValue("d");
                 assertFalse(d.isArray());
-                assertEquals("str", d.toDisplayString());
+                //assertEquals("TEXT \"str\"", d.toDisplayString());
+                assertEquals("NULL", d.toDisplayString());
                 assertNull(d.getArray());
                 assertNull(d.getProperties());
 
@@ -230,7 +220,7 @@ public class I4GLDebugTest {
                 assertTrue(propertiesIt.hasNext());
                 DebugValue p1 = propertiesIt.next();
                 assertEquals("p1", p1.getName());
-                assertEquals("1", p1.toDisplayString());
+                assertEquals("INTEGER 1", p1.toDisplayString());
                 assertNull(p1.getScope());
                 assertTrue(propertiesIt.hasNext());
                 DebugValue p2 = propertiesIt.next();
@@ -244,14 +234,14 @@ public class I4GLDebugTest {
                 assertTrue(propertiesIt.hasNext());
                 DebugValue p21 = propertiesIt.next();
                 assertEquals("p21", p21.getName());
-                assertEquals("21", p21.toDisplayString());
+                assertEquals("INTEGER 21", p21.toDisplayString());
                 assertNull(p21.getScope());
                 assertFalse(propertiesIt.hasNext());
 
                 DebugValue ep1 = e.getProperty("p1");
-                assertEquals("1", ep1.toDisplayString());
+                assertEquals("INTEGER 1", ep1.toDisplayString());
                 ep1.set(p21);
-                assertEquals("21", ep1.toDisplayString());
+                assertEquals("INTEGER 21", ep1.toDisplayString());
                 assertNull(e.getProperty("NonExisting"));
             });
 

@@ -166,9 +166,9 @@ simpleStatement:
 	| inputInsideStatement
 	| debugStatement;
 
-debugStatement: DEBUG EOL+;
+debugStatement: DEBUGGER EOL+;
 
-DEBUG: D E B U G;
+DEBUGGER: D E B U G G E R;
 
 runStatement:
 	RUN (variable | string) (IN FORM MODE | IN LINE MODE)? (
