@@ -9,8 +9,6 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
-import org.guillermomolina.i4gl.I4GLTypes;
-import org.guillermomolina.i4gl.I4GLTypesGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;

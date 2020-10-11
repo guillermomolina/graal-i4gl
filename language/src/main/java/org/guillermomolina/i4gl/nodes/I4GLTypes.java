@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl;
+package org.guillermomolina.i4gl.nodes;
 
 import com.oracle.truffle.api.dsl.ImplicitCast;
 import com.oracle.truffle.api.dsl.TypeCast;
@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
  * CHAR - CharDescriptor, Char1Descriptor - CharValue
  * VARCHAR - VarcharDescriptor - VarcharValue
  * RECORD - RecordDescriptor - RecordValue
- * ARRAY - ArrayDescriptor - ArrayValue
+ * ARRAY - ArrayDescriptor - IntArrayValue, BigIntArrayValue, SmallFloatArrayValue, DoubleArrayValue
  * 
  * Pseudo types:
  *  - LabelDescriptor - 
@@ -55,7 +55,9 @@ public class I4GLTypes {
      */
     @TypeCast(NullValue.class)
     public static NullValue asNullValue(Object value) {
-        assert isNullValue(value);
+        if(!isNullValue(value)) {
+            throw new AssertionError();
+        }
         return NullValue.SINGLETON;
     }
 

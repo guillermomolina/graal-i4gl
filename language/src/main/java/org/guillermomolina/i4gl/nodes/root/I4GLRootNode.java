@@ -9,7 +9,7 @@ import com.oracle.truffle.api.profiles.BranchProfile;
 import com.oracle.truffle.api.source.SourceSection;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.I4GLTypes;
+import org.guillermomolina.i4gl.nodes.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;

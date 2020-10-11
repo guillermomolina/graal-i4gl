@@ -9,8 +9,11 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.BigIntArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.customvalues.DoubleArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.IntArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.SmallFloatArrayValue;
 import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 
 /**
@@ -29,26 +32,6 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     protected abstract I4GLTypeDescriptor getReturnType();
 
     @Specialization
-    int readInt(int[] array, int index) {
-        return array[index - 1];
-    }
-
-    @Specialization
-    long readBigInt(long[] array, int index) {
-        return array[index - 1];
-    }
-
-    @Specialization
-    float readSmallFloat(float[] array, int index) {
-        return array[index - 1];
-    }
-
-    @Specialization
-    double readDouble(double[] array, int index) {
-        return array[index - 1];
-    }
-
-    @Specialization
     String readText(String string, int index) {
         return Character.toString((string.charAt(index - 1)));
     }
@@ -64,7 +47,22 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     }
 
     @Specialization
-    Object readArray(ArrayValue array, int index) {
+    int readIntArray(IntArrayValue array, int index) {
+        return array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    long readBigIntArray(BigIntArrayValue array, int index) {
+        return array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    float readSmallFloatArray(SmallFloatArrayValue array, int index) {
+        return array.getValueAt(index - 1);
+    }
+
+    @Specialization
+    double readDoubleArray(DoubleArrayValue array, int index) {
         return array.getValueAt(index - 1);
     }
 

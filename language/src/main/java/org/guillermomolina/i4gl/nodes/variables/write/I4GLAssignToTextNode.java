@@ -13,8 +13,8 @@ import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
-import org.guillermomolina.i4gl.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.I4GLTypes;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;

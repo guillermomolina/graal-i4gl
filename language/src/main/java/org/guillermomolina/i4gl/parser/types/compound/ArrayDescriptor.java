@@ -2,12 +2,16 @@ package org.guillermomolina.i4gl.parser.types.compound;
 
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.BigIntArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.DoubleArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.IntArrayValue;
+import org.guillermomolina.i4gl.runtime.customvalues.SmallFloatArrayValue;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be
@@ -35,54 +39,21 @@ public class ArrayDescriptor implements I4GLTypeDescriptor {
     }
 
     public Object getDefaultValue() {
-        Object[] data;
         if (valuesDescriptor == IntDescriptor.SINGLETON) {
-            data = getDefaultIntValue();
+            return new IntArrayValue(size);
         } else if (valuesDescriptor == BigIntDescriptor.SINGLETON) {
-            data = getDefaultBigIntValue();
+            return new BigIntArrayValue(size);
         } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
-            data = getDefaultSmallFloatValue();
+            return new SmallFloatArrayValue(size);
         } else if (valuesDescriptor == DoubleDescriptor.SINGLETON) {
-            data = getDefaultDoubleValue();
+            return new DoubleArrayValue(size);
         } else {
-            data = new Object[size];
+            throw new NotImplementedException();
+            /*data = new Object[size];
             for (int i = 0; i < data.length; ++i) {
                 data[i] = valuesDescriptor.getDefaultValue();
-            }
+            }*/
         }
-        return new ArrayValue(data);
-    }
-
-    private Object[] getDefaultIntValue() {
-        Integer[] data = new Integer[size];
-        for (int i = 0; i < data.length; ++i) {
-            data[i] = 0;
-        }
-        return data;
-    }
-
-    private Object[] getDefaultBigIntValue() {
-        Long[] data = new Long[size];
-        for (int i = 0; i < data.length; ++i) {
-            data[i] = 0l;
-        }
-        return data;
-    }
-
-    private Object[] getDefaultSmallFloatValue() {
-        Float[] data = new Float[size];
-        for (int i = 0; i < data.length; ++i) {
-            data[i] = 0f;
-        }
-        return data;
-    }
-
-    private Object[] getDefaultDoubleValue() {
-        Double[] data = new Double[size];
-        for (int i = 0; i < data.length; ++i) {
-            data[i] = 0d;
-        }
-        return data;
     }
 
     public int getSize() {

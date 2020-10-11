@@ -17,20 +17,15 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public class ArrayValue implements TruffleObject {
-    private final Object[] data;
+public abstract class ArrayValue implements TruffleObject {
 
-    public ArrayValue(Object[] data) {
-        this.data = data;
-    }
+    public abstract int getSize();
 
-    public Object getValueAt(int index) {
-        return data[index];
-    } 
+    public abstract I4GLType getElementType();
 
-    public void setValueAt(int index, Object value) {
-        data[index] = value;
-    } 
+    protected abstract Object getArray();
+
+    public abstract void setObjectAt(int index, Object value);
 
     @ExportMessage
     boolean hasLanguage() {
@@ -55,8 +50,7 @@ public class ArrayValue implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-
-        return "[" + data.length + "]";
+        return "[" + getSize() + "]";
     }
 
     @ExportMessage
@@ -66,7 +60,7 @@ public class ArrayValue implements TruffleObject {
 
     @ExportMessage
     long getArraySize() {
-        return data.length;
+        return getSize();
     }
 
     @ExportMessage
@@ -87,7 +81,7 @@ public class ArrayValue implements TruffleObject {
     @ExportMessage
     public Object readArrayElement(long index) throws InvalidArrayIndexException {
         try{
-            return Array.get(data, (int)index);
+            return Array.get(getArray(), (int)index);
         } catch(ArrayIndexOutOfBoundsException e) {
             CompilerDirectives.transferToInterpreter();
             throw InvalidArrayIndexException.create(index);
