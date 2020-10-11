@@ -8,14 +8,14 @@ MAIN
     anInteger INTEGER,
     aFloat SMALLFLOAT
   END RECORD
-  DEFINE anArray ARRAY[2] OF INTEGER
+  DEFINE anArray ARRAY[2] OF FLOAT
   LET aBigInteger = 123456789012
   LET aDouble = 1.0/3.0
   LET aText = "Texto muy largo"
   LET aChar = "Un texto de 10"
   LET aVarchar = "otro texto"
-  LET anArray[1] = 101
-  LET anArray[2] = 102
+  LET anArray[1] = 101.5
+  LET anArray[2] = 102.74
   LET aRecord.anInteger = 100
   LET aRecord.aFloat = 121.2
   DISPLAY aBigInteger
