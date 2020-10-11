@@ -14,7 +14,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.nodes.I4GLTypes;
+import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
@@ -38,7 +38,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
     @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 
 })
-@TypeSystemReference(I4GLTypes.class)
+@TypeSystemReference(I4GLTypeSystem.class)
 public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
 
     protected abstract FrameSlot getSlot();

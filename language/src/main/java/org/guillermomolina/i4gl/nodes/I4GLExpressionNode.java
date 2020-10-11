@@ -21,7 +21,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
  * the specialized execute{Type} methods are implemented because we do not really need them since we are using Truffle's
  * specializations.
  */
-@TypeSystemReference(I4GLTypes.class)
+@TypeSystemReference(I4GLTypeSystem.class)
 @NodeInfo(description = "Abstract class for all nodes that return value")
 @GenerateWrapper
 public abstract class I4GLExpressionNode extends I4GLStatementNode {
@@ -61,19 +61,19 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
     }
 
 	public int executeInt(VirtualFrame frame) throws UnexpectedResultException {
-	    return I4GLTypesGen.expectInteger(executeGeneric(frame));
+	    return I4GLTypeSystemGen.expectInteger(executeGeneric(frame));
     }
 
 	public long executeBigInt(VirtualFrame frame) throws UnexpectedResultException {
-		return I4GLTypesGen.expectLong(executeGeneric(frame));
+		return I4GLTypeSystemGen.expectLong(executeGeneric(frame));
 	}
 
 	public float executeSmallFloat(VirtualFrame frame) throws UnexpectedResultException {
-		return I4GLTypesGen.expectFloat(executeGeneric(frame));
+		return I4GLTypeSystemGen.expectFloat(executeGeneric(frame));
 	}
 
 	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
-		return I4GLTypesGen.expectDouble(executeGeneric(frame));
+		return I4GLTypeSystemGen.expectDouble(executeGeneric(frame));
 	}
 
     protected boolean isInt() {

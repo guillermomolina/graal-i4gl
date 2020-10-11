@@ -31,9 +31,9 @@ import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
  * be using and implicit casts.
  */
 @TypeSystem({ int.class, long.class, float.class, double.class })
-public class I4GLTypes {
+public class I4GLTypeSystem {
 
-    protected I4GLTypes() {
+    protected I4GLTypeSystem() {
     }
 
     /**

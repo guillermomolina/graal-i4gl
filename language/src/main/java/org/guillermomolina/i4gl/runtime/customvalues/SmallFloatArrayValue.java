@@ -24,11 +24,6 @@ public class SmallFloatArrayValue extends ArrayValue {
     public void setValueAt(int index, float value) {
         array[index] = value;
     }
-
-    @Override
-    public void setObjectAt(int index, Object value) {
-        setValueAt(index, (float)value);
-    }
     
     @Override
     protected Object getArray() {

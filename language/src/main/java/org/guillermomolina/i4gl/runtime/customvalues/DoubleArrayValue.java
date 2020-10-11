@@ -24,11 +24,6 @@ public class DoubleArrayValue extends ArrayValue {
     public void setValueAt(int index, double value) {
         array[index] = value;
     }
-
-    @Override
-    public void setObjectAt(int index, Object value) {
-        setValueAt(index, (double)value);
-    }
     
     @Override
     protected Object getArray() {

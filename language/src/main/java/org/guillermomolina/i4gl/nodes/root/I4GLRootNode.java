@@ -9,7 +9,7 @@ import com.oracle.truffle.api.profiles.BranchProfile;
 import com.oracle.truffle.api.source.SourceSection;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.nodes.I4GLTypes;
+import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 /**
  * This node represents the root node of AST of any function or main program.
  */
-@TypeSystemReference(I4GLTypes.class)
+@TypeSystemReference(I4GLTypeSystem.class)
 @NodeInfo(language = "i4gl", description = "The root of all I4GL execution trees")
 public class I4GLRootNode extends RootNode {
     /**

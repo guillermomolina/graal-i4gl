@@ -24,11 +24,6 @@ public class BigIntArrayValue extends ArrayValue {
     public void setValueAt(int index, long value) {
         array[index] = value;
     }
-
-    @Override
-    public void setObjectAt(int index, Object value) {
-        setValueAt(index, (long)value);
-    }
     
     @Override
     protected Object getArray() {

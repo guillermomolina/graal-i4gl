@@ -25,8 +25,6 @@ public abstract class ArrayValue implements TruffleObject {
 
     protected abstract Object getArray();
 
-    public abstract void setObjectAt(int index, Object value);
-
     @ExportMessage
     boolean hasLanguage() {
         return true;

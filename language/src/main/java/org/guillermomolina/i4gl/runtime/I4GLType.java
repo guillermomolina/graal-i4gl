@@ -99,7 +99,7 @@ public final class I4GLType implements TruffleObject {
     }
 
     /*
-     * All I4GLTypes are declared as interop meta-objects. Other example for
+     * All I4GLTypeSystem are declared as interop meta-objects. Other example for
      * meta-objects are Java classes, or JavaScript prototypes.
      */
     @ExportMessage

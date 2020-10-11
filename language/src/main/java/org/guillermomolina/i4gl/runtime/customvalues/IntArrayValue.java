@@ -29,11 +29,6 @@ public class IntArrayValue extends ArrayValue {
     public void setValueAt(int index, int value) {
         array[index] = value;
     } 
-
-    @Override
-    public void setObjectAt(int index, Object value) {
-        setValueAt(index, (int)value);
-    }
     
     @Override
     protected Object getArray() {
