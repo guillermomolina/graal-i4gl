@@ -41,8 +41,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isInt()")
-    void assignInt(RecordValue record, Object value) {
-        record.put(identifier, (int)value);
+    void assignInt(RecordValue record, int value) {
+        record.put(identifier, value);
     }
 
     protected boolean isBigInt() {
@@ -50,8 +50,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isBigInt()")
-    void assignBigInt(RecordValue record, Object value) {
-        record.put(identifier, (long)value);
+    void assignBigInt(RecordValue record, long value) {
+        record.put(identifier, value);
     }
 
     protected boolean isSmallFloat() {
@@ -59,8 +59,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isSmallFloat()")
-    void assignSmallFloat(RecordValue record, Object value) {
-        record.put(identifier, (float)value);
+    void assignSmallFloat(RecordValue record, float value) {
+        record.put(identifier, value);
     }
 
     protected boolean isDouble() {
@@ -68,8 +68,8 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isDouble()")
-    void assignDouble(RecordValue record, Object value) {
-        record.put(identifier, (double)value);
+    void assignDouble(RecordValue record, double value) {
+        record.put(identifier, value);
     }
 
     @Specialization

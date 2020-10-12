@@ -107,7 +107,7 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     private static String addQuotes(String text) {
-        return '"' + "AAAA" + text + '"';
+        return "TEXT \"" + text + '"';
     }
 
     @TruffleBoundary

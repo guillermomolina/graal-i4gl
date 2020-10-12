@@ -3,10 +3,12 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
@@ -27,6 +29,7 @@ import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
 @NodeChildren({ @NodeChild(value = "recordNode", type = I4GLExpressionNode.class),
         @NodeChild(value = "indexNode", type = I4GLExpressionNode.class),
         @NodeChild(value = "valueNode", type = I4GLExpressionNode.class) })
+@TypeSystemReference(I4GLTypeSystem.class)
 public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
 
     private final String identifier;
@@ -36,11 +39,11 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
         this.identifier = identifier;
         this.descriptor = descriptor;
     }
-   
+
     protected boolean isChar() {
         return descriptor instanceof CharDescriptor;
     }
-   
+
     @Specialization(guards = "isChar()")
     void assignChar(RecordValue record, int index, String value) {
         Object targetObject = record.get(identifier);
@@ -52,11 +55,11 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
         final CharValue target = (CharValue) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
-   
+
     protected boolean isVarchar() {
         return descriptor instanceof VarcharDescriptor;
     }
-   
+
     @Specialization(guards = "isVarchar()")
     void assignVarchar(RecordValue record, int index, String value) {
         Object targetObject = record.get(identifier);
@@ -79,11 +82,11 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
         if (!(targetObject instanceof String)) {
             targetObject = "";
         }
-        StringBuilder builder = new StringBuilder((String)targetObject);
+        StringBuilder builder = new StringBuilder((String) targetObject);
         builder.setCharAt(index, value.charAt(0));
         record.put(identifier, targetObject);
     }
- 
+
     @Override
     public boolean hasTag(Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);

@@ -1,6 +1,5 @@
 package org.guillermomolina.i4gl.test;
 
-
 import static com.oracle.truffle.tck.DebuggerTester.getSourceImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -63,8 +62,8 @@ public class I4GLDebugTest {
         tester.expectSuspended(callback);
     }
 
-    protected SuspendedEvent checkState(SuspendedEvent suspendedEvent, String name, final int expectedLineNumber, final boolean expectedIsBefore, final String expectedCode,
-                    final String... expectedFrame) {
+    protected SuspendedEvent checkState(SuspendedEvent suspendedEvent, String name, final int expectedLineNumber,
+            final boolean expectedIsBefore, final String expectedCode, final String... expectedFrame) {
         final int actualLineNumber = suspendedEvent.getSourceSection().getStartLine();
         Assert.assertEquals(expectedLineNumber, actualLineNumber);
         final String actualCode = suspendedEvent.getSourceSection().getCharacters().toString();
@@ -115,7 +114,8 @@ public class I4GLDebugTest {
     }
 
     private static void checkDebugValues(String msg, Map<String, DebugValue> valMap, String... expected) {
-        String message = String.format("Frame %s expected %s got %s", msg, Arrays.toString(expected), valMap.toString());
+        String message = String.format("Frame %s expected %s got %s", msg, Arrays.toString(expected),
+                valMap.toString());
         Assert.assertEquals(message, expected.length / 2, valMap.size());
         for (int i = 0; i < expected.length; i = i + 2) {
             String expectedIdentifier = expected[i];
@@ -131,18 +131,20 @@ public class I4GLDebugTest {
         /*
          * Test AlwaysHalt is working.
          */
-        final Source factorial = i4glCode("MAIN\n" +
-                        "  CALL fac(5)\n" +
-                        "END MAIN\n" +
-                        "FUNCTION fac(n)\n" +
-                        "  DEFINE n INTEGER\n" +
-                        "  IF (n <= 1) THEN\n" +
-                        "    DEBUGGER\n" + // // break
-                        "    RETURN 1\n" +
-                        "  END IF\n" +
-                        "  RETURN n * fac(n - 1)\n" +
-                        "END FUNCTION\n");
-
+        // @formatter:off
+        final Source factorial = i4glCode(
+            "MAIN\n" +
+            "  CALL fac(5)\n" +
+            "END MAIN\n" +
+            "FUNCTION fac(n)\n" +
+            "  DEFINE n INTEGER\n" +
+            "  IF (n <= 1) THEN\n" +
+            "    BREAKPOINT\n" + // // break
+            "    RETURN 1\n" +
+            "  END IF\n" +
+            "  RETURN n * fac(n - 1)\n" +
+            "END FUNCTION\n");
+        // @formatter:on
         try (DebuggerSession session = startSession()) {
             startEval(factorial);
 
@@ -150,7 +152,7 @@ public class I4GLDebugTest {
             session.getBreakpoints();
 
             expectSuspended((SuspendedEvent event) -> {
-                checkState(event, "fac", 7, true, "DEBUGGER\n", "n", "INTEGER 1").prepareContinue();
+                checkState(event, "fac", 7, true, "BREAKPOINT\n", "n", "INTEGER 1").prepareContinue();
             });
 
             expectDone();
@@ -159,28 +161,31 @@ public class I4GLDebugTest {
 
     @Test
     public void testDebugValue() throws Throwable {
+        // @formatter:off
         final Source varsSource = i4glCode(
-                        "MAIN\n" +
-                        "  DEFINE a, b, c INTEGER\n" +
-                        "  DEFINE d TEXT\n" +
-                        "  DEFINE e RECORD\n" +
-                        "    p1 INTEGER,\n" +
-                        "    p2 RECORD\n" +
-                        "      p21 INTEGER\n" +
-                        "    END RECORD\n" +
-                        "  END RECORD\n" +
-                        "  LET a = doNull()\n" +
-                        "  LET b = 1\n" +
-                        "  LET c = 10\n" +
-                        "  LET d = \"str\"\n" +
-                        "  LET e.p1 = 1\n" +
-                        "  LET e.p2.p21 = 21\n" +
-                        "END MAIN\n" +
-                        "FUNCTION doNull()\n" +
-                        "END FUNCTION\n");
-
+            "MAIN\n" +
+            "  DEFINE a, b INTEGER\n" +
+            "  DEFINE c SMALLFLOAT\n" +
+            "  DEFINE d TEXT\n" +
+            "  DEFINE e RECORD\n" +
+            "    p1 INTEGER,\n" +
+            "    p2 RECORD\n" +
+            "      p21 INTEGER\n" +
+            "    END RECORD\n" +
+            "  END RECORD\n" +
+            "  LET a = doNull()\n" +
+            "  LET b = 1\n" +
+            "  LET c = 1.32\n" +
+            "  LET d = \"str\"\n" +
+            "  LET e.p1 = 1\n" +
+            "  LET e.p2.p21 = 21\n" +
+            "  DISPLAY \"MAIN\"\n" +
+            "END MAIN\n" +
+            "FUNCTION doNull()\n" +
+            "END FUNCTION\n");
+        // @formatter:on
         try (DebuggerSession session = startSession()) {
-            session.install(Breakpoint.newBuilder(getSourceImpl(varsSource)).lineIs(13).build());
+            session.install(Breakpoint.newBuilder(getSourceImpl(varsSource)).lineIs(17).build());
             startEval(varsSource);
 
             expectSuspended((SuspendedEvent event) -> {
@@ -194,19 +199,19 @@ public class I4GLDebugTest {
 
                 DebugValue b = scope.getDeclaredValue("b");
                 assertFalse(b.isArray());
+                assertEquals("INTEGER 1", b.toDisplayString());
                 assertNull(b.getArray());
                 assertNull(b.getProperties());
 
                 DebugValue c = scope.getDeclaredValue("c");
                 assertFalse(c.isArray());
-                assertEquals("INTEGER 10", c.toDisplayString());
+                assertEquals("SMALLFLOAT 1.32", c.toDisplayString());
                 assertNull(c.getArray());
                 assertNull(c.getProperties());
 
                 DebugValue d = scope.getDeclaredValue("d");
                 assertFalse(d.isArray());
-                //assertEquals("TEXT \"str\"", d.toDisplayString());
-                assertEquals("NULL", d.toDisplayString());
+                assertEquals("TEXT \"str\"", d.toDisplayString());
                 assertNull(d.getArray());
                 assertNull(d.getProperties());
 
