@@ -48,7 +48,7 @@ public abstract class I4GLArrayValue implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-        return "[" + getSize() + "]";
+        return "[" + getSize() + "] OF " + getElementType().getName();
     }
 
     @ExportMessage
