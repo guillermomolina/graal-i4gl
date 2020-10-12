@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import java.lang.reflect.Array;
 
@@ -11,14 +11,14 @@ import com.oracle.truffle.api.library.ExportMessage;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public class IntArrayValue extends ArrayValue {
+public class I4GLIntArray extends I4GLArrayValue {
     private final int[] array;
 
-    public IntArrayValue(int size) {
+    public I4GLIntArray(int size) {
         this.array = new int[size];
     }
 
-    protected IntArrayValue(int[] array) {
+    protected I4GLIntArray(int[] array) {
         this.array = array;
     }
 

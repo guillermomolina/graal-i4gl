@@ -13,7 +13,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 
 /**
  * Node representing assignment to a record. Compared to {@link I4GLSimpleAssignmentNode} it assigns the value to the record's
@@ -41,7 +41,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isInt()")
-    void assignInt(RecordValue record, int value) {
+    void assignInt(I4GLRecord record, int value) {
         record.put(identifier, value);
     }
 
@@ -50,7 +50,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isBigInt()")
-    void assignBigInt(RecordValue record, long value) {
+    void assignBigInt(I4GLRecord record, long value) {
         record.put(identifier, value);
     }
 
@@ -59,7 +59,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isSmallFloat()")
-    void assignSmallFloat(RecordValue record, float value) {
+    void assignSmallFloat(I4GLRecord record, float value) {
         record.put(identifier, value);
     }
 
@@ -68,12 +68,12 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isDouble()")
-    void assignDouble(RecordValue record, double value) {
+    void assignDouble(I4GLRecord record, double value) {
         record.put(identifier, value);
     }
 
     @Specialization
-    void assignGeneric(RecordValue record, Object value) {
+    void assignGeneric(I4GLRecord record, Object value) {
         record.put(identifier, value);
     }
 

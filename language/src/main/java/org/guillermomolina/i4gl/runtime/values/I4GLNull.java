@@ -1,5 +1,6 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.TruffleObject;
@@ -12,19 +13,19 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public final class NullValue implements TruffleObject {
+public final class I4GLNull implements TruffleObject {
 
     /**
      * The canonical value to represent {@code null} in SL.
      */
-    public static final NullValue SINGLETON = new NullValue();
+    public static final I4GLNull SINGLETON = new I4GLNull();
     private static final int IDENTITY_HASH = System.identityHashCode(SINGLETON);
 
     /**
      * Disallow instantiation from outside to ensure that the {@link #SINGLETON} is the only
      * instance.
      */
-    private NullValue() {
+    private I4GLNull() {
     }
 
     /**
@@ -34,6 +35,12 @@ public final class NullValue implements TruffleObject {
     @Override
     public String toString() {
         return "NULL";
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    Object toDisplayString(boolean allowSideEffects) {
+        return toString();
     }
 
     @ExportMessage
@@ -47,7 +54,7 @@ public final class NullValue implements TruffleObject {
     }
 
     /**
-     * {@link NullValue} values are interpreted as null values by other languages.
+     * {@link I4GLNull} values are interpreted as null values by other languages.
      */
     @ExportMessage
     boolean isNull() {
@@ -65,24 +72,19 @@ public final class NullValue implements TruffleObject {
     }
 
     @ExportMessage
-    static TriState isIdenticalOrUndefined(NullValue receiver, Object other) {
+    static TriState isIdenticalOrUndefined(I4GLNull receiver, Object other) {
         /*
          * NullValue values are identical to other NullValue values.
          */
-        return TriState.valueOf(NullValue.SINGLETON == other);
+        return TriState.valueOf(I4GLNull.SINGLETON == other);
     }
 
     @ExportMessage
-    static int identityHashCode(NullValue receiver) {
+    static int identityHashCode(I4GLNull receiver) {
         /*
          * We do not use 0, as we want consistency with System.identityHashCode(receiver).
          */
         return IDENTITY_HASH;
-    }
-
-    @ExportMessage
-    Object toDisplayString(boolean allowSideEffects) {
-        return "NULL";
     }
     
 }

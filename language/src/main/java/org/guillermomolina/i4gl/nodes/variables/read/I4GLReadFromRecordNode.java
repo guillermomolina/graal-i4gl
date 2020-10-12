@@ -9,7 +9,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 
 /**
  * This node reads value from an record with specified identifier.
@@ -29,27 +29,27 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
     protected abstract String getIdentifier();
 
     @Specialization(guards = "isInt()")
-    int readInt(RecordValue record) {
+    int readInt(I4GLRecord record) {
         return (int)record.get(getIdentifier());
     }
 
     @Specialization(guards = "isBigInt()")
-    long readBigInt(RecordValue record) {
+    long readBigInt(I4GLRecord record) {
         return (long)record.get(getIdentifier());
     }
 
     @Specialization(guards = "isSmallFloat()")
-    float readSmallFloat(RecordValue record) {
+    float readSmallFloat(I4GLRecord record) {
         return (float)record.get(getIdentifier());
     }
 
     @Specialization(guards = "isDouble()")
-    double readDouble(RecordValue record) {
+    double readDouble(I4GLRecord record) {
         return (double)record.get(getIdentifier());
     }
 
     @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readDouble" })
-    Object readGeneric(RecordValue record) {
+    Object readGeneric(I4GLRecord record) {
         return record.get(getIdentifier());
     }
 

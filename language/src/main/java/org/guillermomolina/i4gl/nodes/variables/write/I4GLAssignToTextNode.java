@@ -20,8 +20,8 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLChar;
+import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -57,12 +57,12 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
         final VirtualFrame actualFrame = getFrame(frame);
 
         Object targetObject = actualFrame.getValue(getSlot());
-        if (!(targetObject instanceof CharValue)) {
+        if (!(targetObject instanceof I4GLChar)) {
             targetObject = getTypeDescriptor().getDefaultValue();
             actualFrame.setObject(getSlot(), targetObject);
         }
 
-        final CharValue target = (CharValue) targetObject;
+        final I4GLChar target = (I4GLChar) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
    
@@ -75,12 +75,12 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
         final VirtualFrame actualFrame = getFrame(frame);
 
         Object targetObject = actualFrame.getValue(getSlot());
-        if (!(targetObject instanceof VarcharValue)) {
+        if (!(targetObject instanceof I4GLVarchar)) {
             targetObject = getTypeDescriptor().getDefaultValue();
             actualFrame.setObject(getSlot(), targetObject);
         }
 
-        final VarcharValue target = (VarcharValue) targetObject;
+        final I4GLVarchar target = (I4GLVarchar) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
 

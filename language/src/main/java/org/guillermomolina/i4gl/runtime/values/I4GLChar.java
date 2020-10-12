@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import java.util.Arrays;
 
@@ -19,20 +19,20 @@ import org.guillermomolina.i4gl.runtime.I4GLType;
  * {@link String}.
  */
 @ExportLibrary(InteropLibrary.class)
-public class CharValue implements TruffleObject {
+public class I4GLChar implements TruffleObject {
     private String data;
 
-    public CharValue(int size) {
+    public I4GLChar(int size) {
         char[] chars = new char[size];
         Arrays.fill(chars, ' ');
         this.data = new String(chars);
     }
 
-    private CharValue(CharValue source) {
+    private I4GLChar(I4GLChar source) {
         this.data = source.data;
     }
 
-    public CharValue(String value) {
+    public I4GLChar(String value) {
         this.data = value;
     }
 
@@ -59,7 +59,7 @@ public class CharValue implements TruffleObject {
     }
 
     public Object createDeepCopy() {
-        return new CharValue(this);
+        return new I4GLChar(this);
     }
 
     private void checkArrayIndex(int index) {
@@ -68,7 +68,7 @@ public class CharValue implements TruffleObject {
         }
     }
 
-    public static CharValue concat(CharValue left, CharValue right) {
+    public static I4GLChar concat(I4GLChar left, I4GLChar right) {
         throw new NotImplementedException();
     }
 

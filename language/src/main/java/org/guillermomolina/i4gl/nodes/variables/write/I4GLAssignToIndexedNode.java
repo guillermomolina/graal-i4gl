@@ -9,10 +9,10 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.BigIntArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.DoubleArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.IntArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.SmallFloatArrayValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -28,22 +28,22 @@ import org.guillermomolina.i4gl.runtime.customvalues.SmallFloatArrayValue;
 public abstract class I4GLAssignToIndexedNode extends I4GLStatementNode {
 
     @Specialization
-    void assignToIntArray(IntArrayValue array, int index, int value) {
+    void assignToIntArray(I4GLIntArray array, int index, int value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToBigIntArray(BigIntArrayValue array, int index, long value) {
+    void assignToBigIntArray(I4GLBigIntArray array, int index, long value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToSmallFloatArray(SmallFloatArrayValue array, int index, float value) {
+    void assignToSmallFloatArray(I4GLSmallFloatArray array, int index, float value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToDoubleArray(DoubleArrayValue array, int index, double value) {
+    void assignToDoubleArray(I4GLFloatArray array, int index, double value) {
         array.setValueAt(index - 1, value);
     }
 

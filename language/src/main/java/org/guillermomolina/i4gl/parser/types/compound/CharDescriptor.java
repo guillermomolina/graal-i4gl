@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.parser.types.compound;
 
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLChar;
 
 /**
  * Type descriptor representing the string type.
@@ -14,7 +14,7 @@ public class CharDescriptor extends TextDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new CharValue(size);
+        return new I4GLChar(size);
     }
 
     @Override

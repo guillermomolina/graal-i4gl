@@ -11,8 +11,8 @@ import com.oracle.truffle.api.source.SourceSection;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * This node represents the root node of AST of any function or main program.
@@ -73,7 +73,7 @@ public class I4GLRootNode extends RootNode {
          */
         nullTaken.enter();
         /* Return the default null value. */
-        return NullValue.SINGLETON;
+        return I4GLNull.SINGLETON;
     }
 
     @Override

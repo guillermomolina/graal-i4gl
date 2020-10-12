@@ -26,7 +26,7 @@ import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLSimpleAssignmentNode;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * Simple language lexical scope. There can be a block scope, or function scope.
@@ -326,7 +326,7 @@ public final class I4GLLexicalScope {
         @TruffleBoundary
         Object readMember(String member) throws UnknownIdentifierException {
             if (frame == null) {
-                return NullValue.SINGLETON;
+                return I4GLNull.SINGLETON;
             }
             FrameSlot slot = slots.get(member);
             if (slot == null) {

@@ -24,9 +24,9 @@ import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLChar;
+import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
+import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -89,7 +89,7 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
 
     @Specialization(guards = "isChar()")
     void assignChar(final VirtualFrame frame, final String string) {
-        CharValue value = (CharValue) getTypeDescriptor().getDefaultValue();
+        I4GLChar value = (I4GLChar) getTypeDescriptor().getDefaultValue();
         value.assignString(string);
         getFrame(frame).setObject(getSlot(), value);
     }
@@ -100,13 +100,13 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final VirtualFrame frame, final String string) {
-        VarcharValue value = (VarcharValue) getTypeDescriptor().getDefaultValue();
+        I4GLVarchar value = (I4GLVarchar) getTypeDescriptor().getDefaultValue();
         value.assignString(string);
         getFrame(frame).setObject(getSlot(), value);
     }
 
     @Specialization
-    void assignRecord(final VirtualFrame frame, final RecordValue record) {
+    void assignRecord(final VirtualFrame frame, final I4GLRecord record) {
         getFrame(frame).setObject(getSlot(), record.createDeepCopy());
     }
 

@@ -14,10 +14,10 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.runtime.customvalues.ArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLArrayValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLChar;
+import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
+import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
  * The isInstance type checks are declared using an functional interface and are
@@ -50,12 +50,12 @@ public final class I4GLType implements TruffleObject {
     public static final I4GLType SMALLFLOAT = new I4GLType("SMALLFLOAT", (l, v) -> v instanceof Float);
     public static final I4GLType FLOAT = new I4GLType("FLOAT", (l, v) -> v instanceof Double);
     public static final I4GLType NULL = new I4GLType("NULL", (l, v) -> l.isNull(v));
-    public static final I4GLType CHAR = new I4GLType("CHAR", (l, v) -> v instanceof CharValue);
-    public static final I4GLType VARCHAR = new I4GLType("VARCHAR", (l, v) -> v instanceof VarcharValue);
+    public static final I4GLType CHAR = new I4GLType("CHAR", (l, v) -> v instanceof I4GLChar);
+    public static final I4GLType VARCHAR = new I4GLType("VARCHAR", (l, v) -> v instanceof I4GLVarchar);
     public static final I4GLType TEXT = new I4GLType("TEXT", (l, v) -> l.isString(v));
     public static final I4GLType FUNCTION = new I4GLType("FUNCTION", (l, v) -> l.isExecutable(v));
-    public static final I4GLType ARRAY = new I4GLType("ARRAY", (l, v) -> v instanceof ArrayValue);
-    public static final I4GLType RECORD = new I4GLType("RECORD", (l, v) -> v instanceof RecordValue);
+    public static final I4GLType ARRAY = new I4GLType("ARRAY", (l, v) -> v instanceof I4GLArrayValue);
+    public static final I4GLType RECORD = new I4GLType("RECORD", (l, v) -> v instanceof I4GLRecord);
     public static final I4GLType OBJECT = new I4GLType("OBJECT", (l, v) -> l.hasMembers(v));
 
     /*

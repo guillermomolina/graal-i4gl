@@ -86,18 +86,20 @@ public final class I4GLLanguageView implements TruffleObject {
                     Object typeName = type.getName();
                     if (type == I4GLType.INT) {
                         return typeName + " " + intToString(interop.asInt(delegate));
-                    } else if (type == I4GLType.BIGINT) {
+                    } 
+                    if (type == I4GLType.BIGINT) {
                         return typeName + " " + bigIntToString(interop.asLong(delegate));
-                    } else if (type == I4GLType.SMALLFLOAT) {
+                    } 
+                    if (type == I4GLType.SMALLFLOAT) {
                         return typeName + " " + smallFloatToString(interop.asFloat(delegate));
-                    } else if (type == I4GLType.FLOAT) {
+                    } 
+                    if (type == I4GLType.FLOAT) {
                         return typeName + " " + doubleToString(interop.asDouble(delegate));
-                    } else if (type == I4GLType.TEXT) {
+                    } 
+                    if (type == I4GLType.TEXT) {
                         return typeName + " " + addQuotes(interop.asString(delegate));
-                    } else {
-                        /* We use the type name as fallback for any other type */
-                        return typeName;
                     }
+                    return typeName;
                 } catch (UnsupportedMessageException e) {
                     CompilerDirectives.transferToInterpreter();
                     throw new AssertionError();

@@ -8,10 +8,10 @@ import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.BigIntArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.DoubleArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.IntArrayValue;
-import org.guillermomolina.i4gl.runtime.customvalues.SmallFloatArrayValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be
@@ -40,13 +40,13 @@ public class ArrayDescriptor implements I4GLTypeDescriptor {
 
     public Object getDefaultValue() {
         if (valuesDescriptor == IntDescriptor.SINGLETON) {
-            return new IntArrayValue(size);
+            return new I4GLIntArray(size);
         } else if (valuesDescriptor == BigIntDescriptor.SINGLETON) {
-            return new BigIntArrayValue(size);
+            return new I4GLBigIntArray(size);
         } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
-            return new SmallFloatArrayValue(size);
+            return new I4GLSmallFloatArray(size);
         } else if (valuesDescriptor == DoubleDescriptor.SINGLETON) {
-            return new DoubleArrayValue(size);
+            return new I4GLFloatArray(size);
         } else {
             throw new NotImplementedException();
             /*data = new Object[size];

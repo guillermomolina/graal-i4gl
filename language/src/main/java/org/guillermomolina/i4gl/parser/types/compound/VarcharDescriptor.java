@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.parser.types.compound;
 
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
  * Type descriptor representing the string type.
@@ -14,7 +14,7 @@ public class VarcharDescriptor extends TextDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new VarcharValue(size);
+        return new I4GLVarchar(size);
     }
 
     @Override

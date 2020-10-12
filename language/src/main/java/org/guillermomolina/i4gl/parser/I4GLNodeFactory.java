@@ -80,7 +80,7 @@ import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
@@ -703,7 +703,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
                 Object defaultValue;
                 if (typeDescriptor instanceof TextDescriptor) {
                     // This is hacky, but that is what c4gl compiler does
-                    defaultValue = NullValue.SINGLETON;
+                    defaultValue = I4GLNull.SINGLETON;
                 } else {
                     defaultValue = typeDescriptor.getDefaultValue();
                 }

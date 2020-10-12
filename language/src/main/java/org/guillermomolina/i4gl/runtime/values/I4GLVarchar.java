@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -17,22 +17,22 @@ import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
  */
 @ExportLibrary(InteropLibrary.class)
-public class VarcharValue implements TruffleObject {
+public class I4GLVarchar implements TruffleObject {
 
     private String data;
     private final int size;
 
-    public VarcharValue(int size) {
+    public I4GLVarchar(int size) {
         this.size = size;
         this.data = "";
     }
 
-    private VarcharValue(VarcharValue source) {
+    private I4GLVarchar(I4GLVarchar source) {
         this.size = source.size;
         this.data = source.data;
     }
 
-    public VarcharValue(String value) {
+    public I4GLVarchar(String value) {
         this.size = value.length();
         this.data = value;
     }
@@ -62,7 +62,7 @@ public class VarcharValue implements TruffleObject {
     }
 
     public Object createDeepCopy() {
-        return new VarcharValue(this);
+        return new I4GLVarchar(this);
     }
 
     private void checkArrayIndex(int index) {
@@ -71,7 +71,7 @@ public class VarcharValue implements TruffleObject {
         }
     }
 
-    public static VarcharValue concat(VarcharValue left, VarcharValue right) {
+    public static I4GLVarchar concat(I4GLVarchar left, I4GLVarchar right) {
         throw new NotImplementedException();
     }
 

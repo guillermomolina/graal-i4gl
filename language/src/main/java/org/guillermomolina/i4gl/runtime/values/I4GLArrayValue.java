@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import java.lang.reflect.Array;
 
@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public abstract class ArrayValue implements TruffleObject {
+public abstract class I4GLArrayValue implements TruffleObject {
 
     public abstract int getSize();
 

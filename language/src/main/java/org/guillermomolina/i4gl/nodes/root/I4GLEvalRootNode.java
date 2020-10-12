@@ -11,7 +11,7 @@ import com.oracle.truffle.api.nodes.RootNode;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * This class performs two additional tasks:
@@ -69,7 +69,7 @@ public final class I4GLEvalRootNode extends RootNode {
 
         if (mainCallNode == null) {
             /* The source code did not have a "main" function, so nothing to execute. */
-            return NullValue.SINGLETON;
+            return I4GLNull.SINGLETON;
         } else {
             /* Conversion of arguments to types understood by I4GL. */
             Object[] arguments = frame.getArguments();

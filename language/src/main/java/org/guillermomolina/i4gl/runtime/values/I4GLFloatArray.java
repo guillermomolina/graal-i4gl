@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
@@ -6,22 +6,22 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public class SmallFloatArrayValue extends ArrayValue {
-    private final float[] array;
+public class I4GLFloatArray extends I4GLArrayValue {
+    private final double[] array;
 
-    public SmallFloatArrayValue(int size) {
-        this.array = new float[size];
+    public I4GLFloatArray(int size) {
+        this.array = new double[size];
     }
 
-    protected SmallFloatArrayValue(float[] array) {
+    protected I4GLFloatArray(double[] array) {
         this.array = array;
     }
 
-    public float getValueAt(int index) {
+    public double getValueAt(int index) {
         return array[index];
     } 
 
-    public void setValueAt(int index, float value) {
+    public void setValueAt(int index, double value) {
         array[index] = value;
     }
     
@@ -37,6 +37,6 @@ public class SmallFloatArrayValue extends ArrayValue {
 
     @Override
     public I4GLType getElementType() {
-        return I4GLType.SMALLFLOAT;
+        return I4GLType.FLOAT;
     }
 }

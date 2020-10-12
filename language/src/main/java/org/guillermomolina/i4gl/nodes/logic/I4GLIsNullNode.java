@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLUnaryNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * Node representing logical not operation.
@@ -23,7 +23,7 @@ public abstract class I4GLIsNullNode extends I4GLUnaryNode {
 
 	@Specialization
 	int isNull(Object child) {
-		return child == NullValue.SINGLETON ? 1 : 0;
+		return child == I4GLNull.SINGLETON ? 1 : 0;
 	}
 
     @Override

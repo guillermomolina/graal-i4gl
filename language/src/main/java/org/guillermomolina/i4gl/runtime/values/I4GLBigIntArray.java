@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
@@ -6,14 +6,14 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public class BigIntArrayValue extends ArrayValue {
+public class I4GLBigIntArray extends I4GLArrayValue {
     private final long[] array;
 
-    public BigIntArrayValue(int size) {
+    public I4GLBigIntArray(int size) {
         this.array = new long[size];
     }
 
-    protected BigIntArrayValue(long[] array) {
+    protected I4GLBigIntArray(long[] array) {
         this.array = array;
     }
 

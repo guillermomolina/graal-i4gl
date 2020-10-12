@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,7 +10,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
 import org.guillermomolina.i4gl.runtime.exceptions.JDBCDriverClassNotFoundException;
 
 @CompilerDirectives.ValueType
-public class DatabaseValue {
+public class I4GLDatabase {
 
     private final String driver;
     private final String url;
@@ -18,7 +18,7 @@ public class DatabaseValue {
     private final String password;
     private Connection connection;
 
-    public DatabaseValue(final String driver, final String url, final String user, final String password) {
+    public I4GLDatabase(final String driver, final String url, final String user, final String password) {
         this.driver = driver;
         this.url = url;
         this.user = user;
@@ -26,7 +26,7 @@ public class DatabaseValue {
         this.connection = null;
     }
 
-    public DatabaseValue() {
+    public I4GLDatabase() {
         this("org.h2.Driver", "jdbc:h2:file:~/test", "sa", "");
     }
 

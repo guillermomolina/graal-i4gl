@@ -10,8 +10,8 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.NullValue;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 @NodeInfo(shortName = "DISPLAY", description = "The node implementing the DISPLAY statement")
 public final class I4GLDisplayNode extends I4GLStatementNode {
@@ -40,7 +40,7 @@ public final class I4GLDisplayNode extends I4GLStatementNode {
                 output.printf("%14.2f", (float) value);
             } else if (value instanceof Double) {
                 output.printf("%14.2f", (double) value);
-            } else if (value == NullValue.SINGLETON) {
+            } else if (value == I4GLNull.SINGLETON) {
                 I4GLTypeDescriptor type = argumentNodes[i].getType();
                 if (type instanceof TextDescriptor) {
                     output.print(type.getDefaultValue());

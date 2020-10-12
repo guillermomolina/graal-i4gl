@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.customvalues;
+package org.guillermomolina.i4gl.runtime.values;
 
 import java.util.Map;
 
@@ -18,15 +18,15 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.runtime.I4GLType;
 
 @ExportLibrary(InteropLibrary.class)
-public class RecordValue implements TruffleObject {
+public class I4GLRecord implements TruffleObject {
 
     private final Map<String, Object> properties;
 
-    public RecordValue(Map<String, Object> properties) {
+    public I4GLRecord(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    public RecordValue(RecordValue source) {
+    public I4GLRecord(I4GLRecord source) {
         this.properties = source.properties;
     }
 
@@ -39,7 +39,7 @@ public class RecordValue implements TruffleObject {
     }
 
     public Object createDeepCopy() {
-        return new RecordValue(this);
+        return new I4GLRecord(this);
     }
 
     @ExportMessage
@@ -120,7 +120,7 @@ public class RecordValue implements TruffleObject {
     }
 
     public static boolean isInstance(TruffleObject obj) {
-        return obj instanceof RecordValue;
+        return obj instanceof I4GLRecord;
     }
 
     @ExportLibrary(InteropLibrary.class)

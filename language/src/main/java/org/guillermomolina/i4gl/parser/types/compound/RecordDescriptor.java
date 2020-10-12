@@ -9,7 +9,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.I4GLParseScope;
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 
 /**
  * Type descriptor for I4GL's records types. It contains additional information about the variables it contains.
@@ -38,7 +38,7 @@ public class RecordDescriptor implements I4GLTypeDescriptor {
         for (Map.Entry<String, I4GLTypeDescriptor> entry : types.entrySet()) {
             values.put(entry.getKey(), entry.getValue().getDefaultValue());
         }
-        return new RecordValue(values);
+        return new I4GLRecord(values);
     }
 
     public I4GLParseScope getLexicalScope() {

@@ -14,9 +14,9 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
 import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.CharValue;
-import org.guillermomolina.i4gl.runtime.customvalues.RecordValue;
-import org.guillermomolina.i4gl.runtime.customvalues.VarcharValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLChar;
+import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
+import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
  * Node representing assignment to a record. Compared to
@@ -45,14 +45,14 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isChar()")
-    void assignChar(RecordValue record, int index, String value) {
+    void assignChar(I4GLRecord record, int index, String value) {
         Object targetObject = record.get(identifier);
-        if (!(targetObject instanceof CharValue)) {
+        if (!(targetObject instanceof I4GLChar)) {
             targetObject = descriptor.getDefaultValue();
             record.put(identifier, targetObject);
         }
 
-        final CharValue target = (CharValue) targetObject;
+        final I4GLChar target = (I4GLChar) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
 
@@ -61,14 +61,14 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isVarchar()")
-    void assignVarchar(RecordValue record, int index, String value) {
+    void assignVarchar(I4GLRecord record, int index, String value) {
         Object targetObject = record.get(identifier);
-        if (!(targetObject instanceof VarcharValue)) {
+        if (!(targetObject instanceof I4GLVarchar)) {
             targetObject = descriptor.getDefaultValue();
             record.put(identifier, targetObject);
         }
 
-        final VarcharValue target = (VarcharValue) targetObject;
+        final I4GLVarchar target = (I4GLVarchar) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
 
@@ -77,7 +77,7 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     @Specialization(guards = "isText()")
-    void assignText(RecordValue record, int index, String value) {
+    void assignText(I4GLRecord record, int index, String value) {
         Object targetObject = record.get(identifier);
         if (!(targetObject instanceof String)) {
             targetObject = "";

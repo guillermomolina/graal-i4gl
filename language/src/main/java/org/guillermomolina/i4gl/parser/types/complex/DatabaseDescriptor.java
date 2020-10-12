@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.parser.types.complex;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 
 import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.runtime.customvalues.DatabaseValue;
+import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
 /**
  * Specialized type descriptor for text-file values.
@@ -22,7 +22,7 @@ public class DatabaseDescriptor implements I4GLTypeDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return new DatabaseValue();
+        return new I4GLDatabase();
     }
 
     @Override
