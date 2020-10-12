@@ -90,7 +90,7 @@ public final class I4GLLanguageView implements TruffleObject {
                         return typeName + " " + bigIntToString(interop.asLong(delegate));
                     } else if (type == I4GLType.SMALLFLOAT) {
                         return typeName + " " + smallFloatToString(interop.asFloat(delegate));
-                    } else if (type == I4GLType.DOUBLE) {
+                    } else if (type == I4GLType.FLOAT) {
                         return typeName + " " + doubleToString(interop.asDouble(delegate));
                     } else if (type == I4GLType.TEXT) {
                         return typeName + " " + addQuotes(interop.asString(delegate));

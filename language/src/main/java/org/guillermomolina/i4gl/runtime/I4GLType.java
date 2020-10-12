@@ -45,10 +45,10 @@ public final class I4GLType implements TruffleObject {
      * the case and more additional checks need to be performed (similar to number
      * checking for I4GLBigNumber).
      */
-    public static final I4GLType INT = new I4GLType("INT", (l, v) -> l.fitsInInt(v));
-    public static final I4GLType BIGINT = new I4GLType("BIGINT", (l, v) -> l.fitsInLong(v));
+    public static final I4GLType INT = new I4GLType("INT", (l, v) -> v instanceof Integer);
+    public static final I4GLType BIGINT = new I4GLType("BIGINT", (l, v) -> v instanceof Long);
     public static final I4GLType SMALLFLOAT = new I4GLType("SMALLFLOAT", (l, v) -> v instanceof Float);
-    public static final I4GLType DOUBLE = new I4GLType("DOUBLE", (l, v) -> v instanceof Double);
+    public static final I4GLType FLOAT = new I4GLType("FLOAT", (l, v) -> v instanceof Double);
     public static final I4GLType NULL = new I4GLType("NULL", (l, v) -> l.isNull(v));
     public static final I4GLType CHAR = new I4GLType("CHAR", (l, v) -> v instanceof CharValue);
     public static final I4GLType VARCHAR = new I4GLType("VARCHAR", (l, v) -> v instanceof VarcharValue);
@@ -64,7 +64,7 @@ public final class I4GLType implements TruffleObject {
      * like members might not be. For example, an object might be a function.
      */
     @CompilationFinal(dimensions = 1)
-    protected static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, SMALLFLOAT, DOUBLE, CHAR,
+    protected static final I4GLType[] PRECEDENCE = new I4GLType[] { NULL, INT, BIGINT, SMALLFLOAT, FLOAT, CHAR,
             VARCHAR, TEXT, FUNCTION, ARRAY, RECORD, OBJECT };
 
     private final String name;

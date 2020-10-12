@@ -37,6 +37,6 @@ public class DoubleArrayValue extends ArrayValue {
 
     @Override
     public I4GLType getElementType() {
-        return I4GLType.DOUBLE;
+        return I4GLType.FLOAT;
     }
 }
