@@ -36,6 +36,6 @@ public class IntDescriptor implements I4GLTypeDescriptor {
 
     @Override
     public String toString() {
-        return "INTEGER";
+        return "INT";
     }
 }

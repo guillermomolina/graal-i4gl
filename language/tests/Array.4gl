@@ -1,6 +1,6 @@
 MAIN  
-  DEFINE myvar INTEGER
-  DEFINE myarray1 ARRAY[10] OF INTEGER
+  DEFINE myvar INT
+  DEFINE myarray1 ARRAY[10] OF INT
   DEFINE myarray2 ARRAY[10] OF SMALLFLOAT
   FOR myvar = 1 TO 10
       LET myarray1[myvar] = myvar * 2

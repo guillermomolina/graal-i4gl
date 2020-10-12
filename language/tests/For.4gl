@@ -5,7 +5,7 @@ MAIN
 END MAIN
 
 FUNCTION f1()
-    DEFINE var INTEGER
+    DEFINE var INT
     DISPLAY "1 TO 10"
     FOR var = 1 TO 10
         DISPLAY var
@@ -14,7 +14,7 @@ FUNCTION f1()
 END FUNCTION
 
 FUNCTION f2()
-    DEFINE var INTEGER
+    DEFINE var INT
     DISPLAY "1 TO 10 STEP 2"
     FOR var = 1 TO 10 STEP 2
         DISPLAY var
@@ -23,7 +23,7 @@ FUNCTION f2()
 END FUNCTION
 
 FUNCTION f3()
-    DEFINE var INTEGER
+    DEFINE var INT
     DISPLAY "10 TO 1 STEP -1"
     FOR var = 10 TO 1 STEP -1
         DISPLAY var

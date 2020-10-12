@@ -1,5 +1,5 @@
 MAIN
-  DEFINE an_int,an_int2 INTEGER
+  DEFINE an_int,an_int2 INT
   DEFINE a_char_10,another_char_10 CHAR(10)
 
   IF an_int IS NULL THEN

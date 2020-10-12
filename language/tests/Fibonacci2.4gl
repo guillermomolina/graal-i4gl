@@ -1,12 +1,12 @@
 MAIN
-    DEFINE n INTEGER
+    DEFINE n INT
     FOR n = 0 TO 11
         DISPLAY "Fibonacci de ", n, " es ", fibonacci(n)
     END FOR
 END MAIN
 
 FUNCTION fibonacci(n)
-    DEFINE n, n1, n2, i, n3 INTEGER
+    DEFINE n, n1, n2, i, n3 INT
     IF n < 1 THEN
         RETURN 0
     END IF

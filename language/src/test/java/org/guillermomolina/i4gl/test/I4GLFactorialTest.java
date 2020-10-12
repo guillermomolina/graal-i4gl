@@ -19,7 +19,7 @@ public class I4GLFactorialTest {
         // @formatter:off
         context.eval("i4gl",
             "FUNCTION factorial(n)\n" +
-                "DEFINE n INTEGER\n" +
+                "DEFINE n INT\n" +
                 "IF n <= 1 THEN\n" +
                     "RETURN 1\n" +
                 "END IF\n" +

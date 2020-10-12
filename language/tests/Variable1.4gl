@@ -1,5 +1,5 @@
 MAIN
-    DEFINE var1 INTEGER
+    DEFINE var1 INT
     DEFINE var2 REAL
     DEFINE var3 TEXT
     LET var1 = 1

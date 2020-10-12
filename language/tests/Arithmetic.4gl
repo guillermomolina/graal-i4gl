@@ -1,5 +1,5 @@
 MAIN  
-  DEFINE myvar INTEGER
+  DEFINE myvar INT
   LET myvar = 1
   DISPLAY "|", myvar + 1, "|"
   DISPLAY "|", myvar - 2, "|"

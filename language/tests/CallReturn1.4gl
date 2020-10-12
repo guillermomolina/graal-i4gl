@@ -1,12 +1,12 @@
 MAIN
-  DEFINE result INTEGER
+  DEFINE result INT
 
   CALL f1(101) RETURNING result
   DISPLAY result
 END MAIN 
 
 FUNCTION f1(f1_var)
-  DEFINE f1_var INTEGER
+  DEFINE f1_var INT
 
   CALL f2(201) RETURNING f1_var
   DISPLAY f1_var
@@ -14,7 +14,7 @@ FUNCTION f1(f1_var)
 END FUNCTION
 
 FUNCTION f2(f2_var)
-  DEFINE f2_var INTEGER
+  DEFINE f2_var INT
 
   DISPLAY f2_var
   RETURN 202

@@ -1,5 +1,5 @@
 MAIN
-  DEFINE result1 INTEGER
+  DEFINE result1 INT
   DEFINE result2 VARCHAR(10)
   CALL f1() RETURNING result1, result2
   DISPLAY result1, result2

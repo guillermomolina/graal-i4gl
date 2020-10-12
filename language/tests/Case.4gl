@@ -8,7 +8,7 @@ MAIN
 END MAIN 
 
 FUNCTION case1(var) 
-    DEFINE var INTEGER
+    DEFINE var INT
     CASE var
         WHEN 1
             DISPLAY "one"
@@ -20,7 +20,7 @@ FUNCTION case1(var)
 END FUNCTION
 
 FUNCTION case2(var) 
-    DEFINE var INTEGER
+    DEFINE var INT
     CASE
         WHEN var = 1
             DISPLAY "one"

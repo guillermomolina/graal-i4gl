@@ -1,5 +1,5 @@
 MAIN
-    DEFINE var INTEGER
+    DEFINE var INT
     LET var = 1
     WHILE var <= 10
         DISPLAY var

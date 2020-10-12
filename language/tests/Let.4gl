@@ -5,7 +5,7 @@ MAIN
   DEFINE aChar CHAR(10)
   DEFINE aVarchar VARCHAR(10)
   DEFINE aRecord RECORD
-    anInteger INTEGER,
+    anInteger INT,
     aFloat SMALLFLOAT
   END RECORD
   DEFINE anArray ARRAY[2] OF FLOAT

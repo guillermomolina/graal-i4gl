@@ -137,7 +137,7 @@ public class I4GLDebugTest {
             "  CALL fac(5)\n" +
             "END MAIN\n" +
             "FUNCTION fac(n)\n" +
-            "  DEFINE n INTEGER\n" +
+            "  DEFINE n INT\n" +
             "  IF (n <= 1) THEN\n" +
             "    BREAKPOINT\n" + // // break
             "    RETURN 1\n" +
@@ -152,7 +152,7 @@ public class I4GLDebugTest {
             session.getBreakpoints();
 
             expectSuspended((SuspendedEvent event) -> {
-                checkState(event, "fac", 7, true, "BREAKPOINT\n", "n", "INTEGER 1").prepareContinue();
+                checkState(event, "fac", 7, true, "BREAKPOINT\n", "n", "INT 1").prepareContinue();
             });
 
             expectDone();
@@ -164,13 +164,13 @@ public class I4GLDebugTest {
         // @formatter:off
         final Source varsSource = i4glCode(
             "MAIN\n" +
-            "  DEFINE a, b INTEGER\n" +
+            "  DEFINE a, b INT\n" +
             "  DEFINE c SMALLFLOAT\n" +
             "  DEFINE d TEXT\n" +
             "  DEFINE e RECORD\n" +
-            "    p1 INTEGER,\n" +
+            "    p1 INT,\n" +
             "    p2 RECORD\n" +
-            "      p21 INTEGER\n" +
+            "      p21 INT\n" +
             "    END RECORD\n" +
             "  END RECORD\n" +
             "  LET a = doNull()\n" +
@@ -199,7 +199,7 @@ public class I4GLDebugTest {
 
                 DebugValue b = scope.getDeclaredValue("b");
                 assertFalse(b.isArray());
-                assertEquals("INTEGER 1", b.toDisplayString());
+                assertEquals("INT 1", b.toDisplayString());
                 assertNull(b.getArray());
                 assertNull(b.getProperties());
 
@@ -225,7 +225,7 @@ public class I4GLDebugTest {
                 assertTrue(propertiesIt.hasNext());
                 DebugValue p1 = propertiesIt.next();
                 assertEquals("p1", p1.getName());
-                assertEquals("INTEGER 1", p1.toDisplayString());
+                assertEquals("INT 1", p1.toDisplayString());
                 assertNull(p1.getScope());
                 assertTrue(propertiesIt.hasNext());
                 DebugValue p2 = propertiesIt.next();
@@ -239,14 +239,14 @@ public class I4GLDebugTest {
                 assertTrue(propertiesIt.hasNext());
                 DebugValue p21 = propertiesIt.next();
                 assertEquals("p21", p21.getName());
-                assertEquals("INTEGER 21", p21.toDisplayString());
+                assertEquals("INT 21", p21.toDisplayString());
                 assertNull(p21.getScope());
                 assertFalse(propertiesIt.hasNext());
 
                 DebugValue ep1 = e.getProperty("p1");
-                assertEquals("INTEGER 1", ep1.toDisplayString());
+                assertEquals("INT 1", ep1.toDisplayString());
                 ep1.set(p21);
-                assertEquals("INTEGER 21", ep1.toDisplayString());
+                assertEquals("INT 21", ep1.toDisplayString());
                 assertNull(e.getProperty("NonExisting"));
             });
 

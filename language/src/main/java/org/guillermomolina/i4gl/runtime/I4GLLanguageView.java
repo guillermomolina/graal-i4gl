@@ -83,19 +83,20 @@ public final class I4GLLanguageView implements TruffleObject {
                      * The type is a partial evaluation constant here as we use @ExplodeLoop. So
                      * this if-else cascade should fold after partial evaluation.
                      */
+                    Object typeName = type.getName();
                     if (type == I4GLType.INT) {
-                        return intToString(interop.asInt(delegate));
+                        return typeName + " " + intToString(interop.asInt(delegate));
                     } else if (type == I4GLType.BIGINT) {
-                        return bigIntToString(interop.asLong(delegate));
+                        return typeName + " " + bigIntToString(interop.asLong(delegate));
                     } else if (type == I4GLType.SMALLFLOAT) {
-                        return smallFloatToString(interop.asFloat(delegate));
+                        return typeName + " " + smallFloatToString(interop.asFloat(delegate));
                     } else if (type == I4GLType.DOUBLE) {
-                        return doubleToString(interop.asDouble(delegate));
+                        return typeName + " " + doubleToString(interop.asDouble(delegate));
                     } else if (type == I4GLType.TEXT) {
-                        return addQuotes(interop.asString(delegate));
+                        return typeName + " " + addQuotes(interop.asString(delegate));
                     } else {
                         /* We use the type name as fallback for any other type */
-                        return type.getName();
+                        return typeName;
                     }
                 } catch (UnsupportedMessageException e) {
                     CompilerDirectives.transferToInterpreter();
@@ -107,27 +108,27 @@ public final class I4GLLanguageView implements TruffleObject {
     }
 
     private static String addQuotes(String text) {
-        return "TEXT \"" + text + '"';
+        return '"' + text + '"';
     }
 
     @TruffleBoundary
     private static String intToString(int i) {
-        return "INTEGER " + Integer.toString(i);
+        return Integer.toString(i);
     }
 
     @TruffleBoundary
     private static String bigIntToString(long l) {
-        return "BIGINT " + Long.toString(l);
+        return Long.toString(l);
     }
 
     @TruffleBoundary
     private static String smallFloatToString(float f) {
-        return "SMALLFLOAT " + Float.toString(f);
+        return Float.toString(f);
     }
 
     @TruffleBoundary
     private static String doubleToString(double d) {
-        return "DOUBLE " + Double.toString(d);
+        return Double.toString(d);
     }
 
     public static Object create(Object value) {

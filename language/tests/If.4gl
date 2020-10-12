@@ -1,5 +1,5 @@
 MAIN
-    DEFINE var INTEGER
+    DEFINE var INT
     LET var = 1
     IF var * 2 >= 2 THEN
         DISPLAY "TRUE"
