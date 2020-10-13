@@ -5,8 +5,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLUnaryNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 
 /**
  * Node representing logical not operation.
@@ -31,7 +31,7 @@ public abstract class I4GLNotNode extends I4GLUnaryNode {
 	}
 
     @Override
-    public I4GLTypeDescriptor getType() {
-        return IntDescriptor.SINGLETON;
+    public I4GLType getType() {
+        return I4GLIntType.SINGLETON;
     }
 }

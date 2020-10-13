@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.nodes.arithmetic;
 import com.oracle.truffle.api.dsl.NodeChild;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * Base class for each unary node. It has one child node which is the operation's argument.
@@ -18,7 +18,7 @@ public abstract class I4GLUnaryNode extends I4GLExpressionNode {
      * @return resulting type of the operation
      */
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         return this.getArgument().getType();
     }
 

@@ -10,10 +10,10 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
 import org.guillermomolina.i4gl.runtime.values.I4GLChar;
 import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
@@ -33,15 +33,15 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
 
     private final String identifier;
-    private final I4GLTypeDescriptor descriptor;
+    private final I4GLType descriptor;
 
-    I4GLAssignToRecordTextNode(String identifier, I4GLTypeDescriptor descriptor) {
+    I4GLAssignToRecordTextNode(String identifier, I4GLType descriptor) {
         this.identifier = identifier;
         this.descriptor = descriptor;
     }
 
     protected boolean isChar() {
-        return descriptor instanceof CharDescriptor;
+        return descriptor instanceof I4GLCharType;
     }
 
     @Specialization(guards = "isChar()")
@@ -57,7 +57,7 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     protected boolean isVarchar() {
-        return descriptor instanceof VarcharDescriptor;
+        return descriptor instanceof I4GLVarcharType;
     }
 
     @Specialization(guards = "isVarchar()")
@@ -73,7 +73,7 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     protected boolean isText() {
-        return descriptor instanceof TextDescriptor;
+        return descriptor instanceof I4GLTextType;
     }
 
     @Specialization(guards = "isText()")

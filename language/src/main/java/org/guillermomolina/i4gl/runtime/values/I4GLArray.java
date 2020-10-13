@@ -14,10 +14,11 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.runtime.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
 
 @ExportLibrary(InteropLibrary.class)
-public abstract class I4GLArrayValue implements TruffleObject {
+public abstract class I4GLArray implements TruffleObject {
 
     public abstract int getSize();
 
@@ -42,13 +43,7 @@ public abstract class I4GLArrayValue implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLType.ARRAY;
-    }
-
-    @ExportMessage
-    @TruffleBoundary
-    Object toDisplayString(boolean allowSideEffects) {
-        return "[" + getSize() + "] OF " + getElementType().getName();
+        return new I4GLArrayType(getSize(), getElementType());
     }
 
     @ExportMessage
@@ -60,6 +55,10 @@ public abstract class I4GLArrayValue implements TruffleObject {
     long getArraySize() {
         return getSize();
     }
+
+    @ExportMessage
+    @TruffleBoundary
+    abstract Object toDisplayString(boolean allowSideEffects);
 
     @ExportMessage
     boolean isArrayElementReadable(long index) {

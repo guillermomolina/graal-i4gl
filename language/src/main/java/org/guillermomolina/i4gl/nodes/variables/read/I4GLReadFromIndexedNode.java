@@ -8,7 +8,7 @@ import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLChar;
 import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
@@ -26,10 +26,10 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
         @NodeChild(value = "valueNode", type = I4GLExpressionNode.class),
         @NodeChild(value = "indexNode", type = I4GLExpressionNode.class)
 })
-@NodeField(name = "returnType", type = I4GLTypeDescriptor.class)
+@NodeField(name = "returnType", type = I4GLType.class)
 public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
 
-    protected abstract I4GLTypeDescriptor getReturnType();
+    protected abstract I4GLType getReturnType();
 
     @Specialization
     String readText(String string, int index) {
@@ -72,7 +72,7 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         return this.getReturnType();
     }
 

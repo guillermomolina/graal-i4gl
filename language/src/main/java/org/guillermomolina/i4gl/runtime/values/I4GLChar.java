@@ -12,7 +12,8 @@ import com.oracle.truffle.api.library.ExportMessage;
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.runtime.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLChar1Type;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 
 /**
  * Representation of variables of NChar type. It is a slight wrapper to Java's
@@ -36,8 +37,12 @@ public class I4GLChar implements TruffleObject {
         this.data = value;
     }
 
+    public int getSize() {
+        return data.length();
+    }
+
     public void assignString(String value) {
-        final int size = data.length();
+        final int size = getSize();
         if (value.length() > size) {
             data = value.substring(0, size);
         } else {
@@ -63,7 +68,7 @@ public class I4GLChar implements TruffleObject {
     }
 
     private void checkArrayIndex(int index) {
-        if (index >= data.length()) {
+        if (index >= getSize()) {
             throw new IndexOutOfBoundsException();
         }
     }
@@ -100,7 +105,10 @@ public class I4GLChar implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLType.CHAR;
+        if(getSize() == 1) {
+            return I4GLChar1Type.SINGLETON;
+        }
+        return new I4GLCharType(getSize());
     }
 
     @ExportMessage

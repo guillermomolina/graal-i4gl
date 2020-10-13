@@ -1,13 +1,16 @@
-package org.guillermomolina.i4gl.parser.types.compound;
+package org.guillermomolina.i4gl.runtime.types.compound;
 
+import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.interop.InteropLibrary;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.values.I4GLArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
@@ -18,19 +21,25 @@ import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
  * stored in a chain of these descriptors. It contains additional information about the type of the inner values and
  * the universe of the indices stored inside an ordinal descriptor.
  */
-public class ArrayDescriptor implements I4GLTypeDescriptor {
+public class I4GLArrayType extends I4GLType {
 
     protected final int size;
-    private final I4GLTypeDescriptor valuesDescriptor;
+    private final I4GLType valuesType;
 
     /**
      * Default constructor.
      * @param dimension universe of the indices
-     * @param valuesDescriptor type descriptor of the inner values
+     * @param valuesType type descriptor of the inner values
      */
-    public ArrayDescriptor(int size, I4GLTypeDescriptor valuesDescriptor) {
+    public I4GLArrayType(int size, I4GLType valuesType) {
         this.size = size;
-        this.valuesDescriptor = valuesDescriptor;
+        this.valuesType = valuesType;
+    }
+
+    @Override
+    public boolean isInstance(Object value, InteropLibrary library) {
+        CompilerAsserts.partialEvaluationConstant(this);
+        return value instanceof I4GLArray;
     }
 
     @Override
@@ -39,19 +48,19 @@ public class ArrayDescriptor implements I4GLTypeDescriptor {
     }
 
     public Object getDefaultValue() {
-        if (valuesDescriptor == IntDescriptor.SINGLETON) {
+        if (valuesType == I4GLIntType.SINGLETON) {
             return new I4GLIntArray(size);
-        } else if (valuesDescriptor == BigIntDescriptor.SINGLETON) {
+        } else if (valuesType == I4GLBigIntType.SINGLETON) {
             return new I4GLBigIntArray(size);
-        } else if (valuesDescriptor == SmallFloatDescriptor.SINGLETON) {
+        } else if (valuesType == I4GLSmallFloatType.SINGLETON) {
             return new I4GLSmallFloatArray(size);
-        } else if (valuesDescriptor == DoubleDescriptor.SINGLETON) {
+        } else if (valuesType == I4GLFloatType.SINGLETON) {
             return new I4GLFloatArray(size);
         } else {
             throw new NotImplementedException();
             /*data = new Object[size];
             for (int i = 0; i < data.length; ++i) {
-                data[i] = valuesDescriptor.getDefaultValue();
+                data[i] = valuesType.getDefaultValue();
             }*/
         }
     }
@@ -60,18 +69,18 @@ public class ArrayDescriptor implements I4GLTypeDescriptor {
         return size;
     }
 
-    public I4GLTypeDescriptor getValuesDescriptor() {
-        return this.valuesDescriptor;
+    public I4GLType getValuesType() {
+        return this.valuesType;
     }
 
     @Override
-    public boolean convertibleTo(I4GLTypeDescriptor type) {
+    public boolean convertibleTo(I4GLType type) {
         return false;
     }
 
     @Override
     public String toString() {
-        return "ARRAY[" + size + "] OF " + valuesDescriptor;
+        return "ARRAY[" + size + "] OF " + valuesType;
     }
 
 }

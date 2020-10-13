@@ -1,6 +1,7 @@
 package org.guillermomolina.i4gl.runtime;
 
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
@@ -13,11 +14,26 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 
 @ExportLibrary(value = InteropLibrary.class, delegateTo = "delegate")
 public final class I4GLLanguageView implements TruffleObject {
 
     final Object delegate;
+    /*
+     * This array is used when all types need to be checked in a certain order.
+     * While most interop types like number or string are exclusive, others traits
+     * like members might not be. For example, an object might be a function.
+     */
+    @CompilationFinal(dimensions = 1)
+    public static final I4GLType[] PRECEDENCE = {
+            I4GLIntType.SINGLETON, I4GLBigIntType.SINGLETON, I4GLSmallFloatType.SINGLETON, I4GLFloatType.SINGLETON,
+            I4GLTextType.SINGLETON };
 
     I4GLLanguageView(Object delegate) {
         this.delegate = delegate;
@@ -51,7 +67,7 @@ public final class I4GLLanguageView implements TruffleObject {
          * has/getMetaObject. For example I4GLFunction is already associated with the
          * I4GLLanguage and therefore the language view will not be used.
          */
-        for (I4GLType type : I4GLType.PRECEDENCE) {
+        for (I4GLType type : PRECEDENCE) {
             if (type.isInstance(delegate, interop)) {
                 return true;
             }
@@ -65,7 +81,7 @@ public final class I4GLLanguageView implements TruffleObject {
         /*
          * We do the same as in hasMetaObject but actually return the type this time.
          */
-        for (I4GLType type : I4GLType.PRECEDENCE) {
+        for (I4GLType type : PRECEDENCE) {
             if (type.isInstance(delegate, interop)) {
                 return type;
             }
@@ -76,7 +92,7 @@ public final class I4GLLanguageView implements TruffleObject {
     @ExportMessage
     @ExplodeLoop
     Object toDisplayString(boolean allowSideEffects, @CachedLibrary("this.delegate") InteropLibrary interop) {
-        for (I4GLType type : I4GLType.PRECEDENCE) {
+        for (I4GLType type : PRECEDENCE) {
             if (type.isInstance(this.delegate, interop)) {
                 try {
                     /*
@@ -84,22 +100,19 @@ public final class I4GLLanguageView implements TruffleObject {
                      * this if-else cascade should fold after partial evaluation.
                      */
                     Object typeName = type.getName();
-                    if (type == I4GLType.INT) {
+                    if (type == I4GLIntType.SINGLETON) {
                         return typeName + " " + intToString(interop.asInt(delegate));
-                    } 
-                    if (type == I4GLType.BIGINT) {
+                    } else if (type == I4GLBigIntType.SINGLETON) {
                         return typeName + " " + bigIntToString(interop.asLong(delegate));
-                    } 
-                    if (type == I4GLType.SMALLFLOAT) {
+                    } else if (type == I4GLSmallFloatType.SINGLETON) {
                         return typeName + " " + smallFloatToString(interop.asFloat(delegate));
-                    } 
-                    if (type == I4GLType.FLOAT) {
+                    } else if (type == I4GLFloatType.SINGLETON) {
                         return typeName + " " + doubleToString(interop.asDouble(delegate));
-                    } 
-                    if (type == I4GLType.TEXT) {
+                    } else if (type == I4GLTextType.SINGLETON) {
                         return typeName + " " + addQuotes(interop.asString(delegate));
+                    } else {
+                        return typeName;
                     }
-                    return typeName;
                 } catch (UnsupportedMessageException e) {
                     CompilerDirectives.transferToInterpreter();
                     throw new AssertionError();

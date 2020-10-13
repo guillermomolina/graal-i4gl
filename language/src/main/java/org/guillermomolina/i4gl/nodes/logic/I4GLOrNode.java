@@ -4,8 +4,8 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 
 /**
  * Node representing logical or operation.
@@ -36,8 +36,8 @@ public abstract class I4GLOrNode extends I4GLBinaryExpressionNode {
 	}
 
     @Override
-    public I4GLTypeDescriptor getType() {
-        return IntDescriptor.SINGLETON;
+    public I4GLType getType() {
+        return I4GLIntType.SINGLETON;
     }
 
 }

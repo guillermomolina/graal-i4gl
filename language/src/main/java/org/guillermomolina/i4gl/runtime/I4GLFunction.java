@@ -24,6 +24,7 @@ import com.oracle.truffle.api.utilities.CyclicAssumption;
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFunctionType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLFunction implements TruffleObject {
@@ -121,7 +122,7 @@ public final class I4GLFunction implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLType.FUNCTION;
+        return I4GLFunctionType.SINGLETON;
     }
 
     @ExportMessage

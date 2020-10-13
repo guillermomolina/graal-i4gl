@@ -5,7 +5,7 @@ import java.util.List;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * This node reads one argument from actual frame at specified index. It is used mainly with assignment node where this
@@ -16,9 +16,9 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 public class I4GLReadArgumentNode extends I4GLExpressionNode {
 
 	private final int index;
-	private final I4GLTypeDescriptor argumentType;
+	private final I4GLType argumentType;
 
-	public I4GLReadArgumentNode(int index, I4GLTypeDescriptor argumentType) {
+	public I4GLReadArgumentNode(int index, I4GLType argumentType) {
 		this.index = index;
         this.argumentType = argumentType;
     }
@@ -29,7 +29,7 @@ public class I4GLReadArgumentNode extends I4GLExpressionNode {
 	}
 
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         return this.argumentType;
     }
 

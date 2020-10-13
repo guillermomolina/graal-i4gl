@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.nodes.literals;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
 
 /**
  * Node representing string literal.
@@ -26,8 +26,8 @@ public final class I4GLTextLiteralNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLTypeDescriptor getType() {
-        return TextDescriptor.SINGLETON;
+    public I4GLType getType() {
+        return I4GLTextType.SINGLETON;
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * This node is used to read all arguments from actual frame and return them. It is used in {@link org.guillermomolina.i4gl.nodes.builtin.io.WriteBuiltinNode}
@@ -23,7 +23,7 @@ public class I4GLReadAllArgumentsNode extends I4GLExpressionNode {
 	}
 
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         return null;
     }
 }

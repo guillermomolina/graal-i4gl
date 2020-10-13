@@ -1,12 +1,17 @@
 package org.guillermomolina.i4gl.runtime.values;
 
+import java.util.Arrays;
+
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
+import com.oracle.truffle.api.library.ExportMessage;
 
-import org.guillermomolina.i4gl.runtime.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLSmallFloatArray extends I4GLArrayValue {
+public class I4GLSmallFloatArray extends I4GLArray {
     private final float[] array;
 
     public I4GLSmallFloatArray(int size) {
@@ -15,6 +20,13 @@ public class I4GLSmallFloatArray extends I4GLArrayValue {
 
     protected I4GLSmallFloatArray(float[] array) {
         this.array = array;
+    }
+
+    @Override
+    @ExportMessage
+    @TruffleBoundary
+    Object toDisplayString(boolean allowSideEffects) {
+        return Arrays.toString(array);
     }
 
     public float getValueAt(int index) {
@@ -37,6 +49,6 @@ public class I4GLSmallFloatArray extends I4GLArrayValue {
 
     @Override
     public I4GLType getElementType() {
-        return I4GLType.SMALLFLOAT;
+        return I4GLSmallFloatType.SINGLETON;
     }
 }

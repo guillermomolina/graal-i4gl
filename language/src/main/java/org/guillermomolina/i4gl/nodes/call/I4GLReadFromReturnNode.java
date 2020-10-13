@@ -9,7 +9,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * This node reads value from an valuenode with specified identifier.
@@ -20,11 +20,11 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 @NodeChild(value = "valuenode", type = I4GLExpressionNode.class)
 @NodeFields({
     @NodeField(name = "index", type = Integer.class),
-    @NodeField(name = "returnType", type = I4GLTypeDescriptor.class)
+    @NodeField(name = "returnType", type = I4GLType.class)
 })
 public abstract class I4GLReadFromReturnNode extends I4GLExpressionNode {
 
-    protected abstract I4GLTypeDescriptor getReturnType();
+    protected abstract I4GLType getReturnType();
 
     protected abstract int getIndex();
 
@@ -54,7 +54,7 @@ public abstract class I4GLReadFromReturnNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         return this.getReturnType();
     }
 

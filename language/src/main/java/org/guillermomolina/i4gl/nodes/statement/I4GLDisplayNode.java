@@ -8,8 +8,8 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
@@ -41,8 +41,8 @@ public final class I4GLDisplayNode extends I4GLStatementNode {
             } else if (value instanceof Double) {
                 output.printf("%14.2f", (double) value);
             } else if (value == I4GLNull.SINGLETON) {
-                I4GLTypeDescriptor type = argumentNodes[i].getType();
-                if (type instanceof TextDescriptor) {
+                I4GLType type = argumentNodes[i].getType();
+                if (type instanceof I4GLTextType) {
                     output.print(type.getDefaultValue());
                 } else {
                     throw new I4GLRuntimeException("Variable is NULL and is not a String");

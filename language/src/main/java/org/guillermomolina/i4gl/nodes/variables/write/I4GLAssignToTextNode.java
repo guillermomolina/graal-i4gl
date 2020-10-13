@@ -16,10 +16,10 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.CharDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.TextDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.VarcharDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
 import org.guillermomolina.i4gl.runtime.values.I4GLChar;
 import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
@@ -31,7 +31,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
  */
 @NodeFields({ 
     @NodeField(name = "slot", type = FrameSlot.class),
-    @NodeField(name = "typeDescriptor", type = I4GLTypeDescriptor.class)
+    @NodeField(name = "type", type = I4GLType.class)
 })
 @NodeChildren({
     @NodeChild(value = "indexNode", type = I4GLExpressionNode.class),
@@ -43,13 +43,13 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
 
     protected abstract FrameSlot getSlot();
 
-    protected abstract I4GLTypeDescriptor getTypeDescriptor();
+    protected abstract I4GLType getType();
 
     @CompilerDirectives.CompilationFinal
     private int jumps = -1;
    
     protected boolean isChar() {
-        return getTypeDescriptor() instanceof CharDescriptor;
+        return getType() instanceof I4GLCharType;
     }
  
     @Specialization(guards = "isChar()")
@@ -58,7 +58,7 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
 
         Object targetObject = actualFrame.getValue(getSlot());
         if (!(targetObject instanceof I4GLChar)) {
-            targetObject = getTypeDescriptor().getDefaultValue();
+            targetObject = getType().getDefaultValue();
             actualFrame.setObject(getSlot(), targetObject);
         }
 
@@ -67,7 +67,7 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
     }
    
     protected boolean isVarchar() {
-        return getTypeDescriptor() instanceof VarcharDescriptor;
+        return getType() instanceof I4GLVarcharType;
     }
    
     @Specialization(guards = "isVarchar()")
@@ -76,7 +76,7 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
 
         Object targetObject = actualFrame.getValue(getSlot());
         if (!(targetObject instanceof I4GLVarchar)) {
-            targetObject = getTypeDescriptor().getDefaultValue();
+            targetObject = getType().getDefaultValue();
             actualFrame.setObject(getSlot(), targetObject);
         }
 
@@ -85,7 +85,7 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
     }
 
     protected boolean isText() {
-        return getTypeDescriptor() instanceof TextDescriptor;
+        return getType() instanceof I4GLTextType;
     }
 
     @Specialization(guards = "isText()")

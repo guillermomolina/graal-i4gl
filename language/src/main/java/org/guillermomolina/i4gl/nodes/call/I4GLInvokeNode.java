@@ -14,7 +14,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
@@ -33,7 +33,7 @@ public final class I4GLInvokeNode extends I4GLExpressionNode {
 	}
 
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         throw new NotImplementedException();
     }
 

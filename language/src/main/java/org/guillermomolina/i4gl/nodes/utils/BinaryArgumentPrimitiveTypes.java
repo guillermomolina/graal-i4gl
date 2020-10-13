@@ -1,6 +1,6 @@
 package org.guillermomolina.i4gl.nodes.utils;
 
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * Stores one set of types of arguments of binary operations. This utility class is used for static type checking. We
@@ -10,9 +10,9 @@ import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
  */
 public class BinaryArgumentPrimitiveTypes {
 
-    private final Tuple<I4GLTypeDescriptor, I4GLTypeDescriptor> types;
+    private final Tuple<I4GLType, I4GLType> types;
 
-    public BinaryArgumentPrimitiveTypes(I4GLTypeDescriptor leftType, I4GLTypeDescriptor rightType) {
+    public BinaryArgumentPrimitiveTypes(I4GLType leftType, I4GLType rightType) {
         this.types = new Tuple<>(leftType, rightType);
     }
 
@@ -31,11 +31,11 @@ public class BinaryArgumentPrimitiveTypes {
         return types.getFirst().hashCode() * types.getSecond().hashCode();
     }
 
-    public I4GLTypeDescriptor getLeftType() {
+    public I4GLType getLeftType() {
         return this.types.getFirst();
     }
 
-    public I4GLTypeDescriptor getRightType() {
+    public I4GLType getRightType() {
         return this.types.getSecond();
     }
 

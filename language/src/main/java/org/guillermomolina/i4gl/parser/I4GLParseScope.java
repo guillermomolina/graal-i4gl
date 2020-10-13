@@ -10,10 +10,10 @@ import com.oracle.truffle.api.frame.FrameSlot;
 
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.complex.DatabaseDescriptor;
-import org.guillermomolina.i4gl.parser.types.complex.LabelDescriptor;
-import org.guillermomolina.i4gl.parser.types.compound.RecordDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.complex.I4GLDatabaseType;
+import org.guillermomolina.i4gl.runtime.types.complex.I4GLLabelType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
 
 /**
  * This class represents currently parsed lexical scope. Lexical scope
@@ -26,7 +26,7 @@ public class I4GLParseScope {
      * ...
      */
     private String name;
-    private Map<String, I4GLTypeDescriptor> identifiersMap;
+    private Map<String, I4GLType> variables;
     final List<String> arguments;
     private FrameDescriptor frameDescriptor;
     private final I4GLParseScope outer;
@@ -37,11 +37,9 @@ public class I4GLParseScope {
      * 
      * @param outer            instance of outer lexical scope
      * @param name             name of the current lexical scope
-     * @param usingTPExtension a flag whether support for Turbo I4GL extensions is
-     *                         turned on
      */
     I4GLParseScope(I4GLParseScope outer, String name) {
-        this.identifiersMap = new HashMap<>();
+        this.variables = new HashMap<>();
         this.frameDescriptor = new FrameDescriptor();
         this.name = name;
         this.outer = outer;
@@ -57,45 +55,45 @@ public class I4GLParseScope {
         return frameDescriptor;
     }
 
-    public I4GLTypeDescriptor getIdentifierDescriptor(String identifier) {
-        return identifiersMap.get(identifier);
+    public I4GLType getIdentifierType(String identifier) {
+        return variables.get(identifier);
     }
 
-    public Map<String, I4GLTypeDescriptor> getAllIdentifiers() {
-        return identifiersMap;
+    public Map<String, I4GLType> getVariables() {
+        return variables;
     }
 
     public boolean containsIdentifier(String identifier) {
-        return identifiersMap.containsKey(identifier);
+        return variables.containsKey(identifier);
     }
 
     public boolean isLabel(String identifier) {
-        return identifiersMap.get(identifier) instanceof LabelDescriptor;
+        return variables.get(identifier) instanceof I4GLLabelType;
     }
 
     public void addLabel(String identifier) throws LexicalException {
-        registerNewIdentifier(identifier, new LabelDescriptor(identifier));
+        registerNewIdentifier(identifier, new I4GLLabelType(identifier));
     }
 
     public FrameSlot registerDatabase(String identifier) throws LexicalException {
-        return registerNewIdentifier("_database", new DatabaseDescriptor(identifier));
+        return registerNewIdentifier("_database", new I4GLDatabaseType(identifier));
     }
 
-    public void addVariable(String identifier, I4GLTypeDescriptor typeDescriptor) throws LexicalException {
-        registerNewIdentifier(identifier, typeDescriptor);
+    public void addVariable(String identifier, I4GLType type) throws LexicalException {
+        registerNewIdentifier(identifier, type);
     }
 
     FrameSlot getLocalSlot(String identifier) {
         return getFrameSlot(identifier);
     }
 
-    FrameSlot registerNewIdentifier(String identifier, I4GLTypeDescriptor typeDescriptor) throws LexicalException,
+    FrameSlot registerNewIdentifier(String identifier, I4GLType type) throws LexicalException,
             DuplicitIdentifierException {
-        if (identifiersMap.containsKey(identifier)){
+        if (variables.containsKey(identifier)){
             throw new DuplicitIdentifierException(identifier);
         } else {
-            identifiersMap.put(identifier, typeDescriptor);
-            return frameDescriptor.addFrameSlot(identifier, typeDescriptor.getSlotKind());
+            variables.put(identifier, type);
+            return frameDescriptor.addFrameSlot(identifier, type.getSlotKind());
         }
     }
 
@@ -123,16 +121,16 @@ public class I4GLParseScope {
         return containsLocalIdentifier(identifier);
     }
 
-    void registerLocalVariable(String identifier, I4GLTypeDescriptor typeDescriptor) throws LexicalException {
-        addVariable(identifier, typeDescriptor);
+    void registerLocalVariable(String identifier, I4GLType type) throws LexicalException {
+        addVariable(identifier, type);
     }
 
     void addArgument(String identifier) {
         arguments.add(identifier);
     }
 
-    RecordDescriptor createRecordDescriptor() {
-        return new RecordDescriptor(this);
+    I4GLRecordType createRecordType() {
+        return new I4GLRecordType(variables);
     }
 
     /**

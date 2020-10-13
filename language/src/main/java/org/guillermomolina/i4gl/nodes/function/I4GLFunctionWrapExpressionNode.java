@@ -4,7 +4,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 public class I4GLFunctionWrapExpressionNode extends I4GLExpressionNode {
     @Child
@@ -21,7 +21,7 @@ public class I4GLFunctionWrapExpressionNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLTypeDescriptor getType() {
+    public I4GLType getType() {
         return null;
     }    
 }

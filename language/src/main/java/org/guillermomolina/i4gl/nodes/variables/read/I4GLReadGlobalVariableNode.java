@@ -11,7 +11,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
 
 /**
@@ -22,13 +22,11 @@ import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
  */
 @NodeFields({
     @NodeField(name = "slot", type = FrameSlot.class),
-    @NodeField(name = "typeDescriptor", type = I4GLTypeDescriptor.class)
+    @NodeField(name = "type", type = I4GLType.class)
 })
 public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
 
 	protected abstract FrameSlot getSlot();
-
-	protected abstract I4GLTypeDescriptor getTypeDescriptor();
 
     @Specialization(guards = "isInt()")
     int readInt(VirtualFrame frame) {
@@ -78,11 +76,6 @@ public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
         }
 
         return frame;
-    }
-
-	@Override
-    public I4GLTypeDescriptor getType() {
-	    return this.getTypeDescriptor();
     }
 
     @Override

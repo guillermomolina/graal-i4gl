@@ -8,11 +8,11 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 
 /**
@@ -29,15 +29,15 @@ import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
 
     private final String identifier;
-    private final I4GLTypeDescriptor descriptor;
+    private final I4GLType descriptor;
 
-    I4GLAssignToRecordFieldNode(String identifier, I4GLTypeDescriptor descriptor) {
+    I4GLAssignToRecordFieldNode(String identifier, I4GLType descriptor) {
         this.identifier = identifier;
         this.descriptor = descriptor;
     }
 
     protected boolean isInt() {
-        return descriptor == IntDescriptor.SINGLETON;
+        return descriptor == I4GLIntType.SINGLETON;
     }
 
     @Specialization(guards = "isInt()")
@@ -46,7 +46,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isBigInt() {
-        return descriptor == BigIntDescriptor.SINGLETON;
+        return descriptor == I4GLBigIntType.SINGLETON;
     }
 
     @Specialization(guards = "isBigInt()")
@@ -55,7 +55,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isSmallFloat() {
-        return descriptor == SmallFloatDescriptor.SINGLETON;
+        return descriptor == I4GLSmallFloatType.SINGLETON;
     }
 
     @Specialization(guards = "isSmallFloat()")
@@ -64,7 +64,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isDouble() {
-        return descriptor == DoubleDescriptor.SINGLETON;
+        return descriptor == I4GLFloatType.SINGLETON;
     }
 
     @Specialization(guards = "isDouble()")

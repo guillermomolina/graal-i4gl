@@ -1,22 +1,30 @@
-package org.guillermomolina.i4gl.parser.types.compound;
+package org.guillermomolina.i4gl.runtime.types.compound;
 
+import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.interop.InteropLibrary;
 
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * Type descriptor for I4GL's returns types. It contains additional information about the variables it contains.
  */
-public class ReturnDescriptor implements I4GLTypeDescriptor {
-    private final I4GLTypeDescriptor[] valueDescriptors;
+public class I4GLReturnType extends I4GLType {
+    private final I4GLType[] valueTypes;
 
     /**
      * The default descriptor.
      * @param innerScope lexical scope containing the identifiers of the variables this return contains
      */
-    public ReturnDescriptor(I4GLTypeDescriptor[] valueDescriptors) {
-        this.valueDescriptors = valueDescriptors;
+    public I4GLReturnType(I4GLType[] valueTypes) {
+        this.valueTypes = valueTypes;
+    }
+
+    @Override
+    public boolean isInstance(Object value, InteropLibrary library) {
+        CompilerAsserts.partialEvaluationConstant(this);
+        return value.getClass().isArray();
     }
 
     @Override
@@ -30,30 +38,30 @@ public class ReturnDescriptor implements I4GLTypeDescriptor {
     }
 
     public int getSize() {
-        return valueDescriptors.length;
+        return valueTypes.length;
     }
 
     public boolean isVoid() {
-        return valueDescriptors.length == 0;
+        return valueTypes.length == 0;
     }
 
-    public I4GLTypeDescriptor getValueDescriptor(final int index) {
-        return this.valueDescriptors[index];
+    public I4GLType getValueDescriptor(final int index) {
+        return this.valueTypes[index];
     }
 
     @Override
-    public boolean convertibleTo(I4GLTypeDescriptor type) {
+    public boolean convertibleTo(I4GLType type) {
         return false;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for(int i=0; i < valueDescriptors.length; i++) {
+        for(int i=0; i < valueTypes.length; i++) {
             if (i!=0) {
                 builder.append(", ");
             }
-            builder.append(valueDescriptors[i].toString());
+            builder.append(valueTypes[i].toString());
         }
         return builder.toString();
     }

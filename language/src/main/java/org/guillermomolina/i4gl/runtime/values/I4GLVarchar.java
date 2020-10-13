@@ -10,8 +10,8 @@ import com.oracle.truffle.api.library.ExportMessage;
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.runtime.I4GLType;
 import org.guillermomolina.i4gl.runtime.exceptions.IndexOutOfBoundsException;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
 
 /**
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
@@ -103,7 +103,7 @@ public class I4GLVarchar implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLType.VARCHAR;
+        return new I4GLVarcharType(size);
     }
 
     @ExportMessage

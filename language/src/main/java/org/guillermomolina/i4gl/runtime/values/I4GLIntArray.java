@@ -1,17 +1,20 @@
 package org.guillermomolina.i4gl.runtime.values;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
-import org.guillermomolina.i4gl.runtime.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLIntArray extends I4GLArrayValue {
+public class I4GLIntArray extends I4GLArray {
     private final int[] array;
 
     public I4GLIntArray(int size) {
@@ -20,6 +23,13 @@ public class I4GLIntArray extends I4GLArrayValue {
 
     protected I4GLIntArray(int[] array) {
         this.array = array;
+    }
+
+    @Override
+    @ExportMessage
+    @TruffleBoundary
+    Object toDisplayString(boolean allowSideEffects) {
+        return Arrays.toString(array);
     }
 
     public int getValueAt(int index) {
@@ -42,7 +52,7 @@ public class I4GLIntArray extends I4GLArrayValue {
 
     @Override
     public I4GLType getElementType() {
-        return I4GLType.INT;
+        return I4GLIntType.SINGLETON;
     }
 
     @ExportMessage

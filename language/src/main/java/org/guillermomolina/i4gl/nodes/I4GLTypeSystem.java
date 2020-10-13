@@ -9,28 +9,28 @@ import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * I4GL Type System
- * INT, INTEGER - IntDescriptor - int
- * BIGINT - BigIntDescriptor - long
- * REAL, SMALLFLOAT - SmallFloatDescriptor - float
- * DOUBLE PRECISION, FLOAT - DoubleDescriptor - double
- * TEXT - TextDescriptor - String
- * CHAR - CharDescriptor, Char1Descriptor - CharValue
- * VARCHAR - VarcharDescriptor - VarcharValue
- * RECORD - RecordDescriptor - RecordValue
- * ARRAY - ArrayDescriptor - I4GLIntArray, I4GLBigIntArray, I4GLSmallFloatArray, I4GLFloatArray
+ * INT, INTEGER - I4GLIntType - int
+ * BIGINT - I4GLBigIntType - long
+ * REAL, SMALLFLOAT - I4GLSmallFloatType - float
+ * DOUBLE PRECISION, FLOAT - I4GLFloatType - double
+ * TEXT - I4GLTextType - String
+ * CHAR - I4GLCharType, Char1Type - I4GLChar
+ * VARCHAR - I4GLVarcharType - I4GLVarchar
+ * RECORD - I4GLRecordType - I4GLRecord
+ * ARRAY - I4GLArrayType - I4GLIntArray, I4GLBigIntArray, I4GLSmallFloatArray, I4GLFloatArray
  * 
  * Pseudo types:
- *  - LabelDescriptor - 
- *  - ReturnDescriptor - Object[]
- * NULL - - NullValue
- * DATABASE - DatabaseDescriptor - DatabaseValue
+ *  - I4GLLabelType - I4GLLabel
+ *  - I4GLReturnType - Object[]
+ * NULL - I4GLNullType - I4GLNull
+ * DATABASE - I4GLDatabaseType - I4GLDatabase
  */
 
 /**
  * The type system of our interpreter. It specifies which variable types we will
  * be using and implicit casts.
  */
-@TypeSystem({ int.class, long.class, float.class, double.class })
+@TypeSystem({ int.class, long.class, float.class, double.class, String.class })
 public class I4GLTypeSystem {
 
     protected I4GLTypeSystem() {

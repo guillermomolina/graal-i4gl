@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.nodes.literals;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 
 /**
  * Node representing long literal.
@@ -26,8 +26,8 @@ public abstract class I4GLBigIntLiteralNode extends I4GLExpressionNode {
 	}
 
     @Override
-    public I4GLTypeDescriptor getType() {
-        return BigIntDescriptor.SINGLETON;
+    public I4GLType getType() {
+        return I4GLBigIntType.SINGLETON;
     }
 
 }

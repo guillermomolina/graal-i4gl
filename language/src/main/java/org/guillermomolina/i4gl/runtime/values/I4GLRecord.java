@@ -15,18 +15,21 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.runtime.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
 
 @ExportLibrary(InteropLibrary.class)
 public class I4GLRecord implements TruffleObject {
 
+    private final I4GLRecordType recordType;
     private final Map<String, Object> properties;
 
-    public I4GLRecord(Map<String, Object> properties) {
+    public I4GLRecord(final I4GLRecordType recordType, Map<String, Object> properties) {
+        this.recordType = recordType;
         this.properties = properties;
     }
 
     public I4GLRecord(I4GLRecord source) {
+        this.recordType = source.recordType;
         this.properties = source.properties;
     }
 
@@ -110,7 +113,7 @@ public class I4GLRecord implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLType.RECORD;
+        return recordType;
     }
 
     @ExportMessage

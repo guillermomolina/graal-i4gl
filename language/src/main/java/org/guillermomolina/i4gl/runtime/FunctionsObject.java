@@ -14,6 +14,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLObjectType;
 
 @ExportLibrary(InteropLibrary.class)
 final class FunctionsObject implements TruffleObject {
@@ -63,7 +64,7 @@ final class FunctionsObject implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLType.OBJECT;
+        return I4GLObjectType.SINGLETON;
     }
 
     @ExportMessage

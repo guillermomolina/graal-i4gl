@@ -10,11 +10,11 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.parser.types.I4GLTypeDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.BigIntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.DoubleDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.IntDescriptor;
-import org.guillermomolina.i4gl.parser.types.primitive.SmallFloatDescriptor;
+import org.guillermomolina.i4gl.runtime.types.I4GLType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -31,7 +31,7 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
     /**
      * Returns type of the expression. This method is mainly used for compile time type checking.
      */
-    public abstract I4GLTypeDescriptor getType();
+    public abstract I4GLType getType();
 
 	public abstract Object executeGeneric(VirtualFrame frame);
 
@@ -77,18 +77,18 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
 	}
 
     protected boolean isInt() {
-        return getType() == IntDescriptor.SINGLETON;
+        return getType() == I4GLIntType.SINGLETON;
     }
 
     protected boolean isBigInt() {
-        return getType() == BigIntDescriptor.SINGLETON;
+        return getType() == I4GLBigIntType.SINGLETON;
     }
 
     protected boolean isSmallFloat() {
-        return getType() == SmallFloatDescriptor.SINGLETON;
+        return getType() == I4GLSmallFloatType.SINGLETON;
     }
 
     protected boolean isDouble() {
-        return getType() == DoubleDescriptor.SINGLETON;
+        return getType() == I4GLFloatType.SINGLETON;
     }
 }
