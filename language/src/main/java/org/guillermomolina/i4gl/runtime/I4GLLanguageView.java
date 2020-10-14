@@ -20,6 +20,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 
 @ExportLibrary(value = InteropLibrary.class, delegateTo = "delegate")
 public final class I4GLLanguageView implements TruffleObject {
@@ -32,7 +33,7 @@ public final class I4GLLanguageView implements TruffleObject {
      */
     @CompilationFinal(dimensions = 1)
     public static final I4GLType[] PRECEDENCE = {
-            I4GLIntType.SINGLETON, I4GLBigIntType.SINGLETON, I4GLSmallFloatType.SINGLETON, I4GLFloatType.SINGLETON,
+        I4GLSmallIntType.SINGLETON, I4GLIntType.SINGLETON, I4GLBigIntType.SINGLETON, I4GLSmallFloatType.SINGLETON, I4GLFloatType.SINGLETON,
             I4GLTextType.SINGLETON };
 
     I4GLLanguageView(Object delegate) {
@@ -100,7 +101,9 @@ public final class I4GLLanguageView implements TruffleObject {
                      * this if-else cascade should fold after partial evaluation.
                      */
                     Object typeName = type.getName();
-                    if (type == I4GLIntType.SINGLETON) {
+                    if (type == I4GLSmallIntType.SINGLETON) {
+                        return typeName + " " + smallIntToString((short)interop.asInt(delegate));
+                    } else if (type == I4GLIntType.SINGLETON) {
                         return typeName + " " + intToString(interop.asInt(delegate));
                     } else if (type == I4GLBigIntType.SINGLETON) {
                         return typeName + " " + bigIntToString(interop.asLong(delegate));
@@ -124,6 +127,11 @@ public final class I4GLLanguageView implements TruffleObject {
 
     private static String addQuotes(String text) {
         return '"' + text + '"';
+    }
+
+    @TruffleBoundary
+    private static String smallIntToString(short s) {
+        return Short.toString(s);
     }
 
     @TruffleBoundary

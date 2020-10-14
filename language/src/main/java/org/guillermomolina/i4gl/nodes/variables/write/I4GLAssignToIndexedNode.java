@@ -13,6 +13,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLSmallIntArray;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -26,6 +27,11 @@ import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
 @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 @TypeSystemReference(I4GLTypeSystem.class)
 public abstract class I4GLAssignToIndexedNode extends I4GLStatementNode {
+
+    @Specialization
+    void assignToSmallIntArray(I4GLSmallIntArray array, int index, short value) {
+        array.setValueAt(index - 1, value);
+    }
 
     @Specialization
     void assignToIntArray(I4GLIntArray array, int index, int value) {

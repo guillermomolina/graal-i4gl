@@ -10,11 +10,13 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLSmallIntArray;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be
@@ -48,7 +50,9 @@ public class I4GLArrayType extends I4GLType {
     }
 
     public Object getDefaultValue() {
-        if (valuesType == I4GLIntType.SINGLETON) {
+        if (valuesType == I4GLSmallIntType.SINGLETON) {
+            return new I4GLSmallIntArray(size);
+        } else if (valuesType == I4GLIntType.SINGLETON) {
             return new I4GLIntArray(size);
         } else if (valuesType == I4GLBigIntType.SINGLETON) {
             return new I4GLBigIntArray(size);

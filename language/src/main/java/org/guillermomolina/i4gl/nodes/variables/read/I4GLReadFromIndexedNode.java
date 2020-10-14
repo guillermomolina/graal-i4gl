@@ -14,6 +14,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLChar;
 import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLSmallFloatArray;
+import org.guillermomolina.i4gl.runtime.values.I4GLSmallIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
@@ -44,6 +45,11 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     @Specialization
     String readVarchar(I4GLVarchar varchar, int index) {
         return Character.toString(varchar.getCharAt(index - 1));
+    }
+
+    @Specialization
+    short readSmallIntArray(I4GLSmallIntArray array, int index) {
+        return array.getValueAt(index - 1);
     }
 
     @Specialization

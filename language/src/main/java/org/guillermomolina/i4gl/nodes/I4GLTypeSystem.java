@@ -9,28 +9,32 @@ import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * I4GL Type System
- * INT, INTEGER - I4GLIntType - int
- * BIGINT - I4GLBigIntType - long
- * REAL, SMALLFLOAT - I4GLSmallFloatType - float
- * DOUBLE PRECISION, FLOAT - I4GLFloatType - double
- * TEXT - I4GLTextType - String
- * CHAR - I4GLCharType, Char1Type - I4GLChar
- * VARCHAR - I4GLVarcharType - I4GLVarchar
- * RECORD - I4GLRecordType - I4GLRecord
- * ARRAY - I4GLArrayType - I4GLIntArray, I4GLBigIntArray, I4GLSmallFloatArray, I4GLFloatArray
+ * 
+ * <I4GL type> - <type class> - <value class>
+ * NULL - {@link I4GLNullType} - {@link I4GLNull}
+ * SMALLINT - {@link I4GLSmallIntType} - short
+ * INT, INTEGER - {@link I4GLIntType} - int
+ * BIGINT - {@link I4GLBigIntType} - long
+ * REAL, SMALLFLOAT - {@link I4GLSmallFloatType} - float
+ * DOUBLE PRECISION, FLOAT - {@link I4GLFloatType} - double
+ * TEXT - {@link I4GLTextType} - String
+ * CHAR - {@link I4GLCharType}, {@link Char1Type} - {@link I4GLChar}
+ * VARCHAR - {@link I4GLVarcharType} - {@link I4GLVarchar}
+ * RECORD - {@link I4GLRecordType} - {@link I4GLRecord}
+ * ARRAY - {@link I4GLArrayType} - {@link I4GLSmallIntArray}, {@link I4GLIntArray}, {@link I4GLBigIntArray}, 
+ *                                  {@link I4GLSmallFloatArray}, {@link I4GLFloatArray}
+ * DATABASE - {@link I4GLDatabaseType} - {@link I4GLDatabase}
  * 
  * Pseudo types:
- *  - I4GLLabelType - I4GLLabel
- *  - I4GLReturnType - Object[]
- * NULL - I4GLNullType - I4GLNull
- * DATABASE - I4GLDatabaseType - I4GLDatabase
+ *  - {@link I4GLLabelType} - {@link I4GLLabel}
+ *  - {@link I4GLReturnType} - Object[]
  */
 
 /**
  * The type system of our interpreter. It specifies which variable types we will
  * be using and implicit casts.
  */
-@TypeSystem({ int.class, long.class, float.class, double.class, String.class })
+@TypeSystem({ short.class, int.class, long.class, float.class, double.class, String.class })
 public class I4GLTypeSystem {
 
     protected I4GLTypeSystem() {
@@ -39,8 +43,8 @@ public class I4GLTypeSystem {
     /**
      * Example of a manually specified type check that replaces the automatically
      * generated type check that the Truffle DSL would generate. For
-     * {@link I4GLNull}, we do not need an {@code instanceof} check, because we
-     * know that there is only a {@link I4GLNull#SINGLETON singleton} instance.
+     * {@link I4GLNull}, we do not need an {@code instanceof} check, because we know
+     * that there is only a {@link I4GLNull#SINGLETON singleton} instance.
      */
     @TypeCheck(I4GLNull.class)
     public static boolean isNullValue(Object value) {
@@ -55,14 +59,32 @@ public class I4GLTypeSystem {
      */
     @TypeCast(I4GLNull.class)
     public static I4GLNull asNullValue(Object value) {
-        if(!isNullValue(value)) {
+        if (!isNullValue(value)) {
             throw new AssertionError();
         }
         return I4GLNull.SINGLETON;
     }
 
     @ImplicitCast
+    public static short castIntToShort(int value) {
+        if(value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
+            return (short) value;
+        }
+        throw new ClassCastException();
+    }
+
+    @ImplicitCast
+    public static int castShortToInt(short value) {
+        return value;
+    }
+
+    @ImplicitCast
     public static long castIntToBigInt(int value) {
+        return value;
+    }
+
+    @ImplicitCast
+    public static float castShortToSmallFloat(short value) {
         return value;
     }
 
@@ -89,6 +111,11 @@ public class I4GLTypeSystem {
     @ImplicitCast
     public static double castSmallFloatToFloat(float value) {
         return value;
+    }
+
+    @ImplicitCast
+    public static String castShortToText(short value) {
+        return String.valueOf(value);
     }
 
     @ImplicitCast

@@ -24,6 +24,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLChar;
 import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
@@ -46,6 +47,15 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
 
     @CompilerDirectives.CompilationFinal
     private int jumps = -1;
+    
+    protected boolean isSmallInt() {
+        return getType() == I4GLSmallIntType.SINGLETON;
+    }
+
+    @Specialization(guards = "isSmallInt()")
+    void writeSmallInt(final VirtualFrame frame, final short value) {
+        getFrame(frame).setObject(getSlot(), value);
+    }
 
     protected boolean isInt() {
         return getType() == I4GLIntType.SINGLETON;
@@ -138,7 +148,7 @@ public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
         getFrame(frame).setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
-    @Specialization(replaces = {"writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
+    @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
     void assign(final VirtualFrame frame, final Object value) {
         getFrame(frame).setObject(getSlot(), value);
     }

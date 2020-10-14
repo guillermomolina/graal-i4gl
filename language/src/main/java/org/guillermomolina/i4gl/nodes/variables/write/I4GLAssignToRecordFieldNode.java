@@ -13,6 +13,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
 
 /**
@@ -34,6 +35,15 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     I4GLAssignToRecordFieldNode(String identifier, I4GLType descriptor) {
         this.identifier = identifier;
         this.descriptor = descriptor;
+    }
+
+    protected boolean isSmallInt() {
+        return descriptor == I4GLSmallIntType.SINGLETON;
+    }
+
+    @Specialization(guards = "isSmallInt()")
+    void assignSmallInt(I4GLRecord record, short value) {
+        record.put(identifier, value);
     }
 
     protected boolean isInt() {

@@ -80,6 +80,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
@@ -741,6 +742,9 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitNumberType(final I4GLParser.NumberTypeContext ctx) {
+        if (ctx.SMALLINT() != null) {
+            return new TypeNode(I4GLSmallIntType.SINGLETON);
+        }
         if (ctx.INTEGER() != null || ctx.INT() != null) {
             return new TypeNode(I4GLIntType.SINGLETON);
         }

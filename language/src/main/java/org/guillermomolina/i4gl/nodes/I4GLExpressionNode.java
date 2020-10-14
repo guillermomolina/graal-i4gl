@@ -15,6 +15,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -75,6 +76,10 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
 	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypeSystemGen.expectDouble(executeGeneric(frame));
 	}
+
+    protected boolean isSmallInt() {
+        return getType() == I4GLSmallIntType.SINGLETON;
+    }
 
     protected boolean isInt() {
         return getType() == I4GLIntType.SINGLETON;

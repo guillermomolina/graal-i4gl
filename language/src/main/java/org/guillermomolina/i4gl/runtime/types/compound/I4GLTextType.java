@@ -9,6 +9,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 
 /**
  * Type descriptor representing the string type.
@@ -38,8 +39,9 @@ public class I4GLTextType extends I4GLType {
 
     @Override
     public boolean convertibleTo(I4GLType type) {
-        return type instanceof I4GLTextType || type == I4GLIntType.SINGLETON || type == I4GLBigIntType.SINGLETON
-                || type == I4GLSmallFloatType.SINGLETON || type == I4GLFloatType.SINGLETON;
+        return type instanceof I4GLTextType || type == I4GLSmallIntType.SINGLETON || type == I4GLIntType.SINGLETON
+                || type == I4GLBigIntType.SINGLETON || type == I4GLSmallFloatType.SINGLETON
+                || type == I4GLFloatType.SINGLETON;
     }
 
     @Override

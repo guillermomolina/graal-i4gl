@@ -18,8 +18,17 @@ public class InitializationNodeFactory {
 	public static I4GLStatementNode create(FrameSlot frameSlot, Object value, VirtualFrame frame) {
 	    // TODO: this is a duplicity
         switch (frameSlot.getKind()) {
-            case Int: return (frame == null)?
-                    new IntInitializationNode(frameSlot, (int) value) : new IntInitializationWithFrameNode(frameSlot, (int) value, frame);
+            case Int:
+                int intValue;
+                if(value instanceof Integer) {
+                    intValue = (int) value;
+                } else if (value instanceof Short) {
+                    intValue = (short) value;
+                } else {
+                    throw new ClassCastException();
+                }
+                return (frame == null)?
+                    new IntInitializationNode(frameSlot, intValue) : new IntInitializationWithFrameNode(frameSlot, intValue, frame);
             case Long: return (frame == null)?
                     new LongInitializationNode(frameSlot, (long) value) : new LongInitializationWithFrameNode(frameSlot, (long) value, frame);
             case Double: return (frame == null)?

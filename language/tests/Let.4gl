@@ -1,5 +1,6 @@
 MAIN  
   DEFINE aBigInt BIGINT
+  DEFINE aSmallInt SMALLINT
   DEFINE aFloat FLOAT
   DEFINE aText TEXT
   DEFINE aChar CHAR(10)
@@ -10,6 +11,7 @@ MAIN
   END RECORD
   DEFINE anArray ARRAY[2] OF FLOAT
   LET aBigInt = 123456789012
+  LET aSmallInt = -1223
   LET aFloat = 1.0/3.0
   LET aText = "Texto muy largo"
   LET aChar = "Un texto de 10"
@@ -19,6 +21,7 @@ MAIN
   LET aRecord.anInt = 100
   LET aRecord.aSmallFloat = 121.2
   DISPLAY aBigInt
+  DISPLAY aSmallInt
   DISPLAY aFloat
   DISPLAY aText
   DISPLAY aChar
