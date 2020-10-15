@@ -216,5 +216,14 @@
         /opt/squirrel-sql/squirrel-sql.jar
       </systemPath>
     </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2</version>
+      <scope>system</scope>
+      <systemPath>
+        /opt/squirrel-sql/lib/log4j.jar
+      </systemPath>
+    </dependency>
   </dependencies>
 </project>

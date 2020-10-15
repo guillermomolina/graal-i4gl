@@ -56,7 +56,7 @@ public final class RunSQL {
         CliInitializer.initializeSquirrelInCliMode();
 
         connect("oartdb");
-        exec("SELECT * FROM dual");
+        exec("SELECT * FROM DUALMYSQL");
         close();
     }
 }

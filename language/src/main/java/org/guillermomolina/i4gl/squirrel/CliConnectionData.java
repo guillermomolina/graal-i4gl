@@ -4,39 +4,30 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
-public class CliConnectionData
-{
+public class CliConnectionData {
    private ISQLAlias _alias;
    private CliSession _cliSession;
 
-   public ISQLAlias getAlias()
-   {
+   public ISQLAlias getAlias() {
       return _alias;
    }
 
-   public void setAlias(ISQLAlias alias)
-   {
+   public void setAlias(ISQLAlias alias) {
       _alias = alias;
 
-      try
-      {
+      try {
          closeCliSession();
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
          //
       }
    }
 
-   public CliSession getCliSession()
-   {
+   public CliSession getCliSession() {
       return _cliSession;
    }
 
-   public void createCliSession()
-   {
-      if(null == _alias)
-      {
+   public void createCliSession() {
+      if (null == _alias) {
          System.err.println("ERROR: No database connection has been opened. Call connect(...) to open a connection.");
          return;
       }
@@ -44,30 +35,22 @@ public class CliConnectionData
       _cliSession = new CliSession(_alias);
    }
 
-   public boolean closeCliSession() throws SQLException
-   {
-      if(null == _cliSession)
-      {
+   public boolean closeCliSession() throws SQLException {
+      if (null == _cliSession) {
          return false;
       }
 
-      try
-      {
+      try {
          _cliSession.close();
-      }
-      finally
-      {
+      } finally {
          _cliSession = null;
       }
-
 
       return true;
    }
 
-   public void ensureCliSessionCreated()
-   {
-      if(null == _cliSession)
-      {
+   public void ensureCliSessionCreated() {
+      if (null == _cliSession) {
          createCliSession();
       }
    }
