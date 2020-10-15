@@ -20,5 +20,6 @@
         "vmargs": [
             "-Dgraalvm.locatorDisabled=true"
         ]
-    }
+    },
+    "python.pythonPath": "/bin/python"
 }

@@ -209,10 +209,13 @@
       <type>maven-plugin</type>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.4.190</version>
-      <scope>runtime</scope>
+        <groupId>net.sf.squirrel-sql</groupId>
+        <artifactId>squirrel-sql</artifactId>
+        <version>4.1.0</version>
+        <scope>system</scope>
+        <systemPath>
+          /home/gmolina/bin/squirrel-sql-4.1.0/squirrel-sql.jar
+        </systemPath>
     </dependency>
   </dependencies>
 </project>

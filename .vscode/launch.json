@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "CodeLens (Launch) - RunSQL",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.launcher.RunSQL",
+            "projectName": "launcher"
+        },
+        {
             "type": "graalvm",
             "request": "attach",
             "name": "Attach",
