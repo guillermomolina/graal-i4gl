@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.cli;
+package org.guillermomolina.i4gl.squirrel;
 
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 

@@ -1,6 +1,4 @@
-package net.sourceforge.squirrel_sql.client.cli;
-
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+package org.guillermomolina.i4gl.squirrel;
 
 import java.io.IOException;
 import java.nio.file.Files;

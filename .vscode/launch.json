@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - TestSQL",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.launcher.TestSQL",
+            "projectName": "launcher"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - RunSQL",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.RunSQL",

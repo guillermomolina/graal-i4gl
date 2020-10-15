@@ -1,13 +1,13 @@
-package net.sourceforge.squirrel_sql.client.cli;
+package org.guillermomolina.i4gl.squirrel;
+
+import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
-
-import java.sql.SQLWarning;
-import java.util.ArrayList;
 
 public class CliSQLExecuterHandlerAdapter implements ISQLExecuterHandler
 {

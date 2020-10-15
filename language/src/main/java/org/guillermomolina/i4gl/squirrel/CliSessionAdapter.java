@@ -1,4 +1,9 @@
-package net.sourceforge.squirrel_sql.client.cli;
+package org.guillermomolina.i4gl.squirrel;
+
+import java.sql.SQLException;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
@@ -24,10 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.sql.SQLException;
 
 public class CliSessionAdapter implements ISession
 {

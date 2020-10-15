@@ -1,4 +1,6 @@
-package net.sourceforge.squirrel_sql.client.cli;
+package org.guillermomolina.i4gl.squirrel;
+
+import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
@@ -14,8 +16,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-
-import java.sql.SQLException;
 
 public class CliSession extends CliSessionAdapter
 {

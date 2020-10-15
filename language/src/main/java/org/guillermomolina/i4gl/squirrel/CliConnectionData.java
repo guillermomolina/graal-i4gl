@@ -1,8 +1,8 @@
-package net.sourceforge.squirrel_sql.client.cli;
-
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+package org.guillermomolina.i4gl.squirrel;
 
 import java.sql.SQLException;
+
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 public class CliConnectionData
 {
