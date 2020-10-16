@@ -15,6 +15,7 @@ import com.oracle.truffle.api.source.SourceSection;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
@@ -51,7 +52,9 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLOrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLMainRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLSelectNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
@@ -203,11 +206,13 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
     public Node visitMainStatements(final I4GLParser.MainStatementsContext ctx) {
         final List<I4GLStatementNode> statementNodes = new ArrayList<>(ctx.children.size());
         for (final ParseTree child : ctx.children) {
-            I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
-            if (statementNode == null) {
-                throw new ParseException(source, ctx, "Visitied an unimplemented Node");
+            if(!(child instanceof TerminalNodeImpl)) {
+                I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
+                if (statementNode == null) {
+                    throw new ParseException(source, ctx, "Visited an unimplemented Node");
+                }
+                statementNodes.add(statementNode);    
             }
-            statementNodes.add(statementNode);
         }
         I4GLBlockNode node = new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
         setSourceFromContext(node, ctx);
@@ -1158,13 +1163,34 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             String identifier = ctx.identifier(0).getText();
             final FrameSlot databaseSlot = currentLexicalScope.registerDatabase(identifier);
             final I4GLDatabase databaseValue = new I4GLDatabase(identifier);
-            I4GLStatementNode node = InitializationNodeFactory.create(databaseSlot, databaseValue, null);
-            //I4GLConnectToDatabaseNode node = new I4GLConnectToDatabaseNode(databaseSlot);
+            //I4GLStatementNode node = InitializationNodeFactory.create(databaseSlot, databaseValue, null);
+            I4GLDatabaseNode node = new I4GLDatabaseNode(databaseSlot, databaseValue);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
         }
+    }
+
+    @Override
+    public Node visitMainSelectStatement(final I4GLParser.MainSelectStatementContext ctx) {
+        if(ctx.INTO() != null) {
+            throw new NotImplementedException();
+        }
+        try {
+            I4GLExpressionNode readVariableNode = createReadVariableNode("_database");
+            I4GLSelectNode node = new I4GLSelectNode(readVariableNode);
+            setSourceFromContext(node, ctx);
+            node.addStatementTag();
+            return node;      
+        } catch (final LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
+    }
+
+    @Override
+    public Node visitSimpleSelectStatement(final I4GLParser.SimpleSelectStatementContext ctx) {
+        throw new NotImplementedException();
     }
 }

@@ -18,7 +18,6 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class SquirrelSession extends SquirrelSessionAdapter {
    private final SQLConnection sqlConnection;
@@ -26,31 +25,26 @@ public class SquirrelSession extends SquirrelSessionAdapter {
    private final SessionProperties sessionProperties;
 
    public SquirrelSession(String aliasName) {
-      try {
-         SquirrelInitializer.initialize();
-         
-         ISQLAlias aliasToConnectTo = findAlias(aliasName);
-         IIdentifier driverID = aliasToConnectTo.getDriverIdentifier();
-         ISQLDriver sqlDriver = Main.getApplication().getAliasesAndDriversManager().getDriver(driverID);
+      SquirrelInitializer.initialize();
 
-         SQLDriverManager sqlDriverManager = Main.getApplication().getSQLDriverManager();
+      ISQLAlias aliasToConnectTo = findAlias(aliasName);
+      IIdentifier driverID = aliasToConnectTo.getDriverIdentifier();
+      ISQLDriver sqlDriver = Main.getApplication().getAliasesAndDriversManager().getDriver(driverID);
 
-         SQLDriverPropertyCollection props = aliasToConnectTo.getDriverPropertiesClone();
+      SQLDriverManager sqlDriverManager = Main.getApplication().getSQLDriverManager();
 
-         if (!aliasToConnectTo.getUseDriverProperties()) {
-            props.clear();
-         }
+      SQLDriverPropertyCollection props = aliasToConnectTo.getDriverPropertiesClone();
 
-         sqlConnection = sqlDriverManager.getConnection(sqlDriver, aliasToConnectTo, aliasToConnectTo.getUserName(),
-               AliasPasswordHandler.getPassword(aliasToConnectTo), props);
-
-         sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
-         tokenizer = new QueryTokenizer(sessionProperties.getSQLStatementSeparator(),
-               sessionProperties.getStartOfLineComment(), sessionProperties.getRemoveMultiLineComment());
-
-      } catch (Exception e) {
-         throw Utilities.wrapRuntime(e);
+      if (!aliasToConnectTo.getUseDriverProperties()) {
+         props.clear();
       }
+
+      sqlConnection = sqlDriverManager.getConnection(sqlDriver, aliasToConnectTo, aliasToConnectTo.getUserName(),
+            AliasPasswordHandler.getPassword(aliasToConnectTo), props);
+
+      sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
+      tokenizer = new QueryTokenizer(sessionProperties.getSQLStatementSeparator(),
+            sessionProperties.getStartOfLineComment(), sessionProperties.getRemoveMultiLineComment());
    }
 
    public ISQLAlias findAlias(String aliasName) {
@@ -60,7 +54,7 @@ public class SquirrelSession extends SquirrelSessionAdapter {
          ISQLAlias alias = aliasIterator.next();
 
          if (aliasName.equals(alias.getName())) {
-            return(alias);
+            return (alias);
          }
       }
 

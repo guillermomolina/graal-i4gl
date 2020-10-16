@@ -48,7 +48,7 @@
             "projectName": "launcher",
             "args": "./language/tests/Database.4gl",
             "vmArgs": [
-                "-Dtruffle.class.path.append=./language/target/i4gl.jar",
+                "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
             "stepFilters": {

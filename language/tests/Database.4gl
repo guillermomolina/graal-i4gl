@@ -1,3 +1,8 @@
+DATABASE test
+
 MAIN
-    DATABASE test
+    DEFINE theTotal INTEGER
+    SELECT COUNT(*)
+        FROM customers
+    DISPLAY theTotal
 END MAIN

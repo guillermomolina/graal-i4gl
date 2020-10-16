@@ -10,17 +10,27 @@ import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
 @CompilerDirectives.ValueType
 public class I4GLDatabase {
 
-    private final SquirrelSession session;
+    private final String aliasName;
+    private SquirrelSession session;
 
     public I4GLDatabase(final String aliasName) {
-        session = new SquirrelSession(aliasName);
+        this.aliasName = aliasName;
+    }
+
+    public void connect() {
+        if(session == null) {
+            session = new SquirrelSession(aliasName);
+        }
     }
 
     public void close() {
-        try {
-            session.close();
-        } catch (SQLException e) {
-            throw new DatabaseConnectionException();
-         }
+        if (session != null) {
+            try {
+                session.close();
+                session = null;
+            } catch (SQLException e) {
+                throw new DatabaseConnectionException();
+            }
+        }
     }
 }
