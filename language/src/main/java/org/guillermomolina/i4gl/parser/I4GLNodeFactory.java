@@ -51,7 +51,6 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLOrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLMainRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
-import org.guillermomolina.i4gl.nodes.statement.I4GLConnectToDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNode;
@@ -81,6 +80,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
+import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
@@ -701,7 +701,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             List<I4GLStatementNode> initializationNodes = new ArrayList<>();
             final I4GLType type = typeNode.descriptor;
             for (final String identifier : identifierList) {
-                currentLexicalScope.registerLocalVariable(identifier, type);
+                FrameSlot frameSlot = currentLexicalScope.registerLocalVariable(identifier, type);
                 I4GLStatementNode initializationNode;
                 Object defaultValue;
                 if (type instanceof I4GLTextType) {
@@ -711,7 +711,6 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
                     defaultValue = type.getDefaultValue();
                 }
                 assert defaultValue != null;
-                FrameSlot frameSlot = currentLexicalScope.getFrameSlot(identifier);
                 initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
                 initializationNodes.add(initializationNode);
             }
@@ -1158,7 +1157,9 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         try {
             String identifier = ctx.identifier(0).getText();
             final FrameSlot databaseSlot = currentLexicalScope.registerDatabase(identifier);
-            I4GLConnectToDatabaseNode node = new I4GLConnectToDatabaseNode(databaseSlot);
+            final I4GLDatabase databaseValue = new I4GLDatabase(identifier);
+            I4GLStatementNode node = InitializationNodeFactory.create(databaseSlot, databaseValue, null);
+            //I4GLConnectToDatabaseNode node = new I4GLConnectToDatabaseNode(databaseSlot);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;

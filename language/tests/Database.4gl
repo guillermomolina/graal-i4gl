@@ -1,0 +1,3 @@
+MAIN
+    DATABASE test
+END MAIN

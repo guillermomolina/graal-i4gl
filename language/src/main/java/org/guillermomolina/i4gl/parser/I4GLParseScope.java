@@ -71,16 +71,16 @@ public class I4GLParseScope {
         return variables.get(identifier) instanceof I4GLLabelType;
     }
 
-    public void addLabel(String identifier) throws LexicalException {
-        registerNewIdentifier(identifier, new I4GLLabelType(identifier));
+    public FrameSlot addLabel(String identifier) throws LexicalException {
+        return registerNewIdentifier(identifier, new I4GLLabelType(identifier));
     }
 
     public FrameSlot registerDatabase(String identifier) throws LexicalException {
         return registerNewIdentifier("_database", new I4GLDatabaseType(identifier));
     }
 
-    public void addVariable(String identifier, I4GLType type) throws LexicalException {
-        registerNewIdentifier(identifier, type);
+    public FrameSlot addVariable(String identifier, I4GLType type) throws LexicalException {
+        return registerNewIdentifier(identifier, type);
     }
 
     FrameSlot getLocalSlot(String identifier) {
@@ -121,8 +121,8 @@ public class I4GLParseScope {
         return containsLocalIdentifier(identifier);
     }
 
-    void registerLocalVariable(String identifier, I4GLType type) throws LexicalException {
-        addVariable(identifier, type);
+    FrameSlot registerLocalVariable(String identifier, I4GLType type) throws LexicalException {
+        return addVariable(identifier, type);
     }
 
     void addArgument(String identifier) {

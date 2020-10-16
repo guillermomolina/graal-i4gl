@@ -30,7 +30,7 @@ public class I4GLDatabaseType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLDatabase();
+        return new I4GLDatabase(identifier);
     }
 
     @Override
