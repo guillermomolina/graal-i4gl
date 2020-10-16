@@ -1,8 +1,8 @@
-DATABASE test
 
 MAIN
     DEFINE theTotal INTEGER
-    SELECT COUNT(*)
+    DATABASE test
+    SELECT customerNumber,customerName
         FROM customers
     DISPLAY theTotal
 END MAIN

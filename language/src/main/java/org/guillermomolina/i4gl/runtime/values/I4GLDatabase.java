@@ -1,11 +1,16 @@
 package org.guillermomolina.i4gl.runtime.values;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import com.oracle.truffle.api.CompilerDirectives;
 
+import org.guillermomolina.i4gl.runtime.database.SquirrelExecuterHandler;
 import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
+
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 
 @CompilerDirectives.ValueType
 public class I4GLDatabase {
@@ -31,6 +36,17 @@ public class I4GLDatabase {
             } catch (SQLException e) {
                 throw new DatabaseConnectionException();
             }
+        }
+    }
+
+    public void execute(final String sql) {
+        SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);
+        SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(session, sql, sqlExecuterHandlerProxy);
+        sqlExecuterTask.setExecuteEditableCheck(false);
+        sqlExecuterTask.run();
+        ResultSetDataSet rsds = sqlExecuterHandlerProxy.getResultSetDataSet();
+        for(Object[] row: rsds.getAllDataForReadOnly()) {
+            System.out.println(Arrays.toString(row));
         }
     }
 }

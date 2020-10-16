@@ -18,7 +18,8 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class SquirrelExecuterHandler implements ISQLExecuterHandler {
-   private SquirrelSession session;
+   private final SquirrelSession session;
+   private ResultSetDataSet resultSetDataSet;
 
    public SquirrelExecuterHandler(SquirrelSession session) {
       this.session = session;
@@ -72,24 +73,20 @@ public class SquirrelExecuterHandler implements ISQLExecuterHandler {
    @Override
    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
          throws DataSetException {
-
-      ResultSetDataSet rsds = new ResultSetDataSet();
-      rsds.setLimitDataRead(true);
-
+      resultSetDataSet = new ResultSetDataSet();
+      resultSetDataSet.setLimitDataRead(true);
       DialectType dialectType = DialectFactory.getDialectType(session.getMetaData());
+      resultSetDataSet.setSqlExecutionTabResultSet(rst, null, dialectType);
+   }
 
-      rsds.setSqlExecutionTabResultSet(rst, null, dialectType);
-
-      ResultAsText resultAsText = new ResultAsText(rsds.getDataSetDefinition().getColumnDefinitions(), true);
-
-      for (Object[] row : rsds.getAllDataForReadOnly()) {
-         resultAsText.addRow(row);
-      }
+   public ResultSetDataSet getResultSetDataSet() {
+      return resultSetDataSet;
    }
 
    @Override
    public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount) {
-      System.out.println("Execution took " + info.getTotalElapsedMillis() + " Millis");
+      // System.out.println("Execution took " + info.getTotalElapsedMillis() + "
+      // Millis");
    }
 
    @Override

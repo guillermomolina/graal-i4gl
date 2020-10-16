@@ -284,7 +284,7 @@ subquery: LPAREN sqlSelectStatement RPAREN;
 
 sqlExpression: sqlTerm ((PLUS | MINUS) sqlTerm)*;
 
-sqlAlias: AS? identifier;
+sqlAlias: AS identifier;
 
 sqlTerm: sqlFactor ((sqlMultiply | DIV | SLASH) sqlFactor)*;
 
@@ -292,26 +292,23 @@ sqlMultiply: STAR;
 
 sqlFactor: sqlFactor2 (DOUBLEVERTBAR sqlFactor2)*;
 
-sqlFactor2: (sqlVariable (UNITS unitType)?) sqlVariable (
-		UNITS unitType
-	)?
-	| (sqlLiteral (UNITS unitType)?) sqlLiteral (UNITS unitType)?
-	| groupFunction LPAREN (STAR | ALL | DISTINCT)? (
-		sqlExpression (COMMA sqlExpression)*
-	)? RPAREN
-	| sqlFunction (
-		LPAREN sqlExpression (COMMA sqlExpression)* RPAREN
-	)
-	| ((PLUS | MINUS) sqlExpression) (PLUS | MINUS) sqlExpression
-	| (LPAREN sqlExpression RPAREN) LPAREN sqlExpression RPAREN
-	| sqlExpressionList;
+sqlFactor2
+   : sqlVariable (UNITS unitType)?
+   | sqlLiteral (UNITS unitType)?
+   | groupFunction LPAREN (STAR | ALL | DISTINCT)? (sqlExpression (COMMA sqlExpression)*)? RPAREN
+   | sqlFunction (LPAREN sqlExpression (COMMA sqlExpression)* RPAREN)
+   | (PLUS | MINUS) sqlExpression
+   | LPAREN sqlExpression RPAREN
+   | sqlExpressionList
+   ;
+
 
 sqlExpressionList:
 	LPAREN sqlExpression (COMMA sqlExpression)+ RPAREN;
 
 sqlLiteral: numericConstant | string | NULL | FALSE | TRUE;
 
-sqlVariable: columnsTableId columnsTableId;
+sqlVariable: columnsTableId;
 
 sqlFunction:
 	numberFunction

@@ -1175,12 +1175,22 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
 
     @Override
     public Node visitMainSelectStatement(final I4GLParser.MainSelectStatementContext ctx) {
-        if(ctx.INTO() != null) {
-            throw new NotImplementedException();
-        }
         try {
+            int start = ctx.start.getStartIndex();
+            int end;
+            Interval interval;
+            String sql = "";
+            if(ctx.INTO() != null) {
+                end = ctx.INTO().getSymbol().getStartIndex() - 1;
+                interval = new Interval(start, end);
+                sql = ctx.start.getInputStream().getText(interval);
+                start = ctx.variableList().stop.getStopIndex() + 1;
+            }
+            end = ctx.stop.getStopIndex();
+            interval = new Interval(start, end);
+            sql += ctx.start.getInputStream().getText(interval);            
             I4GLExpressionNode readVariableNode = createReadVariableNode("_database");
-            I4GLSelectNode node = new I4GLSelectNode(readVariableNode);
+            I4GLSelectNode node = new I4GLSelectNode(readVariableNode, sql);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;      

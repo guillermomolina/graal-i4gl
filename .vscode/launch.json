@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "CodeLens (Launch) - RunSQL",
-            "request": "launch",
-            "mainClass": "org.guillermomolina.i4gl.runtime.database.RunSQL",
-            "projectName": "i4gl"
-        },
-        {
-            "type": "java",
             "name": "Debug (Launch) Current File",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
