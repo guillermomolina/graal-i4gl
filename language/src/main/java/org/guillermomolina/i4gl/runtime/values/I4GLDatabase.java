@@ -1,15 +1,19 @@
 package org.guillermomolina.i4gl.runtime.values;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.sql.Types;
+import java.util.List;
 
 import com.oracle.truffle.api.CompilerDirectives;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.database.SquirrelExecuterHandler;
 import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
 
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 
 @CompilerDirectives.ValueType
@@ -23,7 +27,7 @@ public class I4GLDatabase {
     }
 
     public void connect() {
-        if(session == null) {
+        if (session == null) {
             session = new SquirrelSession(aliasName);
         }
     }
@@ -39,14 +43,41 @@ public class I4GLDatabase {
         }
     }
 
-    public void execute(final String sql) {
+    public static Object toI4GLType(final ColumnDisplayDefinition cDefinition, final Object sqlValue) {
+        if (sqlValue == null) {
+            return I4GLNull.SINGLETON;
+        }
+        switch (cDefinition.getSqlType()) {
+            case Types.VARCHAR:
+                return new I4GLVarchar(cDefinition.getPrecision(), (String) sqlValue);
+            case Types.DECIMAL:
+                return new I4GLDecimal((BigDecimal) sqlValue);
+            case Types.INTEGER:
+            case Types.BIGINT:
+            case Types.REAL:
+            case Types.FLOAT:
+                return sqlValue;
+            default:
+                throw new NotImplementedException();
+        }
+    }
+
+    public static Object[] toI4GLArray(final ColumnDisplayDefinition[] cDefinitions, final Object[] row) {
+        Object[] values = new Object[row.length];
+        for (int i = 0; i < row.length; i++) {
+            values[i] = toI4GLType(cDefinitions[i], row[i]);
+        }
+        return values;
+    }
+
+    public Object[] execute(final String sql) {
         SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);
         SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(session, sql, sqlExecuterHandlerProxy);
         sqlExecuterTask.setExecuteEditableCheck(false);
         sqlExecuterTask.run();
         ResultSetDataSet rsds = sqlExecuterHandlerProxy.getResultSetDataSet();
-        for(Object[] row: rsds.getAllDataForReadOnly()) {
-            System.out.println(Arrays.toString(row));
-        }
+        ColumnDisplayDefinition[] cDefinitions = rsds.getDataSetDefinition().getColumnDefinitions();
+        List<Object[]> rows = rsds.getAllDataForReadOnly();
+        return toI4GLArray(cDefinitions, rows.get(0));
     }
 }

@@ -37,6 +37,11 @@ public class I4GLVarchar implements TruffleObject {
         this.data = value;
     }
 
+    public I4GLVarchar(int size, String value) {
+        this.size = size;
+        this.data = value;
+    }
+
     public void assignString(String value) {
         data = value.substring(0, Math.min(size, value.length()));
     }

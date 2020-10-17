@@ -1,8 +1,13 @@
 
 MAIN
-    DEFINE theTotal INTEGER
+    DEFINE theTotal BIGINT
+    DEFINE customerNumber INT
+    DEFINE customerName VARCHAR(50)
     DATABASE test
-    SELECT customerNumber,customerName
+    SELECT COUNT(*) INTO theTotal
         FROM customers
     DISPLAY theTotal
+    SELECT customerNumber,customerName INTO customerNumber,customerName
+        FROM customers
+    DISPLAY "|",customerNumber,"|",customerName,"|"
 END MAIN

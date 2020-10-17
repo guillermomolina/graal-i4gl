@@ -42,7 +42,7 @@ globalDeclaration:
 typeDeclarations: typeDeclaration+;
 
 typeDeclaration:
-	DEFINE variableDeclaration (COMMA variableDeclaration)*;
+	DEFINE variableDeclaration (COMMA variableDeclaration)* EOL;
 
 variableDeclaration: identifier (COMMA identifier)* type;
 //| identifier type (COMMA identifier type)*
@@ -827,7 +827,7 @@ fromSelectStatement:
 aliasName: identifier;
 
 mainSelectStatement:
-	headSelectStatement (INTO variableList)? EOL? fromSelectStatement whereStatement? groupByStatement?
+	headSelectStatement (INTO identifier (COMMA identifier)*)? EOL? fromSelectStatement whereStatement? groupByStatement?
 		havingStatement? unionSelectStatement? orderbyStatement? selectIntoTempStatement?
 		selectWithNoLogStatement?;
 
