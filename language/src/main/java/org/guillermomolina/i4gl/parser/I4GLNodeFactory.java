@@ -1013,7 +1013,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private Node createAssignmentToSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
+    private I4GLStatementNode createAssignmentToSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         try {
             return createAssignToVariableNode(ctx.identifier().getText(), valueNode);
@@ -1022,7 +1022,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private Node createAssignmentToRecordVariable(final I4GLParser.RecordVariableContext ctx,
+    private I4GLStatementNode createAssignmentToRecordVariable(final I4GLParser.RecordVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         try {
             I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
@@ -1049,7 +1049,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private Node createAssignmentToNotIndexedVariable(final I4GLParser.NotIndexedVariableContext ctx,
+    private I4GLStatementNode createAssignmentToNotIndexedVariable(final I4GLParser.NotIndexedVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         if (ctx.simpleVariable() != null) {
             return createAssignmentToSimpleVariable(ctx.simpleVariable(), valueNode);
@@ -1057,7 +1057,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         return createAssignmentToRecordVariable(ctx.recordVariable(), valueNode);
     }
 
-    private Node createAssignmentToIndexedSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
+    private I4GLStatementNode createAssignmentToIndexedSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
             final I4GLParser.VariableIndexContext variableIndexCtx, final I4GLExpressionNode valueNode) {
         try {
             final String identifier = ctx.identifier().getText();
@@ -1129,7 +1129,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         return node;
     }
 
-    private Node createAssignmentToIndexedRecordVariable(final I4GLParser.RecordVariableContext ctx,
+    private I4GLStatementNode createAssignmentToIndexedRecordVariable(final I4GLParser.RecordVariableContext ctx,
             final I4GLParser.VariableIndexContext variableIndexCtx, final I4GLExpressionNode valueNode) {
         try {
             I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
@@ -1152,7 +1152,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
         }
     }
 
-    private Node createAssignmentToIndexedVariable(final I4GLParser.IndexedVariableContext ctx,
+    private I4GLStatementNode createAssignmentToIndexedVariable(final I4GLParser.IndexedVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         final NotIndexedVariableContext notIndexedVariableContext = ctx.notIndexedVariable();
         if (notIndexedVariableContext.simpleVariable() != null) {
@@ -1163,7 +1163,7 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
                 valueNode);
     }
 
-    private Node createAssignmentNode(final I4GLParser.VariableContext ctx, final I4GLExpressionNode valueNode) {
+    private I4GLStatementNode createAssignmentNode(final I4GLParser.VariableContext ctx, final I4GLExpressionNode valueNode) {
         if (ctx.notIndexedVariable() != null) {
             return createAssignmentToNotIndexedVariable(ctx.notIndexedVariable(), valueNode);
         }
@@ -1188,7 +1188,16 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             sql += ctx.start.getInputStream().getText(interval);
             I4GLExpressionNode readVariableNode = createReadVariableNode("_database");
             FrameSlot[] returnSlots = new FrameSlot[0];
-            I4GLSelectNode node = new I4GLSelectNode(readVariableNode, sql, returnSlots);
+            I4GLSelectNode selectNode = new I4GLSelectNode(readVariableNode, sql, returnSlots);
+            List<I4GLStatementNode> assignNodes = new ArrayList<>();
+            if(ctx.variableList() != null) {
+                for(final I4GLParser.VariableContext variableCtx: ctx.variableList().variable()) {
+                    final I4GLExpressionNode valueNode = new ReadFromReturnNode(selectNode, i++);
+                    assignNodes.add(createAssignmentNode(variableCtx, valueNode));
+                }
+            }
+            I4GLBlockNode node = new I4GLBlockNode(
+                assignNodes.toArray(new I4GLStatementNode[assignNodes.size()]));
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
