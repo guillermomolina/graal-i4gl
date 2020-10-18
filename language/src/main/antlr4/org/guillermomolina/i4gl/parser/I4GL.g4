@@ -812,7 +812,7 @@ fromSelectStatement:
 aliasName: identifier;
 
 mainSelectStatement:
-	headSelectStatement (INTO identifier (COMMA identifier)*)? fromSelectStatement whereStatement?
+	headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
 		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
 		selectIntoTempStatement? selectWithNoLogStatement?;
 

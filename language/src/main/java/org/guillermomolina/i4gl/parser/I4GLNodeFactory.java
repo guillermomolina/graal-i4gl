@@ -1177,25 +1177,17 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             int end;
             Interval interval;
             String sql = "";
-            FrameSlot[] returnSlots = new FrameSlot[0];
             if (ctx.INTO() != null) {
                 end = ctx.INTO().getSymbol().getStartIndex() - 1;
                 interval = new Interval(start, end);
                 sql = ctx.start.getInputStream().getText(interval);
-                start = ctx.identifier(ctx.identifier().size() - 1).stop.getStopIndex() + 1;
-
-                List<FrameSlot> returnSlotList = new ArrayList<>(ctx.identifier().size());
-                for (final I4GLParser.IdentifierContext identifierCtx : ctx.identifier()) {
-                    final String resultIdentifier = identifierCtx.getText();
-                    FrameSlot recordSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
-                    returnSlotList.add(recordSlot);
-                }
-                returnSlots = returnSlotList.toArray(new FrameSlot[returnSlotList.size()]);
+                start = ctx.variableList().stop.getStopIndex() + 1;
             }
             end = ctx.stop.getStopIndex();
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
             I4GLExpressionNode readVariableNode = createReadVariableNode("_database");
+            FrameSlot[] returnSlots = new FrameSlot[0];
             I4GLSelectNode node = new I4GLSelectNode(readVariableNode, sql, returnSlots);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
