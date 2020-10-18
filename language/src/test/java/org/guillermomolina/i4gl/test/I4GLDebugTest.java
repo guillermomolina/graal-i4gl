@@ -152,7 +152,7 @@ public class I4GLDebugTest {
             session.getBreakpoints();
 
             expectSuspended((SuspendedEvent event) -> {
-                checkState(event, "fac", 7, true, "BREAKPOINT\n", "n", "INT 1").prepareContinue();
+                checkState(event, "fac", 7, true, "BREAKPOINT", "n", "INT 1").prepareContinue();
             });
 
             expectDone();

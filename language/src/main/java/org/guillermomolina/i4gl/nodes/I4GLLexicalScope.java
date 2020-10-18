@@ -25,7 +25,7 @@ import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.nodes.variables.write.I4GLSimpleAssignmentNode;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNode;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
@@ -215,7 +215,7 @@ public final class I4GLLexicalScope {
         //throw new NotImplementedException();
         // Variables are slot-based.
         // To collect declared variables, traverse the block's AST and find slots associated
-        // with I4GLSimpleAssignmentNode. The traversal stops when we hit the current node.
+        // with I4GLAssignToLocalVariableNode. The traversal stops when we hit the current node.
         Map<String, FrameSlot> slots = new LinkedHashMap<>(4);
         NodeUtil.forEachChild(varsBlock, new NodeVisitor() {
             @Override
@@ -247,17 +247,17 @@ public final class I4GLLexicalScope {
     private static Map<String, FrameSlot> collectArgs(Node block) {
         // Arguments are pushed to frame slots at the beginning of the function block.
         // To collect argument slots, search for I4GLReadArgumentNode inside of
-        // I4GLSimpleAssignmentNode.
+        // I4GLAssignToLocalVariableNode.
         Map<String, FrameSlot> args = new LinkedHashMap<>(4);
         NodeUtil.forEachChild(block, new NodeVisitor() {
 
-            private I4GLSimpleAssignmentNode wn; // The current write node containing a slot
+            private I4GLAssignToLocalVariableNode wn; // The current write node containing a slot
 
             @Override
             public boolean visit(Node node) {
                 // When there is a write node, search for I4GLReadArgumentNode among its children:
-                if (node instanceof I4GLSimpleAssignmentNode) {
-                    wn = (I4GLSimpleAssignmentNode) node;
+                if (node instanceof I4GLAssignToLocalVariableNode) {
+                    wn = (I4GLAssignToLocalVariableNode) node;
                     boolean all = NodeUtil.forEachChild(node, this);
                     wn = null;
                     return all;

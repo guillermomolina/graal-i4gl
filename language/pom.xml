@@ -108,7 +108,7 @@
             <include>**/*TestSuite.java</include>
             <include>**/*Test.java</include>
           </includes>
-          <argLine>-ea -Dgraalvm.locatorDisabled=true ${test.argLine}</argLine>
+          <argLine>-ea -Dgraalvm.locatorDisabled=true -Dsquirrel.home=/opt/squirrel-sql ${test.argLine}</argLine>
         </configuration>
       </plugin>
       <plugin>

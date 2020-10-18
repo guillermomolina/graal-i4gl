@@ -11,16 +11,15 @@ compilationUnit:
 identifier: IDENT;
 
 mainBlock:
-	EOL? MAIN EOL typeDeclarations? mainStatements? END MAIN EOL;
+	MAIN typeDeclarations? mainStatements? END MAIN;
 
 mainStatements: (
 		databaseDeclaration
 		| deferStatement
 		| statement
-		| EOL
 	)+;
 
-deferStatement: DEFER (INTERRUPT | QUIT) EOL;
+deferStatement: DEFER (INTERRUPT | QUIT);
 
 functionOrReportDefinitions: (
 		reportDefinition
@@ -30,19 +29,19 @@ functionOrReportDefinitions: (
 returnStatement: RETURN expressionList?;
 
 functionDefinition:
-	FUNCTION identifier parameterList? EOL typeDeclarations? codeBlock? END FUNCTION EOL;
+	FUNCTION identifier parameterList? typeDeclarations? codeBlock? END FUNCTION;
 
 parameterList: LPAREN parameterGroup* RPAREN;
 
 parameterGroup: identifier (COMMA identifier)*;
 
 globalDeclaration:
-	GLOBALS (string | EOL typeDeclarations END GLOBALS) EOL;
+	GLOBALS (string | typeDeclarations END GLOBALS);
 
 typeDeclarations: typeDeclaration+;
 
 typeDeclaration:
-	DEFINE variableDeclaration (COMMA variableDeclaration)* EOL;
+	DEFINE variableDeclaration (COMMA variableDeclaration)*;
 
 variableDeclaration: identifier (COMMA identifier)* type;
 //| identifier type (COMMA identifier type)*
@@ -123,7 +122,7 @@ structuredType: recordType | arrayType | dynArrayType;
 
 recordType:
 	RECORD (
-		EOL (variableDeclaration (COMMA variableDeclaration)*) END RECORD
+		(variableDeclaration (COMMA variableDeclaration)*) END RECORD
 		| (LIKE tableIdentifier DOT STAR)
 	);
 
@@ -165,7 +164,7 @@ simpleStatement:
 	| inputInsideStatement
 	| debugStatement;
 
-debugStatement: BREAKPOINT EOL;
+debugStatement: BREAKPOINT;
 
 BREAKPOINT: B R E A K P O I N T;
 
@@ -204,23 +203,7 @@ componentVariable:
 assignmentStatement:
 	LET (simpleAssignmentStatement | multipleAssignmentStatement);
 
-//Exploded for an easier visitor
-simpleAssignmentStatement:
-	assignSimpleVariable
-	| assignRecordVariable
-	| assignIndexedVariable
-	| assignIndexedRecordVariable;
-
-assignSimpleVariable: identifier EQUAL assignmentValue;
-
-assignRecordVariable:
-	simpleVariable (DOT identifier)+ EQUAL assignmentValue;
-
-assignIndexedVariable:
-	identifier variableIndex EQUAL assignmentValue;
-
-assignIndexedRecordVariable:
-	simpleVariable (DOT identifier)+ variableIndex EQUAL assignmentValue;
+simpleAssignmentStatement: variable EQUAL assignmentValue;
 
 assignmentValue: expressionList | NULL;
 
@@ -253,7 +236,7 @@ functionIdentifier: (
 
 actualParameter: STAR | expression;
 
-gotoStatement: GOTO COLON? label EOL;
+gotoStatement: GOTO COLON? label;
 
 condition: (TRUE | FALSE) | logicalTerm (OR logicalTerm)*;
 
@@ -292,16 +275,18 @@ sqlMultiply: STAR;
 
 sqlFactor: sqlFactor2 (DOUBLEVERTBAR sqlFactor2)*;
 
-sqlFactor2
-   : sqlVariable (UNITS unitType)?
-   | sqlLiteral (UNITS unitType)?
-   | groupFunction LPAREN (STAR | ALL | DISTINCT)? (sqlExpression (COMMA sqlExpression)*)? RPAREN
-   | sqlFunction (LPAREN sqlExpression (COMMA sqlExpression)* RPAREN)
-   | (PLUS | MINUS) sqlExpression
-   | LPAREN sqlExpression RPAREN
-   | sqlExpressionList
-   ;
-
+sqlFactor2:
+	sqlVariable (UNITS unitType)?
+	| sqlLiteral (UNITS unitType)?
+	| groupFunction LPAREN (STAR | ALL | DISTINCT)? (
+		sqlExpression (COMMA sqlExpression)*
+	)? RPAREN
+	| sqlFunction (
+		LPAREN sqlExpression (COMMA sqlExpression)* RPAREN
+	)
+	| (PLUS | MINUS) sqlExpression
+	| LPAREN sqlExpression RPAREN
+	| sqlExpressionList;
 
 sqlExpressionList:
 	LPAREN sqlExpression (COMMA sqlExpression)+ RPAREN;
@@ -400,7 +385,7 @@ whileStatement: WHILE ifCondition codeBlock? END WHILE;
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
 		STEP numericConstant
-	)? EOL codeBlock? END FOR EOL;
+	)? codeBlock? END FOR;
 
 controlVariable: identifier;
 
@@ -411,7 +396,7 @@ finalValue: expression;
 forEachStatement:
 	FOREACH identifier (USING variableList)? (INTO variableList)? (
 		WITH REOPTIMIZATION
-	)? EOL codeBlock? END FOREACH EOL;
+	)? codeBlock? END FOREACH;
 
 variableList: variable (COMMA variable)*;
 
@@ -456,7 +441,7 @@ exitStatements:
 	EXIT exitTypes
 	| EXIT PROGRAM (LPAREN expression RPAREN | expression)?;
 
-continueStatements: CONTINUE exitTypes EOL;
+continueStatements: CONTINUE exitTypes;
 
 otherStorageStatement:
 	ALLOCATE ARRAY identifier arrayIndexer
@@ -525,9 +510,9 @@ constructEvents:
 	| ON KEY LPAREN keyList RPAREN;
 
 constructInsideStatement:
-	NEXT FIELD (fieldName | NEXT | PREVIOUS) EOL
-	| CONTINUE CONSTRUCT EOL
-	| EXIT CONSTRUCT EOL;
+	NEXT FIELD (fieldName | NEXT | PREVIOUS)
+	| CONTINUE CONSTRUCT
+	| EXIT CONSTRUCT;
 
 specialAttribute: REVERSE | BLINK | UNDERLINE;
 
@@ -574,7 +559,7 @@ displayStatement:
 			TO fieldList
 			| AT expression COMMA expression
 		)?
-	) attributeList? EOL;
+	) attributeList?;
 
 displayValue:
 	expression (CLIPPED | USING string)?
@@ -691,13 +676,13 @@ optionsStatement:
 
 screenStatement:
 	CLEAR (FORM | WINDOW identifier | WINDOW? SCREEN | fieldList)
-	| CLOSE WINDOW identifier EOL
-	| CLOSE FORM identifier EOL
+	| CLOSE WINDOW identifier
+	| CLOSE FORM identifier
 	| constructStatement
-	| CURRENT WINDOW IS (SCREEN | identifier) EOL
+	| CURRENT WINDOW IS (SCREEN | identifier)
 	| displayStatement
 	| displayArrayStatement
-	| DISPLAY FORM identifier attributeList? EOL
+	| DISPLAY FORM identifier attributeList?
 	| errorStatement
 	| messageStatement
 	| promptStatement
@@ -724,7 +709,7 @@ sqlStatements:
 	| clientServerStatement;
 
 cursorManipulationStatement:
-	CLOSE cursorName EOL
+	CLOSE cursorName
 	| DECLARE cursorName (
 		CURSOR (WITH HOLD)? FOR (
 			sqlSelectStatement (FOR UPDATE (OF columnsList)?)?
@@ -745,7 +730,7 @@ cursorManipulationStatement:
 		| RELATIVE expression
 		| ABSOLUTE expression
 	)? cursorName (INTO variableList)?
-	| FLUSH cursorName EOL
+	| FLUSH cursorName
 	| OPEN cursorName (USING variableList)?
 	| PUT cursorName (FROM variableOrConstantList)?;
 
@@ -827,9 +812,9 @@ fromSelectStatement:
 aliasName: identifier;
 
 mainSelectStatement:
-	headSelectStatement (INTO identifier (COMMA identifier)*)? EOL? fromSelectStatement whereStatement? groupByStatement?
-		havingStatement? unionSelectStatement? orderbyStatement? selectIntoTempStatement?
-		selectWithNoLogStatement?;
+	headSelectStatement (INTO identifier (COMMA identifier)*)? fromSelectStatement whereStatement?
+		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
+		selectIntoTempStatement? selectWithNoLogStatement?;
 
 selectIntoTempStatement: INTO TEMP identifier;
 
@@ -855,10 +840,10 @@ sqlLoadStatement:
 	LOAD FROM (variable | string) (DELIMITER (variable | string))? (
 		INSERT INTO tableIdentifier (LPAREN columnsList RPAREN)?
 		| sqlInsertStatement
-	) EOL;
+	);
 
 sqlUnLoadStatement:
-	UNLOAD TO (variable | string) (DELIMITER (variable | string))? sqlSelectStatement EOL;
+	UNLOAD TO (variable | string) (DELIMITER (variable | string))? sqlSelectStatement;
 
 sqlInsertStatement:
 	INSERT INTO tableIdentifier (LPAREN columnsList RPAREN)? (
@@ -915,7 +900,7 @@ dataIntegrityStatement:
 	| COMMIT WORK
 	| ROLLBACK WORK;
 
-wheneverStatement: WHENEVER wheneverType wheneverFlow EOL;
+wheneverStatement: WHENEVER wheneverType wheneverFlow;
 
 wheneverType:
 	NOT FOUND
@@ -1833,11 +1818,9 @@ HEX_DIGIT: ('0' .. '9' | 'a' .. 'f');
 // Single-line comments
 
 SL_COMMENT:
-	'#' (~('\r' | '\n'))* (EOL+ | EOF) -> channel(HIDDEN);
+	'#' (~('\r' | '\n'))* ([\r\n]+ | EOF) -> channel(HIDDEN);
 
 SL_COMMENT_2:
-	'--' (~('\r' | '\n'))* (EOL+ | EOF) -> channel(HIDDEN);
+	'--' (~('\r' | '\n'))* ([\r\n]+ | EOF) -> channel(HIDDEN);
 
-EOL: [\r\n]+;
-
-WS: [ \t]+ -> channel(HIDDEN);
+WS: [ \t\r\n]+ -> channel(HIDDEN);

@@ -20,7 +20,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 /**
  * Node representing assignment to a record. Compared to
- * {@link I4GLSimpleAssignmentNode} it assigns the value to the record's frame
+ * {@link I4GLAssignToLocalVariableNode} it assigns the value to the record's frame
  * instead of function's frame.
  *
  * This node uses specializations which means that it is not used directly but

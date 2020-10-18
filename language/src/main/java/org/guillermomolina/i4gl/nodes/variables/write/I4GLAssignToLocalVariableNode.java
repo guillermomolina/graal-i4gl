@@ -39,7 +39,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
         @NodeField(name = "type", type = I4GLType.class), })
 @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 @TypeSystemReference(I4GLTypeSystem.class)
-public abstract class I4GLSimpleAssignmentNode extends I4GLStatementNode {
+public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
 
     public abstract FrameSlot getSlot();
 

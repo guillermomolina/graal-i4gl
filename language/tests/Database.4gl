@@ -6,8 +6,8 @@ MAIN
     DATABASE test
     SELECT COUNT(*) INTO theTotal
         FROM customers
-    DISPLAY theTotal
+    #DISPLAY theTotal
     SELECT customerNumber,customerName INTO customerNumber,customerName
         FROM customers
-    DISPLAY "|",customerNumber,"|",customerName,"|"
+    #DISPLAY "|",customerNumber,"|",customerName,"|"
 END MAIN
