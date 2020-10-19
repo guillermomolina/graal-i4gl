@@ -813,9 +813,10 @@ aliasName: identifier;
 
 
 mainSelectStatement:
-	headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
+	SELECT SQL_MODE_IGNORED_WORDS+;
+	/*headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
 		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
-		selectIntoTempStatement? selectWithNoLogStatement?;
+		selectIntoTempStatement? selectWithNoLogStatement?;*/
 
 mainSelectStatement2:
 	headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
