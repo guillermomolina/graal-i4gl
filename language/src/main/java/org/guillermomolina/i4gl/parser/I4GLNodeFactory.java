@@ -51,10 +51,10 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLNotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLOrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLMainRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
+import org.guillermomolina.i4gl.nodes.sql.I4GLSelectNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
-import org.guillermomolina.i4gl.nodes.statement.I4GLSelectNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
@@ -324,14 +324,21 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             parameterNodes.add((I4GLExpressionNode) visit(parameterCtx));
         }
         final I4GLExpressionNode[] arguments = parameterNodes.toArray(new I4GLExpressionNode[parameterNodes.size()]);
-        List<FrameSlot> returnSlots = new ArrayList<>(ctx.identifier().size());
-        for (final I4GLParser.IdentifierContext identifierCtx : ctx.identifier()) {
-            final String resultIdentifier = identifierCtx.getText();
-            FrameSlot recordSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
-            returnSlots.add(recordSlot);
+        FrameSlot[] returnSlots = new FrameSlot[0];
+        if(ctx.RETURNING() != null) {
+            List<FrameSlot> returnSlotList = new ArrayList<>(ctx.variableList().variable().size());
+            for (final I4GLParser.VariableContext variableCtx : ctx.variableList().variable()) {
+                if(variableCtx.indexedVariable() != null || variableCtx.notIndexedVariable().recordVariable() != null) {
+                    // Only Simple Local Variables for now
+                    throw new NotImplementedException();
+                }
+                final String resultIdentifier = variableCtx.notIndexedVariable().simpleVariable().identifier().getText();
+                FrameSlot returnSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
+                returnSlotList.add(returnSlot);
+            }    
+            returnSlots = returnSlotList.toArray(new FrameSlot[returnSlotList.size()]);
         }
-        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments,
-                returnSlots.toArray(new FrameSlot[returnSlots.size()]));
+        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments, returnSlots);
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -1177,27 +1184,30 @@ public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
             int end;
             Interval interval;
             String sql = "";
+            FrameSlot[] returnSlots = new FrameSlot[0];
             if (ctx.INTO() != null) {
                 end = ctx.INTO().getSymbol().getStartIndex() - 1;
                 interval = new Interval(start, end);
                 sql = ctx.start.getInputStream().getText(interval);
                 start = ctx.variableList().stop.getStopIndex() + 1;
+
+                List<FrameSlot> returnSlotList = new ArrayList<>(ctx.variableList().variable().size());
+                for (final I4GLParser.VariableContext variableCtx : ctx.variableList().variable()) {
+                    if(variableCtx.indexedVariable() != null || variableCtx.notIndexedVariable().recordVariable() != null) {
+                        // Only Simple Local Variables for now
+                        throw new NotImplementedException();
+                    }
+                    final String resultIdentifier = variableCtx.notIndexedVariable().simpleVariable().identifier().getText();
+                    FrameSlot recordSlot = currentLexicalScope.getLocalSlot(resultIdentifier);
+                    returnSlotList.add(recordSlot);
+                }
+                returnSlots = returnSlotList.toArray(new FrameSlot[returnSlotList.size()]);
             }
             end = ctx.stop.getStopIndex();
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
             I4GLExpressionNode readVariableNode = createReadVariableNode("_database");
-            FrameSlot[] returnSlots = new FrameSlot[0];
-            I4GLSelectNode selectNode = new I4GLSelectNode(readVariableNode, sql, returnSlots);
-            List<I4GLStatementNode> assignNodes = new ArrayList<>();
-            if(ctx.variableList() != null) {
-                for(final I4GLParser.VariableContext variableCtx: ctx.variableList().variable()) {
-                    final I4GLExpressionNode valueNode = new ReadFromReturnNode(selectNode, i++);
-                    assignNodes.add(createAssignmentNode(variableCtx, valueNode));
-                }
-            }
-            I4GLBlockNode node = new I4GLBlockNode(
-                assignNodes.toArray(new I4GLStatementNode[assignNodes.size()]));
+            I4GLSelectNode node = new I4GLSelectNode(readVariableNode, sql, returnSlots);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;

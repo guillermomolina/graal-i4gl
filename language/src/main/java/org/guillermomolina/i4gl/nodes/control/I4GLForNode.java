@@ -25,9 +25,7 @@ public class I4GLForNode extends I4GLStatementNode {
     @Child
     private I4GLStatementNode body;
     @Child
-    private I4GLExpressionNode hasEndedAscendingNode;
-    @Child
-    private I4GLExpressionNode hasEndedDescendingNode;
+    private I4GLExpressionNode readControlVariable;
     @Child
     private I4GLExpressionNode initialValue;
     @Child
@@ -36,55 +34,36 @@ public class I4GLForNode extends I4GLStatementNode {
     private I4GLAssignToLocalVariableNode step;
 
     public I4GLForNode(final I4GLAssignToLocalVariableNode assignment, final FrameSlot controlSlot,
-            final I4GLExpressionNode initialValue, final I4GLExpressionNode finalValue, final I4GLAssignToLocalVariableNode step,
-            final I4GLExpressionNode readControlVariableNode, final I4GLStatementNode body) {
+            final I4GLExpressionNode initialValue, final I4GLExpressionNode finalValue,
+            final I4GLAssignToLocalVariableNode step, final I4GLExpressionNode readControlVariable,
+            final I4GLStatementNode body) {
         this.assignment = assignment;
         this.controlSlot = controlSlot;
         this.initialValue = initialValue;
         this.finalValue = finalValue;
         this.step = step;
         this.body = body;
-        this.hasEndedAscendingNode = I4GLLessThanOrEqualNodeGen.create(readControlVariableNode, finalValue);
-        this.hasEndedDescendingNode = I4GLNotNodeGen.create(I4GLLessThanNodeGen.create(readControlVariableNode, finalValue));
+        this.readControlVariable = readControlVariable;
     }
 
-    @Override
-    public void executeVoid(final VirtualFrame frame) {
-        try {
-            final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(controlSlot);
-            I4GLExpressionNode hasEndedNode = hasEndedAscendingNode;
-            switch (kind) {
-                case Int:
-                    if (this.initialValue.executeInt(frame) >= this.finalValue.executeInt(frame)) {
-                        hasEndedNode = hasEndedDescendingNode;
-                    }
-                    break;
-                case Long:
-                    if (this.initialValue.executeBigInt(frame) >= this.finalValue.executeBigInt(frame)) {
-                        hasEndedNode = hasEndedDescendingNode;
-                    }
-                    break;
-                case Float:
-                    if (this.initialValue.executeSmallFloat(frame) >= this.finalValue.executeSmallFloat(frame)) {
-                        hasEndedNode = hasEndedDescendingNode;
-                    }
-                    break;
-                case Double:
-                    if (this.initialValue.executeDouble(frame) >= this.finalValue.executeDouble(frame)) {
-                        hasEndedNode = hasEndedDescendingNode;
-                    }
-                    break;
-                default:
-                    throw new I4GLRuntimeException("Unsupported control variable type");
-            }
-
-            this.execute(frame, hasEndedNode);
-        } catch (final UnexpectedResultException e) {
-            throw new I4GLRuntimeException("Something went wrong.");
+    private boolean isDescending(final VirtualFrame frame) throws UnexpectedResultException {
+        final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(controlSlot);
+        switch (kind) {
+            case Int:
+                return this.finalValue.executeInt(frame) < this.initialValue.executeInt(frame);
+            case Long:
+                return this.finalValue.executeBigInt(frame) < this.initialValue.executeBigInt(frame);
+            case Float:
+                return this.finalValue.executeSmallFloat(frame) < this.initialValue.executeSmallFloat(frame);
+            case Double:
+                return this.finalValue.executeDouble(frame) < this.initialValue.executeDouble(frame);
+            default:
+                throw new I4GLRuntimeException("Unsupported control variable type");
         }
     }
 
-    private void execute(final VirtualFrame frame, final I4GLExpressionNode hasEndedNode) throws UnexpectedResultException {
+    private void execute(final VirtualFrame frame, final I4GLExpressionNode hasEndedNode)
+            throws UnexpectedResultException {
         assignment.executeVoid(frame);
 
         while (hasEndedNode.executeInt(frame) != 0) {
@@ -92,4 +71,20 @@ public class I4GLForNode extends I4GLStatementNode {
             step.executeVoid(frame);
         }
     }
+
+    @Override
+    public void executeVoid(final VirtualFrame frame) {
+        try {
+            I4GLExpressionNode hasEndedNode;
+            if (isDescending(frame)) {
+                hasEndedNode = I4GLNotNodeGen.create(I4GLLessThanNodeGen.create(readControlVariable, finalValue));
+            } else {
+                hasEndedNode = I4GLLessThanOrEqualNodeGen.create(readControlVariable, finalValue);
+            }
+            this.execute(frame, hasEndedNode);
+        } catch (final UnexpectedResultException e) {
+            throw new I4GLRuntimeException("Something went wrong.");
+        }
+    }
+
 }

@@ -211,7 +211,7 @@ multipleAssignmentStatement:
 	identifier DOT STAR EQUAL identifier DOT STAR;
 
 callStatement:
-	CALL function (RETURNING identifier (COMMA identifier)*)?;
+	CALL function (RETURNING variableList)?;
 
 functionIdentifier: (
 		DAY
