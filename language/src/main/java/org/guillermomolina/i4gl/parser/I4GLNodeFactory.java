@@ -86,7 +86,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
-public class I4GLNodeFactory extends I4GLBaseVisitor<Node> {
+public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private static final String RECORD_STRING = "Record";
     private static final String DIMENSIONS_STRING = "Dimensions can not be ";
 

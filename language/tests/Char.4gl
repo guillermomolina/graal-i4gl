@@ -9,9 +9,3 @@ MAIN
     LET var1 = "H"
     DISPLAY "|", var1, "|"
 END MAIN
-
-# Expected output
-# "|H        |"
-# "|H  X     |"
-# "|H  X    Z|"
-# "|H        |"
