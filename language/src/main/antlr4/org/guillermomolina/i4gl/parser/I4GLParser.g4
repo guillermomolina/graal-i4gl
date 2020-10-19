@@ -811,7 +811,13 @@ fromSelectStatement:
 
 aliasName: identifier;
 
+
 mainSelectStatement:
+	headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
+		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
+		selectIntoTempStatement? selectWithNoLogStatement?;
+
+mainSelectStatement2:
 	headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
 		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
 		selectIntoTempStatement? selectWithNoLogStatement?;

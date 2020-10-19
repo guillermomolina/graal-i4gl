@@ -4,6 +4,10 @@
 
 lexer grammar I4GLLexer;
 
+channels {
+	COMMENT_CHANNEL
+}
+
 fragment A: ('a' | 'A');
 
 fragment B: ('b' | 'B');
@@ -595,7 +599,7 @@ SECOND: S E C O N D;
 
 SKIP2: S K I P;
 
-SELECT: S E L E C T;
+SELECT: S E L E C T -> mode(SQL_MODE);
 
 SET: S E T;
 
@@ -838,13 +842,21 @@ fragment EXPONENT: ('e' | 'E') ('+' | '-')? ('0' .. '9')+;
 
 HEX_DIGIT: ('0' .. '9' | 'a' .. 'f');
 
-WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+WS: [ \t\r\n\u000C]+ -> channel(HIDDEN);
 
 // Multi-line comment not standard
-ML_COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+ML_COMMENT: '/*' .*? '*/' -> channel(COMMENT_CHANNEL);
 
 // Single-line comments
 
-SL_COMMENT:       '#' ~[\r\n]*    -> channel(HIDDEN);
+SL_COMMENT: '#' ~[\r\n]* -> channel(COMMENT_CHANNEL);
 
-SL_COMMENT_2:       '--' ~[\r\n]*    -> channel(HIDDEN);
+SL_COMMENT_2: '--' ~[\r\n]* -> channel(COMMENT_CHANNEL);
+
+// SQL Mode
+
+mode SQL_MODE;
+
+SQL_MODE_DISPLAY: DISPLAY -> type(DISPLAY),mode(DEFAULT_MODE);
+
+
