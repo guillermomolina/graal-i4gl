@@ -43,6 +43,9 @@ public class SquirrelSession extends SquirrelSessionAdapter {
             AliasPasswordHandler.getPassword(aliasToConnectTo), props);
 
       sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
+      sessionProperties.setSQLLimitRows(false);
+      //sessionProperties.setSQLReadOn(true);
+      //sessionProperties.setSQLReadOnBlockSize(2);      
       tokenizer = new QueryTokenizer(sessionProperties.getSQLStatementSeparator(),
             sessionProperties.getStartOfLineComment(), sessionProperties.getRemoveMultiLineComment());
    }

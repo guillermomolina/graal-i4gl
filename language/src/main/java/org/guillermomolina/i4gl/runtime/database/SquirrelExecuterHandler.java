@@ -11,7 +11,6 @@ import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -19,7 +18,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class SquirrelExecuterHandler implements ISQLExecuterHandler {
    private final SquirrelSession session;
-   private ResultSetWrapper resultSetWrapper;
+   private SquirrelDataSet resultSet;
 
    public SquirrelExecuterHandler(SquirrelSession session) {
       this.session = session;
@@ -73,19 +72,14 @@ public class SquirrelExecuterHandler implements ISQLExecuterHandler {
    @Override
    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
          throws DataSetException {
-      resultSetWrapper = rst;
-   }
-
-   public ResultSetDataSet getResultSetDataSet() throws DataSetException {
-      ResultSetDataSet resultSetDataSet = new ResultSetDataSet();
-      resultSetDataSet.setLimitDataRead(true);
+      resultSet = new SquirrelDataSet();
+      resultSet.setLimitDataRead(true);
       DialectType dialectType = DialectFactory.getDialectType(session.getMetaData());
-      resultSetDataSet.setSqlExecutionTabResultSet(resultSetWrapper, null, dialectType);
-      return resultSetDataSet;
+      resultSet.setSqlExecutionTabResultSet(rst, null, dialectType);
    }
 
-   public ResultSetWrapper getResultSetWrapper() {
-      return resultSetWrapper;
+   public SquirrelDataSet getResultSet() {
+      return resultSet;
    }
 
    @Override

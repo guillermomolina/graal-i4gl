@@ -8,6 +8,7 @@ import java.util.List;
 import com.oracle.truffle.api.CompilerDirectives;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.runtime.database.SquirrelDataSet;
 import org.guillermomolina.i4gl.runtime.database.SquirrelExecuterHandler;
 import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
@@ -15,7 +16,6 @@ import org.guillermomolina.i4gl.runtime.exceptions.DatabaseException;
 
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 
 @CompilerDirectives.ValueType
 public class I4GLDatabase {
@@ -81,7 +81,7 @@ public class I4GLDatabase {
         sqlExecuterTask.setExecuteEditableCheck(false);
         sqlExecuterTask.run();
         try {
-            ResultSetDataSet rsds = sqlExecuterHandlerProxy.getResultSetDataSet();
+            SquirrelDataSet rsds = sqlExecuterHandlerProxy.getResultSet();
             if (rsds.currentRowCount() != 1) {
                 final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
                 throw new DatabaseException("The query \"" + query + "\" has not returned exactly one row.");

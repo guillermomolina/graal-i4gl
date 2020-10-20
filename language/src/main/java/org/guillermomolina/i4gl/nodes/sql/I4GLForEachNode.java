@@ -62,8 +62,8 @@ public class I4GLForEachNode extends I4GLStatementNode {
     public void executeVoid(VirtualFrame frame) {
         final I4GLCursor cursor = (I4GLCursor) cursorVariableNode.executeGeneric(frame);
         cursor.start();
-        while (cursor.hasNext()) {
-            evaluateResult(frame, cursor.getNext());
+        while (cursor.next()) {
+            evaluateResult(frame, cursor.getRow());
             body.executeVoid(frame);
         }
         cursor.end();
