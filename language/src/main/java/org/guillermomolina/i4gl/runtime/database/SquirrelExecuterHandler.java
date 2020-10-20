@@ -19,7 +19,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class SquirrelExecuterHandler implements ISQLExecuterHandler {
    private final SquirrelSession session;
-   private ResultSetDataSet resultSetDataSet;
+   private ResultSetWrapper resultSetWrapper;
 
    public SquirrelExecuterHandler(SquirrelSession session) {
       this.session = session;
@@ -73,14 +73,19 @@ public class SquirrelExecuterHandler implements ISQLExecuterHandler {
    @Override
    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
          throws DataSetException {
-      resultSetDataSet = new ResultSetDataSet();
-      resultSetDataSet.setLimitDataRead(true);
-      DialectType dialectType = DialectFactory.getDialectType(session.getMetaData());
-      resultSetDataSet.setSqlExecutionTabResultSet(rst, null, dialectType);
+      resultSetWrapper = rst;
    }
 
-   public ResultSetDataSet getResultSetDataSet() {
+   public ResultSetDataSet getResultSetDataSet() throws DataSetException {
+      ResultSetDataSet resultSetDataSet = new ResultSetDataSet();
+      resultSetDataSet.setLimitDataRead(true);
+      DialectType dialectType = DialectFactory.getDialectType(session.getMetaData());
+      resultSetDataSet.setSqlExecutionTabResultSet(resultSetWrapper, null, dialectType);
       return resultSetDataSet;
+   }
+
+   public ResultSetWrapper getResultSetWrapper() {
+      return resultSetWrapper;
    }
 
    @Override

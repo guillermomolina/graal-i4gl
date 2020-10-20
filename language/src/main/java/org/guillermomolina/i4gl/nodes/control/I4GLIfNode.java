@@ -3,8 +3,8 @@ package org.guillermomolina.i4gl.nodes.control;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
-
 import com.oracle.truffle.api.profiles.ConditionProfile;
+
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
@@ -12,7 +12,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 /**
  * Node representing if statement.
  */
-@NodeInfo(shortName = "if", description = "The node implementing a conditional statement")
+@NodeInfo(shortName = "IF", description = "The node implementing a conditional statement")
 public final class I4GLIfNode extends I4GLStatementNode {
 
 	@Child

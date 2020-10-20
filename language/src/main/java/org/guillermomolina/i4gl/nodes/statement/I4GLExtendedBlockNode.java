@@ -14,7 +14,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.GotoException;
 /**
  * Block node implementation with extended support of goto statements.
  */
-@NodeInfo(shortName = "block")
+@NodeInfo(shortName = "EXTENDED BLOCK")
 public class I4GLExtendedBlockNode extends I4GLStatementNode {
 
     @Children

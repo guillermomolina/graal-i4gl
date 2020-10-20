@@ -19,7 +19,7 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
-@NodeInfo(shortName = "call")
+@NodeInfo(shortName = "CALL")
 public final class I4GLCallNode extends I4GLStatementNode {
 
     private final String functionIdentifier;

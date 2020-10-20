@@ -1,5 +1,7 @@
 # Informix Fourth Generation Language
 
-An Informix 4GL language implementation built using Truffle for the GraalVM.
+The Informix 4GL is a Pascal like functional language that embeds SQL statements.
 
-WORK IN PROGRESS
+The grammar is implemented in [Antlr 4](https://www.antlr.org/), the parser builds AST nodes for the 4GL specific code (functions, control flow, variables, etc), wich are implemented as a Tuffle language on top of [GraalVM](https://www.graalvm.org/). The SQL specific code is handled to the [Squirrel SQL](http://squirrel-sql.sourceforge.net/) library for further parsing and later execution.
+
+WORK IN PROGRESS...

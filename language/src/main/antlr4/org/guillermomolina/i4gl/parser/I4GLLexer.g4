@@ -60,6 +60,8 @@ fragment Y: ('y' | 'Y');
 
 fragment Z: ('z' | 'Z');
 
+ABSOLUTE: A B S O L U T E;
+
 AFTER: A F T E R;
 
 ACCEPT: A C C E P T;
@@ -149,6 +151,8 @@ CREATE: C R E A T E -> mode(SQL_MODE);
 
 CURRENT: C U R R E N T;
 
+CURSOR: C U R S O R;
+
 CYAN: C Y A N;
 
 DATABASE: D A T A B A S E;
@@ -165,7 +169,7 @@ DEC: D E C;
 
 DECIMAL: D E C I M A L;
 
-DECLARE: D E C L A R E -> mode(SQL_MODE);
+DECLARE: D E C L A R E;
 
 DEFAULTS: D E F A U L T S;
 
@@ -211,7 +215,7 @@ EVERY: E V E R Y;
 
 EXCLUSIVE: E X C L U S I V E;
 
-EXECUTE: E X E C U T E -> mode(SQL_MODE);
+EXECUTE: E X E C U T E;
 
 EXIT: E X I T;
 
@@ -245,7 +249,7 @@ FOUND: F O U N D;
 
 FRACTION: F R A C T I O N;
 
-FREE: F R E E -> mode(SQL_MODE);
+FREE: F R E E;
 
 FROM: F R O M -> mode(SQL_MODE);
 
@@ -266,6 +270,8 @@ HEADER: H E A D E R;
 HELP: H E L P;
 
 HIDE: H I D E;
+
+HOLD: H O L D;
 
 HOUR: H O U R;
 
@@ -405,13 +411,15 @@ PIPE: P I P E;
 
 PRECISION: P R E C I S I O N;
 
-PREPARE: P R E P A R E -> mode(SQL_MODE);
+PREPARE: P R E P A R E;
 
 PREVIOUS: P R E V I O U S;
 
 PRINT: P R I N T;
 
 PRINTER: P R I N T E R;
+
+PRIOR: P R I O R;
 
 PROGRAM: P R O G R A M;
 
@@ -426,6 +434,8 @@ RECORD: R E C O R D;
 REAL: R E A L;
 
 RED: R E D;
+
+RELATIVE: R E L A T I V E;
 
 REOPTIMIZATION: R E O P T I M I Z A T I O N;
 
@@ -685,7 +695,7 @@ SQL_MODE_FOR: FOR -> type(FOR), mode(DEFAULT_MODE);
 
 SQL_MODE_FREE: FREE -> type(FREE), mode(DEFAULT_MODE);
 
-SQL_MODE_FROM: FROM -> type(FROM), mode(DEFAULT_MODE);
+SQL_MODE_FROM: FROM -> type(FROM);
 
 SQL_MODE_IF: IF -> type(IF), mode(DEFAULT_MODE);
 

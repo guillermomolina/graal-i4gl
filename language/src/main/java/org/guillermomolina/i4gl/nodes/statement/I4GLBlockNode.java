@@ -14,7 +14,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 /**
  * A statement node that just executes a list of other statements.
  */
-@NodeInfo(shortName = "block", description = "The node implementing a source code block")
+@NodeInfo(shortName = "BLOCK", description = "The node implementing a source code block")
 public final class I4GLBlockNode extends I4GLStatementNode implements BlockNode.ElementExecutor<I4GLStatementNode> {
     /**
      * The block of child nodes. Using the block node allows Truffle to split the block into

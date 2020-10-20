@@ -47,7 +47,7 @@ import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.ReturnException;
 
-@NodeInfo(shortName = "return", description = "The node implementing a return statement")
+@NodeInfo(shortName = "RETURN", description = "The node implementing a return statement")
 public final class I4GLReturnNode extends I4GLStatementNode {
 
     @Children private I4GLExpressionNode[] valueNodes;

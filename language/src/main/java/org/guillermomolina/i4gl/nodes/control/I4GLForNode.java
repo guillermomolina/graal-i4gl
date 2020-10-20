@@ -17,7 +17,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 /**
  * Node representing for cycle.
  */
-@NodeInfo(shortName = "for")
+@NodeInfo(shortName = "FOR")
 public class I4GLForNode extends I4GLStatementNode {
     private final FrameSlot controlSlot;
     @Child

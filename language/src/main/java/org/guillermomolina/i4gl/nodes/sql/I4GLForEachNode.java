@@ -3,26 +3,28 @@ package org.guillermomolina.i4gl.nodes.sql;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
-import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
+import org.guillermomolina.i4gl.runtime.values.I4GLCursor;
 
-public class I4GLSelectNode extends I4GLStatementNode {
-    @Child
-    private I4GLExpressionNode databaseVariableNode;
-    @Child
-    private InteropLibrary interop;
-    private  final String sql;
+/**
+ * Node representing I4GL's foreach loop.
+ */
+@NodeInfo(shortName = "FOREACH", description = "The node implementing a foreach loop on a cursor")
+public class I4GLForEachNode extends I4GLStatementNode {
     private final FrameSlot[] resultSlots;
+    @Child
+    private I4GLExpressionNode cursorVariableNode;
+    @Child
+    private I4GLStatementNode body;
 
-    public I4GLSelectNode(final I4GLExpressionNode databaseVariableNode, final String sql, FrameSlot[] resultSlots) {
-        this.databaseVariableNode = databaseVariableNode;
-        this.interop = InteropLibrary.getFactory().createDispatched(3);
-        this.sql = sql;
+    public I4GLForEachNode(I4GLExpressionNode cursorVariableNode, final FrameSlot[] resultSlots, final I4GLStatementNode body) {
+        this.cursorVariableNode = cursorVariableNode;
         this.resultSlots = resultSlots;
+        this.body = body;
     }
 
     public void evaluateResult(VirtualFrame frame, Object[] returnValue) {
@@ -52,13 +54,18 @@ public class I4GLSelectNode extends I4GLStatementNode {
                         break;
                     default:
                 }
-            }    
+            }
         }
     }
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        final I4GLDatabase database = (I4GLDatabase) databaseVariableNode.executeGeneric(frame);
-        evaluateResult(frame, database.execute(sql));
+        final I4GLCursor cursor = (I4GLCursor) cursorVariableNode.executeGeneric(frame);
+        cursor.start();
+        while (cursor.hasNext()) {
+            evaluateResult(frame, cursor.getNext());
+            body.executeVoid(frame);
+        }
+        cursor.end();
     }
 }

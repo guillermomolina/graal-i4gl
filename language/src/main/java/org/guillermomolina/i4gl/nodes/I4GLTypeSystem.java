@@ -24,6 +24,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLNull;
  * ARRAY - {@link I4GLArrayType} - {@link I4GLSmallIntArray}, {@link I4GLIntArray}, {@link I4GLBigIntArray}, 
  *                                  {@link I4GLSmallFloatArray}, {@link I4GLFloatArray}
  * DATABASE - {@link I4GLDatabaseType} - {@link I4GLDatabase}
+ * Cursor - {@link I4GLCursorType} - {@link I4GLCursor}
  * 
  * Pseudo types:
  *  - {@link I4GLLabelType} - {@link I4GLLabel}

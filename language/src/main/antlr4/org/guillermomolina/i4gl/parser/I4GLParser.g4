@@ -4,7 +4,9 @@
 
 parser grammar I4GLParser;
 
-options { tokenVocab=I4GLLexer; }
+options {
+	tokenVocab = I4GLLexer;
+}
 
 compilationUnit:
 	databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock? functionOrReportDefinitions
@@ -12,8 +14,7 @@ compilationUnit:
 
 identifier: IDENT;
 
-mainBlock:
-	MAIN typeDeclarations? mainStatements? END MAIN;
+mainBlock: MAIN typeDeclarations? mainStatements? END MAIN;
 
 mainStatements: (
 		databaseDeclaration
@@ -212,8 +213,7 @@ assignmentValue: expressionList | NULL;
 multipleAssignmentStatement:
 	identifier DOT STAR EQUAL identifier DOT STAR;
 
-callStatement:
-	CALL function (RETURNING variableList)?;
+callStatement: CALL function (RETURNING variableList)?;
 
 actualParameter: STAR | expression;
 
@@ -265,9 +265,7 @@ factorTypes:
 	| NOT factor;
 
 function:
-	identifier LPAREN (
-		actualParameter (COMMA actualParameter)*
-	)? RPAREN;
+	identifier LPAREN (actualParameter (COMMA actualParameter)*)? RPAREN;
 
 constant: numericConstant | string;
 
@@ -298,9 +296,13 @@ repetetiveStatement:
 whileStatement: WHILE ifCondition codeBlock? END WHILE;
 
 forEachStatement:
-	FOREACH identifier (USING variableList)? (INTO variableList)? (
+	FOREACH cursorName usingVariableList? intoVariableList? (
 		WITH REOPTIMIZATION
 	)? codeBlock? END FOREACH;
+
+usingVariableList: USING variableList;
+
+intoVariableList: INTO variableList;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
@@ -354,13 +356,8 @@ otherStorageStatement:
 	| DEALLOCATE ARRAY identifier
 	| RESIZE ARRAY identifier arrayIndexer
 	| FREE variableList // name clash, marked as SQL
-	| INITIALIZE variableList (
-		TO NULL
-		| LIKE expressionList
-	)
-	| VALIDATE variableList LIKE expression (
-		COMMA expression
-	)*;
+	| INITIALIZE variableList (TO NULL | LIKE expressionList)
+	| VALIDATE variableList LIKE expression (COMMA expression)*;
 
 printExpressionItem:
 	COLUMN expression
@@ -616,12 +613,49 @@ sqlStatements:
 	| clientServerStatement;
 
 cursorManipulationStatement:
-	CLOSE SQL_MODE_WORD
-	| DECLARE SQL_MODE_WORD+
-	| FETCH SQL_MODE_WORD+ (INTO variableList)?
-	| FLUSH SQL_MODE_WORD
-	| OPEN SQL_MODE_WORD (USING variableList)?
-	| PUT SQL_MODE_WORD (FROM variableOrConstantList)?;
+	closeCursorStatement
+	| declareCursorStatement
+	| fetchCursorStatement
+	| flushCursorStatement
+	| openCursorStatement
+	| putCursorStatement;
+
+closeCursorStatement: CLOSE cursorName;
+
+declareCursorStatement:
+	DECLARE cursorName (
+		CURSOR (WITH HOLD)? FOR (
+			sqlSelectStatement (FOR UPDATE (OF columnsList)?)?
+			| sqlInsertStatement
+			| statementId
+		)
+		| SCROLL CURSOR (WITH HOLD)? FOR (
+			sqlSelectStatement
+			| statementId
+		)
+	);
+
+fetchCursorStatement:
+	FETCH (
+		NEXT
+		| (PREVIOUS | PRIOR)
+		| FIRST
+		| LAST
+		| CURRENT
+		| RELATIVE expression
+		| ABSOLUTE expression
+	)? cursorName intoVariableList?;
+
+flushCursorStatement: FLUSH cursorName;
+
+openCursorStatement: OPEN cursorName usingVariableList?;
+
+putCursorStatement:
+	PUT cursorName (FROM variableOrConstantList)?;
+
+statementId: identifier;
+
+cursorName: identifier;
 
 dataDefinitionStatement:
 	DROP SQL_MODE_WORD+
@@ -635,28 +669,29 @@ dataManipulationStatement:
 	| sqlLoadStatement
 	| sqlUnLoadStatement;
 
-sqlInsertStatement:
-	INSERT_INTO SQL_MODE_WORD+;
+sqlInsertStatement: INSERT_INTO SQL_MODE_WORD+;
 
-sqlDeleteStatement:
-	DELETE_FROM SQL_MODE_WORD+;
+sqlDeleteStatement: DELETE_FROM SQL_MODE_WORD+;
 
 sqlSelectStatement:
-	SELECT SQL_MODE_WORD+ (INTO variableList)? FROM SQL_MODE_WORD+;
+	SELECT SQL_MODE_WORD+ intoVariableList? FROM SQL_MODE_WORD+;
 
-sqlUpdateStatement:
-	UPDATE SQL_MODE_WORD+;
+sqlUpdateStatement: UPDATE SQL_MODE_WORD+;
 
 sqlLoadStatement:
-	LOAD_FROM (variable | SQL_MODE_WORD) (DELIMITER (variable | SQL_MODE_WORD))? SQL_MODE_WORD+;
+	LOAD_FROM (variable | SQL_MODE_WORD) (
+		DELIMITER (variable | SQL_MODE_WORD)
+	)? SQL_MODE_WORD+;
 
 sqlUnLoadStatement:
-	UNLOAD_TO (variable | SQL_MODE_WORD) (DELIMITER (variable | SQL_MODE_WORD))? SQL_MODE_WORD+;
+	UNLOAD_TO (variable | SQL_MODE_WORD) (
+		DELIMITER (variable | SQL_MODE_WORD)
+	)? SQL_MODE_WORD+;
 
 dynamicManagementStatement:
-	PREPARE SQL_MODE_WORD+
-	| EXECUTE SQL_MODE_WORD+
-	| FREE SQL_MODE_WORD+
+	PREPARE cursorName FROM expression
+	| EXECUTE cursorName usingVariableList?
+	| FREE (cursorName | statementId)
 	| LOCK SQL_MODE_WORD+;
 
 queryOptimizationStatement:

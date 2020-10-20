@@ -27,6 +27,10 @@ public class I4GLDatabase {
         this.aliasName = aliasName;
     }
 
+    public SquirrelSession getSession() {
+        return session;
+    }
+
     public void connect() {
         if (session == null) {
             session = new SquirrelSession(aliasName);
@@ -76,14 +80,18 @@ public class I4GLDatabase {
         SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(session, sql, sqlExecuterHandlerProxy);
         sqlExecuterTask.setExecuteEditableCheck(false);
         sqlExecuterTask.run();
-        ResultSetDataSet rsds = sqlExecuterHandlerProxy.getResultSetDataSet();
-        if (rsds.currentRowCount() != 1) {
-            final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
-            throw new DatabaseException(
-                    "The query \"" + query + "\" has not returned exactly one row.");
+        try {
+            ResultSetDataSet rsds = sqlExecuterHandlerProxy.getResultSetDataSet();
+            if (rsds.currentRowCount() != 1) {
+                final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
+                throw new DatabaseException("The query \"" + query + "\" has not returned exactly one row.");
+            }
+            ColumnDisplayDefinition[] cDefinitions = rsds.getDataSetDefinition().getColumnDefinitions();
+            List<Object[]> rows = rsds.getAllDataForReadOnly();
+            return toI4GLArray(cDefinitions, rows.get(0));
+        } catch (Exception ex) {
+            //
         }
-        ColumnDisplayDefinition[] cDefinitions = rsds.getDataSetDefinition().getColumnDefinitions();
-        List<Object[]> rows = rsds.getAllDataForReadOnly();
-        return toI4GLArray(cDefinitions, rows.get(0));
+        return null;
     }
 }

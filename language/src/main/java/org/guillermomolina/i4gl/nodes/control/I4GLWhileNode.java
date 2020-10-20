@@ -18,7 +18,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 /**
  * Node representing I4GL's while loop.
  */
-@NodeInfo(shortName = "while", description = "The node implementing a while loop")
+@NodeInfo(shortName = "WHILE", description = "The node implementing a while loop")
 public class I4GLWhileNode extends I4GLStatementNode {
 
     private static class WhileRepeatingNode extends Node implements RepeatingNode {
