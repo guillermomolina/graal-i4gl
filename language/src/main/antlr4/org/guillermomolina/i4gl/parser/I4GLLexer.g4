@@ -60,25 +60,17 @@ fragment Y: ('y' | 'Y');
 
 fragment Z: ('z' | 'Z');
 
-ABSOLUTE: A B S O L U T E;
-
 AFTER: A F T E R;
 
 ACCEPT: A C C E P T;
-
-AGGREGATE: A G G R E G A T E;
 
 ALLOCATE: A L L O C A T E;
 
 ALL: A L L;
 
-ALL_ROWS: A L L '_' R O W S;
-
 AND: A N D;
 
 ANY: A N Y;
-
-AS: A S;
 
 ASC: A S C;
 
@@ -90,19 +82,11 @@ ATTRIBUTE: A T T R I B U T E;
 
 ATTRIBUTES: A T T R I B U T E S;
 
-AVERAGE: A V E R A G E;
-
-AVG: A V G;
-
 ARRAY: A R R A Y;
 
 BEFORE: B E F O R E;
 
-BEGIN: B E G I N;
-
-//TRANSACTION CONTROL
-
-BETWEEN: B E T W E E N;
+BEGIN: B E G I N -> mode(SQL_MODE);
 
 BIGINT: B I G I N T;
 
@@ -121,13 +105,9 @@ BOTTOM: B O T T O M;
 // Not standard
 BREAKPOINT: B R E A K P O I N T;
 
-BUFFERED: B U F F E R E D;
-
 BY: B Y;
 
 BYTE: B Y T E;
-
-CACHE: C A C H E;
 
 CALL: C A L L;
 
@@ -137,17 +117,17 @@ CHAR: C H A R;
 
 CHARACTER: C H A R A C T E R;
 
-CHAR_LENGTH: C H A R '_' L E N G T H;
-
-CHECK: C H E C K;
-
 CLEAR: C L E A R;
 
 CLIPPED: C L I P P E D;
 
-CLOSE: C L O S E;
+CLOSE_DATABASE: C L O S E WS D A T A B A S E;
 
-CLUSTER: C L U S T E R;
+CLOSE_FORM: C L O S E WS F O R M;
+
+CLOSE_WINDOW: C L O S E WS W I N D O W;
+
+CLOSE: C L O S E -> mode(SQL_MODE);
 
 COLUMN: C O L U M N;
 
@@ -157,31 +137,17 @@ COMMAND: C O M M A N D;
 
 COMMENT: C O M M E N T;
 
-COMMIT: C O M M I T;
-
-COMMITTED: C O M M I T T E D;
-
-CONSTANT: C O N S T A N T;
+COMMIT: C O M M I T -> mode(SQL_MODE);
 
 CONSTRAINED: C O N S T R A I N E D;
-
-CONSTRAINT: C O N S T R A I N T;
 
 CONSTRUCT: C O N S T R U C T;
 
 CONTINUE: C O N T I N U E;
 
-COUNT: C O U N T;
-
-COPY: C O P Y;
-
-CRCOLS: C R C O L S;
-
-CREATE: C R E A T E;
+CREATE: C R E A T E -> mode(SQL_MODE);
 
 CURRENT: C U R R E N T;
-
-CURSOR: C U R S O R;
 
 CYAN: C Y A N;
 
@@ -199,11 +165,7 @@ DEC: D E C;
 
 DECIMAL: D E C I M A L;
 
-DECODE: D E C O D E;
-
-DECLARE: D E C L A R E;
-
-DEFAULT: D E F A U L T;
+DECLARE: D E C L A R E -> mode(SQL_MODE);
 
 DEFAULTS: D E F A U L T S;
 
@@ -211,11 +173,13 @@ DEFER: D E F E R;
 
 DEFINE: D E F I N E;
 
+DELETE_FROM: D E L E T E WS F R O M -> mode(SQL_MODE);
+
 DELETE: D E L E T E;
 
 //SQL
 
-DELIMITER: D E L I M I T E R;
+DELIMITER: D E L I M I T E R -> mode(SQL_MODE);
 
 //SQL
 
@@ -225,21 +189,15 @@ DIM: D I M;
 
 DIMENSIONS: D I M E N S I O N S;
 
-DIRTY: D I R T Y;
-
 DISPLAY: D I S P L A Y -> mode(DEFAULT_MODE);
 
-DISTINCT: D I S T I N C T;
-
 DIV: D I V;
-
-DO: D O;
 
 DOUBLE: D O U B L E;
 
 DOWN: D O W N;
 
-DROP: D R O P;
+DROP: D R O P -> mode(SQL_MODE);
 
 DYNAMIC: D Y N A M I C;
 
@@ -249,35 +207,21 @@ END: E N D;
 
 ERROR: E R R O R;
 
-ESCAPE: E S C A P E;
-
 EVERY: E V E R Y;
 
 EXCLUSIVE: E X C L U S I V E;
 
-EXEC: E X E C;
-
-EXECUTE: E X E C U T E;
+EXECUTE: E X E C U T E -> mode(SQL_MODE);
 
 EXIT: E X I T;
-
-EXISTS: E X I S T S;
-
-EXPLAIN: E X P L A I N;
-
-EXTEND: E X T E N D;
-
-EXTENT: E X T E N T;
 
 EXTERNAL: E X T E R N A L;
 
 FALSE: F A L S E;
 
-FETCH: F E T C H;
+FETCH: F E T C H -> mode(SQL_MODE);
 
 FIELD: F I E L D;
-
-FIELD_TOUCHED: F I E L D '_' T O U C H E D;
 
 FILE: F I L E;
 
@@ -285,11 +229,9 @@ FINISH: F I N I S H;
 
 FIRST: F I R S T;
 
-FIRST_ROWS: F I R S T '_' R O W S;
-
 FLOAT: F L O A T;
 
-FLUSH: F L U S H;
+FLUSH: F L U S H -> mode(SQL_MODE);
 
 FOR: F O R;
 
@@ -297,23 +239,17 @@ FORM: F O R M;
 
 FORMAT: F O R M A T;
 
-FORMONLY: F O R M O N L Y;
-
 FOREACH: F O R E A C H;
 
 FOUND: F O U N D;
 
 FRACTION: F R A C T I O N;
 
-FREE: F R E E;
+FREE: F R E E -> mode(SQL_MODE);
 
-FROM: F R O M;
-
-//SQL & PREPARE
+FROM: F R O M -> mode(SQL_MODE);
 
 FUNCTION: F U N C T I O N;
-
-GET_FLDBUF: G E T F L D B U F;
 
 GLOBALS: G L O B A L S;
 
@@ -325,65 +261,31 @@ GREEN: G R E E N;
 
 GROUP: G R O U P;
 
-//SQL
-
-HAVING: H A V I N G;
-
-//SQL
-
 HEADER: H E A D E R;
 
 HELP: H E L P;
 
 HIDE: H I D E;
 
-HOLD: H O L D;
-
-//CURSOR
-
 HOUR: H O U R;
-
-//CURSOR
 
 IF: I F;
 
 IN: I N;
 
-//SQL
-
-INNER: I N N E R;
-
-//SQL
-
-INDEX: I N D E X;
-
-//SQL
-
-INDICATOR: I N D I C A T O R;
-
-//SQL
-
-INFIELD: I N F I E L D;
-
 INITIALIZE: I N I T I A L I Z E;
 
 INPUT: I N P U T;
 
+INSERT_INTO: I N S E R T WS I N T O -> mode(SQL_MODE);
+
 INSERT: I N S E R T;
 
-//SQL
-
-INSTRUCTIONS: I N S T R U C T I O N S;
-
 INTO: I N T O;
-
-//SQL & CURSOR 
 
 INT: I N T;
 
 INT8: I N T '8';
-
-INT_FLAG: I N T '_' F L A G;
 
 INTEGER: I N T E G E R;
 
@@ -395,13 +297,7 @@ INVISIBLE: I N V I S I B L E;
 
 IS: I S;
 
-ISOLATION: I S O L A T I O N;
-
-JOIN: J O I N;
-
 KEY: K E Y;
-
-LABEL: L A B E L;
 
 LAST: L A S T;
 
@@ -419,13 +315,11 @@ LINENO: L I N E N O;
 
 LINES: L I N E S;
 
-LOAD: L O A D;
+LOAD_FROM: L O A D WS F R O M -> mode(SQL_MODE);
 
 LOCATE: L O C A T E;
 
-LOCK: L O C K;
-
-LOG: L O G;
+LOCK: L O C K -> mode(SQL_MODE);
 
 LONG: L O N G;
 
@@ -441,13 +335,7 @@ MAIN: M A I N;
 
 MARGIN: M A R G I N;
 
-MAX: M A X;
-
-MDY: M D Y;
-
 MEMORY: M E M O R Y;
-
-MIN: M I N;
 
 MINUTE: M I N U T E;
 
@@ -469,8 +357,6 @@ NEED: N E E D;
 
 NEXT: N E X T;
 
-NEW: N E W;
-
 NORMAL: N O R M A L;
 
 NO: N O;
@@ -479,17 +365,11 @@ NOT: N O T;
 
 NOTFOUND: N O T F O U N D;
 
-NOW: N O W;
-
 NUMERIC: N U M E R I C;
 
 NULL: N U L L;
 
 NVARCHAR: N V A R C H A R;
-
-//SQL
-
-NVL: N V L;
 
 OF: O F;
 
@@ -497,7 +377,11 @@ OFF: O F F;
 
 ON: O N;
 
-OPEN: O P E N;
+OPEN_FORM: O P E N WS F O R M;
+
+OPEN_WINDOW: O P E N WS W I N D O W;
+
+OPEN: O P E N -> mode(SQL_MODE);
 
 OPTION: O P T I O N;
 
@@ -505,17 +389,9 @@ OPTIONS: O P T I O N S;
 
 OR: O R;
 
-ORD: O R D;
-
 ORDER: O R D E R;
 
-//SQL
-
 OUTPUT: O U T P U T;
-
-OUTER: O U T E R;
-
-//SQL
 
 OTHERWISE: O T H E R W I S E;
 
@@ -525,13 +401,11 @@ PAGENO: P A G E N O;
 
 PAUSE: P A U S E;
 
-PERCENT: P E R C E N T;
-
 PIPE: P I P E;
 
 PRECISION: P R E C I S I O N;
 
-PREPARE: P R E P A R E;
+PREPARE: P R E P A R E -> mode(SQL_MODE);
 
 PREVIOUS: P R E V I O U S;
 
@@ -539,35 +413,21 @@ PRINT: P R I N T;
 
 PRINTER: P R I N T E R;
 
-PRIOR: P R I O R;
-
 PROGRAM: P R O G R A M;
 
 PROMPT: P R O M P T;
 
-PUT: P U T;
+PUT: P U T -> mode(SQL_MODE);
 
 QUIT: Q U I T;
-
-QUIT_FLAG: Q U I T '_' F L A G;
 
 RECORD: R E C O R D;
 
 REAL: R E A L;
 
-READ: R E A D;
-
 RED: R E D;
 
-RELATIVE: R E L A T I V E;
-
-REMOVE: R E M O V E;
-
 REOPTIMIZATION: R E O P T I M I Z A T I O N;
-
-REPEATABLE: R E P E A T A B L E;
-
-REPEAT: R E P E A T;
 
 REPORT: R E P O R T;
 
@@ -581,7 +441,7 @@ REVERSE: R E V E R S E;
 
 RIGHT: R I G H T;
 
-ROLLBACK: R O L L B A C K;
+ROLLBACK: R O L L B A C K -> mode(SQL_MODE);
 
 ROW: R O W;
 
@@ -601,13 +461,9 @@ SKIP2: S K I P;
 
 SELECT: S E L E C T -> mode(SQL_MODE);
 
-SET: S E T;
-
-SHARE: S H A R E;
+SET: S E T -> mode(SQL_MODE);
 
 SHOW: S H O W;
-
-SIZE: S I Z E;
 
 SLEEP: S L E E P;
 
@@ -625,23 +481,13 @@ SQLERROR: S Q L E R R O R;
 
 SQLWARNING: S Q L W A R N I N G;
 
-START: S T A R T;
+START_REPORT: S T A R T WS R E P O R T;
 
-STABILITY: S T A B I L I T Y;
-
-STATISTICS: S T A T I S T I C S;
-
-STATUS: S T A T U S;
+START: S T A R T -> mode(SQL_MODE);
 
 STEP: S T E P;
 
 STOP: S T O P;
-
-SUM: S U M;
-
-TABLE: T A B L E;
-
-TABLES: T A B L E S;
 
 TERMINATE: T E R M I N A T E;
 
@@ -655,19 +501,13 @@ THROUGH: T H R O U G H;
 
 THRU: T H R U;
 
-TIME: T I M E;
-
 TO: T O;
-
-TODAY: T O D A Y;
 
 TOP: T O P;
 
 TRAILER: T R A I L E R;
 
 TRUE: T R U E;
-
-TYPE: T Y P E;
 
 UNCONSTRAINED: U N C O N S T R A I N E D;
 
@@ -679,35 +519,20 @@ UNIQUE: U N I Q U E;
 
 UNITS: U N I T S;
 
-UNLOAD: U N L O A D;
+UNLOAD_TO: U N L O A D WS T O -> mode(SQL_MODE);
 
 UP: U P;
 
-UPDATE: U P D A T E;
+UPDATE_STATISTICS:
+	U P D A T E WS S T A T I S T I C S -> mode(SQL_MODE);
 
-//SQL
-
-USER: U S E R;
+UPDATE: U P D A T E -> mode(SQL_MODE);
 
 USING: U S I N G;
 
 VALIDATE: V A L I D A T E;
 
-VALUES: V A L U E S;
-
-//SQL
-
 VARCHAR: V A R C H A R;
-
-//SQL
-
-WEEKDAY: W E E K D A Y;
-
-VIEW: V I E W;
-
-//SQL
-
-WAIT: W A I T;
 
 WAITING: W A I T I N G;
 
@@ -716,10 +541,6 @@ WARNING: W A R N I N G;
 WHEN: W H E N;
 
 WHENEVER: W H E N E V E R;
-
-WHERE: W H E R E;
-
-//SQL
 
 WHILE: W H I L E;
 
@@ -732,8 +553,6 @@ WITHOUT: W I T H O U T;
 WINDOW: W I N D O W;
 
 WORDWRAP: W O R D W R A P;
-
-WORK: W O R K;
 
 WRAP: W R A P;
 
@@ -790,11 +609,6 @@ ATSYMBOL: '@';
 
 DOUBLEVERTBAR: '||';
 
-//COMMENT_1
-// : '{' ( : '\r' '\n' | '\r' | '\n' | ~('}' | '\n' | '\r') )* '}' ; an identifier. Note that
-// testLiterals is set to true! This means that after we match the rule, we look in the literals
-// table to see if it's a literal or really an identifer
-
 IDENT: ('a' .. 'z' | '_') (
 		'a' .. 'z'
 		| 'A' .. 'Z'
@@ -803,13 +617,11 @@ IDENT: ('a' .. 'z' | '_') (
 	)*;
 
 // character literals
-CHAR_LITERAL: '\'' ( /*ESC |*/ ~'\'') '\'';
+CHAR_LITERAL: '\'' ( ~'\'') '\'';
 
 // string literals
-STRING_LITERAL: ('"') (
-/*ESC|*/ ~ ('"' | '\\'))* ('"')
-	| ('\'') (
-/*ESC|~*/ ('\\' | '\''))* ('\'');
+STRING_LITERAL: ('"') (~ ('"' | '\\'))* ('"')
+	| ('\'') ( ('\\' | '\''))* ('\'');
 
 // a numeric literal
 
@@ -822,23 +634,6 @@ UNSIGNED_REAL: ('0' .. '9')+ '.' ('0' .. '9')* EXPONENT?
 	| ('0' .. '9')+ EXPONENT;
 
 fragment EXPONENT: ('e' | 'E') ('+' | '-')? ('0' .. '9')+;
-
-// escape sequence -- note that this is protected; it can only be called from another lexer rule --
-// it will not ever directly return a token to the parser There are various ambiguities hushed in
-// this rule. The optional '0'...'9' digit matches should be matched here rather than letting them
-// go back to STRING_LITERAL to be matched. ANTLR does the right thing by matching immediately;
-// hence, it's ok to shut off the FOLLOW ambig warnings.
-/*
- ESC : '\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '"' | '\'' | '\\' | ('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT
- HEX_DIGIT | '0'..'3' (
- 
- : '0'..'7' (
- 
- : '0'..'7' )? )? | '4'..'7' (
- 
- : '0'..'7' )? ) ;
- */
-// hexadecimal digit (again, note it's protected!)
 
 HEX_DIGIT: ('0' .. '9' | 'a' .. 'f');
 
@@ -853,12 +648,80 @@ SL_COMMENT: '#' ~[\r\n]* -> channel(COMMENT_CHANNEL);
 
 SL_COMMENT_2: '--' ~[\r\n]* -> channel(COMMENT_CHANNEL);
 
-// SQL Mode
-
 mode SQL_MODE;
 
-SQL_MODE_DISPLAY: DISPLAY -> type(DISPLAY), mode(DEFAULT_MODE);
+SQL_MODE_BEGIN: BEGIN -> type(BEGIN), mode(DEFAULT_MODE);
 
-SQL_MODE_IGNORED_WORDS: ~[ \t\r\n\u000C]+;
+SQL_MODE_CASE: CASE -> type(CASE), mode(DEFAULT_MODE);
 
+SQL_MODE_CLOSE: CLOSE -> type(CLOSE), mode(DEFAULT_MODE);
+
+SQL_MODE_COMMIT: COMMIT -> type(COMMIT), mode(DEFAULT_MODE);
+
+SQL_MODE_CREATE: CREATE -> type(CREATE), mode(DEFAULT_MODE);
+
+SQL_MODE_DECLARE: DECLARE -> type(DECLARE), mode(DEFAULT_MODE);
+
+SQL_MODE_DELETE_FROM: DELETE_FROM -> type(DELETE_FROM), mode(DEFAULT_MODE);
+
+SQL_MODE_DELIMITER: DELIMITER -> type(DELIMITER), mode(DEFAULT_MODE);
+
+SQL_MODE_DISPLAY:
+	DISPLAY -> type(DISPLAY), mode(DEFAULT_MODE);
+
+SQL_MODE_DROP: DROP -> type(DROP), mode(DEFAULT_MODE);
+
+SQL_MODE_END: END -> type(END), mode(DEFAULT_MODE);
+
+SQL_MODE_EXECUTE: EXECUTE -> type(EXECUTE), mode(DEFAULT_MODE);
+
+SQL_MODE_FETCH: FETCH -> type(FETCH), mode(DEFAULT_MODE);
+
+SQL_MODE_FLUSH: FLUSH -> type(FLUSH), mode(DEFAULT_MODE);
+
+SQL_MODE_FOREACH: FOREACH -> type(FOREACH), mode(DEFAULT_MODE);
+
+SQL_MODE_FOR: FOR -> type(FOR), mode(DEFAULT_MODE);
+
+SQL_MODE_FREE: FREE -> type(FREE), mode(DEFAULT_MODE);
+
+SQL_MODE_FROM: FROM -> type(FROM), mode(DEFAULT_MODE);
+
+SQL_MODE_IF: IF -> type(IF), mode(DEFAULT_MODE);
+
+SQL_MODE_INSERT_INTO: INSERT_INTO -> type(INSERT_INTO), mode(DEFAULT_MODE);
+
+SQL_MODE_INTO: INTO -> type(INTO), mode(DEFAULT_MODE);
+
+SQL_MODE_LET: LET -> type(LET), mode(DEFAULT_MODE);
+
+SQL_MODE_LOAD_FROM: LOAD_FROM -> type(LOAD_FROM), mode(DEFAULT_MODE);
+
+SQL_MODE_LOCK: LOCK -> type(LOCK), mode(DEFAULT_MODE);
+
+SQL_MODE_OPEN: OPEN -> type(OPEN), mode(DEFAULT_MODE);
+
+SQL_MODE_PREPARE: PREPARE -> type(PREPARE), mode(DEFAULT_MODE);
+
+SQL_MODE_PUT: PUT -> type(PUT), mode(DEFAULT_MODE);
+
+SQL_MODE_ROLLBACK: ROLLBACK -> type(ROLLBACK), mode(DEFAULT_MODE);
+
+SQL_MODE_SELECT: SELECT -> type(SELECT), mode(DEFAULT_MODE);
+
+SQL_MODE_SET: SET -> type(SET), mode(DEFAULT_MODE);
+
+SQL_MODE_START: START -> type(START), mode(DEFAULT_MODE);
+
+SQL_MODE_UNLOAD_TO: UNLOAD_TO -> type(UNLOAD_TO), mode(DEFAULT_MODE);
+
+SQL_MODE_UPDATE_STATISTICS: UPDATE_STATISTICS -> type(UPDATE_STATISTICS), mode(DEFAULT_MODE);
+
+SQL_MODE_UPDATE: UPDATE -> type(UPDATE), mode(DEFAULT_MODE);
+
+SQL_MODE_WHILE: WHILE -> type(WHILE), mode(DEFAULT_MODE);
+
+SQL_MODE_WORD: ~[ \t\r\n\u000C]+;
+
+SQL_MODE_WS: WS -> type(WS), channel(HIDDEN);
 

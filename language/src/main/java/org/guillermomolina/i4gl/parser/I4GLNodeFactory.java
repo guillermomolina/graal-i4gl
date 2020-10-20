@@ -318,7 +318,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
-        final String functionIdentifier = ctx.function().functionIdentifier().getText();
+        final String functionIdentifier = ctx.function().identifier().getText();
         final List<I4GLExpressionNode> parameterNodes = new ArrayList<>(ctx.function().actualParameter().size());
         for (final I4GLParser.ActualParameterContext parameterCtx : ctx.function().actualParameter()) {
             parameterNodes.add((I4GLExpressionNode) visit(parameterCtx));
@@ -346,7 +346,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitFunction(final I4GLParser.FunctionContext ctx) {
-        final String functionIdentifier = ctx.functionIdentifier().getText();
+        final String functionIdentifier = ctx.identifier().getText();
         final List<I4GLExpressionNode> parameterNodes = new ArrayList<>(ctx.actualParameter().size());
         for (final I4GLParser.ActualParameterContext parameterCtx : ctx.actualParameter()) {
             parameterNodes.add((I4GLExpressionNode) visit(parameterCtx));
@@ -998,7 +998,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitDebugStatement(final I4GLParser.DebugStatementContext ctx) {
+    public Node visitBreakpointStatement(final I4GLParser.BreakpointStatementContext ctx) {
         final I4GLDebuggerNode node = new I4GLDebuggerNode();
         node.addStatementTag();
         setSourceFromContext(node, ctx);
@@ -1178,7 +1178,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitMainSelectStatement(final I4GLParser.MainSelectStatementContext ctx) {
+    public Node visitSqlSelectStatement(final I4GLParser.SqlSelectStatementContext ctx) {
         try {
             int start = ctx.start.getStartIndex();
             int end;
@@ -1214,10 +1214,5 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
         }
-    }
-
-    @Override
-    public Node visitSimpleSelectStatement(final I4GLParser.SimpleSelectStatementContext ctx) {
-        throw new NotImplementedException();
     }
 }

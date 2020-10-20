@@ -64,7 +64,9 @@ numberType: (
 		BIGINT
 		| INTEGER
 		| INT
+		| INT8
 		| SMALLINT
+		| LONG
 		| REAL
 		| SMALLFLOAT
 	)
@@ -164,9 +166,9 @@ simpleStatement:
 	| constructInsideStatement
 	| displayInsideStatement
 	| inputInsideStatement
-	| debugStatement;
+	| breakpointStatement;
 
-debugStatement: BREAKPOINT;
+breakpointStatement: BREAKPOINT;
 
 runStatement:
 	RUN (variable | string) (IN FORM MODE | IN LINE MODE)? (
@@ -213,106 +215,9 @@ multipleAssignmentStatement:
 callStatement:
 	CALL function (RETURNING variableList)?;
 
-functionIdentifier: (
-		DAY
-		| YEAR
-		| MONTH
-		| TODAY
-		| WEEKDAY
-		| MDY
-		| COLUMN
-		| SUM
-		| COUNT
-		| AVG
-		| MIN
-		| MAX
-		| EXTEND
-		| DATE
-		| TIME
-		| INFIELD
-		| PREPARE
-	)
-	| constantIdentifier;
-
 actualParameter: STAR | expression;
 
 gotoStatement: GOTO COLON? label;
-
-condition: (TRUE | FALSE) | logicalTerm (OR logicalTerm)*;
-
-logicalTerm: logicalFactor (AND logicalFactor)*;
-
-logicalFactor:
-	// Added "prior" to a comparison expression to support use of a condition in a connect_clause.
-	// (sqlExpression NOT? IN) sqlExpression NOT? IN expressionSet
-	| (sqlExpression NOT? LIKE) sqlExpression NOT? LIKE sqlExpression (
-		ESCAPE CHAR_LITERAL
-	)?
-	| (sqlExpression NOT? BETWEEN) sqlExpression NOT? BETWEEN sqlExpression AND sqlExpression
-	| (sqlExpression IS NOT? NULL) sqlExpression IS NOT? NULL
-	| quantifiedFactor quantifiedFactor
-	| (NOT condition) NOT condition
-	| LPAREN condition RPAREN
-	| sqlExpression relationalOperator sqlExpression;
-
-quantifiedFactor: (
-		sqlExpression relationalOperator (ALL | ANY)? subquery
-	) sqlExpression relationalOperator (ALL | ANY)? subquery
-	| (NOT? EXISTS subquery) NOT? EXISTS subquery
-	| subquery;
-
-expressionSet: sqlExpression sqlExpression | subquery;
-
-subquery: LPAREN sqlSelectStatement RPAREN;
-
-sqlExpression: sqlTerm ((PLUS | MINUS) sqlTerm)*;
-
-sqlAlias: AS identifier;
-
-sqlTerm: sqlFactor ((sqlMultiply | DIV | SLASH) sqlFactor)*;
-
-sqlMultiply: STAR;
-
-sqlFactor: sqlFactor2 (DOUBLEVERTBAR sqlFactor2)*;
-
-sqlFactor2:
-	sqlVariable (UNITS unitType)?
-	| sqlLiteral (UNITS unitType)?
-	| groupFunction LPAREN (STAR | ALL | DISTINCT)? (
-		sqlExpression (COMMA sqlExpression)*
-	)? RPAREN
-	| sqlFunction (
-		LPAREN sqlExpression (COMMA sqlExpression)* RPAREN
-	)
-	| (PLUS | MINUS) sqlExpression
-	| LPAREN sqlExpression RPAREN
-	| sqlExpressionList;
-
-sqlExpressionList:
-	LPAREN sqlExpression (COMMA sqlExpression)+ RPAREN;
-
-sqlLiteral: numericConstant | string | NULL | FALSE | TRUE;
-
-sqlVariable: columnsTableId;
-
-sqlFunction:
-	numberFunction
-	| charFunction
-	| dateFunction
-	| otherFunction;
-
-dateFunction: YEAR | DATE | DAY | MONTH;
-
-numberFunction: MOD;
-
-charFunction: LENGTH;
-
-groupFunction: AVG | COUNT | MAX | MIN | SUM;
-
-otherFunction: (DECODE | NVL) | constantIdentifier;
-
-// This is not being used currently, but might be useful at some point.
-sqlPseudoColumn: USER;
 
 relationalOperator:
 	EQUAL
@@ -360,7 +265,7 @@ factorTypes:
 	| NOT factor;
 
 function:
-	functionIdentifier LPAREN (
+	identifier LPAREN (
 		actualParameter (COMMA actualParameter)*
 	)? RPAREN;
 
@@ -375,12 +280,27 @@ conditionalStatement: ifStatement | caseStatement;
 ifStatement:
 	IF ifCondition THEN codeBlock? (ELSE codeBlock?)? END IF;
 
+caseStatement: caseStatement1 | caseStatement2;
+
+caseStatement1:
+	CASE expression (WHEN expression codeBlock)+ (
+		OTHERWISE codeBlock
+	)? END CASE;
+
+caseStatement2:
+	CASE (WHEN ifCondition codeBlock)+ (OTHERWISE codeBlock)? END CASE;
+
 repetetiveStatement:
 	whileStatement
 	| forEachStatement
 	| forStatement;
 
 whileStatement: WHILE ifCondition codeBlock? END WHILE;
+
+forEachStatement:
+	FOREACH identifier (USING variableList)? (INTO variableList)? (
+		WITH REOPTIMIZATION
+	)? codeBlock? END FOREACH;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
@@ -393,24 +313,9 @@ initialValue: expression;
 
 finalValue: expression;
 
-forEachStatement:
-	FOREACH identifier (USING variableList)? (INTO variableList)? (
-		WITH REOPTIMIZATION
-	)? codeBlock? END FOREACH;
-
 variableList: variable (COMMA variable)*;
 
 variableOrConstantList: expression (COMMA expression)*;
-
-caseStatement: caseStatement1 | caseStatement2;
-
-caseStatement1:
-	CASE expression (WHEN expression codeBlock)+ (
-		OTHERWISE codeBlock
-	)? END CASE;
-
-caseStatement2:
-	CASE (WHEN ifCondition codeBlock)+ (OTHERWISE codeBlock)? END CASE;
 
 otherI4GLStatement:
 	otherProgramFlowStatement
@@ -448,12 +353,12 @@ otherStorageStatement:
 	| LOCATE variableList IN (MEMORY | FILE (variable | string)?)
 	| DEALLOCATE ARRAY identifier
 	| RESIZE ARRAY identifier arrayIndexer
-	| FREE variable (COMMA variable)*
-	| INITIALIZE variable (COMMA variable)* (
+	| FREE variableList // name clash, marked as SQL
+	| INITIALIZE variableList (
 		TO NULL
 		| LIKE expressionList
 	)
-	| VALIDATE variable (COMMA variable)* LIKE expression (
+	| VALIDATE variableList LIKE expression (
 		COMMA expression
 	)*;
 
@@ -470,7 +375,7 @@ printExpressionList:
 	printExpressionItem (COMMA printExpressionItem)*;
 
 reportStatement:
-	START REPORT identifier (
+	START_REPORT identifier (
 		TO (expression | PIPE expression | PRINTER)
 	)? (
 		WITH (
@@ -542,6 +447,8 @@ constructStatement:
 	) attributeList? (HELP numericConstant)? (
 		constructGroupStatement+ END CONSTRUCT
 	)?;
+
+columnsList: columnsTableId (COMMA columnsTableId)*;
 
 displayArrayStatement:
 	DISPLAY ARRAY expression TO expression attributeList? displayEvents* (
@@ -676,8 +583,8 @@ optionsStatement:
 
 screenStatement:
 	CLEAR (FORM | WINDOW identifier | WINDOW? SCREEN | fieldList)
-	| CLOSE WINDOW identifier
-	| CLOSE FORM identifier
+	| CLOSE_WINDOW identifier
+	| CLOSE_FORM identifier
 	| constructStatement
 	| CURRENT WINDOW IS (SCREEN | identifier)
 	| displayStatement
@@ -689,8 +596,8 @@ screenStatement:
 	| inputStatement
 	| inputArrayStatement
 	| menuStatement
-	| OPEN FORM expression FROM expression
-	| OPEN WINDOW expression AT expression COMMA expression (
+	| OPEN_FORM expression FROM expression
+	| OPEN_WINDOW expression AT expression COMMA expression (
 		WITH FORM expression
 		| WITH expression ROWS COMMA expression COLUMNS
 	) windowAttributeList?
@@ -709,62 +616,16 @@ sqlStatements:
 	| clientServerStatement;
 
 cursorManipulationStatement:
-	CLOSE cursorName
-	| DECLARE cursorName (
-		CURSOR (WITH HOLD)? FOR (
-			sqlSelectStatement (FOR UPDATE (OF columnsList)?)?
-			| sqlInsertStatement
-			| statementId
-		)
-		| SCROLL CURSOR (WITH HOLD)? FOR (
-			sqlSelectStatement
-			| statementId
-		)
-	)
-	| FETCH (
-		NEXT
-		| (PREVIOUS | PRIOR)
-		| FIRST
-		| LAST
-		| CURRENT
-		| RELATIVE expression
-		| ABSOLUTE expression
-	)? cursorName (INTO variableList)?
-	| FLUSH cursorName
-	| OPEN cursorName (USING variableList)?
-	| PUT cursorName (FROM variableOrConstantList)?;
-
-columnsList: columnsTableId (COMMA columnsTableId)*;
-
-statementId: identifier;
-
-cursorName: identifier;
-
-dataType: type;
-
-columnItem:
-	identifier (
-		dataType
-		| (BYTE | TEXT) (IN (TABLE | identifier))?
-	) (NOT NULL)?
-	| UNIQUE LPAREN (identifier (COMMA identifier)*)? RPAREN (
-		CONSTRAINT identifier
-	)?;
+	CLOSE SQL_MODE_WORD
+	| DECLARE SQL_MODE_WORD+
+	| FETCH SQL_MODE_WORD+ (INTO variableList)?
+	| FLUSH SQL_MODE_WORD
+	| OPEN SQL_MODE_WORD (USING variableList)?
+	| PUT SQL_MODE_WORD (FROM variableOrConstantList)?;
 
 dataDefinitionStatement:
-	DROP TABLE identifier
-	| CREATE TEMP? TABLE identifier LPAREN columnItem (
-		COMMA columnItem
-	)* RPAREN (WITH NO LOG)? (IN identifier)? (
-		EXTENT SIZE numericConstant
-	)? (NEXT SIZE numericConstant)? (
-		LOCK MODE LPAREN (PAGE | ROW) RPAREN
-	)?
-	| CREATE UNIQUE? CLUSTER? INDEX identifier ON identifier LPAREN identifier (
-		ASC
-		| DESC
-	)? (COMMA identifier (ASC | DESC)?)* RPAREN
-	| DROP INDEX identifier;
+	DROP SQL_MODE_WORD+
+	| CREATE SQL_MODE_WORD+;
 
 dataManipulationStatement:
 	sqlInsertStatement
@@ -774,138 +635,40 @@ dataManipulationStatement:
 	| sqlLoadStatement
 	| sqlUnLoadStatement;
 
-sqlSelectStatement: mainSelectStatement;
-
-columnsTableId:
-	STAR
-	| (tableIdentifier variableIndex?) (
-		DOT STAR
-		| DOT columnsTableId
-	)?;
-
-selectList: (
-		sqlExpression sqlAlias? (COMMA sqlExpression sqlAlias?)*
-	);
-
-headSelectStatement:
-	SELECT (ALL | (DISTINCT | UNIQUE))? selectList;
-
-tableQualifier:
-	identifier COLON
-	| identifier ATSYMBOL identifier COLON
-	| string;
-
-tableIdentifier: tableQualifier? identifier;
-
-fromTable: OUTER? tableIdentifier sqlAlias?;
-
-tableExpression: simpleSelectStatement;
-
-fromSelectStatement:
-	FROM (fromTable | LPAREN tableExpression RPAREN sqlAlias?) (
-		COMMA (
-			fromTable
-			| LPAREN tableExpression RPAREN sqlAlias?
-		)
-	)*;
-
-aliasName: identifier;
-
-
-mainSelectStatement:
-	SELECT SQL_MODE_IGNORED_WORDS+;
-	/*headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
-		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
-		selectIntoTempStatement? selectWithNoLogStatement?;*/
-
-mainSelectStatement2:
-	headSelectStatement (INTO variableList)? fromSelectStatement whereStatement?
-		groupByStatement? havingStatement? unionSelectStatement? orderbyStatement?
-		selectIntoTempStatement? selectWithNoLogStatement?;
-
-selectIntoTempStatement: INTO TEMP identifier;
-
-selectWithNoLogStatement: WITH NO LOG;
-
-unionSelectStatement: (UNION ALL? simpleSelectStatement);
-
-simpleSelectStatement:
-	headSelectStatement fromSelectStatement whereStatement? groupByStatement? havingStatement?
-		unionSelectStatement?;
-
-whereStatement: WHERE condition;
-
-groupByStatement: GROUP BY variableOrConstantList;
-
-havingStatement: HAVING condition;
-
-orderbyColumn: expression (ASC | DESC)?;
-
-orderbyStatement: ORDER BY orderbyColumn (COMMA orderbyColumn)*;
-
-sqlLoadStatement:
-	LOAD FROM (variable | string) (DELIMITER (variable | string))? (
-		INSERT INTO tableIdentifier (LPAREN columnsList RPAREN)?
-		| sqlInsertStatement
-	);
-
-sqlUnLoadStatement:
-	UNLOAD TO (variable | string) (DELIMITER (variable | string))? sqlSelectStatement;
-
 sqlInsertStatement:
-	INSERT INTO tableIdentifier (LPAREN columnsList RPAREN)? (
-		VALUES LPAREN expressionList RPAREN
-		| simpleSelectStatement
-	);
-
-sqlUpdateStatement:
-	UPDATE tableIdentifier SET (
-		(
-			columnsTableId EQUAL expression (
-				COMMA columnsTableId EQUAL expression
-			)*
-		)
-		| (
-			(LPAREN columnsList RPAREN | (aliasName DOT)? STAR) EQUAL (
-				LPAREN expressionList RPAREN
-				| (aliasName DOT)? STAR
-			)
-		)
-	) (WHERE (condition | CURRENT OF cursorName))?;
+	INSERT_INTO SQL_MODE_WORD+;
 
 sqlDeleteStatement:
-	DELETE FROM tableIdentifier (
-		WHERE (condition | CURRENT OF cursorName)
-	)?;
+	DELETE_FROM SQL_MODE_WORD+;
 
-actualParameterList: actualParameter (COMMA actualParameter)*;
+sqlSelectStatement:
+	SELECT SQL_MODE_WORD+ (INTO variableList)? FROM SQL_MODE_WORD+;
+
+sqlUpdateStatement:
+	UPDATE SQL_MODE_WORD+;
+
+sqlLoadStatement:
+	LOAD_FROM (variable | SQL_MODE_WORD) (DELIMITER (variable | SQL_MODE_WORD))? SQL_MODE_WORD+;
+
+sqlUnLoadStatement:
+	UNLOAD_TO (variable | SQL_MODE_WORD) (DELIMITER (variable | SQL_MODE_WORD))? SQL_MODE_WORD+;
 
 dynamicManagementStatement:
-	PREPARE cursorName FROM expression
-	| EXECUTE cursorName (USING variableList)?
-	| FREE (cursorName | statementId)
-	| LOCK TABLE expression IN (SHARE | EXCLUSIVE) MODE;
+	PREPARE SQL_MODE_WORD+
+	| EXECUTE SQL_MODE_WORD+
+	| FREE SQL_MODE_WORD+
+	| LOCK SQL_MODE_WORD+;
 
 queryOptimizationStatement:
-	UPDATE STATISTICS (FOR TABLE tableIdentifier)?
-	| SET LOCK MODE TO (WAIT seconds? | NOT WAIT)
-	| SET EXPLAIN (ON | OFF)
-	| SET ISOLATION TO (
-		CURSOR STABILITY
-		| (DIRTY | COMMITTED | REPEATABLE) READ
-	)
-	| SET BUFFERED? LOG;
-
-databaseDeclaration:
-	DATABASE (identifier (ATSYMBOL identifier)?) EXCLUSIVE? SEMI?;
-
-clientServerStatement: CLOSE DATABASE;
+	UPDATE_STATISTICS SQL_MODE_WORD*
+	| SET SQL_MODE_WORD+;
 
 dataIntegrityStatement:
 	wheneverStatement
-	| BEGIN WORK
-	| COMMIT WORK
-	| ROLLBACK WORK;
+	| START SQL_MODE_WORD* // mysql dialect
+	| BEGIN SQL_MODE_WORD*
+	| COMMIT SQL_MODE_WORD*
+	| ROLLBACK SQL_MODE_WORD*;
 
 wheneverStatement: WHENEVER wheneverType wheneverFlow;
 
@@ -917,6 +680,25 @@ wheneverType:
 wheneverFlow: (CONTINUE | STOP)
 	| CALL identifier
 	| (GO TO | GOTO) COLON? identifier;
+
+clientServerStatement: CLOSE_DATABASE;
+
+columnsTableId:
+	STAR
+	| (tableIdentifier variableIndex?) (
+		DOT STAR
+		| DOT columnsTableId
+	)?;
+
+tableQualifier:
+	identifier COLON
+	| identifier ATSYMBOL identifier COLON
+	| string;
+
+tableIdentifier: tableQualifier? identifier;
+
+databaseDeclaration:
+	DATABASE (identifier (ATSYMBOL identifier)?) EXCLUSIVE? SEMI?;
 
 reportDefinition:
 	REPORT identifier parameterList? typeDeclarations? outputReport? (
@@ -950,43 +732,4 @@ integer: sign? UNSIGNED_INTEGER;
 
 real: sign? UNSIGNED_REAL;
 
-seconds: UNSIGNED_INTEGER;
-
 sign: PLUS | MINUS;
-
-constantIdentifier: (
-		ACCEPT
-		| ASCII
-		| COUNT
-		| CURRENT
-		| FALSE
-		| FIRST
-		| FOUND
-		| GROUP
-		| HIDE
-		| INDEX
-		| INT_FLAG
-		| INTERRUPT
-		| LAST
-		| LENGTH
-		| LINENO
-		| MDY
-		| NO
-		| NOT
-		| NOTFOUND
-		| NULL
-		| PAGENO
-		| REAL
-		| SIZE
-		| SQL
-		| STATUS
-		| TEMP
-		| TIME
-		| TODAY
-		| TRUE
-		| USER
-		| WAIT
-		| WEEKDAY
-		| WORK
-	)
-	| identifier;

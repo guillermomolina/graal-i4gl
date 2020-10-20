@@ -11,6 +11,7 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.database.SquirrelExecuterHandler;
 import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
+import org.guillermomolina.i4gl.runtime.exceptions.DatabaseException;
 
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -78,8 +79,8 @@ public class I4GLDatabase {
         ResultSetDataSet rsds = sqlExecuterHandlerProxy.getResultSetDataSet();
         if (rsds.currentRowCount() != 1) {
             final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
-            //throw new DatabaseException(
-            //        "The query \"" + query + "\" has not returned exactly one row.");
+            throw new DatabaseException(
+                    "The query \"" + query + "\" has not returned exactly one row.");
         }
         ColumnDisplayDefinition[] cDefinitions = rsds.getDataSetDefinition().getColumnDefinitions();
         List<Object[]> rows = rsds.getAllDataForReadOnly();
