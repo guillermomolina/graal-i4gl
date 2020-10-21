@@ -46,6 +46,36 @@ public class I4GLRecord implements TruffleObject {
     }
 
     @ExportMessage
+    boolean hasLanguage() {
+        return true;
+    }
+
+    @ExportMessage
+    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+        return I4GLLanguage.class;
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    Object toDisplayString(boolean allowSideEffects) {
+        return properties.toString();
+    }
+
+    public static boolean isInstance(TruffleObject obj) {
+        return obj instanceof I4GLRecord;
+    }
+
+    @ExportMessage
+    boolean hasMetaObject() {
+        return true;
+    }
+
+    @ExportMessage
+    Object getMetaObject() {
+        return recordType;
+    }
+
+    @ExportMessage
     boolean hasMembers() {
         return true;
     }
@@ -91,39 +121,9 @@ public class I4GLRecord implements TruffleObject {
     }
 
     @ExportMessage
-    boolean hasLanguage() {
-        return true;
-    }
-
-    @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
-        return I4GLLanguage.class;
-    }
-
-    @ExportMessage
     @TruffleBoundary
     Object getMembers(boolean includeInternal) {
         return new RecordNamesObject(properties.keySet().toArray());
-    }
-
-    @ExportMessage
-    boolean hasMetaObject() {
-        return true;
-    }
-
-    @ExportMessage
-    Object getMetaObject() {
-        return recordType;
-    }
-
-    @ExportMessage
-    @TruffleBoundary
-    Object toDisplayString(boolean allowSideEffects) {
-        return properties.toString();
-    }
-
-    public static boolean isInstance(TruffleObject obj) {
-        return obj instanceof I4GLRecord;
     }
 
     @ExportLibrary(InteropLibrary.class)

@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.values.I4GLDecimal;
@@ -513,6 +515,22 @@ public class SquirrelDataSet implements IDataSet {
       _currentRow = null;
    }
 
+   public List<String> getColumnLabels() {
+      if (_dataSetDefinition == null) {
+         return null;
+      }
+      
+      List<String> columnNames = new ArrayList<>(getColumnCount());
+      for (ColumnDisplayDefinition colDef : _dataSetDefinition.getColumnDefinitions()) {
+         String columnName = "UNKNOWN";
+         if (colDef != null) {
+            columnName = colDef.getLabel();
+         }
+         columnNames.add(columnName);
+      }
+      return columnNames;
+   }
+
    @Override
    public String toString() {
       StringBuilder result = new StringBuilder();
@@ -531,8 +549,12 @@ public class SquirrelDataSet implements IDataSet {
       return result.toString();
    }
 
-   public int currentRowCount() {
+   public int currentRowIndex() {
       return _iCurrent;
+   }
+
+   public boolean isValid() {
+      return _iCurrent != -1;
    }
 
    public boolean isAllResultsRead() {

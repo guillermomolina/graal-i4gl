@@ -1,9 +1,16 @@
 package org.guillermomolina.i4gl.runtime.values;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.interop.TruffleObject;
+import com.oracle.truffle.api.interop.UnknownIdentifierException;
+import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
@@ -22,11 +29,13 @@ public final class I4GLCursor implements TruffleObject {
     private final String sql;
     private I4GLDatabase database;
     private SquirrelDataSet dataSet;
+    private List<String> columnLabels;
 
     public I4GLCursor(final I4GLDatabase database, final String sql) {
         this.database = database;
         this.sql = sql;
         this.database = new I4GLDatabase("test");
+        this.columnLabels = new ArrayList<>();
     }
 
     public void start() {
@@ -38,6 +47,8 @@ public final class I4GLCursor implements TruffleObject {
         sqlExecuterTask.setExecuteEditableCheck(false);
         sqlExecuterTask.run();
         dataSet = sqlExecuterHandlerProxy.getResultSet();
+        columnLabels = dataSet.getColumnLabels();
+
     }
 
     public boolean next() {
@@ -83,4 +94,98 @@ public final class I4GLCursor implements TruffleObject {
         return I4GLCursorType.SINGLETON;
     }
 
+    @ExportMessage
+    boolean hasMembers() {
+        return !columnLabels.isEmpty() && dataSet.isValid();
+    }
+
+    @ExportMessage(name = "isMemberReadable")
+    @TruffleBoundary
+    boolean hasMember(String name) {
+        return columnLabels.contains(name);
+    }
+
+    @ExportMessage
+    boolean isMemberInsertable(String name) {
+        return false;
+    }
+
+    @ExportMessage
+    boolean isMemberModifiable(String name) {
+        return false;
+    }
+
+    @ExportMessage
+    boolean isMemberRemovable(String name) {
+        return false;
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    Object readMember(String name) throws UnknownIdentifierException {
+        final int index = columnLabels.indexOf(name);
+        if (index == -1) {
+            throw UnknownIdentifierException.create(name);
+        }
+        final Object[] row = dataSet.getCurrentRow();
+        final Object value = row[index];
+        return value;
+    }
+
+    @TruffleBoundary
+    private static UnsupportedMessageException unsupported() {
+        return UnsupportedMessageException.create();
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    void writeMember(String name, Object value) throws UnsupportedMessageException {
+        throw unsupported();
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    void removeMember(String name) throws UnsupportedMessageException {
+        throw unsupported();
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    Object getMembers(boolean includeInternal) {
+        return new CursorNamesObject(columnLabels.toArray());
+    }
+
+    @ExportLibrary(InteropLibrary.class)
+    static final class CursorNamesObject implements TruffleObject {
+
+        private final Object[] names;
+
+        CursorNamesObject(Object[] names) {
+            this.names = names;
+        }
+
+        @ExportMessage
+        boolean hasArrayElements() {
+            return true;
+        }
+
+        @ExportMessage
+        boolean isArrayElementReadable(long index) {
+            return index >= 0 && index < names.length;
+        }
+
+        @ExportMessage
+        long getArraySize() {
+            return names.length;
+        }
+
+        @ExportMessage
+        Object readArrayElement(long index) throws InvalidArrayIndexException {
+            if (!isArrayElementReadable(index)) {
+                CompilerDirectives.transferToInterpreter();
+                throw InvalidArrayIndexException.create(index);
+            }
+            return names[(int) index];
+        }
+    }
 }
