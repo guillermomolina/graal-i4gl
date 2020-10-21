@@ -16,7 +16,7 @@ public class InitializationNodeFactory {
 
     @SuppressWarnings("deprecation")
 	public static I4GLStatementNode create(FrameSlot frameSlot, Object value, VirtualFrame frame) {
-	    // TODO: this is a duplicity
+	    // 
         switch (frameSlot.getKind()) {
             case Int:
                 int intValue;

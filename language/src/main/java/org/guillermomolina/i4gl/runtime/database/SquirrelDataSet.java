@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class SquirrelDataSet implements IDataSet {
    private final static ILogger s_log = LoggerController.createLogger(SquirrelDataSet.class);
 
-   // TODO: These 2 should be handled with an Iterator.
+   // These 2 should be handled with an Iterator.
    private int _iCurrent = -1;
 
    private Object[] _currentRow;
@@ -305,8 +305,7 @@ public class SquirrelDataSet implements IDataSet {
    // SS: Modified to auto-compute column widths if <computeWidths> is true
    private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md, String fullTableName,
          int[] columnIndices, boolean computeWidths) throws SQLException {
-      // TODO?? ColumnDisplayDefinition should also have the Type (String, Date,
-      // Double,Integer,Boolean)
+      // ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
       int[] colWidths = null;
 
       // SS: update dynamic column widths

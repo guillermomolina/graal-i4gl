@@ -76,7 +76,7 @@ public final class I4GLContext {
      * {@link I4GLBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
-        // TODO: add builtins
+        // 
     }
 
     public static NodeInfo lookupNodeInfo(Class<?> clazz) {

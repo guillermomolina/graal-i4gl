@@ -17,7 +17,6 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLDecimalType;
 
 
 @ExportLibrary(InteropLibrary.class)
-@SuppressWarnings("static-method")
 public final class I4GLDecimal implements TruffleObject, Comparable<I4GLDecimal> {
     private final BigDecimal value;
 
@@ -58,7 +57,6 @@ public final class I4GLDecimal implements TruffleObject, Comparable<I4GLDecimal>
         return value.hashCode();
     }
 
-    @SuppressWarnings("static-method")
     @ExportMessage
     boolean isNumber() {
         return fitsInLong();

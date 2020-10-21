@@ -298,7 +298,6 @@ public final class I4GLLexicalScope {
             this.frame = frame;
         }
 
-        @SuppressWarnings("static-method")
         @ExportMessage
         boolean hasMembers() {
             return true;
@@ -306,7 +305,7 @@ public final class I4GLLexicalScope {
 
         @ExportMessage
         @TruffleBoundary
-        Object getMembers(@SuppressWarnings("unused") boolean includeInternal) {
+        Object getMembers(boolean includeInternal) {
             return new KeysArray(slots.keySet().toArray(new String[0]));
         }
 
@@ -350,9 +349,8 @@ public final class I4GLLexicalScope {
             }
         }
 
-        @SuppressWarnings("static-method")
         @ExportMessage
-        boolean isMemberInsertable(@SuppressWarnings("unused") String member) {
+        boolean isMemberInsertable(String member) {
             return false;
         }
 
@@ -379,7 +377,6 @@ public final class I4GLLexicalScope {
             this.keys = keys;
         }
 
-        @SuppressWarnings("static-method")
         @ExportMessage
         boolean hasArrayElements() {
             return true;
