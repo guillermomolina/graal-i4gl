@@ -73,7 +73,6 @@ public class SquirrelExecuterHandler implements ISQLExecuterHandler {
    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
          throws DataSetException {
       resultSet = new SquirrelDataSet();
-      resultSet.setLimitDataRead(true);
       DialectType dialectType = DialectFactory.getDialectType(session.getMetaData());
       resultSet.setSqlExecutionTabResultSet(rst, null, dialectType);
    }

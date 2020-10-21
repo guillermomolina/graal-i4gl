@@ -1,13 +1,9 @@
 package org.guillermomolina.i4gl.runtime.values;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Types;
-import java.util.List;
 
 import com.oracle.truffle.api.CompilerDirectives;
 
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.database.SquirrelDataSet;
 import org.guillermomolina.i4gl.runtime.database.SquirrelExecuterHandler;
 import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
@@ -15,7 +11,6 @@ import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseException;
 
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 @CompilerDirectives.ValueType
 public class I4GLDatabase {
@@ -47,7 +42,7 @@ public class I4GLDatabase {
             }
         }
     }
-
+/*
     public static Object toI4GLType(final ColumnDisplayDefinition cDefinition, final Object sqlValue) {
         if (sqlValue == null) {
             return I4GLNull.SINGLETON;
@@ -74,24 +69,21 @@ public class I4GLDatabase {
         }
         return values;
     }
-
+*/
     public Object[] execute(final String sql) {
         SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);
         SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(session, sql, sqlExecuterHandlerProxy);
         sqlExecuterTask.setExecuteEditableCheck(false);
         sqlExecuterTask.run();
-        try {
-            SquirrelDataSet rsds = sqlExecuterHandlerProxy.getResultSet();
-            if (rsds.currentRowCount() != 1) {
-                final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
-                throw new DatabaseException("The query \"" + query + "\" has not returned exactly one row.");
-            }
-            ColumnDisplayDefinition[] cDefinitions = rsds.getDataSetDefinition().getColumnDefinitions();
-            List<Object[]> rows = rsds.getAllDataForReadOnly();
-            return toI4GLArray(cDefinitions, rows.get(0));
-        } catch (Exception ex) {
-            //
+        Object[] result = null;
+        SquirrelDataSet rsds = sqlExecuterHandlerProxy.getResultSet();
+        if(rsds.next()) {
+            result = rsds.getCurrentRow();
         }
-        return null;
+        if (rsds.next()) {
+            final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
+            throw new DatabaseException("The query \"" + query + "\" has not returned exactly one row.");
+        }
+        return result;
     }
 }

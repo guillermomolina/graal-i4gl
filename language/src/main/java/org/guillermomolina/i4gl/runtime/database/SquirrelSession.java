@@ -44,8 +44,7 @@ public class SquirrelSession extends SquirrelSessionAdapter {
 
       sessionProperties = Main.getApplication().getSquirrelPreferences().getSessionProperties();
       sessionProperties.setSQLLimitRows(false);
-      //sessionProperties.setSQLReadOn(true);
-      //sessionProperties.setSQLReadOnBlockSize(2);      
+      sessionProperties.setSQLReadOn(true);
       tokenizer = new QueryTokenizer(sessionProperties.getSQLStatementSeparator(),
             sessionProperties.getStartOfLineComment(), sessionProperties.getRemoveMultiLineComment());
    }
