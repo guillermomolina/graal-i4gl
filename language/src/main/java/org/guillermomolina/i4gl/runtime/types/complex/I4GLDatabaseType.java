@@ -4,6 +4,7 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
@@ -11,10 +12,10 @@ import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
  * Specialized type descriptor for text-file values.
  */
 public class I4GLDatabaseType extends I4GLType {
-    private final String identifier;
 
-    public I4GLDatabaseType(String identifier) {
-        this.identifier = identifier;
+    public static final I4GLDatabaseType SINGLETON = new I4GLDatabaseType();
+
+    private I4GLDatabaseType() {
     }
 
     @Override
@@ -30,7 +31,7 @@ public class I4GLDatabaseType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLDatabase(identifier);
+        throw new NotImplementedException();
     }
 
     @Override
@@ -40,6 +41,6 @@ public class I4GLDatabaseType extends I4GLType {
 
     @Override
     public String toString() {
-        return "DATABASE " + identifier;
+        return "DATABASE";
     }
 }

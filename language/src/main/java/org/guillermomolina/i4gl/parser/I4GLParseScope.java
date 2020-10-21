@@ -11,7 +11,6 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import org.guillermomolina.i4gl.parser.exceptions.DuplicitIdentifierException;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
-import org.guillermomolina.i4gl.runtime.types.complex.I4GLDatabaseType;
 import org.guillermomolina.i4gl.runtime.types.complex.I4GLLabelType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
 
@@ -73,10 +72,6 @@ public class I4GLParseScope {
 
     public FrameSlot addLabel(String identifier) throws LexicalException {
         return registerNewIdentifier(identifier, new I4GLLabelType(identifier));
-    }
-
-    public FrameSlot registerDatabase(String identifier) throws LexicalException {
-        return registerNewIdentifier("_database", new I4GLDatabaseType(identifier));
     }
 
     public FrameSlot addVariable(String identifier, I4GLType type) throws LexicalException {

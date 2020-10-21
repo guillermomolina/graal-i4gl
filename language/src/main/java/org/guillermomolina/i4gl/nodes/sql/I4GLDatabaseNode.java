@@ -14,6 +14,10 @@ public class I4GLDatabaseNode extends I4GLStatementNode {
         this.slot = slot;
         this.database = database;
     }
+        
+    public FrameSlot getSlot() {
+        return slot;
+    }
 
     @Override
     public void executeVoid(VirtualFrame frame) {

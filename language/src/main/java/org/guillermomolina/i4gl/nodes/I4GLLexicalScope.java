@@ -24,6 +24,7 @@ import org.guillermomolina.i4gl.nodes.call.I4GLReadArgumentNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLCursorNode;
+import org.guillermomolina.i4gl.nodes.sql.I4GLDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNode;
@@ -241,9 +242,11 @@ public final class I4GLLexicalScope {
                 } else if (node instanceof I4GLCursorNode) {
                     I4GLCursorNode wn = (I4GLCursorNode) node;
                     String name = Objects.toString(wn.getSlot().getIdentifier());
-                    if (!hasParentVar(name)) {
-                        slots.put(name, wn.getSlot());
-                    }
+                    slots.put(name, wn.getSlot());
+                } else if (node instanceof I4GLDatabaseNode) {
+                    I4GLDatabaseNode wn = (I4GLDatabaseNode) node;
+                    String name = Objects.toString(wn.getSlot().getIdentifier());
+                    slots.put(name, wn.getSlot());
                 }
                 return true;
             }

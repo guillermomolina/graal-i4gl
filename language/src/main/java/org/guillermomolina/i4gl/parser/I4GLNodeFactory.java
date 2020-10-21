@@ -76,6 +76,7 @@ import org.guillermomolina.i4gl.parser.exceptions.TypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.complex.I4GLCursorType;
+import org.guillermomolina.i4gl.runtime.types.complex.I4GLDatabaseType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
@@ -434,14 +435,15 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitForEachStatement(final I4GLParser.ForEachStatementContext ctx) {
-        if(ctx.usingVariableList() != null || ctx.WITH() != null) {
+        if (ctx.usingVariableList() != null || ctx.WITH() != null) {
             throw new NotImplementedException();
         }
         try {
             final String cursorName = ctx.cursorName().identifier().getText();
             FrameSlot[] returnSlots = new FrameSlot[0];
             if (ctx.intoVariableList() != null) {
-                List<FrameSlot> returnSlotList = new ArrayList<>(ctx.intoVariableList().variableList().variable().size());
+                List<FrameSlot> returnSlotList = new ArrayList<>(
+                        ctx.intoVariableList().variableList().variable().size());
                 for (final I4GLParser.VariableContext variableCtx : ctx.intoVariableList().variableList().variable()) {
                     if (variableCtx.indexedVariable() != null
                             || variableCtx.notIndexedVariable().recordVariable() != null) {
@@ -1049,7 +1051,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitDatabaseDeclaration(final I4GLParser.DatabaseDeclarationContext ctx) {
         try {
             String identifier = ctx.identifier(0).getText();
-            final FrameSlot databaseSlot = currentLexicalScope.registerDatabase(identifier);
+            final FrameSlot databaseSlot = currentLexicalScope.addVariable("!database", I4GLDatabaseType.SINGLETON);
             final I4GLDatabase databaseValue = new I4GLDatabase(identifier);
             I4GLDatabaseNode node = new I4GLDatabaseNode(databaseSlot, databaseValue);
             setSourceFromContext(node, ctx);
@@ -1233,7 +1235,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 sql = ctx.start.getInputStream().getText(interval);
                 start = ctx.intoVariableList().stop.getStopIndex() + 1;
 
-                List<FrameSlot> returnSlotList = new ArrayList<>(ctx.intoVariableList().variableList().variable().size());
+                List<FrameSlot> returnSlotList = new ArrayList<>(
+                        ctx.intoVariableList().variableList().variable().size());
                 for (final I4GLParser.VariableContext variableCtx : ctx.intoVariableList().variableList().variable()) {
                     if (variableCtx.indexedVariable() != null
                             || variableCtx.notIndexedVariable().recordVariable() != null) {
@@ -1250,7 +1253,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             end = ctx.stop.getStopIndex();
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
-            I4GLExpressionNode databaseVariableNode = createReadVariableNode("_database");
+            I4GLExpressionNode databaseVariableNode = createReadVariableNode("!database");
             I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, returnSlots);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
@@ -1277,7 +1280,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
             String cursorName = ctx.cursorName().identifier().getText();
             final FrameSlot cursorSlot = currentLexicalScope.addVariable(cursorName, I4GLCursorType.SINGLETON);
-            I4GLExpressionNode databaseVariableNode = createReadVariableNode("_database");
+            I4GLExpressionNode databaseVariableNode = createReadVariableNode("!database");
             I4GLStatementNode node = new I4GLCursorNode(databaseVariableNode, sql, cursorSlot);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
