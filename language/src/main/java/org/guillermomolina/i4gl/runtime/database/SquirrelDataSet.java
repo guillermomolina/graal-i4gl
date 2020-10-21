@@ -1,10 +1,16 @@
 package org.guillermomolina.i4gl.runtime.database;
 
+import java.math.BigDecimal;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.runtime.values.I4GLDecimal;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
+import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -15,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -41,7 +48,7 @@ public class SquirrelDataSet implements IDataSet {
    /**
     * the result set reader, which we will notify of cancel requests
     */
-   private SquirrelResultSetReader _rdr = null;
+   private ResultSetReader _rdr = null;
 
    /**
     * The type of dialect of the session from which this data set came. Plugins can
@@ -155,7 +162,7 @@ public class SquirrelDataSet implements IDataSet {
 
          // Read the entire row, since some drivers complain if columns are
          // read out of sequence
-         _rdr = new SquirrelResultSetReader(rs, dialectType);
+         _rdr = new ResultSetReader(rs, dialectType);
 
          return 0;
 
@@ -171,18 +178,35 @@ public class SquirrelDataSet implements IDataSet {
       }
    }
 
-   private Object[] createRow(int[] columnIndices, boolean useColumnDefs, ColumnDisplayDefinition[] colDefs,
-         BlockMode blockMode) throws SQLException {
-      Object[] row;
-
-      if (useColumnDefs) {
-         row = _rdr.readRow(colDefs, blockMode, _limitDataRead);
-      } else {
-         row = _rdr.readRow(blockMode);
+   public static Object toI4GLObject(final ColumnDisplayDefinition cDefinition, final Object sqlValue) {
+      if (sqlValue == null) {
+          return I4GLNull.SINGLETON;
       }
+      switch (cDefinition.getSqlType()) {
+          case Types.VARCHAR:
+              return new I4GLVarchar(cDefinition.getPrecision(), (String) sqlValue);
+          case Types.DECIMAL:
+              return new I4GLDecimal((BigDecimal) sqlValue);
+          case Types.INTEGER:
+          case Types.BIGINT:
+          case Types.REAL:
+          case Types.FLOAT:
+              return sqlValue;
+          default:
+              throw new NotImplementedException();
+      }
+  }
+
+   private Object[] createRow(int[] columnIndices, ColumnDisplayDefinition[] colDefs,
+         BlockMode blockMode) throws SQLException {
+      Object[] row = _rdr.readRow(colDefs, blockMode, _limitDataRead);
 
       if (row == null) {
          return null;
+      }
+
+      for (int i = 0; i < row.length; i++) {
+         row[i] = toI4GLObject(colDefs[i], row[i]);
       }
 
       // Now reorder columns.
@@ -219,7 +243,7 @@ public class SquirrelDataSet implements IDataSet {
          return false;
       }
       try {
-         _currentRow = createRow(_dataSetDefinition.getColumnIndices(), true, _dataSetDefinition.getColumnDefinitions(),
+         _currentRow = createRow(_dataSetDefinition.getColumnIndices(), _dataSetDefinition.getColumnDefinitions(),
                BlockMode.INDIFFERENT);
       } catch (SQLException e) {
          return false;

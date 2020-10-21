@@ -51,10 +51,11 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLNotNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLOrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLMainRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
+import org.guillermomolina.i4gl.nodes.sql.I4GLCursorNode;
+import org.guillermomolina.i4gl.nodes.sql.I4GLDatabaseNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLForEachNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLSelectNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
-import org.guillermomolina.i4gl.nodes.statement.I4GLDatabaseNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
@@ -85,7 +86,6 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
-import org.guillermomolina.i4gl.runtime.values.I4GLCursor;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
@@ -1250,8 +1250,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             end = ctx.stop.getStopIndex();
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
-            I4GLExpressionNode readVariableNode = createReadVariableNode("_database");
-            I4GLSelectNode node = new I4GLSelectNode(readVariableNode, sql, returnSlots);
+            I4GLExpressionNode databaseVariableNode = createReadVariableNode("_database");
+            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, returnSlots);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
@@ -1277,8 +1277,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
             String cursorName = ctx.cursorName().identifier().getText();
             final FrameSlot cursorSlot = currentLexicalScope.addVariable(cursorName, I4GLCursorType.SINGLETON);
-            final I4GLCursor cursorValue = new I4GLCursor(sql);
-            I4GLStatementNode node = InitializationNodeFactory.create(cursorSlot, cursorValue, null);
+            I4GLExpressionNode databaseVariableNode = createReadVariableNode("_database");
+            I4GLStatementNode node = new I4GLCursorNode(databaseVariableNode, sql, cursorSlot);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;

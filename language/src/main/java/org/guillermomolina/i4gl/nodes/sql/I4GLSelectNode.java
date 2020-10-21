@@ -7,7 +7,9 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import org.guillermomolina.i4gl.runtime.exceptions.DatabaseException;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
+import org.guillermomolina.i4gl.runtime.values.I4GLCursor;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
 public class I4GLSelectNode extends I4GLStatementNode {
@@ -59,6 +61,21 @@ public class I4GLSelectNode extends I4GLStatementNode {
     @Override
     public void executeVoid(VirtualFrame frame) {
         final I4GLDatabase database = (I4GLDatabase) databaseVariableNode.executeGeneric(frame);
-        evaluateResult(frame, database.execute(sql));
+        final I4GLCursor cursor = new I4GLCursor(database, sql);
+        cursor.start();
+
+        Object[] result = null;
+        if(cursor.next()) {
+            result = cursor.getRow();
+        }
+        if (cursor.next()) {
+            final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
+            throw new DatabaseException("The query \"" + query + "\" has not returned exactly one row.");
+        }
+        cursor.end();
+        
+        if(result != null) {
+            evaluateResult(frame, result);
+        }
     }
 }

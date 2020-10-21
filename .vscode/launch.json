@@ -57,16 +57,16 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch and Wait) I4GLMain Let.4gl",
+            "name": "Debug (Launch and Wait) I4GLMain Cursor.4gl",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--inspect",
-                "./language/tests/Let.4gl"
+                "./language/tests/Cursor.4gl"
             ],
             "vmArgs": [
-                "-Dtruffle.class.path.append=./language/target/i4gl.jar",
+                "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
             "stepFilters": {

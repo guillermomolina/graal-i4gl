@@ -1,8 +1,9 @@
-package org.guillermomolina.i4gl.nodes.statement;
+package org.guillermomolina.i4gl.nodes.sql;
 
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
 public class I4GLDatabaseNode extends I4GLStatementNode {

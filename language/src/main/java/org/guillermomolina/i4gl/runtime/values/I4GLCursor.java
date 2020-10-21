@@ -15,7 +15,6 @@ import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
 import org.guillermomolina.i4gl.runtime.types.complex.I4GLCursorType;
 
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLCursor implements TruffleObject {
@@ -23,9 +22,9 @@ public final class I4GLCursor implements TruffleObject {
     private final String sql;
     private I4GLDatabase database;
     private SquirrelDataSet dataSet;
-    private ColumnDisplayDefinition[] columnDefinitions;
 
-    public I4GLCursor(final String sql) {
+    public I4GLCursor(final I4GLDatabase database, final String sql) {
+        this.database = database;
         this.sql = sql;
         this.database = new I4GLDatabase("test");
     }
@@ -39,7 +38,6 @@ public final class I4GLCursor implements TruffleObject {
         sqlExecuterTask.setExecuteEditableCheck(false);
         sqlExecuterTask.run();
         dataSet = sqlExecuterHandlerProxy.getResultSet();
-        columnDefinitions = dataSet.getDataSetDefinition().getColumnDefinitions();
     }
 
     public boolean next() {
