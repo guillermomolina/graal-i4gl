@@ -27,7 +27,7 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLLexicalScope;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
-import org.guillermomolina.i4gl.parser.I4GLParserFactory;
+import org.guillermomolina.i4gl.parser.I4GLFullParser;
 import org.guillermomolina.i4gl.runtime.I4GLLanguageView;
 
 /**
@@ -64,7 +64,8 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         if (!request.getArgumentNames().isEmpty()) {
             throw new NotImplementedException();
         }
-        Map<String, RootCallTarget> functions = I4GLParserFactory.parseI4GL(this, source);
+        final I4GLFullParser parser = new I4GLFullParser(this, source);
+        Map<String, RootCallTarget> functions = parser.getAllFunctions();
         RootCallTarget main = functions.get("MAIN");
         RootNode evalMain;
         if (main != null) {
@@ -75,13 +76,13 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
              * function. Instead, we create a new I4GLEvalRootNode that does everything we
              * need.
              */
-            evalMain = new I4GLEvalRootNode(this, main, functions);
+            evalMain = new I4GLEvalRootNode(this, main, functions, parser.getRootFrameDescriptor());
         } else {
             /*
              * Even without a main function, "evaluating" the parsed source needs to
              * register the functions into the I4GLContext.
              */
-            evalMain = new I4GLEvalRootNode(this, null, functions);
+            evalMain = new I4GLEvalRootNode(this, null, functions, parser.getRootFrameDescriptor());
         }
         return Truffle.getRuntime().createCallTarget(evalMain);
     }
@@ -89,17 +90,6 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     @Override
     protected Object getLanguageView(I4GLContext context, Object value) {
         return I4GLLanguageView.forValue(value);
-    }
-
-    /**
-     * Does some thing in old style.
-     *
-     * @deprecated
-     */
-    @Deprecated(forRemoval = true)
-    @Override
-    protected Object findExportedSymbol(I4GLContext context, String globalName, boolean onlyExplicit) {
-        return null;
     }
 
     @Override

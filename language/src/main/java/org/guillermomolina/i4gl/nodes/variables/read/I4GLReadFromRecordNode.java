@@ -44,11 +44,11 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
     }
 
     @Specialization(guards = "isDouble()")
-    double readDouble(I4GLRecord record) {
+    double readFloat(I4GLRecord record) {
         return (double)record.get(getIdentifier());
     }
 
-    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readDouble" })
+    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readFloat" })
     Object readGeneric(I4GLRecord record) {
         return record.get(getIdentifier());
     }

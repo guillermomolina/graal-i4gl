@@ -5,6 +5,8 @@ import java.util.Map;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.RootCallTarget;
+import com.oracle.truffle.api.Truffle;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
@@ -17,24 +19,29 @@ import org.guillermomolina.i4gl.runtime.values.I4GLNull;
  * This class performs two additional tasks:
  *
  * <ul>
- * <li>Lazily registration of functions on first execution. This fulfills the semantics of
- * "evaluating" source code in I4GL.</li>
- * <li>Conversion of arguments to types understood by I4GL. The I4GL source code can be evaluated from a
- * different language, i.e., the caller can be a node from a different language that uses types not
- * understood by I4GL.</li>
+ * <li>Lazily registration of functions on first execution. This fulfills the
+ * semantics of "evaluating" source code in I4GL.</li>
+ * <li>Conversion of arguments to types understood by I4GL. The I4GL source code
+ * can be evaluated from a different language, i.e., the caller can be a node
+ * from a different language that uses types not understood by I4GL.</li>
  * </ul>
  */
 public final class I4GLEvalRootNode extends RootNode {
 
     private final Map<String, RootCallTarget> functions;
-    @CompilationFinal private boolean registered;
+    private final FrameDescriptor globalsFrameDescriptor;
+    @CompilationFinal
+    private boolean registered;
 
-    @Child private DirectCallNode mainCallNode;
+    @Child
+    private DirectCallNode mainCallNode;
 
-    public I4GLEvalRootNode(I4GLLanguage language, RootCallTarget mainFunction, Map<String, RootCallTarget> functions) {
+    public I4GLEvalRootNode(I4GLLanguage language, RootCallTarget mainFunction, Map<String, RootCallTarget> functions,
+            FrameDescriptor globalsFrameDescriptor) {
         super(language);
         this.functions = functions;
         this.mainCallNode = mainFunction != null ? DirectCallNode.create(mainFunction) : null;
+        this.globalsFrameDescriptor = globalsFrameDescriptor;
     }
 
     @Override
@@ -63,6 +70,8 @@ public final class I4GLEvalRootNode extends RootNode {
         if (!registered) {
             /* Function registration is a slow-path operation that must not be compiled. */
             CompilerDirectives.transferToInterpreterAndInvalidate();
+            VirtualFrame globalsFrame = Truffle.getRuntime().createVirtualFrame(new Object[0], globalsFrameDescriptor);
+            lookupContextReference(I4GLLanguage.class).get().getFrameRegistry().put("GLOBAL", globalsFrame);
             lookupContextReference(I4GLLanguage.class).get().getFunctionRegistry().register(functions);
             registered = true;
         }

@@ -68,7 +68,7 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     }
 
     @Specialization
-    double readDoubleArray(I4GLFloatArray array, int index) {
+    double readFloatArray(I4GLFloatArray array, int index) {
         return array.getValueAt(index - 1);
     }
 

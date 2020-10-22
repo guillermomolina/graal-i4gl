@@ -6,12 +6,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.Scope;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.Env;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.AllocationReporter;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.NodeInfo;
@@ -25,6 +28,7 @@ public final class I4GLContext {
     private final BufferedReader input;
     private final PrintWriter output;
     private final I4GLFunctionRegistry functionRegistry;
+    private final Map<String,VirtualFrame> frameRegistry;
     private final AllocationReporter allocationReporter;
     private final Iterable<Scope> topScopes; // Cache the top scopes
 
@@ -33,6 +37,7 @@ public final class I4GLContext {
         this.input = new BufferedReader(new InputStreamReader(env.in()));
         this.output = new PrintWriter(env.out(), true);
         this.functionRegistry = new I4GLFunctionRegistry(language);
+        this.frameRegistry = new HashMap<>();
         this.allocationReporter = env.lookup(AllocationReporter.class);
         this.topScopes = Collections.singleton(Scope.newBuilder("global", functionRegistry.getFunctionsObject()).build());
         installBuiltins();
@@ -60,11 +65,19 @@ public final class I4GLContext {
     public PrintWriter getOutput() {
         return output;
     }
+
     /**
      * Returns the registry of all functions that are currently defined.
      */
     public I4GLFunctionRegistry getFunctionRegistry() {
         return functionRegistry;
+    }
+
+    /**
+     * Returns the registry of all variables that are currently defined.
+     */
+    public Map<String,VirtualFrame> getFrameRegistry() {
+        return frameRegistry;
     }
 
     public Iterable<Scope> getTopScopes() {

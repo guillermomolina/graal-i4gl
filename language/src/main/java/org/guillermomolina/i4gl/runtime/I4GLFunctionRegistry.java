@@ -11,7 +11,7 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.source.Source;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.parser.I4GLParserFactory;
+import org.guillermomolina.i4gl.parser.I4GLFullParser;
 
 /**
  * Manages the mapping from function names to {@link I4GLFunction function objects}.
@@ -56,7 +56,8 @@ public final class I4GLFunctionRegistry {
     }
 
     public void register(Source newFunctions) {
-        register(I4GLParserFactory.parseI4GL(language, newFunctions));
+        final I4GLFullParser parser = new I4GLFullParser(language, newFunctions);
+        register(parser.getAllFunctions());
     }
 
     public I4GLFunction getFunction(String name) {
