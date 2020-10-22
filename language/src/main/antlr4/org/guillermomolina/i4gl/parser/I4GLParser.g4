@@ -9,12 +9,15 @@ options {
 }
 
 compilationUnit:
-	databaseDeclaration? globalDeclaration? typeDeclarations? mainBlock? functionOrReportDefinitions
-		? EOF;
+	compilationUnitInitialization mainFunctionDefinition? functionOrReportDefinitions? EOF;
+
+compilationUnitInitialization:
+	databaseDeclaration? globalsDeclaration? typeDeclarations?;
 
 identifier: IDENT;
 
-mainBlock: MAIN typeDeclarations? mainStatements? END MAIN;
+mainFunctionDefinition:
+	MAIN typeDeclarations? mainStatements? END MAIN;
 
 mainStatements: (
 		databaseDeclaration
@@ -38,7 +41,7 @@ parameterList: LPAREN parameterGroup* RPAREN;
 
 parameterGroup: identifier (COMMA identifier)*;
 
-globalDeclaration:
+globalsDeclaration:
 	GLOBALS (string | typeDeclarations END GLOBALS);
 
 typeDeclarations: typeDeclaration+;
