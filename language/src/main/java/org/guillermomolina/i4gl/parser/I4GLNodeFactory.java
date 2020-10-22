@@ -62,6 +62,7 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNode;
@@ -1053,8 +1054,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (isLocal) {
             return I4GLReadLocalVariableNodeGen.create(variableSlot, type);
         } else {
-            throw new NotImplementedException();
-            //return new I4GLReadGlobalVariableNodeGen.create(variableSlot, type);
+            return new I4GLReadGlobalVariableNodeGen.create(variableSlot, type);
         }
     }
 

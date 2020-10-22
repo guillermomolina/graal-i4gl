@@ -43,7 +43,7 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
         return (float)record.get(getIdentifier());
     }
 
-    @Specialization(guards = "isDouble()")
+    @Specialization(guards = "isFloat()")
     double readFloat(I4GLRecord record) {
         return (double)record.get(getIdentifier());
     }

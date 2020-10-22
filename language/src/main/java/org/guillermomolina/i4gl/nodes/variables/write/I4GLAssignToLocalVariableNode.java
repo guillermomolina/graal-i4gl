@@ -14,6 +14,7 @@ import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
@@ -84,11 +85,11 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
         getFrame(frame).setFloat(getSlot(), value);
     }
 
-    protected boolean isDouble() {
+    protected boolean isFloat() {
         return getType() == I4GLFloatType.SINGLETON;
     }
 
-    @Specialization(guards = "isDouble()")
+    @Specialization(guards = "isFloat()")
     void writeDouble(final VirtualFrame frame, final double value) {
         getFrame(frame).setDouble(getSlot(), value);
     }
@@ -161,7 +162,8 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
         }
 
         for (int i = 0; i < jumps; ++i) {
-            frame = (VirtualFrame) frame.getArguments()[0];
+            throw new NotImplementedException();
+            //frame = (VirtualFrame) frame.getArguments()[0];
         }
 
         return frame;

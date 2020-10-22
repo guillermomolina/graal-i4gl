@@ -1,6 +1,7 @@
 package org.guillermomolina.i4gl.nodes.variables.read;
 
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -26,25 +27,46 @@ import org.guillermomolina.i4gl.runtime.types.I4GLType;
     @NodeField(name = "type", type = I4GLType.class)
 })
 public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
-
+    @CompilationFinal
+    protected VirtualFrame globalFrame;
     protected abstract FrameSlot getSlot();
+    
+    @Override
+    protected boolean isSmallInt() {
+        return getGlobalFrame().isInt(getSlot());
+    }
 
-    @Specialization(guards = "getGlobalFrame().isInt(getSlot())")
+    @Specialization(guards = "isSmallInt()")
     protected int readInt(final VirtualFrame frame) {
         return FrameUtil.getIntSafe(getGlobalFrame(), getSlot());
     }
+    
+    @Override
+    protected boolean isInt() {
+        return getGlobalFrame().isLong(getSlot());
+    }
 
-    @Specialization(guards = "getGlobalFrame().isLong(getSlot())")
+    @Specialization(guards = "isInt()")
     protected long readBigInt(final VirtualFrame frame) {
         return FrameUtil.getLongSafe(getGlobalFrame(), getSlot());
     }
+    
+    @Override
+    protected boolean isSmallFloat() {
+        return getGlobalFrame().isFloat(getSlot());
+    }
 
-    @Specialization(guards = "getGlobalFrame().isFloat(getSlot())")
+    @Specialization(guards = "isSmallFloat()")
     protected float readSmallFloat(final VirtualFrame frame) {
         return FrameUtil.getFloatSafe(getGlobalFrame(), getSlot());
     }
+    
+    @Override
+    protected boolean isFloat() {
+        return getGlobalFrame().isDouble(getSlot());
+    }
 
-    @Specialization(guards = "getGlobalFrame().isDouble(getSlot())")
+    @Specialization(guards = "isFloat()")
     protected double readFloat(final VirtualFrame frame) {
         return FrameUtil.getDoubleSafe(getGlobalFrame(), getSlot());
     }
@@ -70,12 +92,15 @@ public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
     }
 
     protected VirtualFrame getGlobalFrame() {
-        return lookupContextReference(I4GLLanguage.class).get().getFrameRegistry().get("GLOBAL");
+        if(globalFrame == null) {
+            CompilerDirectives.transferToInterpreterAndInvalidate();
+            globalFrame = lookupContextReference(I4GLLanguage.class).get().getFrameRegistry().get("GLOBAL");
+        }
+        return globalFrame;
     }
 
     @Override
     public boolean hasTag(final Class<? extends Tag> tag) {
         return tag == ReadVariableTag.class || super.hasTag(tag);
     }
-
 }

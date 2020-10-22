@@ -93,7 +93,7 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
         return getType() == I4GLSmallFloatType.SINGLETON;
     }
 
-    protected boolean isDouble() {
+    protected boolean isFloat() {
         return getType() == I4GLFloatType.SINGLETON;
     }
 }

@@ -73,11 +73,11 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
         record.put(identifier, value);
     }
 
-    protected boolean isDouble() {
+    protected boolean isFloat() {
         return descriptor == I4GLFloatType.SINGLETON;
     }
 
-    @Specialization(guards = "isDouble()")
+    @Specialization(guards = "isFloat()")
     void assignDouble(I4GLRecord record, double value) {
         record.put(identifier, value);
     }
