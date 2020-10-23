@@ -121,8 +121,12 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
                             throw new NoSuchElementException();
                         }
                         Object functionObject = findFunctionObject();
-                        Scope vscope = Scope.newBuilder(nextScope.getName(), nextScope.getVariables(frame))
-                                .node(nextScope.getNode()).arguments(nextScope.getArguments(frame))
+                        final String nextScopeName = nextScope.getName();
+                        final Object nextScopeVariables = nextScope.getVariables(frame);
+                        final Node nextScopeNode = nextScope.getNode();
+                        final Object nextScopeArguments = nextScope.getArguments(frame);
+                        Scope vscope = Scope.newBuilder(nextScopeName, nextScopeVariables)
+                                .node(nextScopeNode).arguments(nextScopeArguments)
                                 .rootInstance(functionObject).build();
                         previousScope = nextScope;
                         nextScope = null;
