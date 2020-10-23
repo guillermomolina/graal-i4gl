@@ -12,6 +12,7 @@ import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
@@ -65,11 +66,20 @@ public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
              */
             CompilerDirectives.transferToInterpreter();
             final Object result = getGlobalFrame().getValue(getSlot());
+            if(result == null) {
+                throw new NotImplementedException();
+            }
             getGlobalFrame().setObject(getSlot(), result);
             return result;
         }
 
-        return FrameUtil.getObjectSafe(getGlobalFrame(), getSlot());
+        Object result = FrameUtil.getObjectSafe(getGlobalFrame(), getSlot());
+        if(result == null) {
+            CompilerDirectives.transferToInterpreter();
+            result = getType().getDefaultValue();
+            getGlobalFrame().setObject(getSlot(), result);
+        }
+        return result;
     }
 
     protected VirtualFrame getGlobalFrame() {

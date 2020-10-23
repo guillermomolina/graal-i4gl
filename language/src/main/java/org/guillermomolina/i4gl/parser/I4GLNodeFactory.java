@@ -518,15 +518,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private I4GLExpressionNode createReadVariableNode(final String identifier) throws LexicalException {
-        return doLookup(identifier, (final I4GLParseScope foundInScope,
-                final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
-    }
-
-    private I4GLExpressionNode createReadDatabaseVariableNode() throws LexicalException {
-        return createReadVariableNode(I4GLParseScope.DATABASE_IDENTIFIER);
-    }
-
     @Override
     public Node visitIfStatement(final I4GLParser.IfStatementContext ctx) {
         I4GLExpressionNode condition = (I4GLExpressionNode) visit(ctx.ifCondition());
@@ -964,9 +955,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitSimpleVariable(final I4GLParser.SimpleVariableContext ctx) {
         try {
             final String identifier = ctx.identifier().getText();
-            I4GLExpressionNode variableNode = doLookup(identifier, (final I4GLParseScope foundInParseScope,
-                    final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInParseScope));
-            setSourceFromContext(variableNode, ctx);
+            I4GLExpressionNode variableNode = createReadVariableNode(identifier);
             variableNode.addExpressionTag();
             return variableNode;
         } catch (LexicalException e) {
@@ -1053,6 +1042,15 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         } else {
             return I4GLReadGlobalVariableNodeGen.create(variableSlot, type);
         }
+    }
+
+    private I4GLExpressionNode createReadVariableNode(final String identifier) throws LexicalException {
+        return doLookup(identifier, (final I4GLParseScope foundInScope,
+                final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier, foundInScope));
+    }
+
+    private I4GLExpressionNode createReadDatabaseVariableNode() throws LexicalException {
+        return createReadVariableNode(I4GLParseScope.DATABASE_IDENTIFIER);
     }
 
     @Override
@@ -1175,10 +1173,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 if (indexNodes.size() > 3) {
                     throw new ParseException(source, ctx, DIMENSIONS_STRING + indexList.size());
                 }
-                I4GLExpressionNode variableNode = doLookup(identifier,
-                        (final I4GLParseScope foundInParseScope,
-                                final String foundIdentifier) -> createReadVariableFromScope(foundIdentifier,
-                                        foundInParseScope));
+                I4GLExpressionNode variableNode = createReadVariableNode(identifier);
                 node = createAssignmentToArray(variableNode, indexNodes, valueNode);
             } else if (targetType instanceof I4GLTextType) {
                 if (indexNodes.size() != 1) {

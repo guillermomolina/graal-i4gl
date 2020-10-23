@@ -4,11 +4,11 @@ DEFINE aFloat FLOAT
 DEFINE aText TEXT
 DEFINE aChar CHAR(10)
 DEFINE aVarchar VARCHAR(10)
-/* DEFINE aRecord RECORD
+DEFINE anArray ARRAY[2] OF FLOAT
+DEFINE aRecord RECORD
   anInt INT,
   aSmallFloat SMALLFLOAT
 END RECORD
-DEFINE anArray ARRAY[2] OF FLOAT */
 
 MAIN  
   LET aBigInt = 123456789012
@@ -17,16 +17,16 @@ MAIN
   LET aText = "Texto muy largo"
   LET aChar = "Un texto de 10"
   LET aVarchar = "otro texto"
-  /*LET anArray[1] = 101.5
+  LET anArray[1] = 101.5
   LET anArray[2] = 102.74
   LET aRecord.anInt = 100
-  LET aRecord.aSmallFloat = 121.2*/
+  LET aRecord.aSmallFloat = 121.2
   DISPLAY aBigInt
   DISPLAY aSmallInt
   DISPLAY aFloat
   DISPLAY aText
   DISPLAY aChar
   DISPLAY aVarchar
-  /*DISPLAY anArray[1], anArray[2]
-  DISPLAY aRecord.anInt, aRecord.aSmallFloat*/
+  DISPLAY anArray[1], anArray[2]
+  DISPLAY aRecord.anInt, aRecord.aSmallFloat
 END MAIN 

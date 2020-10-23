@@ -5,11 +5,11 @@ MAIN
   DEFINE aText TEXT
   DEFINE aChar CHAR(10)
   DEFINE aVarchar VARCHAR(10)
+  DEFINE anArray ARRAY[2] OF FLOAT
   DEFINE aRecord RECORD
     anInt INT,
     aSmallFloat SMALLFLOAT
   END RECORD
-  DEFINE anArray ARRAY[2] OF FLOAT
   LET aBigInt = 123456789012
   LET aSmallInt = -1223
   LET aFloat = 1.0/3.0

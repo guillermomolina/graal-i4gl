@@ -10,6 +10,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
@@ -60,11 +61,20 @@ public abstract class I4GLReadLocalVariableNode extends I4GLExpressionNode {
              */
             CompilerDirectives.transferToInterpreter();
             final Object result = frame.getValue(getSlot());
+            if(result == null) {
+                throw new NotImplementedException();
+            }
             frame.setObject(getSlot(), result);
             return result;
         }
 
-        return FrameUtil.getObjectSafe(frame, getSlot());
+        Object result = FrameUtil.getObjectSafe(frame, getSlot());
+        if(result == null) {
+            CompilerDirectives.transferToInterpreter();
+            result = getType().getDefaultValue();
+            frame.setObject(getSlot(), result);
+        }
+        return result;
     }
 
     @Override
