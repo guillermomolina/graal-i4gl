@@ -64,8 +64,8 @@ import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadLocalVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToGlobalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToIndexedNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNode;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordFieldNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordTextNodeGen;
@@ -175,7 +175,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     public FrameDescriptor getRootFrameDescriptor() {
-        assert(currentParseScope.getOuterScope() == null);
+        assert (currentParseScope.getOuterScope() == null);
         return currentParseScope.getFrameDescriptor();
     }
 
@@ -218,7 +218,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
         }
 
-        if(blockNodeList.isEmpty()) {
+        if (blockNodeList.isEmpty()) {
             return null;
         }
         return new I4GLBlockNode(blockNodeList.toArray(new I4GLStatementNode[blockNodeList.size()]));
@@ -227,13 +227,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitCompilationUnitInitialization(final I4GLParser.CompilationUnitInitializationContext ctx) {
         final String functionIdentifier = "!initialization";
-        I4GLBlockNode bodyNode = createInitializationBodyNode(ctx.databaseDeclaration(),
-                ctx.globalsDeclaration(), ctx.typeDeclarations());
-        if(bodyNode == null) {
+        I4GLBlockNode bodyNode = createInitializationBodyNode(ctx.databaseDeclaration(), ctx.globalsDeclaration(),
+                ctx.typeDeclarations());
+        if (bodyNode == null) {
             return null;
         }
-        I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentParseScope.getFrameDescriptor(),
-                bodyNode, null, functionIdentifier);
+        I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,
+                null, functionIdentifier);
         allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
         return rootNode;
     }
@@ -247,8 +247,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(),
                     ctx.mainStatements());
-            I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentParseScope.getFrameDescriptor(),
-                    bodyNode, sourceSection, functionIdentifier);
+            I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,
+                    sourceSection, functionIdentifier);
             allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
             currentParseScope = currentParseScope.getOuterScope();
             return rootNode;
@@ -336,15 +336,15 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return bodyNode;
     }
 
-    private I4GLAssignToLocalVariableNode createAssignToVariableNode(final String identifier,
-            final I4GLExpressionNode valueNode) throws LexicalException {
+    private I4GLStatementNode createAssignToVariableNode(final String identifier, final I4GLExpressionNode valueNode)
+            throws LexicalException {
         return doLookup(identifier,
                 (final I4GLParseScope foundInScope, final String foundIdentifier) -> createAssignToVariableFromScope(
                         foundIdentifier, foundInScope, valueNode));
     }
 
-    private I4GLAssignToLocalVariableNode createAssignToVariableFromScope(final String identifier,
-            final I4GLParseScope scope, final I4GLExpressionNode valueNode) {
+    private I4GLStatementNode createAssignToVariableFromScope(final String identifier, final I4GLParseScope scope,
+            final I4GLExpressionNode valueNode) {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
         final I4GLType type = scope.getIdentifierType(identifier);
         final boolean isLocal = scope == currentParseScope;
@@ -352,8 +352,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (isLocal) {
             return I4GLAssignToLocalVariableNodeGen.create(valueNode, variableSlot, type);
         }
-        // assign to global
-        throw new NotImplementedException();
+        return I4GLAssignToGlobalVariableNodeGen.create(valueNode, variableSlot, type);
     }
 
     @Override
@@ -468,10 +467,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
                 throw new ParseException(source, ctx, "Type mismatch in beginning and last value of for loop.");
             }
-            I4GLAssignToLocalVariableNode initialAssignment = createAssignToVariableNode(iteratingIdentifier,
-                    startValue);
+            I4GLStatementNode initialAssignment = createAssignToVariableNode(iteratingIdentifier, startValue);
             I4GLExpressionNode readControlVariableNode = createReadVariableNode(iteratingIdentifier);
-            I4GLAssignToLocalVariableNode stepNode = createAssignToVariableNode(iteratingIdentifier,
+            I4GLStatementNode stepNode = createAssignToVariableNode(iteratingIdentifier,
                     I4GLAddNodeGen.create(readControlVariableNode, stepValue));
             I4GLForNode node = new I4GLForNode(initialAssignment, controlSlot, startValue, finalValue, stepNode,
                     readControlVariableNode, loopBody);
@@ -528,7 +526,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private I4GLExpressionNode createReadDatabaseVariableNode() throws LexicalException {
         return createReadVariableNode(I4GLParseScope.DATABASE_IDENTIFIER);
     }
-
 
     @Override
     public Node visitIfStatement(final I4GLParser.IfStatementContext ctx) {
@@ -1054,7 +1051,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (isLocal) {
             return I4GLReadLocalVariableNodeGen.create(variableSlot, type);
         } else {
-            return new I4GLReadGlobalVariableNodeGen.create(variableSlot, type);
+            return I4GLReadGlobalVariableNodeGen.create(variableSlot, type);
         }
     }
 

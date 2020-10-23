@@ -11,7 +11,6 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLLessThanNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLLessThanOrEqualNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLNotNodeGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNode;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
@@ -21,7 +20,7 @@ import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 public class I4GLForNode extends I4GLStatementNode {
     private final FrameSlot controlSlot;
     @Child
-    private I4GLAssignToLocalVariableNode assignment;
+    private I4GLStatementNode assignment;
     @Child
     private I4GLStatementNode body;
     @Child
@@ -31,11 +30,11 @@ public class I4GLForNode extends I4GLStatementNode {
     @Child
     private I4GLExpressionNode finalValue;
     @Child
-    private I4GLAssignToLocalVariableNode step;
+    private I4GLStatementNode step;
 
-    public I4GLForNode(final I4GLAssignToLocalVariableNode assignment, final FrameSlot controlSlot,
+    public I4GLForNode(final I4GLStatementNode assignment, final FrameSlot controlSlot,
             final I4GLExpressionNode initialValue, final I4GLExpressionNode finalValue,
-            final I4GLAssignToLocalVariableNode step, final I4GLExpressionNode readControlVariable,
+            final I4GLStatementNode step, final I4GLExpressionNode readControlVariable,
             final I4GLStatementNode body) {
         this.assignment = assignment;
         this.controlSlot = controlSlot;

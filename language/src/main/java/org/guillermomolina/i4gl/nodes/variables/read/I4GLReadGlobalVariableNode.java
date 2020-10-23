@@ -29,44 +29,25 @@ import org.guillermomolina.i4gl.runtime.types.I4GLType;
 public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;
+    
     protected abstract FrameSlot getSlot();
     
-    @Override
-    protected boolean isSmallInt() {
-        return getGlobalFrame().isInt(getSlot());
-    }
-
-    @Specialization(guards = "isSmallInt()")
+    @Specialization(guards = "getGlobalFrame().isInt(getSlot())")
     protected int readInt(final VirtualFrame frame) {
         return FrameUtil.getIntSafe(getGlobalFrame(), getSlot());
     }
-    
-    @Override
-    protected boolean isInt() {
-        return getGlobalFrame().isLong(getSlot());
-    }
 
-    @Specialization(guards = "isInt()")
+    @Specialization(guards = "getGlobalFrame().isLong(getSlot())")
     protected long readBigInt(final VirtualFrame frame) {
         return FrameUtil.getLongSafe(getGlobalFrame(), getSlot());
     }
     
-    @Override
-    protected boolean isSmallFloat() {
-        return getGlobalFrame().isFloat(getSlot());
-    }
-
-    @Specialization(guards = "isSmallFloat()")
+    @Specialization(guards = "getGlobalFrame().isFloat(getSlot())")
     protected float readSmallFloat(final VirtualFrame frame) {
         return FrameUtil.getFloatSafe(getGlobalFrame(), getSlot());
     }
     
-    @Override
-    protected boolean isFloat() {
-        return getGlobalFrame().isDouble(getSlot());
-    }
-
-    @Specialization(guards = "isFloat()")
+    @Specialization(guards = "getGlobalFrame().isDouble(getSlot())")
     protected double readFloat(final VirtualFrame frame) {
         return FrameUtil.getDoubleSafe(getGlobalFrame(), getSlot());
     }

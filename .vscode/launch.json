@@ -35,11 +35,11 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) I4GLMain Cursor.4gl",
+            "name": "Debug (Launch) I4GLMain GlobalVariable.4gl",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
-            "args": "./language/tests/Cursor.4gl",
+            "args": "./language/tests/GlobalVariable.4gl",
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
@@ -57,13 +57,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch and Wait) I4GLMain Cursor.4gl",
+            "name": "Debug (Launch and Wait) I4GLMain GlobalVariable.4gl",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--inspect",
-                "./language/tests/Cursor.4gl"
+                "./language/tests/GlobalVariable.4gl"
             ],
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",

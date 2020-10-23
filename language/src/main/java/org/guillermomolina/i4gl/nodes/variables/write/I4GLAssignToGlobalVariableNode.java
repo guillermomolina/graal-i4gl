@@ -2,6 +2,8 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 
 import java.util.Arrays;
 
+import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.NodeFields;
@@ -12,6 +14,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
+import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
@@ -37,11 +40,14 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
         @NodeField(name = "type", type = I4GLType.class), })
 @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 @TypeSystemReference(I4GLTypeSystem.class)
-public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
+public abstract class I4GLAssignToGlobalVariableNode extends I4GLStatementNode {
 
     public abstract FrameSlot getSlot();
 
     protected abstract I4GLType getType();
+
+    @CompilationFinal
+    protected VirtualFrame globalFrame;
     
     protected boolean isSmallInt() {
         return getType() == I4GLSmallIntType.SINGLETON;
@@ -49,7 +55,7 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
 
     @Specialization(guards = "isSmallInt()")
     void writeSmallInt(final VirtualFrame frame, final short value) {
-        frame.setObject(getSlot(), value);
+        getGlobalFrame().setObject(getSlot(), value);
     }
 
     protected boolean isInt() {
@@ -58,7 +64,7 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
 
     @Specialization(guards = "isInt()")
     void writeInt(final VirtualFrame frame, final int value) {
-        frame.setInt(getSlot(), value);
+        getGlobalFrame().setInt(getSlot(), value);
     }
     
     protected boolean isBigInt() {
@@ -67,7 +73,7 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
 
     @Specialization(guards = "isBigInt()")
     void writeBigInt(final VirtualFrame frame, final long value) {
-        frame.setLong(getSlot(), value);
+        getGlobalFrame().setLong(getSlot(), value);
     }
 
     protected boolean isSmallFloat() {
@@ -76,7 +82,7 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
 
     @Specialization(guards = "isSmallFloat()")
     void writeSmallFloat(final VirtualFrame frame, final float value) {
-        frame.setFloat(getSlot(), value);
+        getGlobalFrame().setFloat(getSlot(), value);
     }
 
     protected boolean isFloat() {
@@ -85,7 +91,7 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
 
     @Specialization(guards = "isFloat()")
     void writeDouble(final VirtualFrame frame, final double value) {
-        frame.setDouble(getSlot(), value);
+        getGlobalFrame().setDouble(getSlot(), value);
     }
 
     protected boolean isChar() {
@@ -96,7 +102,7 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
     void assignChar(final VirtualFrame frame, final String string) {
         I4GLChar value = (I4GLChar) getType().getDefaultValue();
         value.assignString(string);
-        frame.setObject(getSlot(), value);
+        getGlobalFrame().setObject(getSlot(), value);
     }
 
     protected boolean isVarchar() {
@@ -107,32 +113,32 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
     void assignVarchar(final VirtualFrame frame, final String string) {
         I4GLVarchar value = (I4GLVarchar) getType().getDefaultValue();
         value.assignString(string);
-        frame.setObject(getSlot(), value);
+        getGlobalFrame().setObject(getSlot(), value);
     }
 
     @Specialization
     void assignRecord(final VirtualFrame frame, final I4GLRecord record) {
-        frame.setObject(getSlot(), record.createDeepCopy());
+        getGlobalFrame().setObject(getSlot(), record.createDeepCopy());
     }
 
     @Specialization
     void assignIntArray(final VirtualFrame frame, final int[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
     void assignBigIntArray(final VirtualFrame frame, final long[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
     void assignSmallFloatArray(final VirtualFrame frame, final float[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization
     void assignDoubleArray(final VirtualFrame frame, final double[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     /**
@@ -140,12 +146,20 @@ public abstract class I4GLAssignToLocalVariableNode extends I4GLStatementNode {
      */
     @Specialization
     void assignArray(final VirtualFrame frame, final Object[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
     @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
     void assign(final VirtualFrame frame, final Object value) {
-        frame.setObject(getSlot(), value);
+        getGlobalFrame().setObject(getSlot(), value);
+    }
+
+    protected VirtualFrame getGlobalFrame() {
+        if(globalFrame == null) {
+            CompilerDirectives.transferToInterpreterAndInvalidate();
+            globalFrame = lookupContextReference(I4GLLanguage.class).get().getFrameRegistry().get("GLOBAL");
+        }
+        return globalFrame;
     }
 
     @Override
