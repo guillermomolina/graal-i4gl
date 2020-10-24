@@ -48,6 +48,13 @@ public class I4GLParseScope {
         this.arguments = new ArrayList<>();
     }
    
+    public I4GLParseScope getRootScope() {
+        I4GLParseScope scope = this;
+        while(scope.outer != null) {
+            scope = scope.outer;
+        }
+        return scope;
+    }
 
     public FrameSlot getFrameSlot(String identifier) {
         return frameDescriptor.findFrameSlot(identifier);

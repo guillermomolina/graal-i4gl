@@ -50,7 +50,6 @@ typeDeclaration:
 	DEFINE variableDeclaration (COMMA variableDeclaration)*;
 
 variableDeclaration: identifier (COMMA identifier)* type;
-//| identifier type (COMMA identifier type)*
 
 type:
 	typeIdentifier

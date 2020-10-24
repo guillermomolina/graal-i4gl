@@ -20,7 +20,6 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.nodes.InitializationNodeFactory;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLAddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideIntegerNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideNodeGen;
@@ -78,17 +77,9 @@ import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.complex.I4GLCursorType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
-import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
-import org.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
-import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
-import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
-import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
-import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
-import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private static final String RECORD_STRING = "Record";
@@ -105,7 +96,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public I4GLNodeFactory(final I4GLLanguage language, final Source source) {
         this.language = language;
         this.source = source;
-        this.currentParseScope = new I4GLParseScope(null, "GLOBAL");
+        pushNewScope("GLOBAL");
         this.allFunctions = new HashMap<>();
     }
 
@@ -175,8 +166,17 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     public FrameDescriptor getRootFrameDescriptor() {
-        assert (currentParseScope.getOuterScope() == null);
-        return currentParseScope.getFrameDescriptor();
+        return currentParseScope.getRootScope().getFrameDescriptor();
+    }
+
+    public I4GLParseScope pushNewScope(final String scopeName) {
+        currentParseScope = new I4GLParseScope(currentParseScope, scopeName);     
+        return currentParseScope;  
+    }
+
+    public I4GLParseScope popScope() {
+        currentParseScope = currentParseScope.getOuterScope();        
+        return currentParseScope;  
     }
 
     private static void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
@@ -242,7 +242,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitMainFunctionDefinition(final I4GLParser.MainFunctionDefinitionContext ctx) {
         try {
             final String functionIdentifier = "MAIN";
-            currentParseScope = new I4GLParseScope(currentParseScope, functionIdentifier);
+            pushNewScope(functionIdentifier);
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(),
@@ -250,7 +250,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
             allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
-            currentParseScope = currentParseScope.getOuterScope();
+            popScope();
             return rootNode;
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
@@ -287,13 +287,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
-            currentParseScope = new I4GLParseScope(currentParseScope, functionIdentifier);
+            pushNewScope(functionIdentifier);
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, parameteridentifiers, ctx.typeDeclarations(),
                     ctx.codeBlock());
             final I4GLRootNode rootNode = new I4GLRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
             allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
-            currentParseScope = currentParseScope.getOuterScope();
+            popScope();
             return rootNode;
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
@@ -735,167 +735,20 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return node;
     }
 
-    private I4GLBlockNode mergeBlocks(Iterable<? extends ParserRuleContext> contextList) {
-        List<I4GLStatementNode> statementNodes = new ArrayList<>();
-        for (ParseTree variableDeclarationCtx : contextList) {
-            I4GLBlockNode blockNode = (I4GLBlockNode) visit(variableDeclarationCtx);
-            assert blockNode != null;
-            if (blockNode instanceof I4GLBlockNode) {
-                statementNodes.addAll(blockNode.getStatements());
-            }
-        }
-        return new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
-    }
-
-    @Override
-    public Node visitTypeDeclarations(final I4GLParser.TypeDeclarationsContext ctx) {
-        I4GLBlockNode node = mergeBlocks(ctx.typeDeclaration());
-        setSourceFromContext(node, ctx);
-        node.addStatementTag();
-        return node;
-    }
-
-    @Override
-    public Node visitTypeDeclaration(final I4GLParser.TypeDeclarationContext ctx) {
-        I4GLBlockNode node = mergeBlocks(ctx.variableDeclaration());
-        setSourceFromContext(node, ctx);
-        node.addStatementTag();
-        return node;
-    }
-
-    class TypeNode extends Node {
-        public final I4GLType descriptor;
-
-        public TypeNode(final I4GLType descriptor) {
-            this.descriptor = descriptor;
-        }
-    }
-
     @Override
     public Node visitVariableDeclaration(final I4GLParser.VariableDeclarationContext ctx) {
         try {
-            final TypeNode typeNode = (TypeNode) visit(ctx.type());
+            final I4GLTypeFactory typeFactory = new I4GLTypeFactory(this);
+            final I4GLType type = typeFactory.visit(ctx.type());
             final List<I4GLParser.IdentifierContext> identifierCtxList = ctx.identifier();
-            final List<String> identifierList = new ArrayList<>(identifierCtxList.size());
             for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
-                identifierList.add(identifierCtx.getText());
+                final String identifier = identifierCtx.getText();
+                currentParseScope.registerLocalVariable(identifier, type);
             }
-            List<I4GLStatementNode> initializationNodes = new ArrayList<>();
-            final I4GLType type = typeNode.descriptor;
-            for (final String identifier : identifierList) {
-                FrameSlot frameSlot = currentParseScope.registerLocalVariable(identifier, type);
-                I4GLStatementNode initializationNode;
-                Object defaultValue;
-                if (type instanceof I4GLTextType) {
-                    // This is hacky, but that is what c4gl compiler does
-                    defaultValue = I4GLNull.SINGLETON;
-                } else {
-                    defaultValue = type.getDefaultValue();
-                }
-                assert defaultValue != null;
-                initializationNode = InitializationNodeFactory.create(frameSlot, defaultValue, null);
-                initializationNodes.add(initializationNode);
-            }
-
-            I4GLBlockNode node = new I4GLBlockNode(
-                    initializationNodes.toArray(new I4GLStatementNode[initializationNodes.size()]));
-            node.addStatementTag();
-            setSourceFromContext(node, ctx);
-            return node;
+            return null;
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
         }
-    }
-
-    @Override
-    public Node visitCharType(final I4GLParser.CharTypeContext ctx) {
-        if (ctx.varchar() != null) {
-            final int size = Integer.parseInt(ctx.numericConstant(0).getText());
-            return new TypeNode(new I4GLVarcharType(size));
-        } else {
-            int size = 1;
-            if (!ctx.numericConstant().isEmpty()) {
-                size = Integer.parseInt(ctx.numericConstant(0).getText());
-            }
-            return new TypeNode(new I4GLCharType(size));
-        }
-    }
-
-    @Override
-    public Node visitNumberType(final I4GLParser.NumberTypeContext ctx) {
-        if (ctx.SMALLINT() != null) {
-            return new TypeNode(I4GLSmallIntType.SINGLETON);
-        }
-        if (ctx.INTEGER() != null || ctx.INT() != null) {
-            return new TypeNode(I4GLIntType.SINGLETON);
-        }
-        if (ctx.BIGINT() != null) {
-            return new TypeNode(I4GLBigIntType.SINGLETON);
-        }
-        if (ctx.SMALLFLOAT() != null || ctx.REAL() != null) {
-            return new TypeNode(I4GLSmallFloatType.SINGLETON);
-        }
-        if (ctx.FLOAT() != null || ctx.DOUBLE() != null) {
-            return new TypeNode(I4GLFloatType.SINGLETON);
-        }
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Node visitTimeType(final I4GLParser.TimeTypeContext ctx) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Node visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Node visitLargeType(final I4GLParser.LargeTypeContext ctx) {
-        if (ctx.BYTE() != null) {
-            throw new NotImplementedException();
-        } else /* there is a ctx.TEXT() */ {
-            return new TypeNode(I4GLTextType.SINGLETON);
-        }
-    }
-
-    @Override
-    public Node visitRecordType(final I4GLParser.RecordTypeContext ctx) {
-        currentParseScope = new I4GLParseScope(currentParseScope, "_record");
-
-        if (ctx.LIKE() != null) {
-            throw new NotImplementedException();
-        }
-        for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
-            visit(variableDeclarationCtx);
-        }
-
-        I4GLRecordType type = currentParseScope.createRecordType();
-
-        assert currentParseScope.getOuterScope() != null;
-        currentParseScope = currentParseScope.getOuterScope();
-        return new TypeNode(type);
-    }
-
-    @Override
-    public Node visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
-        TypeNode typeNode = (TypeNode) visit(ctx.arrayTypeType());
-        I4GLArrayType arrayDescriptor = null;
-        for (int i = ctx.arrayIndexer().dimensionSize().size() - 1; i >= 0; i--) {
-            int size = Integer.parseInt(ctx.arrayIndexer().dimensionSize(i).getText());
-            if (arrayDescriptor == null) {
-                arrayDescriptor = new I4GLArrayType(size, typeNode.descriptor);
-            } else {
-                arrayDescriptor = new I4GLArrayType(size, arrayDescriptor);
-            }
-        }
-        return new TypeNode(arrayDescriptor);
-    }
-
-    @Override
-    public Node visitDynArrayType(final I4GLParser.DynArrayTypeContext ctx) {
-        throw new NotImplementedException();
     }
 
     @Override

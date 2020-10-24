@@ -2,10 +2,8 @@ package org.guillermomolina.i4gl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.RootCallTarget;
@@ -15,16 +13,13 @@ import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
 import com.oracle.truffle.api.debug.DebuggerTags;
 import com.oracle.truffle.api.dsl.NodeFactory;
-import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.instrumentation.ProvidedTags;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.interop.InteropLibrary;
-import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.nodes.I4GLLexicalScope;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
 import org.guillermomolina.i4gl.parser.I4GLFullParser;
@@ -95,51 +90,6 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     @Override
     protected boolean isVisible(I4GLContext context, Object value) {
         return !InteropLibrary.getFactory().getUncached(value).isNull(value);
-    }
-
-    @Override
-    public Iterable<Scope> findLocalScopes(I4GLContext context, Node node, Frame frame) {
-        final I4GLLexicalScope scope = I4GLLexicalScope.createScope(node);
-        return new Iterable<Scope>() {
-            @Override
-            public Iterator<Scope> iterator() {
-                return new Iterator<Scope>() {
-                    private I4GLLexicalScope previousScope;
-                    private I4GLLexicalScope nextScope = scope;
-
-                    @Override
-                    public boolean hasNext() {
-                        if (nextScope == null) {
-                            nextScope = previousScope.findParent();
-                        }
-                        return nextScope != null;
-                    }
-
-                    @Override
-                    public Scope next() {
-                        if (!hasNext()) {
-                            throw new NoSuchElementException();
-                        }
-                        Object functionObject = findFunctionObject();
-                        final String nextScopeName = nextScope.getName();
-                        final Object nextScopeVariables = nextScope.getVariables(frame);
-                        final Node nextScopeNode = nextScope.getNode();
-                        final Object nextScopeArguments = nextScope.getArguments(frame);
-                        Scope vscope = Scope.newBuilder(nextScopeName, nextScopeVariables)
-                                .node(nextScopeNode).arguments(nextScopeArguments)
-                                .rootInstance(functionObject).build();
-                        previousScope = nextScope;
-                        nextScope = null;
-                        return vscope;
-                    }
-
-                    private Object findFunctionObject() {
-                        String name = node.getRootNode().getName();
-                        return context.getFunctionRegistry().getFunction(name);
-                    }
-                };
-            }
-        };
     }
 
     @Override

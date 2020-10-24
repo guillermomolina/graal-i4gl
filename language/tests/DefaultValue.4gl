@@ -1,26 +1,60 @@
 MAIN
-  DEFINE an_int,an_int2 INT
-  DEFINE a_char_10,another_char_10 CHAR(10)
+  DEFINE anInt1,anInt2 INTEGER
+  DEFINE aFloat1,aFloat2 FLOAT
+  DEFINE aChar1,aChar2 CHAR(10)
+  DEFINE aVarchar1,aVarchar2 VARCHAR(10)
+  DEFINE aText1 TEXT
 
-  IF an_int IS NULL THEN
-    DISPLAY "an_int is null"
+  IF anInt1 IS NULL THEN
+    DISPLAY "anInt1 is null"
   END IF
-  DISPLAY "|", an_int, "|"
+  DISPLAY "|", anInt1, "|"
 
-  LET an_int2=an_int
-  IF an_int2 IS NULL THEN
-    DISPLAY "an_int2 is null"
-  END IF
-  DISPLAY "|", an_int2, "|"
+  LET anInt2=anInt1
 
-  IF a_char_10 IS NULL THEN
-    DISPLAY "a_char_10 is null"
+  IF anInt2 IS NULL THEN
+    DISPLAY "anInt2 is null"
   END IF
-  DISPLAY "|", a_char_10, "|"
- 
-  LET another_char_10=a_char_10
-  IF another_char_10 IS NULL THEN
-    DISPLAY "another_char_10 is null"
+  DISPLAY "|", anInt2, "|"
+
+  IF aFloat1 IS NULL THEN
+    DISPLAY "aFloat1 is null"
   END IF
-  DISPLAY "|", another_char_10, "|"
+  DISPLAY "|", aFloat1, "|"
+
+  LET aFloat2=aFloat1
+
+  IF aFloat2 IS NULL THEN
+    DISPLAY "aFloat2 is null"
+  END IF
+  DISPLAY "|", aFloat2, "|"
+
+  IF aChar1 IS NULL THEN
+    DISPLAY "aChar1 is null"
+  END IF
+  DISPLAY "|", aChar1, "|"
+
+  LET aChar2=aChar1
+
+  IF aChar2 IS NULL THEN
+    DISPLAY "aChar2 is null"
+  END IF
+  DISPLAY "|", aChar2, "|"
+
+  IF aVarchar1 IS NULL THEN
+    DISPLAY "aVarchar1 is null"
+  END IF
+  DISPLAY "|", aVarchar1, "|"
+
+  LET aVarchar2=aVarchar1
+
+  IF aVarchar2 IS NULL THEN
+    DISPLAY "aVarchar2 is null"
+  END IF
+  DISPLAY "|", aVarchar2, "|"
+
+  IF aText1 IS NULL THEN
+    DISPLAY "aText1 is null"
+  END IF
+  DISPLAY "|", aText1, "|"
 END MAIN
