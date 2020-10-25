@@ -16,8 +16,8 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.I4GLFunction;
 import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
+import org.guillermomolina.i4gl.runtime.context.I4GLFunction;
 
 @NodeInfo(shortName = "CALL")
 public final class I4GLCallNode extends I4GLStatementNode {

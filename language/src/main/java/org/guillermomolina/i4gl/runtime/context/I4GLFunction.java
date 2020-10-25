@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime;
+package org.guillermomolina.i4gl.runtime.context;
 
 import java.util.logging.Level;
 
@@ -23,7 +23,6 @@ import com.oracle.truffle.api.utilities.CyclicAssumption;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
-import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFunctionType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLFunction implements TruffleObject {
@@ -45,7 +44,7 @@ public final class I4GLFunction implements TruffleObject {
      */
     private final CyclicAssumption callTargetStable;
 
-    protected I4GLFunction(I4GLLanguage language, String name) {
+    public I4GLFunction(I4GLLanguage language, String name) {
         this.name = name;
         this.callTarget = Truffle.getRuntime().createCallTarget(new I4GLUndefinedFunctionRootNode(language, name));
         this.callTargetStable = new CyclicAssumption(name);
@@ -55,7 +54,7 @@ public final class I4GLFunction implements TruffleObject {
         return name;
     }
 
-    protected void setCallTarget(RootCallTarget callTarget) {
+    public void setCallTarget(RootCallTarget callTarget) {
         this.callTarget = callTarget;
         /*
          * We have a new call target. Invalidate all code that speculated that the old call target

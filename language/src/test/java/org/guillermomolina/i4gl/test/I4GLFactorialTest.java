@@ -26,7 +26,7 @@ public class I4GLFactorialTest {
                 "RETURN n * factorial(n -1)\n" +
             "END FUNCTION\n"
         );
-        // @formatter:on
+        // @formatter:on     
         factorial = context.getBindings("i4gl").getMember("factorial");
     }
 

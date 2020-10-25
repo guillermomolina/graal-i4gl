@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime;
+package org.guillermomolina.i4gl.runtime.context;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +16,11 @@ import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLObjectType;
 
 @ExportLibrary(InteropLibrary.class)
-final class VariablesObject implements TruffleObject {
+final class I4GLFunctions implements TruffleObject {
 
-    final Map<String, Object> variables = new HashMap<>();
+    final Map<String, I4GLFunction> functions = new HashMap<>();
 
-    VariablesObject() {
+    I4GLFunctions() {
     }
 
     @ExportMessage
@@ -41,19 +41,19 @@ final class VariablesObject implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object readMember(String member) {
-        return variables.get(member);
+        return functions.get(member);
     }
 
     @ExportMessage
     @TruffleBoundary
     boolean isMemberReadable(String member) {
-        return variables.containsKey(member);
+        return functions.containsKey(member);
     }
 
     @ExportMessage
     @TruffleBoundary
     Object getMembers(boolean includeInternal) {
-        return new VariableNamesObject(variables.keySet().toArray());
+        return new FunctionNamesObject(functions.keySet().toArray());
     }
 
     @ExportMessage
@@ -69,19 +69,19 @@ final class VariablesObject implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-        return variables.toString();
+        return functions.toString();
     }
 
     public static boolean isInstance(TruffleObject obj) {
-        return obj instanceof VariablesObject;
+        return obj instanceof I4GLFunctions;
     }
 
     @ExportLibrary(InteropLibrary.class)
-    static final class VariableNamesObject implements TruffleObject {
+    static final class FunctionNamesObject implements TruffleObject {
 
         private final Object[] names;
 
-        VariableNamesObject(Object[] names) {
+        FunctionNamesObject(Object[] names) {
             this.names = names;
         }
 

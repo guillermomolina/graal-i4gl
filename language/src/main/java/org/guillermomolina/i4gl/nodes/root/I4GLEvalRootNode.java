@@ -12,7 +12,7 @@ import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.runtime.I4GLContext;
+import org.guillermomolina.i4gl.runtime.context.I4GLContext;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**

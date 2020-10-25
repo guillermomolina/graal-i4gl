@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime.types.primitive;
+package org.guillermomolina.i4gl.runtime.context;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -7,11 +7,11 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
-public class I4GLFunctionType extends I4GLType {
+final class I4GLFunctionType extends I4GLType {
 
     public static final I4GLFunctionType SINGLETON = new I4GLFunctionType();
 
-    private I4GLFunctionType() {
+    I4GLFunctionType() {
     }    
 
     @Override

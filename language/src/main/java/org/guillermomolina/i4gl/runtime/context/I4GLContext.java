@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime;
+package org.guillermomolina.i4gl.runtime.context;
 
 import static com.oracle.truffle.api.CompilerDirectives.shouldNotReachHere;
 
@@ -14,6 +14,7 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.Scope;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.Env;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.AllocationReporter;
 import com.oracle.truffle.api.interop.TruffleObject;
@@ -22,6 +23,7 @@ import com.oracle.truffle.api.source.Source;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
+import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 public final class I4GLContext {
     private final Env env;
@@ -30,7 +32,6 @@ public final class I4GLContext {
     private final I4GLFunctionRegistry functionRegistry;
     private final Map<String,VirtualFrame> frameRegistry;
     private final AllocationReporter allocationReporter;
-    private final Iterable<Scope> topScopes; // Cache the top scopes
 
     public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env) {
         this.env = env;
@@ -39,7 +40,6 @@ public final class I4GLContext {
         this.functionRegistry = new I4GLFunctionRegistry(language);
         this.frameRegistry = new HashMap<>();
         this.allocationReporter = env.lookup(AllocationReporter.class);
-        this.topScopes = Collections.singleton(Scope.newBuilder("global", functionRegistry.getFunctionsObject()).build());
         installBuiltins();
     }
 
@@ -81,7 +81,31 @@ public final class I4GLContext {
     }
 
     public Iterable<Scope> getTopScopes() {
-        return topScopes;
+        return Collections.singleton(Scope.newBuilder("global", geGlobalVariables()).build());
+    }
+
+    private TruffleObject geGlobalVariables() {
+        final I4GLVariables vars = (I4GLVariables) getModuleVariables("GLOBAL");
+        for(Map.Entry<String, I4GLFunction> entry: functionRegistry.getFunctions().entrySet()) {
+            vars.variables.put(entry.getKey(), entry.getValue());
+        }
+        return vars;
+    }
+
+    @TruffleBoundary
+    private TruffleObject getModuleVariables(String moduleName) {
+        VirtualFrame frame = frameRegistry.get(moduleName);
+        final I4GLVariables vars = new I4GLVariables();
+        if(frame != null) {
+            for (FrameSlot slot : frame.getFrameDescriptor().getSlots()) {
+                Object value = frame.getValue(slot);
+                if(value == null) {
+                    value = I4GLNull.SINGLETON;
+                }
+                vars.variables.put((String)slot.getIdentifier(), value);
+            }    
+        }
+        return vars;
     }
 
     /**

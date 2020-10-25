@@ -23,8 +23,8 @@ import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
 import org.guillermomolina.i4gl.parser.I4GLFullParser;
-import org.guillermomolina.i4gl.runtime.I4GLContext;
-import org.guillermomolina.i4gl.runtime.I4GLLanguageView;
+import org.guillermomolina.i4gl.runtime.context.I4GLLanguageView;
+import org.guillermomolina.i4gl.runtime.context.I4GLContext;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the

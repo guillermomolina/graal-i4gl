@@ -9,8 +9,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.runtime.I4GLContext;
-import org.guillermomolina.i4gl.runtime.I4GLFunctionRegistry;
+import org.guillermomolina.i4gl.runtime.context.I4GLContext;
+import org.guillermomolina.i4gl.runtime.context.I4GLFunctionRegistry;
 import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**

@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.runtime;
+package org.guillermomolina.i4gl.runtime.context;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
@@ -31,7 +31,7 @@ public final class I4GLLanguageView implements TruffleObject {
      * like members might not be. For example, an object might be a function.
      */
     @CompilationFinal(dimensions = 1)
-    public static final I4GLType[] PRECEDENCE = {
+    protected static final I4GLType[] PRECEDENCE = {
         I4GLSmallIntType.SINGLETON, I4GLIntType.SINGLETON, I4GLBigIntType.SINGLETON, I4GLSmallFloatType.SINGLETON, I4GLFloatType.SINGLETON,
             I4GLTextType.SINGLETON };
 

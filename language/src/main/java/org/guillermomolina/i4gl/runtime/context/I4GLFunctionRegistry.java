@@ -1,9 +1,5 @@
-package org.guillermomolina.i4gl.runtime;
+package org.guillermomolina.i4gl.runtime.context;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 import com.oracle.truffle.api.RootCallTarget;
@@ -19,7 +15,7 @@ import org.guillermomolina.i4gl.parser.I4GLFullParser;
 public final class I4GLFunctionRegistry {
 
     private final I4GLLanguage language;
-    private final FunctionsObject functionsObject = new FunctionsObject();
+    private final I4GLFunctions functionsObject = new I4GLFunctions();
 
     public I4GLFunctionRegistry(I4GLLanguage language) {
         this.language = language;
@@ -60,21 +56,12 @@ public final class I4GLFunctionRegistry {
         register(parser.getAllFunctions());
     }
 
-    public I4GLFunction getFunction(String name) {
-        return functionsObject.functions.get(name);
+    public Map<String, I4GLFunction> getFunctions() {
+        return functionsObject.functions;
     }
 
-    /**
-     * Returns the sorted list of all functions, for printing purposes only.
-     */
-    public List<I4GLFunction> getFunctions() {
-        List<I4GLFunction> result = new ArrayList<>(functionsObject.functions.values());
-        Collections.sort(result, new Comparator<I4GLFunction>() {
-            public int compare(I4GLFunction f1, I4GLFunction f2) {
-                return f1.toString().compareTo(f2.toString());
-            }
-        });
-        return result;
+    public I4GLFunction getFunction(String name) {
+        return functionsObject.functions.get(name);
     }
 
     public TruffleObject getFunctionsObject() {
