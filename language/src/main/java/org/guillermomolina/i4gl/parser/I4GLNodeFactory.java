@@ -764,10 +764,15 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitAssignmentStatement(final I4GLParser.AssignmentStatementContext ctx) {
+        I4GLStatementNode node;
         if (ctx.simpleAssignmentStatement() != null) {
-            return visit(ctx.simpleAssignmentStatement());
+            node = (I4GLStatementNode) visit(ctx.simpleAssignmentStatement());
+        } else {
+            node = (I4GLStatementNode) visit(ctx.multipleAssignmentStatement());
         }
-        return visit(ctx.multipleAssignmentStatement());
+        setSourceFromContext(node, ctx);
+        node.addStatementTag();
+        return node;
     }
 
     @Override
