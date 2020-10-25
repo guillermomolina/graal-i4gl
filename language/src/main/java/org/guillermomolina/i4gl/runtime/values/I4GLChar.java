@@ -9,9 +9,9 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
-import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.runtime.I4GLContext;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLChar1Type;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 

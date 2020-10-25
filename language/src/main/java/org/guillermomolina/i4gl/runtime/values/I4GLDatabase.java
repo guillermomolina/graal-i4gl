@@ -9,8 +9,8 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
-import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.I4GLContext;
 import org.guillermomolina.i4gl.runtime.database.SquirrelSession;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseConnectionException;
 import org.guillermomolina.i4gl.runtime.types.complex.I4GLDatabaseType;

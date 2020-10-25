@@ -8,8 +8,8 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.utilities.TriState;
 
-import org.guillermomolina.i4gl.I4GLContext;
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.runtime.I4GLContext;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLNullType;
 
 @ExportLibrary(InteropLibrary.class)

@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl;
+package org.guillermomolina.i4gl.runtime;
 
 import static com.oracle.truffle.api.CompilerDirectives.shouldNotReachHere;
 
@@ -20,8 +20,8 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
 
+import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
-import org.guillermomolina.i4gl.runtime.I4GLFunctionRegistry;
 
 public final class I4GLContext {
     private final Env env;
