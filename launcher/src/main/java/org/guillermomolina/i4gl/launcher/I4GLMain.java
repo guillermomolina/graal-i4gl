@@ -42,13 +42,14 @@ package org.guillermomolina.i4gl.launcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
@@ -61,57 +62,62 @@ public final class I4GLMain {
      * The main entry point.
      */
     public static void main(String[] args) throws IOException {
-        Source source;
         Map<String, String> options = new HashMap<>();
-        String file = null;
+        List<String> files = new ArrayList<>();
         for (String arg : args) {
-            if (!parseOption(options, arg) && file == null) {
-                    file = arg;
+            if (!parseOption(options, arg)) {
+                files.add(arg);
             }
         }
 
-        if (file == null) {
-            // @formatter:off
-            source = Source.newBuilder(LANGUAGE_ID, new InputStreamReader(System.in), "<stdin>").build();
-            // @formatter:on
-        } else {
-            source = Source.newBuilder(LANGUAGE_ID, new File(file)).build();
+        try {
+            execute(options, files);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            System.exit(-1);
         }
-
-        System.exit(executeSource(file, source, System.in, System.out, options));
     }
 
-    private static int executeSource(String file, Source source, InputStream in, PrintStream out, Map<String, String> options) {
-        Context context;
-        PrintStream err = System.err;
-        try {
-            context = Context.newBuilder(LANGUAGE_ID).allowExperimentalOptions(true).in(in).out(out).options(options).build();
-        } catch (IllegalArgumentException e) {
-            err.println(e.getMessage());
-            return 1;
-        }
-        out.println("== Running " + file + " on " + context.getEngine().getImplementationName() 
-            + " " + context.getEngine().getVersion() + " ==");
+    private static int execute(final Map<String, String> options, final List<String> files)
+            throws IllegalArgumentException {
+        Context context = Context.newBuilder(LANGUAGE_ID).allowExperimentalOptions(true).in(System.in).out(System.out)
+                .options(options).build();
+        Engine engine = context.getEngine();
+        System.out.println("== Running on " + engine.getImplementationName() + " "
+                + engine.getVersion() + " ==");
+
 
         try {
-            final Value result = context.eval(source);
+            Value result;
+            if (files.isEmpty()) {
+                Source source = Source.newBuilder(LANGUAGE_ID, new InputStreamReader(System.in), "<stdin>").build();
+                result = context.eval(source);
+            } else {
+                String file = files.get(0);
+                Source source = Source.newBuilder(LANGUAGE_ID, new File(file)).build();
+                result = context.eval(source);
+            }
+
             final Value bindings = context.getBindings(LANGUAGE_ID);
             if (bindings.getMember("MAIN") == null) {
-                err.println("No MAIN defined in 4gl source file.");
-                return 1;
+                System.err.println("No MAIN defined in 4gl source file.");
+                return -1;
             }
             if (!result.isNull()) {
-                out.println("== Exit code " + result.toString() + " ==");
+                System.out.println("== Exit code " + result.toString() + " ==");
             }
             return 0;
+        } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            return -1;
         } catch (PolyglotException ex) {
             if (ex.isInternalError()) {
                 // for internal errors we print the full stack trace
                 ex.printStackTrace();
             } else {
-                err.println(ex.getMessage());
+                System.err.println(ex.getMessage());
             }
-            return 1;
+            return -1;
         } finally {
             context.close();
         }
