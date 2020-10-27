@@ -111,6 +111,10 @@ if [[ "$GRAALVM_VERSION" != "" ]]; then
     for opt in "$@"
     do
       case $opt in
+        --polyglot)
+            echo "Ignored arg $opt" ;;
+        --experimental-options)
+            echo "Ignored arg $opt" ;;
         -debug)
             JAVA_ARGS+=("-Xdebug" "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=y") ;;
         -dump)
