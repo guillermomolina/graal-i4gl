@@ -2,13 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "java",
-            "name": "CodeLens (Launch) - I4GLSimpleTestSuite",
-            "request": "launch",
-            "mainClass": "org.guillermomolina.i4gl.test.I4GLSimpleTestSuite",
-            "projectName": "i4gl"
-        },
-        {
             "type": "graalvm",
             "request": "launch",
             "name": "Launch i4gl Script",
@@ -49,11 +42,14 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) I4GLMain CallReturn1.4gl",
+            "name": "Debug (Launch) I4GLMain test1",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
-            "args": "./language/tests/CallReturn1.4gl",
+            "args": [
+                "./language/tests/module/Main.4gl",
+                "./language/tests/module/Module1.4gl"
+            ],
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
@@ -101,10 +97,13 @@
             "port": 9229
         }
     ],
-	"compounds": [
-		{
-			"name": "Debug I4GL + Attach",
-			"configurations": [ "Debug (Launch and Wait) I4GLMain", "GraalVM Attach" ]
-		}
-	]
+    "compounds": [
+        {
+            "name": "Debug I4GL + Attach",
+            "configurations": [
+                "Debug (Launch and Wait) I4GLMain",
+                "GraalVM Attach"
+            ]
+        }
+    ]
 }
