@@ -32,7 +32,7 @@ import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
-import org.guillermomolina.i4gl.test.I4GLTestRunner.TestCase;
+import org.guillermomolina.i4gl.test.I4GLSimpleTestRunner.TestCase;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.internal.TextListener;
@@ -46,7 +46,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-public class I4GLTestRunner extends ParentRunner<TestCase> {
+public class I4GLSimpleTestRunner extends ParentRunner<TestCase> {
     private static final String SOURCE_SUFFIX = ".4gl";
     private static final String INPUT_SUFFIX = ".input";
     private static final String OUTPUT_SUFFIX = ".output";
@@ -74,7 +74,7 @@ public class I4GLTestRunner extends ParentRunner<TestCase> {
 
     private final List<TestCase> testCases;
 
-    public I4GLTestRunner(Class<?> runningClass) throws InitializationError {
+    public I4GLSimpleTestRunner(Class<?> runningClass) throws InitializationError {
         super(runningClass);
         try {
             testCases = createTests(runningClass);
@@ -96,7 +96,7 @@ public class I4GLTestRunner extends ParentRunner<TestCase> {
     protected static List<TestCase> createTests(final Class<?> c) throws IOException, InitializationError {
         I4GLTestSuite suite = c.getAnnotation(I4GLTestSuite.class);
         if (suite == null) {
-            throw new InitializationError(String.format("@%s annotation required on class '%s' to run with '%s'.", I4GLTestSuite.class.getSimpleName(), c.getName(), I4GLTestRunner.class.getSimpleName()));
+            throw new InitializationError(String.format("@%s annotation required on class '%s' to run with '%s'.", I4GLTestSuite.class.getSimpleName(), c.getName(), I4GLSimpleTestRunner.class.getSimpleName()));
         }
 
         String[] paths = suite.value();
@@ -307,7 +307,7 @@ public class I4GLTestRunner extends ParentRunner<TestCase> {
     public static void runInMain(Class<?> testClass, String[] args) throws InitializationError, NoTestsRemainException {
         JUnitCore core = new JUnitCore();
         core.addListener(new TextListener(System.out));
-        I4GLTestRunner suite = new I4GLTestRunner(testClass);
+        I4GLSimpleTestRunner suite = new I4GLSimpleTestRunner(testClass);
         if (args.length > 0) {
             suite.filter(new NameFilter(args[0]));
         }

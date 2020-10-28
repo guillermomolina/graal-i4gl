@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "CodeLens (Launch) - I4GLSimpleTestSuite",
+            "request": "launch",
+            "mainClass": "org.guillermomolina.i4gl.test.I4GLSimpleTestSuite",
+            "projectName": "i4gl"
+        },
+        {
             "type": "graalvm",
             "request": "launch",
             "name": "Launch i4gl Script",

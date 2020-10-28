@@ -3,12 +3,12 @@ package org.guillermomolina.i4gl.test;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(I4GLSimpleTestRunner.class)
-@I4GLTestSuite({"tests/simple"})
-public class I4GLSimpleTestSuite {
+@RunWith(I4GLModuleTestRunner.class)
+@I4GLTestSuite({"tests/module"})
+public class I4GLModuleTestSuite {
 
     public static void main(String[] args) throws Exception {
-        I4GLSimpleTestRunner.runInMain(I4GLSimpleTestSuite.class, args);
+        I4GLModuleTestRunner.runInMain(I4GLModuleTestSuite.class, args);
     }
 
     /*
