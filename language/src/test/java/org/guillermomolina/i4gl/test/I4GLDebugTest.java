@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.oracle.truffle.api.debug.Breakpoint;
 import com.oracle.truffle.api.debug.DebugScope;
@@ -22,7 +23,9 @@ import com.oracle.truffle.api.debug.SuspendedCallback;
 import com.oracle.truffle.api.debug.SuspendedEvent;
 import com.oracle.truffle.tck.DebuggerTester;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,7 +46,12 @@ public class I4GLDebugTest {
     }
 
     private void startEval(Source code) {
-        tester.startEval(code);
+        tester.startExecute(new Function<Context, Value>() {
+            public Value apply(Context c) {
+                c.eval(code);
+                return c.getBindings("i4gl").getMember("MAIN").execute();
+            }
+        });
     }
 
     private static Source i4glCode(String code) {

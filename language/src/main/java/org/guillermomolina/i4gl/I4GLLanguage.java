@@ -3,10 +3,8 @@ package org.guillermomolina.i4gl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.oracle.truffle.api.CallTarget;
-import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.Scope;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -21,10 +19,10 @@ import com.oracle.truffle.api.source.Source;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
-import org.guillermomolina.i4gl.nodes.root.I4GLEvalRootNode;
+import org.guillermomolina.i4gl.nodes.root.I4GLModuleRootNode;
 import org.guillermomolina.i4gl.parser.I4GLFullParser;
-import org.guillermomolina.i4gl.runtime.context.I4GLLanguageView;
 import org.guillermomolina.i4gl.runtime.context.I4GLContext;
+import org.guillermomolina.i4gl.runtime.context.I4GLLanguageView;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the
@@ -61,26 +59,14 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
             throw new NotImplementedException();
         }
         final I4GLFullParser parser = new I4GLFullParser(this, source);
-        Map<String, RootCallTarget> functions = parser.getAllFunctions();
-        RootCallTarget main = functions.get("MAIN");
-        RootNode evalMain;
-        if (main != null) {
-            /*
-             * We have a main function, so "evaluating" the parsed source means invoking
-             * that main function. However, we need to lazily register functions into the
-             * I4GLContext first, so we cannot use the original I4GLRootNode for the main
-             * function. Instead, we create a new I4GLEvalRootNode that does everything we
-             * need.
-             */
-            evalMain = new I4GLEvalRootNode(this, main, functions, parser.getRootFrameDescriptor());
-        } else {
-            /*
-             * Even without a main function, "evaluating" the parsed source needs to
-             * register the functions into the I4GLContext.
-             */
-            evalMain = new I4GLEvalRootNode(this, null, functions, parser.getRootFrameDescriptor());
+        String moduleName = source.getName();
+        final int extensionIndex = moduleName.lastIndexOf(".");
+        if (extensionIndex != -1) {
+            moduleName = moduleName.substring(0, extensionIndex);
         }
-        return Truffle.getRuntime().createCallTarget(evalMain);
+    
+        RootNode moduleRootNode = new I4GLModuleRootNode(this, moduleName, parser.getAllFunctions(), parser.getRootFrameDescriptor());
+        return Truffle.getRuntime().createCallTarget(moduleRootNode);
     }
 
     @Override

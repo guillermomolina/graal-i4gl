@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "graalvm",
+            "request": "launch",
+            "name": "Launch i4gl Script",
+            "runtimeExecutable": "/home/guille/Fuentes/graal/languages/graal-i4gl/i4gl",
+            "program": "${file}"
+        },
+        {
             "type": "java",
             "name": "Debug (Launch) Current File",
             "request": "launch",
@@ -57,13 +64,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch and Wait) I4GLMain CallReturn1.4gl",
+            "name": "Debug (Launch and Wait) I4GLMain",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--inspect",
-                "./language/tests/CallReturn1.4gl"
+                "${file}"
             ],
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
@@ -79,6 +86,18 @@
                 "skipConstructors": false
             },
             "console": "internalConsole"
+        },
+        {
+            "type": "graalvm",
+            "request": "attach",
+            "name": "GraalVM Attach",
+            "port": 9229
         }
-    ]
+    ],
+	"compounds": [
+		{
+			"name": "Debug I4GL + Attach",
+			"configurations": [ "Debug (Launch and Wait) I4GLMain", "GraalVM Attach" ]
+		}
+	]
 }

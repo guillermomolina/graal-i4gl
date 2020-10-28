@@ -29,6 +29,7 @@ import com.oracle.truffle.api.dsl.NodeFactory;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
 import org.guillermomolina.i4gl.test.I4GLTestRunner.TestCase;
@@ -290,6 +291,10 @@ public class I4GLTestRunner extends ParentRunner<TestCase> {
 
             /* Call the main entry point, without any arguments. */
             context.eval(source);
+            final Value mainFunction = context.getBindings(I4GLLanguage.ID).getMember("MAIN");
+            if (mainFunction != null) {
+                mainFunction.execute();
+            }
         } catch (PolyglotException ex) {
             if (!ex.isInternalError()) {
                 out.println(ex.getMessage());

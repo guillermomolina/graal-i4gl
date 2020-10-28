@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
@@ -78,31 +77,31 @@ public final class I4GLMain {
         }
     }
 
-    private static int execute(final Map<String, String> options, final List<String> files)
-            throws IllegalArgumentException {
+    private static int execute(final Map<String, String> options, final List<String> files) {
         Context context = Context.newBuilder(LANGUAGE_ID).allowExperimentalOptions(true).in(System.in).out(System.out)
                 .options(options).build();
-        Engine engine = context.getEngine();
+        /*Engine engine = context.getEngine();
         System.out.println("== Running on " + engine.getImplementationName() + " "
-                + engine.getVersion() + " ==");
+                + engine.getVersion() + " ==");*/
 
 
         try {
-            Value result;
             if (files.isEmpty()) {
                 Source source = Source.newBuilder(LANGUAGE_ID, new InputStreamReader(System.in), "<stdin>").build();
-                result = context.eval(source);
+                context.eval(source);
             } else {
-                String file = files.get(0);
-                Source source = Source.newBuilder(LANGUAGE_ID, new File(file)).build();
-                result = context.eval(source);
+                for(String fileName: files) {
+                    Source source = Source.newBuilder(LANGUAGE_ID, new File(fileName)).build();
+                    context.eval(source);    
+                }
             }
 
-            final Value bindings = context.getBindings(LANGUAGE_ID);
-            if (bindings.getMember("MAIN") == null) {
-                System.err.println("No MAIN defined in 4gl source file.");
+            final Value mainFunction = context.getBindings(LANGUAGE_ID).getMember("MAIN");
+            if (mainFunction == null) {
+                System.err.println("No MAIN defined in the 4gl sources.");
                 return -1;
             }
+            final Value result = mainFunction.execute();
             if (!result.isNull()) {
                 System.out.println("== Exit code " + result.toString() + " ==");
             }
