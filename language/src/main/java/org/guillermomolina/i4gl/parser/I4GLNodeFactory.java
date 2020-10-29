@@ -61,11 +61,11 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadNonLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadLocalVariableNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToNonLocalVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadNonLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToNonLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordFieldNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordTextNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToTextNodeGen;
@@ -89,6 +89,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private final Source source;
     private final I4GLLanguage language;
     private I4GLParseScope currentParseScope;
+    private FrameDescriptor globalsFrameDescriptor;
+    private FrameDescriptor moduleFrameDescriptor;
     private final Map<String, RootCallTarget> allFunctions;
     private final String moduleName;
 
@@ -173,8 +175,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return allFunctions;
     }
 
-    public FrameDescriptor getRootFrameDescriptor() {
-        return currentParseScope.getRootScope().getFrameDescriptor();
+    public FrameDescriptor getGlobalsFrameDescriptor() {
+        assert globalsFrameDescriptor != null;
+        return globalsFrameDescriptor;
+    }
+
+    public FrameDescriptor getModuleFrameDescriptor() {
+        assert moduleFrameDescriptor != null;
+        return moduleFrameDescriptor;
     }
 
     public I4GLParseScope pushNewScope(final String scopeName) {
@@ -202,14 +210,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
-        pushNewScope("GLOBAL");
+        globalsFrameDescriptor = pushNewScope("GLOBAL").getFrameDescriptor();
         if(ctx.databaseDeclaration() != null) {
             visit(ctx.databaseDeclaration());
         }
         if(ctx.globalsDeclaration() != null) {
             visit(ctx.globalsDeclaration());
         }
-        pushNewScope(moduleName);
+        moduleFrameDescriptor = pushNewScope(moduleName).getFrameDescriptor();
         if(ctx.typeDeclarations() != null) {
             visit(ctx.typeDeclarations());
         }

@@ -88,7 +88,7 @@ public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            globalFrame = lookupContextReference(I4GLLanguage.class).get().getFrameRegistry().get("GLOBAL");
+            globalFrame = lookupContextReference(I4GLLanguage.class).get().getModuleFrame(getFrameName());
         }
         return globalFrame;
     }

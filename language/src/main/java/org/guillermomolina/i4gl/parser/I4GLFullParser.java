@@ -35,7 +35,11 @@ public class I4GLFullParser {
         return factory.getAllFunctions();
     }
 
-    public FrameDescriptor getRootFrameDescriptor() {
-        return factory.getRootFrameDescriptor();
+    public FrameDescriptor getGlobalsFrameDescriptor() {
+        return factory.getGlobalsFrameDescriptor();
+    }
+
+    public FrameDescriptor getModuleFrameDescriptor() {
+        return factory.getModuleFrameDescriptor();
     }
 }

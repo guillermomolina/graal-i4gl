@@ -60,7 +60,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         }
         final I4GLFullParser parser = new I4GLFullParser(this, source);
         RootNode moduleRootNode = new I4GLModuleRootNode(this, parser.getModuleName(), parser.getAllFunctions(),
-                parser.getRootFrameDescriptor());
+                parser.getGlobalsFrameDescriptor(), parser.getModuleFrameDescriptor());
         return Truffle.getRuntime().createCallTarget(moduleRootNode);
     }
 

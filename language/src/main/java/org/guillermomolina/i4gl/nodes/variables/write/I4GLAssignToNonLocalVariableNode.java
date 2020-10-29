@@ -162,7 +162,7 @@ public abstract class I4GLAssignToNonLocalVariableNode extends I4GLStatementNode
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            globalFrame = lookupContextReference(I4GLLanguage.class).get().getFrameRegistry().get(getFrameName());
+            globalFrame = lookupContextReference(I4GLLanguage.class).get().getModuleFrame(getFrameName());
         }
         return globalFrame;
     }

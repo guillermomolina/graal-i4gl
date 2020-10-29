@@ -73,11 +73,12 @@ public final class I4GLContext {
         return functionRegistry;
     }
 
-    /**
-     * Returns the registry of all variables that are currently defined.
-     */
-    public Map<String,VirtualFrame> getFrameRegistry() {
-        return frameRegistry;
+    public VirtualFrame getModuleFrame(final String moduleName) {
+        return frameRegistry.get(moduleName);
+    }
+
+    public VirtualFrame addModuleFrame(final String moduleName, final VirtualFrame frame) {
+        return frameRegistry.put(moduleName, frame);
     }
 
     public Iterable<Scope> getTopScopes() {
