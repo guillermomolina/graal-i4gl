@@ -81,10 +81,10 @@ public final class I4GLContext {
     }
 
     public Iterable<Scope> getTopScopes() {
-        return Collections.singleton(Scope.newBuilder("global", geGlobalVariables()).build());
+        return Collections.singleton(Scope.newBuilder("global", geNonLocalVariables()).build());
     }
 
-    private TruffleObject geGlobalVariables() {
+    private TruffleObject geNonLocalVariables() {
         final I4GLVariables vars = (I4GLVariables) getModuleVariables("GLOBAL");
         for(Map.Entry<String, I4GLFunction> entry: functionRegistry.getFunctions().entrySet()) {
             vars.variables.put(entry.getKey(), entry.getValue());

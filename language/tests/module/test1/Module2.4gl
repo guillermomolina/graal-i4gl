@@ -1,0 +1,3 @@
+FUNCTION module2()
+    DISPLAY "Module2"
+END FUNCTION

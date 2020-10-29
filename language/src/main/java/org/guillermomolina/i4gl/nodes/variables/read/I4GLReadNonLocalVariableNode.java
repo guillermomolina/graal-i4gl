@@ -24,12 +24,15 @@ import org.guillermomolina.i4gl.runtime.types.I4GLType;
  */
 
 @NodeFields({ 
+    @NodeField(name = "frameName", type = String.class),
     @NodeField(name = "slot", type = FrameSlot.class),
     @NodeField(name = "type", type = I4GLType.class)
 })
-public abstract class I4GLReadGlobalVariableNode extends I4GLExpressionNode {
+public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;
+
+    public abstract String getFrameName();
     
     protected abstract FrameSlot getSlot();
     

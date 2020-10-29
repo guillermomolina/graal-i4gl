@@ -52,7 +52,7 @@ else
 fi
 readonly COMPONENT_DIR="component_temp_dir"
 readonly LANGUAGE_PATH="$COMPONENT_DIR/$JRE/languages/i4gl"
-if [[ -f ../native/slnative ]]; then
+if [[ -f ../native/i4glnative ]]; then
     INCLUDE_I4GLNATIVE="TRUE"
 fi
 
@@ -67,7 +67,7 @@ cp ../launcher/target/i4gl-launcher.jar "$LANGUAGE_PATH/launcher/"
 mkdir -p "$LANGUAGE_PATH/bin"
 cp ../i4gl $LANGUAGE_PATH/bin/
 if [[ $INCLUDE_I4GLNATIVE = "TRUE" ]]; then
-    cp ../native/slnative $LANGUAGE_PATH/bin/
+    cp ../native/i4glnative $LANGUAGE_PATH/bin/
 fi
 
 touch "$LANGUAGE_PATH/native-image.properties"
@@ -87,13 +87,13 @@ jar cfm ../i4gl-component.jar META-INF/MANIFEST.MF .
 
 echo "bin/i4gl = ../$JRE/languages/i4gl/bin/i4gl" > META-INF/symlinks
 if [[ $INCLUDE_I4GLNATIVE = "TRUE" ]]; then
-    echo "bin/slnative = ../$JRE/languages/i4gl/bin/slnative" >> META-INF/symlinks
+    echo "bin/i4glnative = ../$JRE/languages/i4gl/bin/i4glnative" >> META-INF/symlinks
 fi
 jar uf ../i4gl-component.jar META-INF/symlinks
 
 {
     echo "$JRE"'languages/i4gl/bin/i4gl = rwxrwxr-x'
-    echo "$JRE"'languages/i4gl/bin/slnative = rwxrwxr-x'
+    echo "$JRE"'languages/i4gl/bin/i4glnative = rwxrwxr-x'
 } > META-INF/permissions
 jar uf ../i4gl-component.jar META-INF/permissions
 )

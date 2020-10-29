@@ -59,13 +59,8 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
             throw new NotImplementedException();
         }
         final I4GLFullParser parser = new I4GLFullParser(this, source);
-        String moduleName = source.getName();
-        final int extensionIndex = moduleName.lastIndexOf(".");
-        if (extensionIndex != -1) {
-            moduleName = moduleName.substring(0, extensionIndex);
-        }
-    
-        RootNode moduleRootNode = new I4GLModuleRootNode(this, moduleName, parser.getAllFunctions(), parser.getRootFrameDescriptor());
+        RootNode moduleRootNode = new I4GLModuleRootNode(this, parser.getModuleName(), parser.getAllFunctions(),
+                parser.getRootFrameDescriptor());
         return Truffle.getRuntime().createCallTarget(moduleRootNode);
     }
 

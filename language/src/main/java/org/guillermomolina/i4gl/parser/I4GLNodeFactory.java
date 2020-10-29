@@ -61,9 +61,9 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadGlobalVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadNonLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadLocalVariableNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToGlobalVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToNonLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordFieldNodeGen;
@@ -87,16 +87,20 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     /* State while parsing a source unit. */
     private final Source source;
-    private final Map<String, RootCallTarget> allFunctions;
-
-    /* State while parsing a block. */
     private final I4GLLanguage language;
     private I4GLParseScope currentParseScope;
+    private final Map<String, RootCallTarget> allFunctions;
+    private final String moduleName;
 
     public I4GLNodeFactory(final I4GLLanguage language, final Source source) {
         this.language = language;
         this.source = source;
-        pushNewScope("GLOBAL");
+        String localModuleName = source.getName();
+        final int extensionIndex = localModuleName.lastIndexOf(".");
+        if (extensionIndex != -1) {
+            localModuleName = localModuleName.substring(0, extensionIndex);
+        }
+        this.moduleName = localModuleName;
         this.allFunctions = new HashMap<>();
     }
 
@@ -161,6 +165,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return null;
     }
 
+    public String getModuleName() {
+        return moduleName;
+    }
+
     public Map<String, RootCallTarget> getAllFunctions() {
         return allFunctions;
     }
@@ -170,13 +178,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     public I4GLParseScope pushNewScope(final String scopeName) {
-        currentParseScope = new I4GLParseScope(currentParseScope, scopeName);     
-        return currentParseScope;  
+        currentParseScope = new I4GLParseScope(currentParseScope, scopeName);
+        return currentParseScope;
     }
 
     public I4GLParseScope popScope() {
-        currentParseScope = currentParseScope.getOuterScope();        
-        return currentParseScope;  
+        currentParseScope = currentParseScope.getOuterScope();
+        return currentParseScope;
     }
 
     private static void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
@@ -192,50 +200,36 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return new Interval(a, b);
     }
 
-    private I4GLBlockNode createInitializationBodyNode(I4GLParser.DatabaseDeclarationContext databaseDeclarationContext,
-            I4GLParser.GlobalsDeclarationContext globalsDeclarationContext,
-            I4GLParser.TypeDeclarationsContext typeDeclarationsContext) {
-        List<I4GLStatementNode> blockNodeList = new ArrayList<>();
-
-        if (databaseDeclarationContext != null) {
-            I4GLDatabaseNode databaseDeclarationNode = (I4GLDatabaseNode) visit(databaseDeclarationContext);
-            if (databaseDeclarationNode != null) {
-                blockNodeList.add(databaseDeclarationNode);
-            }
+    @Override
+    public Node visitModule(final I4GLParser.ModuleContext ctx) {
+        pushNewScope("GLOBAL");
+        if(ctx.databaseDeclaration() != null) {
+            visit(ctx.databaseDeclaration());
         }
-
-        if (globalsDeclarationContext != null) {
-            I4GLBlockNode globalsNode = (I4GLBlockNode) visit(globalsDeclarationContext);
-            if (globalsNode != null) {
-                blockNodeList.addAll(globalsNode.getStatements());
-            }
+        if(ctx.globalsDeclaration() != null) {
+            visit(ctx.globalsDeclaration());
         }
-
-        if (typeDeclarationsContext != null) {
-            I4GLBlockNode initializationNode = (I4GLBlockNode) visit(typeDeclarationsContext);
-            if (initializationNode != null) {
-                blockNodeList.addAll(initializationNode.getStatements());
-            }
+        pushNewScope(moduleName);
+        if(ctx.typeDeclarations() != null) {
+            visit(ctx.typeDeclarations());
         }
-
-        if (blockNodeList.isEmpty()) {
-            return null;
+        if(ctx.mainFunctionDefinition() != null) {
+            visit(ctx.mainFunctionDefinition());
         }
-        return new I4GLBlockNode(blockNodeList.toArray(new I4GLStatementNode[blockNodeList.size()]));
+        if(ctx.functionOrReportDefinitions() != null) {
+            visit(ctx.functionOrReportDefinitions());
+        }
+        return null;
     }
 
     @Override
-    public Node visitCompilationUnitInitialization(final I4GLParser.CompilationUnitInitializationContext ctx) {
-        final String functionIdentifier = "!initialization";
-        I4GLBlockNode bodyNode = createInitializationBodyNode(ctx.databaseDeclaration(), ctx.globalsDeclaration(),
-                ctx.typeDeclarations());
-        if (bodyNode == null) {
-            return null;
+    public Node visitGlobalsDeclaration(final I4GLParser.GlobalsDeclarationContext ctx) {
+        if(ctx.string() != null) {
+            throw new NotImplementedException();
+        } else if(ctx.typeDeclarations() != null) {
+            visit(ctx.typeDeclarations());
         }
-        I4GLMainRootNode rootNode = new I4GLMainRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,
-                null, functionIdentifier);
-        allFunctions.put(functionIdentifier, Truffle.getRuntime().createCallTarget(rootNode));
-        return rootNode;
+        return null;
     }
 
     @Override
@@ -305,10 +299,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             throws LexicalException {
         List<I4GLStatementNode> blockNodes = new ArrayList<>();
         if (typeDeclarationsContext != null) {
-            I4GLBlockNode initializationNode = (I4GLBlockNode) visit(typeDeclarationsContext);
-            if (initializationNode != null) {
-                blockNodes.addAll(initializationNode.getStatements());
-            }
+            visit(typeDeclarationsContext);
         }
 
         if (parameteridentifiers != null) {
@@ -352,7 +343,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (isLocal) {
             return I4GLAssignToLocalVariableNodeGen.create(valueNode, variableSlot, type);
         }
-        return I4GLAssignToGlobalVariableNodeGen.create(valueNode, variableSlot, type);
+        return I4GLAssignToNonLocalVariableNodeGen.create(valueNode, scope.getName(), variableSlot, type);
     }
 
     @Override
@@ -898,7 +889,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (isLocal) {
             return I4GLReadLocalVariableNodeGen.create(variableSlot, type);
         } else {
-            return I4GLReadGlobalVariableNodeGen.create(variableSlot, type);
+            return I4GLReadNonLocalVariableNodeGen.create(scope.getName(), variableSlot, type);
         }
     }
 

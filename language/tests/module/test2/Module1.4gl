@@ -31,4 +31,4 @@ FUNCTION module1()
   DISPLAY anArray[1], anArray[2]
   DISPLAY aRecord.anInt, aRecord.aSmallFloat
   DISPLAY "End module1"
-END MAIN
+END FUNCTION

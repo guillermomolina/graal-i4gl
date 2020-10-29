@@ -8,11 +8,8 @@ options {
 	tokenVocab = I4GLLexer;
 }
 
-compilationUnit:
-	compilationUnitInitialization mainFunctionDefinition? functionOrReportDefinitions? EOF;
-
-compilationUnitInitialization:
-	databaseDeclaration? globalsDeclaration? typeDeclarations?;
+module:
+	databaseDeclaration? globalsDeclaration? typeDeclarations? mainFunctionDefinition? functionOrReportDefinitions? EOF;
 
 identifier: IDENT;
 

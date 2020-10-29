@@ -22,9 +22,13 @@ public class I4GLFullParser {
         BailoutErrorListener listener = new BailoutErrorListener(source);
         lexer.addErrorListener(listener);
         parser.addErrorListener(listener);
-        I4GLParser.CompilationUnitContext tree = parser.compilationUnit();
+        I4GLParser.ModuleContext tree = parser.module();
         factory = new I4GLNodeFactory(language, source);
         factory.visit(tree);
+    }
+
+    public String getModuleName() {
+        return factory.getModuleName();
     }
 
     public Map<String, RootCallTarget> getAllFunctions() {

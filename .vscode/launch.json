@@ -36,7 +36,7 @@
             "request": "launch",
             "input": "${file}",
             "grammar": "language/src/main/antlr4/org/guillermomolina/i4gl/parser/I4GLParser.g4",
-            "startRule": "compilationUnit",
+            "startRule": "module",
             "printParseTree": true,
             "visualParseTree": true
         },
@@ -47,8 +47,8 @@
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
-                "./language/tests/module/Main.4gl",
-                "./language/tests/module/Module1.4gl"
+                "${workspaceFolder}/language/tests/module/test2/Main.4gl",
+                "${workspaceFolder}/language/tests/module/test2/Module1.4gl"
             ],
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
