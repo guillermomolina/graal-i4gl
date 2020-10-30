@@ -157,7 +157,6 @@ else
         exit 1
     fi
     GRAAL_SDK_PATH="$HOME/.m2/repository/org/graalvm/sdk/graal-sdk/$VERSION/graal-sdk-$VERSION.jar"
-    GRAAL_SDK_PATH="$HOME/.m2/repository/org/graalvm/sdk/graal-sdk/$VERSION/graal-sdk-$VERSION.jar"
     TRUFFLE_API_PATH="$HOME/.m2/repository/org/graalvm/truffle/truffle-api/$VERSION/truffle-api-$VERSION.jar"
     JAVA_ARGS+=("-Dsquirrel.home=$SQUIRREL_PATH")
     "$JAVACMD" "${JAVA_ARGS[@]}" -cp "$SQUIRREL_API_PATH":"$GRAAL_SDK_PATH":"$LAUNCHER_PATH":"$LANGUAGE_PATH":"$TRUFFLE_API_PATH" "$MAIN_CLASS" "${PROGRAM_ARGS[@]}"
