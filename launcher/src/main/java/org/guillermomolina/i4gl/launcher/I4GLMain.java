@@ -102,7 +102,7 @@ public final class I4GLMain {
                 System.err.println("No MAIN defined in the 4gl sources.");
                 return -1;
             }
-            final Value result = mainFunction.execute();
+            mainFunction.execute();
             return 0;
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
