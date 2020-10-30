@@ -29,7 +29,7 @@ public final class I4GLFunction implements TruffleObject {
 
     public static final int INLINE_CACHE_SIZE = 2;
 
-    private static final TruffleLogger LOG = TruffleLogger.getLogger(I4GLLanguage.ID, I4GLFunction.class);
+    private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(I4GLFunction.class);
 
     /** The name of the function. */
     private final String name;
@@ -60,7 +60,7 @@ public final class I4GLFunction implements TruffleObject {
          * We have a new call target. Invalidate all code that speculated that the old call target
          * was stable.
          */
-        LOG.log(Level.FINE, "Installed call target for: {0}", name);
+        LOGGER.log(Level.FINE, "Installed call target for: {0}", name);
         callTargetStable.invalidate();
     }
 

@@ -14,7 +14,7 @@
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
-            "args": "${file}",
+            "args": ["--log.i4gl.level=FINEST","${file}"],
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"

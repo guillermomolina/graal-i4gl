@@ -3,12 +3,15 @@ package org.guillermomolina.i4gl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.oracle.truffle.api.CallTarget;
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.Scope;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLanguage.ContextPolicy;
+import com.oracle.truffle.api.TruffleLogger;
 import com.oracle.truffle.api.debug.DebuggerTags;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.instrumentation.ProvidedTags;
@@ -37,11 +40,11 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     public static final String ID = "i4gl";
     public static final String MIME_TYPE = "application/x-i4gl";
 
-    // To make the linter happy, remove it
-    public static final I4GLLanguage INSTANCE = null;
+    private static final TruffleLogger LOGGER = TruffleLogger.getLogger(ID, I4GLLanguage.class);
 
     @Override
     protected I4GLContext createContext(Env environment) {
+        LOGGER.fine("Creating new I4GLContext");
         return new I4GLContext(this, environment);
     }
 
@@ -54,13 +57,16 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
      */
     @Override
     protected CallTarget parse(ParsingRequest request) throws Exception {
+        LOGGER.fine("Received parse request");
         Source source = request.getSource();
         if (!request.getArgumentNames().isEmpty()) {
             throw new NotImplementedException();
         }
+        LOGGER.log(Level.FINE, "Start parsing {0}", source.getPath());
         final I4GLFullParser parser = new I4GLFullParser(this, source);
         RootNode moduleRootNode = new I4GLModuleRootNode(this, parser.getModuleName(), parser.getAllFunctions(),
                 parser.getGlobalsFrameDescriptor(), parser.getModuleFrameDescriptor());
+        LOGGER.log(Level.FINE, "Finish parsing {0}", source.getPath());
         return Truffle.getRuntime().createCallTarget(moduleRootNode);
     }
 
@@ -88,5 +94,10 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
 
     public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
         EXTERNAL_BUILTINS.add(builtin);
+    }
+
+    @TruffleBoundary
+    public static TruffleLogger getLogger(Class<?> clazz) {
+        return TruffleLogger.getLogger(ID, clazz);
     }
 }

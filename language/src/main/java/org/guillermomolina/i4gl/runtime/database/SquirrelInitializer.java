@@ -1,8 +1,7 @@
 package org.guillermomolina.i4gl.runtime.database;
 
-import java.util.Properties;
-
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import net.sourceforge.squirrel_sql.client.Application;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
@@ -36,7 +35,7 @@ public class SquirrelInitializer {
                   new String[] { "-no-splash", "-no-plugins", "-home", squirrelHomeDir, "-userdir", squirrelUserDir });
          }
 
-         initLogging();
+         Logger.getRootLogger().setLevel(Level.OFF);
 
          Application application = new Application();
          Main.setApplication(application);
@@ -47,17 +46,5 @@ public class SquirrelInitializer {
 
          isInitialized = true;
       }
-   }
-
-   private static void initLogging() {
-      Properties props = new Properties();
-      props.setProperty("log4j.rootLogger", "off, SquirrelAppender");
-      props.setProperty("log4j.appender.SquirrelAppender",
-            "net.sourceforge.squirrel_sql.client.SquirrelFileSizeRollingAppender");
-      props.setProperty("log4j.appender.SquirrelAppender.layout", "org.apache.log4j.PatternLayout");
-      props.setProperty("log4j.appender.SquirrelAppender.layout.ConversionPattern",
-            "%d{ISO8601} [%t] %-5p %c %x - %m%n");
-
-      PropertyConfigurator.configure(props);
    }
 }

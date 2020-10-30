@@ -26,12 +26,17 @@ public class I4GLParseScope {
      * ...
      */
     private String name;
+    private String type;
     private Map<String, I4GLType> variables;
     final List<String> arguments;
     private FrameDescriptor frameDescriptor;
     private final I4GLParseScope outer;
     private int loopDepth;
 
+    public static final String GLOBAL_TYPE = "GLOBAL";
+    public static final String MODULE_TYPE = "MODULE";
+    public static final String FUNCTION_TYPE = "FUNCTION";
+    public static final String RECORD_TYPE = "RECORD";
     public static final String DATABASE_IDENTIFIER = "!database";
 
     /**
@@ -40,12 +45,13 @@ public class I4GLParseScope {
      * @param outer            instance of outer lexical scope
      * @param name             name of the current lexical scope
      */
-    I4GLParseScope(I4GLParseScope outer, String name) {
+    I4GLParseScope(I4GLParseScope outer, String type, String name) {
         this.variables = new HashMap<>();
         this.frameDescriptor = new FrameDescriptor();
         this.name = name;
         this.outer = outer;
         this.arguments = new ArrayList<>();
+        this.type = type;
     }
 
     public FrameSlot getFrameSlot(String identifier) {
@@ -98,7 +104,12 @@ public class I4GLParseScope {
     }
 
     String getName() {
-        return name;
+        return name == null? type : name;
+    }
+
+    @Override
+    public String toString() {
+        return type + "(" + (name == null? "" : name) + ")";
     }
 
     I4GLParseScope getOuterScope() {

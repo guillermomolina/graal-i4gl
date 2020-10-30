@@ -78,21 +78,22 @@ public final class I4GLMain {
     }
 
     private static int execute(final Map<String, String> options, final List<String> files) {
-        Context context = Context.newBuilder(LANGUAGE_ID).allowExperimentalOptions(true).in(System.in).out(System.out)
-                .options(options).build();
-        /*Engine engine = context.getEngine();
-        System.out.println("== Running on " + engine.getImplementationName() + " "
-                + engine.getVersion() + " ==");*/
 
+        try (Context context = Context.newBuilder(LANGUAGE_ID).allowExperimentalOptions(true).in(System.in)
+                .out(System.out).options(options).build()) {
+            /* 
+             * Do not remove this yet
+             * Engine engine = context.getEngine(); System.out.println("== Running on " +
+             * engine.getImplementationName() + " " + engine.getVersion() + " ==");
+             */
 
-        try {
             if (files.isEmpty()) {
                 Source source = Source.newBuilder(LANGUAGE_ID, new InputStreamReader(System.in), "<stdin>").build();
                 context.eval(source);
             } else {
-                for(String fileName: files) {
+                for (String fileName : files) {
                     Source source = Source.newBuilder(LANGUAGE_ID, new File(fileName)).build();
-                    context.eval(source);    
+                    context.eval(source);
                 }
             }
 
@@ -102,12 +103,9 @@ public final class I4GLMain {
                 return -1;
             }
             final Value result = mainFunction.execute();
-            if (!result.isNull()) {
-                System.out.println("== Exit code " + result.toString() + " ==");
-            }
             return 0;
         } catch (IOException ex) {
-                System.err.println(ex.getMessage());
+            System.err.println(ex.getMessage());
             return -1;
         } catch (PolyglotException ex) {
             if (ex.isInternalError()) {
@@ -117,8 +115,6 @@ public final class I4GLMain {
                 System.err.println(ex.getMessage());
             }
             return -1;
-        } finally {
-            context.close();
         }
     }
 
@@ -140,12 +136,12 @@ public final class I4GLMain {
         if (value == null) {
             value = "true";
         }
-        int index = key.indexOf('.');
+        /*int index = key.indexOf('.');
         String group = key;
         if (index >= 0) {
             group = group.substring(0, index);
-        }
-        options.put(group, value);
+        }*/
+        options.put(key, value);
         return true;
     }
 

@@ -1,12 +1,15 @@
 package org.guillermomolina.i4gl.parser;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.Truffle;
+import com.oracle.truffle.api.TruffleLogger;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.nodes.Node;
@@ -85,6 +88,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private static final String RECORD_STRING = "Record";
     private static final String DIMENSIONS_STRING = "Dimensions can not be ";
 
+    private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(I4GLNodeFactory.class);
+
     /* State while parsing a source unit. */
     private final Source source;
     private final I4GLLanguage language;
@@ -104,6 +109,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
         this.moduleName = localModuleName;
         this.allFunctions = new HashMap<>();
+
     }
 
     /**
@@ -167,6 +173,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return null;
     }
 
+    private void trace(final String message) {
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine(message);
+        }
+    }
+
     public String getModuleName() {
         return moduleName;
     }
@@ -185,13 +197,18 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return moduleFrameDescriptor;
     }
 
-    public I4GLParseScope pushNewScope(final String scopeName) {
-        currentParseScope = new I4GLParseScope(currentParseScope, scopeName);
+    public I4GLParseScope pushNewScope(final String type, final String name) {
+        final String currentScopeName = currentParseScope == null ? "<unset>" : currentParseScope.toString();
+        currentParseScope = new I4GLParseScope(currentParseScope, type, name);
+        trace(MessageFormat.format("Push scope {0}->{1}", currentScopeName, currentParseScope));
         return currentParseScope;
     }
 
     public I4GLParseScope popScope() {
-        currentParseScope = currentParseScope.getOuterScope();
+        final I4GLParseScope outerScope = currentParseScope.getOuterScope();
+        final String outerScopeName = outerScope == null ? "<unset>" : outerScope.toString();
+        trace(MessageFormat.format("Pop scope {0}<-{1}", outerScopeName, currentParseScope));
+        currentParseScope = outerScope;
         return currentParseScope;
     }
 
@@ -210,21 +227,21 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
-        globalsFrameDescriptor = pushNewScope("GLOBAL").getFrameDescriptor();
-        if(ctx.databaseDeclaration() != null) {
+        globalsFrameDescriptor = pushNewScope(I4GLParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
+        if (ctx.databaseDeclaration() != null) {
             visit(ctx.databaseDeclaration());
         }
-        if(ctx.globalsDeclaration() != null) {
+        if (ctx.globalsDeclaration() != null) {
             visit(ctx.globalsDeclaration());
         }
-        moduleFrameDescriptor = pushNewScope(moduleName).getFrameDescriptor();
-        if(ctx.typeDeclarations() != null) {
+        moduleFrameDescriptor = pushNewScope(I4GLParseScope.MODULE_TYPE, moduleName).getFrameDescriptor();
+        if (ctx.typeDeclarations() != null) {
             visit(ctx.typeDeclarations());
         }
-        if(ctx.mainFunctionDefinition() != null) {
+        if (ctx.mainFunctionDefinition() != null) {
             visit(ctx.mainFunctionDefinition());
         }
-        if(ctx.functionOrReportDefinitions() != null) {
+        if (ctx.functionOrReportDefinitions() != null) {
             visit(ctx.functionOrReportDefinitions());
         }
         return null;
@@ -232,9 +249,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitGlobalsDeclaration(final I4GLParser.GlobalsDeclarationContext ctx) {
-        if(ctx.string() != null) {
+        if (ctx.string() != null) {
             throw new NotImplementedException();
-        } else if(ctx.typeDeclarations() != null) {
+        } else if (ctx.typeDeclarations() != null) {
             visit(ctx.typeDeclarations());
         }
         return null;
@@ -244,7 +261,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitMainFunctionDefinition(final I4GLParser.MainFunctionDefinitionContext ctx) {
         try {
             final String functionIdentifier = "MAIN";
-            pushNewScope(functionIdentifier);
+            pushNewScope(I4GLParseScope.FUNCTION_TYPE, functionIdentifier);
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, null, ctx.typeDeclarations(),
@@ -289,7 +306,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
-            pushNewScope(functionIdentifier);
+            pushNewScope(I4GLParseScope.FUNCTION_TYPE, functionIdentifier);
             I4GLBlockNode bodyNode = createFunctionBody(sourceSection, parameteridentifiers, ctx.typeDeclarations(),
                     ctx.codeBlock());
             final I4GLRootNode rootNode = new I4GLRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,

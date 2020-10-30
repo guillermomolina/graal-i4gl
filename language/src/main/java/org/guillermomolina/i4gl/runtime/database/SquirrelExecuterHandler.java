@@ -3,7 +3,11 @@ package org.guillermomolina.i4gl.runtime.database;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
+import com.oracle.truffle.api.TruffleLogger;
+
+import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.exceptions.DatabaseException;
 
@@ -17,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class SquirrelExecuterHandler implements ISQLExecuterHandler {
+   private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(SquirrelExecuterHandler.class);
    private final SquirrelSession session;
    private SquirrelDataSet resultSet;
 
@@ -56,17 +61,17 @@ public class SquirrelExecuterHandler implements ISQLExecuterHandler {
 
    @Override
    public void sqlStatementCount(int statementCount) {
-      //
+      LOGGER.log(Level.FINE, "SQL statement count: {0}", statementCount);
    }
 
    @Override
    public void sqlToBeExecuted(String sql) {
-      //
+      LOGGER.log(Level.FINE, "SQL to be executed: \"{0}\"", sql);
    }
 
    @Override
    public void sqlDataUpdated(int updateCount) {
-      System.out.println(updateCount + " rows updated");
+      LOGGER.log(Level.FINE, "{0} rows updated", updateCount);
    }
 
    @Override
@@ -83,14 +88,15 @@ public class SquirrelExecuterHandler implements ISQLExecuterHandler {
 
    @Override
    public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount) {
-      // System.out.println("Execution took " + info.getTotalElapsedMillis() + "
-      // Millis");
+      LOGGER.log(Level.FINE, "Execution took {0} Millis", info.getTotalElapsedMillis());
    }
 
    @Override
    public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement) {
       if (!sqlExecErrorMsgs.isEmpty()) {
-         System.out.println(sqlExecErrorMsgs.get(0));
+         for(String msg: sqlExecErrorMsgs) {
+            LOGGER.severe(msg);
+         }
       }
    }
 }

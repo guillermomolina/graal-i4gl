@@ -75,7 +75,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
 
     @Override
     public I4GLType visitRecordType(final I4GLParser.RecordTypeContext ctx) {
-        I4GLParseScope currentParseScope = nodeFactory.pushNewScope("_record");
+        I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
 
         if (ctx.LIKE() != null) {
             throw new NotImplementedException();
