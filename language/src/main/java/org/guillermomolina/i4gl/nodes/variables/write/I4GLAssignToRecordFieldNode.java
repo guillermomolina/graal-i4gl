@@ -7,7 +7,6 @@ import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
@@ -27,7 +26,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
         @NodeChild(value = "recordNode", type = I4GLExpressionNode.class),
         @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 })
-public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
+public abstract class I4GLAssignToRecordFieldNode extends I4GLAssignmentNode {
 
     private final String identifier;
     private final I4GLType descriptor;

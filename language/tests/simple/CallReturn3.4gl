@@ -1,0 +1,10 @@
+MAIN
+  DEFINE result1 INT
+  DEFINE result2 ARRAY[10] OF INT
+  CALL f1() RETURNING result1, result2[2]
+  DISPLAY result1, result2[2]
+END MAIN 
+
+FUNCTION f1()
+  RETURN 102, 202
+END FUNCTION

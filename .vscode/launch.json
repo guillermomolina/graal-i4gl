@@ -47,6 +47,7 @@
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
+                "--log.i4gl.level=FINEST",
                 "${workspaceFolder}/language/tests/module/test2/Main.4gl",
                 "${workspaceFolder}/language/tests/module/test2/Module1.4gl"
             ],
@@ -72,7 +73,7 @@
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
-                "--inspect",
+                "--log.i4gl.level=FINEST",
                 "${file}"
             ],
             "vmArgs": [

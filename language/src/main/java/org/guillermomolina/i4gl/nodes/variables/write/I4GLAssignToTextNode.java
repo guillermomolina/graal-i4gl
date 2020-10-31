@@ -11,11 +11,9 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
-import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
-import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
@@ -39,7 +37,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 })
 @TypeSystemReference(I4GLTypeSystem.class)
-public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
+public abstract class I4GLAssignToTextNode extends I4GLAssignmentNode {
 
     protected abstract FrameSlot getSlot();
 
@@ -54,12 +52,11 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
  
     @Specialization(guards = "isChar()")
     void assignChar(VirtualFrame frame, final int index, final String value) {
-        final VirtualFrame actualFrame = getFrame(frame);
 
-        Object targetObject = actualFrame.getValue(getSlot());
+        Object targetObject = frame.getValue(getSlot());
         if (!(targetObject instanceof I4GLChar)) {
             targetObject = getType().getDefaultValue();
-            actualFrame.setObject(getSlot(), targetObject);
+            frame.setObject(getSlot(), targetObject);
         }
 
         final I4GLChar target = (I4GLChar) targetObject;
@@ -72,12 +69,11 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
    
     @Specialization(guards = "isVarchar()")
     void assignVarchar(VirtualFrame frame, final int index, final String value) {
-        final VirtualFrame actualFrame = getFrame(frame);
 
-        Object targetObject = actualFrame.getValue(getSlot());
+        Object targetObject = frame.getValue(getSlot());
         if (!(targetObject instanceof I4GLVarchar)) {
             targetObject = getType().getDefaultValue();
-            actualFrame.setObject(getSlot(), targetObject);
+            frame.setObject(getSlot(), targetObject);
         }
 
         final I4GLVarchar target = (I4GLVarchar) targetObject;
@@ -90,29 +86,14 @@ public abstract class I4GLAssignToTextNode extends I4GLStatementNode {
 
     @Specialization(guards = "isText()")
     void assignText(VirtualFrame frame, final int index, final String value) {
-        final VirtualFrame actualFrame = getFrame(frame);
 
-        Object targetObject = actualFrame.getValue(getSlot());
+        Object targetObject = frame.getValue(getSlot());
         if (!(targetObject instanceof String)) {
             targetObject = "";
         }
         StringBuilder builder = new StringBuilder((String)targetObject);
         builder.setCharAt(index, value.charAt(0));
-        actualFrame.setObject(getSlot(), builder.toString());
-    }
-
-    @ExplodeLoop
-    private VirtualFrame getFrame(VirtualFrame frame) {
-        if (jumps == -1) {
-            jumps = this.getJumpsToFrame(frame, getSlot());
-            CompilerDirectives.transferToInterpreterAndInvalidate();
-        }
-
-        for (int i = 0; i < jumps; ++i) {
-            frame = (VirtualFrame) frame.getArguments()[0];
-        }
-
-        return frame;
+        frame.setObject(getSlot(), builder.toString());
     }
 
     @Override

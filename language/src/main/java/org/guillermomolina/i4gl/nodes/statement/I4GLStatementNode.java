@@ -1,7 +1,6 @@
 package org.guillermomolina.i4gl.nodes.statement;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
-import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.InstrumentableNode;
@@ -180,57 +179,4 @@ public abstract class I4GLStatementNode extends Node implements InstrumentableNo
      * @param frame current frame
      */
 	public abstract void executeVoid(VirtualFrame frame);
-
-	protected VirtualFrame getFrameContainingSlot(VirtualFrame currentFrame, FrameSlot slot) {
-		if(frameContainsSlot(currentFrame, slot)) {
-			return currentFrame;
-		}
-		
-		while(currentFrame.getArguments().length > 0) {
-			currentFrame = (VirtualFrame)currentFrame.getArguments()[0];
-			if(frameContainsSlot(currentFrame, slot)) {
-				return currentFrame;
-			}
-		}
-		
-		return null;
-	}
-
-    /**
-     * Gets the number of required jumps to the parent frame to get frame containing specified slot. This function is
-     * used for optimization. If we have some node that uses frame slot which is not from its frame then first time it
-     * is executed it has to look in which frame the slot belongs, remember the number of jumps and each next time it is
-     * executed it directly jumps by that number and retrieves the slot. This is thanks to the fact that the number of jumps
-     * cannot change.
-     * @param currentFrame the initial frame
-     * @param slot the queried slot
-     * @return the number of jumps to parent frame to find the queried slot
-     */
-    protected int getJumpsToFrame(VirtualFrame currentFrame, FrameSlot slot) {
-	    int result = 0;
-        if (frameContainsSlot(currentFrame, slot)) {
-            return result;
-        }
-
-        while (currentFrame.getArguments().length > 0) {
-            currentFrame = (VirtualFrame) currentFrame.getArguments()[0];
-            ++result;
-            if (frameContainsSlot(currentFrame, slot)) {
-                return result;
-            }
-        }
-
-        return -1;
-    }
-
-
-    /**
-     * Checks whether specified frame contains specified slot.
-     * @param frame the frame
-     * @param slot the slot
-     */
-    private boolean frameContainsSlot(VirtualFrame frame, FrameSlot slot) {
-		return frame.getFrameDescriptor().getSlots().contains(slot);
-	}
-
 }
