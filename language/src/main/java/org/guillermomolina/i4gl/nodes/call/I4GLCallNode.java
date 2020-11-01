@@ -4,8 +4,6 @@ import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.instrumentation.Tag;
@@ -16,25 +14,33 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
+import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromResultNode;
 import org.guillermomolina.i4gl.runtime.context.I4GLFunction;
+import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "CALL")
 public final class I4GLCallNode extends I4GLStatementNode {
 
     private final String functionIdentifier;
-    private final FrameSlot[] resultSlots;
+    private final I4GLReadFromResultNode[] readResultNodes;
+    private final I4GLStatementNode[] assignResultNodes;
     @Children
     private final I4GLExpressionNode[] argumentNodes;
-    @CompilationFinal private I4GLFunction cachedFunction;
+    @CompilationFinal
+    private I4GLFunction cachedFunction;
     @Child
     private InteropLibrary library;
 
-    public I4GLCallNode(String identifier, I4GLExpressionNode[] argumentNodes, FrameSlot[] resultSlots) {
+    public I4GLCallNode(final String identifier, final I4GLExpressionNode[] argumentNodes,
+            final I4GLReadFromResultNode[] readResultNodes, final I4GLStatementNode[] assignResultNodes) {
         this.functionIdentifier = identifier;
         this.argumentNodes = argumentNodes;
         this.library = InteropLibrary.getFactory().createDispatched(3);
-        this.resultSlots = resultSlots;
+        if( readResultNodes.length != assignResultNodes.length) {
+            throw new IncorrectNumberOfReturnValuesException(assignResultNodes.length, readResultNodes.length);
+        }
+        this.readResultNodes = readResultNodes;
+        this.assignResultNodes = assignResultNodes;
     }
 
     private I4GLFunction getFunction() {
@@ -43,19 +49,37 @@ public final class I4GLCallNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        if (cachedFunction== null) {
+        if (cachedFunction == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             cachedFunction = getFunction();
         }
         Object[] argumentValues = this.evaluateArguments(frame);
         CallTarget function = cachedFunction.getCallTarget();
-        evaluateResult(frame, function.call(argumentValues));
+        final Object callOutput = function.call(argumentValues);
+        if( readResultNodes.length != 0) {
+            Object[] results;
+            if (callOutput instanceof Object[]) {
+                results = (Object[]) callOutput;
+            } else {
+                results = new Object[1];
+                results[0] = callOutput;
+            }
+            if (results.length != readResultNodes.length) {
+                throw new IncorrectNumberOfReturnValuesException(assignResultNodes.length, results.length);
+            }
+            for (int i = 0; i < readResultNodes.length; i++) {
+                readResultNodes[i].setResult(results[i]);
+            }
+            if (assignResultNodes.length != 0) {
+                evaluateResults(frame, results);
+            }    
+        }
     }
 
     @ExplodeLoop
     private Object[] evaluateArguments(VirtualFrame frame) {
         CompilerAsserts.compilationConstant(argumentNodes.length);
-        
+
         Object[] argumentValues = new Object[argumentNodes.length];
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
@@ -64,41 +88,12 @@ public final class I4GLCallNode extends I4GLStatementNode {
         return argumentValues;
     }
 
-    public void evaluateResult(VirtualFrame frame, Object callOutput) {
-        if (resultSlots.length != 0) {
-            Object[] returnValue;
-            if(callOutput instanceof Object[]) {
-                returnValue = (Object[]) callOutput;
-            } else {
-                returnValue = new Object[1];
-                returnValue[0] = callOutput;
-            }
-            if (returnValue.length != resultSlots.length) {
-                throw new IncorrectNumberOfReturnValuesException(resultSlots.length, returnValue.length);
-            }
-            for (int index = 0; index < resultSlots.length; index++) {
-                final Object result = returnValue[index];
-                final FrameSlot slot = resultSlots[index];
-                final FrameSlotKind slotKind = frame.getFrameDescriptor().getFrameSlotKind(slot);
-                switch (slotKind) {
-                    case Int:
-                        frame.setInt(slot, (int) result);
-                        break;
-                    case Long:
-                        frame.setLong(slot, (long) result);
-                        break;
-                    case Float:
-                        frame.setFloat(slot, (float) result);
-                        break;
-                    case Double:
-                        frame.setDouble(slot, (double) result);
-                        break;
-                    case Object:
-                        frame.setObject(slot, result);
-                        break;
-                    default:
-                }
-            }    
+    @ExplodeLoop
+    private void evaluateResults(VirtualFrame frame, Object[] results) {
+        CompilerAsserts.compilationConstant(assignResultNodes.length);
+
+        for (int i = 0; i < assignResultNodes.length; i++) {
+            assignResultNodes[i].executeVoid(frame);
         }
     }
 

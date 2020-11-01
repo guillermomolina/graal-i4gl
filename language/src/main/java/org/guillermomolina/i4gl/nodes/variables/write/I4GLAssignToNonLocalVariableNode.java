@@ -17,6 +17,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
@@ -42,7 +43,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 })
 @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 @TypeSystemReference(I4GLTypeSystem.class)
-public abstract class I4GLAssignToNonLocalVariableNode extends I4GLAssignmentNode {
+public abstract class I4GLAssignToNonLocalVariableNode extends I4GLStatementNode {
 
     public abstract String getFrameName();
 

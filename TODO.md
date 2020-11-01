@@ -1,3 +1,4 @@
 # To be implemented
-- Unpacking return values to compound or indexed vars.
-- Add logging facility.
+- Global variables in file
+- Define records like table fields
+- Other (than SELECT) SQL statements

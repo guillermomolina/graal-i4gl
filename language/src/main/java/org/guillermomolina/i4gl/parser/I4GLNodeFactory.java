@@ -29,7 +29,6 @@ import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLModuloNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLMultiplyNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLSubtractNodeGen;
-import org.guillermomolina.i4gl.nodes.call.I4GLCallComplexNode;
 import org.guillermomolina.i4gl.nodes.call.I4GLCallNode;
 import org.guillermomolina.i4gl.nodes.call.I4GLInvokeNode;
 import org.guillermomolina.i4gl.nodes.call.I4GLReadArgumentNode;
@@ -65,6 +64,7 @@ import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromResultNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadNonLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToIndexedNodeGen;
@@ -73,7 +73,6 @@ import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToNonLocalVariab
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordFieldNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToRecordTextNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToTextNodeGen;
-import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignmentNode;
 import org.guillermomolina.i4gl.parser.I4GLParser.NotIndexedVariableContext;
 import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.ParseException;
@@ -354,14 +353,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return bodyNode;
     }
 
-    private I4GLAssignmentNode createAssignToVariableNode(final String identifier, final I4GLExpressionNode valueNode)
+    private I4GLStatementNode createAssignToVariableNode(final String identifier, final I4GLExpressionNode valueNode)
             throws LexicalException {
         return doLookup(identifier,
                 (final I4GLParseScope foundInScope, final String foundIdentifier) -> createAssignToVariableFromScope(
                         foundIdentifier, foundInScope, valueNode));
     }
 
-    private I4GLAssignmentNode createAssignToVariableFromScope(final String identifier, final I4GLParseScope scope,
+    private I4GLStatementNode createAssignToVariableFromScope(final String identifier, final I4GLParseScope scope,
             final I4GLExpressionNode valueNode) {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
         final I4GLType type = scope.getIdentifierType(identifier);
@@ -396,38 +395,21 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             parameterNodes.add((I4GLExpressionNode) visit(parameterCtx));
         }
         final I4GLExpressionNode[] arguments = parameterNodes.toArray(new I4GLExpressionNode[parameterNodes.size()]);
-        FrameSlot[] returnSlots = new FrameSlot[0];
+        I4GLStatementNode[] asssignResultNodes = new I4GLStatementNode[0];
+        I4GLReadFromResultNode[] readResultNodes = new I4GLReadFromResultNode[0];
         if (ctx.RETURNING() != null) {
-            List<FrameSlot> returnSlotList = new ArrayList<>(ctx.variableList().variable().size());
-            for (final I4GLParser.VariableContext variableCtx : ctx.variableList().variable()) {
-                if (variableCtx.indexedVariable() != null
-                        || variableCtx.notIndexedVariable().recordVariable() != null) {
-                    return createCallComplex(ctx, functionIdentifier, arguments);
-                }
-                final String resultIdentifier = variableCtx.notIndexedVariable().simpleVariable().identifier()
-                        .getText();
-                FrameSlot returnSlot = currentParseScope.getLocalSlot(resultIdentifier);
-                returnSlotList.add(returnSlot);
-            }
-            returnSlots = returnSlotList.toArray(new FrameSlot[returnSlotList.size()]);
-        }
-        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments, returnSlots);
-        setSourceFromContext(node, ctx);
-        node.addStatementTag();
-        return node;
-    }
-
-    private Node createCallComplex(final I4GLParser.CallStatementContext ctx, final String functionIdentifier,
-            final I4GLExpressionNode[] arguments) {
-        I4GLAssignmentNode[] resultNodes = new I4GLAssignmentNode[0];
-        if (ctx.RETURNING() != null) {
-            resultNodes = new I4GLAssignmentNode[ctx.variableList().variable().size()];
+            final int size = ctx.variableList().variable().size();
+            readResultNodes = new I4GLReadFromResultNode[size];
+            asssignResultNodes = new I4GLStatementNode[size];
             int index = 0;
             for (final I4GLParser.VariableContext variableCtx : ctx.variableList().variable()) {
-                resultNodes[index++] = createAssignmentNode(variableCtx, null);
+                readResultNodes[index] = new I4GLReadFromResultNode();
+                asssignResultNodes[index] = createAssignmentNode(variableCtx, readResultNodes[index]);
+                index++;
             }
         }
-        I4GLCallComplexNode node = new I4GLCallComplexNode(functionIdentifier, arguments, resultNodes);
+        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments, readResultNodes,
+                asssignResultNodes);
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -819,10 +801,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         throw new NotImplementedException();
     }
 
-    private I4GLAssignmentNode createAssignmentToArray(I4GLExpressionNode arrayExpression,
+    private I4GLStatementNode createAssignmentToArray(I4GLExpressionNode arrayExpression,
             List<I4GLExpressionNode> indexNodes, I4GLExpressionNode valueNode) throws LexicalException {
         I4GLExpressionNode readIndexedNode = arrayExpression;
-        I4GLAssignmentNode result = null;
+        I4GLStatementNode result = null;
         final int lastIndex = indexNodes.size() - 1;
         for (int index = 0; index < indexNodes.size(); index++) {
             assert readIndexedNode != null;
@@ -1004,7 +986,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private I4GLAssignmentNode createAssignmentToSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
+    private I4GLStatementNode createAssignmentToSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         try {
             return createAssignToVariableNode(ctx.identifier().getText(), valueNode);
@@ -1013,7 +995,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private I4GLAssignmentNode createAssignmentToRecordVariable(final I4GLParser.RecordVariableContext ctx,
+    private I4GLStatementNode createAssignmentToRecordVariable(final I4GLParser.RecordVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         try {
             I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
@@ -1023,7 +1005,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
             I4GLType expressionType = variableNode.getType();
-            I4GLAssignmentNode node;
+            I4GLStatementNode node;
             if (expressionType instanceof I4GLRecordType) {
                 String identifier = ctx.identifier(index).getText();
                 I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
@@ -1040,7 +1022,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private I4GLAssignmentNode createAssignmentToNotIndexedVariable(final I4GLParser.NotIndexedVariableContext ctx,
+    private I4GLStatementNode createAssignmentToNotIndexedVariable(final I4GLParser.NotIndexedVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         if (ctx.simpleVariable() != null) {
             return createAssignmentToSimpleVariable(ctx.simpleVariable(), valueNode);
@@ -1048,7 +1030,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return createAssignmentToRecordVariable(ctx.recordVariable(), valueNode);
     }
 
-    private I4GLAssignmentNode createAssignmentToIndexedSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
+    private I4GLStatementNode createAssignmentToIndexedSimpleVariable(final I4GLParser.SimpleVariableContext ctx,
             final I4GLParser.VariableIndexContext variableIndexCtx, final I4GLExpressionNode valueNode) {
         try {
             final String identifier = ctx.identifier().getText();
@@ -1059,7 +1041,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             for (I4GLParser.ExpressionContext indexCtx : indexList) {
                 indexNodes.add((I4GLExpressionNode) visit(indexCtx));
             }
-            I4GLAssignmentNode node;
+            I4GLStatementNode node;
             if (targetType instanceof I4GLArrayType) {
                 if (indexNodes.size() > 3) {
                     throw new ParseException(source, ctx, DIMENSIONS_STRING + indexList.size());
@@ -1084,10 +1066,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private I4GLAssignmentNode createAssignIndexedRecordVariable(final String identifier,
+    private I4GLStatementNode createAssignIndexedRecordVariable(final String identifier,
             final I4GLExpressionNode variableNode, final I4GLParser.VariableIndexContext variableIndexCtx,
             final I4GLExpressionNode valueNode) throws LexicalException {
-        I4GLAssignmentNode node;
+        I4GLStatementNode node;
         I4GLRecordType accessedRecordType = (I4GLRecordType) variableNode.getType();
         if (!accessedRecordType.containsIdentifier(identifier)) {
             throw new UnknownIdentifierException("The record does not contain this identifier");
@@ -1117,7 +1099,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return node;
     }
 
-    private I4GLAssignmentNode createAssignmentToIndexedRecordVariable(final I4GLParser.RecordVariableContext ctx,
+    private I4GLStatementNode createAssignmentToIndexedRecordVariable(final I4GLParser.RecordVariableContext ctx,
             final I4GLParser.VariableIndexContext variableIndexCtx, final I4GLExpressionNode valueNode) {
         try {
             I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
@@ -1131,7 +1113,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
             }
             String identifier = ctx.identifier(index).getText();
-            I4GLAssignmentNode node = createAssignIndexedRecordVariable(identifier, variableNode, variableIndexCtx,
+            I4GLStatementNode node = createAssignIndexedRecordVariable(identifier, variableNode, variableIndexCtx,
                     valueNode);
             node.addStatementTag();
             setSourceFromContext(node, ctx);
@@ -1141,7 +1123,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private I4GLAssignmentNode createAssignmentToIndexedVariable(final I4GLParser.IndexedVariableContext ctx,
+    private I4GLStatementNode createAssignmentToIndexedVariable(final I4GLParser.IndexedVariableContext ctx,
             final I4GLExpressionNode valueNode) {
         final NotIndexedVariableContext notIndexedVariableContext = ctx.notIndexedVariable();
         if (notIndexedVariableContext.simpleVariable() != null) {
@@ -1152,7 +1134,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 valueNode);
     }
 
-    private I4GLAssignmentNode createAssignmentNode(final I4GLParser.VariableContext ctx,
+    private I4GLStatementNode createAssignmentNode(final I4GLParser.VariableContext ctx,
             final I4GLExpressionNode valueNode) {
         if (ctx.notIndexedVariable() != null) {
             return createAssignmentToNotIndexedVariable(ctx.notIndexedVariable(), valueNode);

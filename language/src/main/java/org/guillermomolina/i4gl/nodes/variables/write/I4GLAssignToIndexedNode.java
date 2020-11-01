@@ -3,13 +3,12 @@ package org.guillermomolina.i4gl.nodes.variables.write;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
-import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
+import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.values.I4GLBigIntArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLFloatArray;
 import org.guillermomolina.i4gl.runtime.values.I4GLIntArray;
@@ -27,7 +26,7 @@ import org.guillermomolina.i4gl.runtime.values.I4GLSmallIntArray;
 @NodeChild(value = "indexNode", type = I4GLExpressionNode.class)
 @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 @TypeSystemReference(I4GLTypeSystem.class)
-public abstract class I4GLAssignToIndexedNode extends I4GLAssignmentNode {
+public abstract class I4GLAssignToIndexedNode extends I4GLStatementNode {
     
     @Specialization
     void assignToSmallIntArray(I4GLSmallIntArray array, int index, short value) {
@@ -52,12 +51,6 @@ public abstract class I4GLAssignToIndexedNode extends I4GLAssignmentNode {
     @Specialization
     void assignToDoubleArray(I4GLFloatArray array, int index, double value) {
         array.setValueAt(index - 1, value);
-    }
-
-    @Override
-    @Specialization
-    public void executeWithValue(VirtualFrame frame, Object value) {
-        throw new NotImplementedException();
     }
 
     @Override

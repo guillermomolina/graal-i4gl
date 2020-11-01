@@ -7,9 +7,9 @@ import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 public class I4GLReadFromResultNode extends I4GLExpressionNode {
-    private final Object result;
+    private Object result;
 
-    public I4GLReadFromResultNode(final Object result) {
+    public void setResult(final Object result) {
         this.result = result;
     }
 
@@ -20,6 +20,7 @@ public class I4GLReadFromResultNode extends I4GLExpressionNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
+        assert result != null;
         return result;
     }
     
