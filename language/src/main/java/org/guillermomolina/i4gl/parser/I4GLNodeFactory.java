@@ -79,9 +79,11 @@ import org.guillermomolina.i4gl.parser.exceptions.TypeMismatchException;
 import org.guillermomolina.i4gl.parser.exceptions.UnknownIdentifierException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.complex.I4GLCursorType;
+import org.guillermomolina.i4gl.runtime.types.complex.I4GLDatabaseType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
+import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
 public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private static final String RECORD_STRING = "Record";
@@ -90,6 +92,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(I4GLNodeFactory.class);
 
     /* State while parsing a source unit. */
+    private I4GLDatabase currentDatabase;
     private final Source source;
     private final I4GLLanguage language;
     private I4GLParseScope currentParseScope;
@@ -109,6 +112,18 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         this.moduleName = localModuleName;
         this.allFunctions = new HashMap<>();
 
+    }
+
+    public I4GLDatabase getDatabase(final ParserRuleContext ctx) {
+        if (currentDatabase == null) {
+            try {
+                I4GLDatabaseType databaseType = (I4GLDatabaseType)lookupVariableType(I4GLParseScope.DATABASE_IDENTIFIER);
+                currentDatabase = (I4GLDatabase) (databaseType.getDefaultValue());
+            } catch (LexicalException e) {
+                throw new ParseException(source, ctx, "No Database declared");
+            }
+        }
+        return currentDatabase;
     }
 
     /**
@@ -170,6 +185,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
         }
         return null;
+    }
+
+    private I4GLType lookupVariableType(final String identifier) throws LexicalException {
+        return doLookup(identifier, I4GLParseScope::getIdentifierType);
+    }
+
+    private FrameSlot lookupVariableSlot(final String identifier) throws LexicalException {
+        return doLookup(identifier, I4GLParseScope::getLocalSlot);
     }
 
     private void trace(final String message) {
@@ -1032,8 +1055,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             final I4GLParser.VariableIndexContext variableIndexCtx, final I4GLExpressionNode valueNode) {
         try {
             final String identifier = ctx.identifier().getText();
-            final I4GLType targetType = doLookup(identifier, I4GLParseScope::getIdentifierType);
-            final FrameSlot targetSlot = doLookup(identifier, I4GLParseScope::getLocalSlot);
+            final I4GLType targetType = lookupVariableType(identifier);
+            final FrameSlot targetSlot = lookupVariableSlot(identifier);
             final List<I4GLParser.ExpressionContext> indexList = variableIndexCtx.expressionList().expression();
             List<I4GLExpressionNode> indexNodes = new ArrayList<>(indexList.size());
             for (I4GLParser.ExpressionContext indexCtx : indexList) {

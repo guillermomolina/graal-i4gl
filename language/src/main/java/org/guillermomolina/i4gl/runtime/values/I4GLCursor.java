@@ -34,7 +34,6 @@ public final class I4GLCursor implements TruffleObject {
     public I4GLCursor(final I4GLDatabase database, final String sql) {
         this.database = database;
         this.sql = sql;
-        this.database = new I4GLDatabase("test");
         this.columnLabels = new ArrayList<>();
     }
 

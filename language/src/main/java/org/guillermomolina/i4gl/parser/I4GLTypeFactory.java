@@ -12,9 +12,10 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
+import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
 public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
-    final I4GLNodeFactory nodeFactory;
+    final private I4GLNodeFactory nodeFactory;
 
     public I4GLTypeFactory(final I4GLNodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
@@ -61,6 +62,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
 
     @Override
     public I4GLType visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
+        I4GLDatabase database = nodeFactory.getDatabase(ctx);
         throw new NotImplementedException();
     }
 
