@@ -127,8 +127,7 @@ public final class I4GLCursor implements TruffleObject {
             throw UnknownIdentifierException.create(name);
         }
         final Object[] row = dataSet.getCurrentRow();
-        final Object value = row[index];
-        return value;
+        return row[index];
     }
 
     @TruffleBoundary

@@ -17,7 +17,7 @@ identifier: IDENT;
 mainFunctionDefinition:
 	MAIN typeDeclarations? mainStatements? END MAIN;
 
-mainStatements: (    
+mainStatements: (
 		exitProgramStatement
 		| databaseDeclaration
 		| deferStatement
@@ -125,13 +125,12 @@ secondQualifier: SECOND | fractionQualifier;
 
 fractionQualifier: FRACTION (LPAREN numericConstant RPAREN)?;
 
-structuredType: recordType | arrayType | dynArrayType;
+structuredType: recordLikeType | recordType | arrayType | dynArrayType;
+
+recordLikeType: RECORD LIKE tableIdentifier DOT STAR;
 
 recordType:
-	RECORD (
-		(variableDeclaration (COMMA variableDeclaration)*) END RECORD
-		| (LIKE tableIdentifier DOT STAR)
-	);
+	RECORD (variableDeclaration (COMMA variableDeclaration)*) END RECORD;
 
 arrayIndexer:
 	LBRACK dimensionSize (
@@ -193,19 +192,6 @@ recordVariable: simpleVariable (DOT identifier)+;
 indexedVariable: notIndexedVariable variableIndex;
 
 variableIndex: LBRACK expressionList RBRACK;
-
-/*
- thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
- */
-componentVariable:
-	identifier (
-		(DOT STAR)
-		| (
-			DOT componentVariable (
-				(THROUGH | THRU) componentVariable
-			)?
-		)
-	);
 
 assignmentStatement:
 	LET (simpleAssignmentStatement | multipleAssignmentStatement);
@@ -306,7 +292,24 @@ forEachStatement:
 
 usingVariableList: USING variableList;
 
-intoVariableList: INTO variableList;
+intoVariableList: INTO variableOrComponentList;
+
+variableOrComponentList: variableOrComponent (COMMA variableOrComponent)*;
+
+variableOrComponent: variable | componentVariable;
+
+/*
+ thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
+ */
+componentVariable:
+	identifier (
+		(DOT STAR)
+		| (
+			DOT componentVariable (
+				(THROUGH | THRU) componentVariable
+			)?
+		)
+	);
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (

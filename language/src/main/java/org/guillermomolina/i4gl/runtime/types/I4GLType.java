@@ -1,5 +1,7 @@
 package org.guillermomolina.i4gl.runtime.types;
 
+import java.sql.Types;
+
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.dsl.Cached;
@@ -12,7 +14,16 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
+import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.context.I4GLContext;
+import org.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLDecimalType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
  * The isInstance type checks are declared using an functional interface and are
@@ -34,6 +45,24 @@ import org.guillermomolina.i4gl.runtime.context.I4GLContext;
 @ExportLibrary(InteropLibrary.class)
 public abstract class I4GLType implements TruffleObject {
 
+    public static I4GLType fromTableColumInfo(final TableColumnInfo info) {
+        switch (info.getDataType()) {
+            case Types.VARCHAR:
+                return new I4GLVarcharType(info.getColumnSize());
+            case Types.INTEGER:
+                return I4GLIntType.SINGLETON;
+            case Types.BIGINT:
+                return I4GLBigIntType.SINGLETON;
+            case Types.REAL:
+                return I4GLSmallFloatType.SINGLETON;
+                case Types.FLOAT:
+                return I4GLFloatType.SINGLETON;
+            case Types.DECIMAL:
+                return new I4GLDecimalType(info.getColumnSize(), info.getDecimalDigits());
+            default:
+                throw new NotImplementedException();
+        }
+    }
 
     /**
      * Checks whether this type is of a certain instance. If used on fast-paths it

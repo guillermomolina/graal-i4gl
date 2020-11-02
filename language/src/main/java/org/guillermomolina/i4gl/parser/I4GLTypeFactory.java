@@ -1,9 +1,10 @@
 package org.guillermomolina.i4gl.parser;
 
 import java.sql.SQLException;
-import java.sql.Types;
+import java.util.List;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.parser.exceptions.LexicalException;
 import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
@@ -22,7 +23,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
-    final private I4GLNodeFactory nodeFactory;
+    private final I4GLNodeFactory nodeFactory;
 
     public I4GLTypeFactory(final I4GLNodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
@@ -79,26 +80,13 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
         final String tableName = getTableName(ctx.tableIdentifier());
         final String columnName = ctx.identifier().getText();
         I4GLDatabase database = nodeFactory.getDatabase(ctx);
-        SQLDatabaseMetaData _dmd = database.getSession().getSQLConnection().getSQLMetaData();
+        SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();
         try {
-            TableColumnInfo[] infos = _dmd.getColumnInfo(null, null, tableName);
+            TableColumnInfo[] infos = dmd.getColumnInfo(null, null, tableName);
             for (int i = 0; i < infos.length; i++) {
                 TableColumnInfo info = infos[i];
                 if (info.getColumnName().compareTo(columnName) == 0) {
-                    switch (info.getDataType()) {
-                        case Types.VARCHAR:
-                            return new I4GLVarcharType(info.getColumnSize());
-                        case Types.INTEGER:
-                            return I4GLIntType.SINGLETON;
-                        case Types.BIGINT:
-                            return I4GLBigIntType.SINGLETON;
-                        case Types.REAL:
-                            return I4GLSmallFloatType.SINGLETON;
-                        case Types.FLOAT:
-                            return I4GLFloatType.SINGLETON;
-                        default:
-                            throw new NotImplementedException();
-                    }
+                    return I4GLType.fromTableColumInfo(info);
                 }
             }
         } catch (SQLException e) {
@@ -120,12 +108,41 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
     @Override
     public I4GLType visitRecordType(final I4GLParser.RecordTypeContext ctx) {
         I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
-
-        if (ctx.LIKE() != null) {
-            throw new NotImplementedException();
-        }
         for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
-            nodeFactory.visit(variableDeclarationCtx);
+            try {
+                final I4GLType type = visit(variableDeclarationCtx.type());
+                final List<I4GLParser.IdentifierContext> identifierCtxList = variableDeclarationCtx.identifier();
+                for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
+                    final String identifier = identifierCtx.getText();
+                    currentParseScope.registerLocalVariable(identifier, type);
+                }
+            } catch (final LexicalException e) {
+                throw new ParseException(nodeFactory.getSource(), ctx, e.getMessage());
+            }
+        }
+
+        I4GLRecordType type = currentParseScope.createRecordType();
+
+        nodeFactory.popScope();
+        return type;
+    }
+
+    @Override
+    public I4GLType visitRecordLikeType(final I4GLParser.RecordLikeTypeContext ctx) {
+        I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
+        final String tableName = getTableName(ctx.tableIdentifier());
+        I4GLDatabase database = nodeFactory.getDatabase(ctx);
+        SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();
+        try {
+            TableColumnInfo[] infos = dmd.getColumnInfo(null, null, tableName);
+            for (int i = 0; i < infos.length; i++) {
+                TableColumnInfo info = infos[i];
+                final I4GLType type = I4GLType.fromTableColumInfo(info);
+                final String columnName = info.getColumnName();
+                currentParseScope.registerLocalVariable(columnName, type);
+            }
+        } catch (SQLException | LexicalException e) {
+            throw new ParseException(nodeFactory.getSource(), ctx, e.getMessage());
         }
 
         I4GLRecordType type = currentParseScope.createRecordType();
