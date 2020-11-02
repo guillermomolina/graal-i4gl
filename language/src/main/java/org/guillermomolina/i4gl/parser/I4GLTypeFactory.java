@@ -1,6 +1,10 @@
 package org.guillermomolina.i4gl.parser;
 
+import java.sql.SQLException;
+import java.sql.Types;
+
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
+import org.guillermomolina.i4gl.parser.exceptions.ParseException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
@@ -13,6 +17,9 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
+
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
     final private I4GLNodeFactory nodeFactory;
@@ -60,10 +67,45 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
         throw new NotImplementedException();
     }
 
+    private String getTableName(final I4GLParser.TableIdentifierContext ctx) {
+        if (ctx.tableQualifier() != null) {
+            throw new NotImplementedException();
+        }
+        return ctx.identifier().getText();
+    }
+
     @Override
     public I4GLType visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
+        final String tableName = getTableName(ctx.tableIdentifier());
+        final String columnName = ctx.identifier().getText();
         I4GLDatabase database = nodeFactory.getDatabase(ctx);
-        throw new NotImplementedException();
+        SQLDatabaseMetaData _dmd = database.getSession().getSQLConnection().getSQLMetaData();
+        try {
+            TableColumnInfo[] infos = _dmd.getColumnInfo(null, null, tableName);
+            for (int i = 0; i < infos.length; i++) {
+                TableColumnInfo info = infos[i];
+                if (info.getColumnName().compareTo(columnName) == 0) {
+                    switch (info.getDataType()) {
+                        case Types.VARCHAR:
+                            return new I4GLVarcharType(info.getColumnSize());
+                        case Types.INTEGER:
+                            return I4GLIntType.SINGLETON;
+                        case Types.BIGINT:
+                            return I4GLBigIntType.SINGLETON;
+                        case Types.REAL:
+                            return I4GLSmallFloatType.SINGLETON;
+                        case Types.FLOAT:
+                            return I4GLFloatType.SINGLETON;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ParseException(nodeFactory.getSource(), ctx, e.getMessage());
+        }
+        throw new ParseException(nodeFactory.getSource(), ctx,
+                "There is no column named " + columnName + " in table " + tableName);
     }
 
     @Override

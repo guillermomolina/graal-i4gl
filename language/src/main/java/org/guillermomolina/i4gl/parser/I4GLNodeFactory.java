@@ -119,6 +119,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             try {
                 I4GLDatabaseType databaseType = (I4GLDatabaseType)lookupVariableType(I4GLParseScope.DATABASE_IDENTIFIER);
                 currentDatabase = (I4GLDatabase) (databaseType.getDefaultValue());
+                currentDatabase.connect();
             } catch (LexicalException e) {
                 throw new ParseException(source, ctx, "No Database declared");
             }
@@ -185,6 +186,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             }
         }
         return null;
+    }
+
+    public Source getSource() {
+        return source;
     }
 
     private I4GLType lookupVariableType(final String identifier) throws LexicalException {
