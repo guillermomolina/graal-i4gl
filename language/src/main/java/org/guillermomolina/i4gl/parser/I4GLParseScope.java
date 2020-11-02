@@ -86,8 +86,8 @@ public class I4GLParseScope {
         return registerNewIdentifier(identifier, type);
     }
 
-    public FrameSlot addDatabaseVariable() throws LexicalException {
-        return registerNewIdentifier(DATABASE_IDENTIFIER, I4GLDatabaseType.SINGLETON);
+    public FrameSlot addDatabaseVariable(final String alias) throws LexicalException {
+        return registerNewIdentifier(DATABASE_IDENTIFIER, new I4GLDatabaseType(alias));
     }
 
     FrameSlot getLocalSlot(String identifier) {

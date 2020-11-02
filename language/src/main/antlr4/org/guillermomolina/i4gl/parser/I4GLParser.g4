@@ -9,27 +9,30 @@ options {
 }
 
 module:
-	databaseDeclaration? globalsDeclaration? typeDeclarations? mainFunctionDefinition? functionOrReportDefinitions? EOF;
+	databaseDeclaration? globalsDeclaration? typeDeclarations? mainFunctionDefinition?
+		functionOrReportDefinitions? EOF;
 
 identifier: IDENT;
 
 mainFunctionDefinition:
 	MAIN typeDeclarations? mainStatements? END MAIN;
 
-mainStatements: (
-		databaseDeclaration
+mainStatements: (    
+		exitProgramStatement
+		| databaseDeclaration
 		| deferStatement
 		| statement
 	)+;
 
 deferStatement: DEFER (INTERRUPT | QUIT);
 
+exitProgramStatement:
+	EXIT PROGRAM (LPAREN expression RPAREN | expression)?;
+
 functionOrReportDefinitions: (
 		reportDefinition
 		| functionDefinition
 	)+;
-
-returnStatement: RETURN expressionList?;
 
 functionDefinition:
 	FUNCTION identifier parameterList? typeDeclarations? codeBlock? END FUNCTION;
@@ -151,7 +154,9 @@ string: STRING_LITERAL;
 
 statement: (label COLON)? unlabelledStatement;
 
-codeBlock: (statement | databaseDeclaration)+;
+codeBlock: (statement | databaseDeclaration | returnStatement)+;
+
+returnStatement: RETURN expressionList?;
 
 label: identifier;
 
@@ -329,8 +334,7 @@ otherProgramFlowStatement:
 	| gotoStatement
 	| SLEEP expression
 	| exitStatements
-	| continueStatements
-	| returnStatement;
+	| continueStatements;
 
 exitTypes:
 	FOREACH
@@ -343,9 +347,7 @@ exitTypes:
 	| REPORT
 	| WHILE;
 
-exitStatements:
-	EXIT exitTypes
-	| EXIT PROGRAM (LPAREN expression RPAREN | expression)?;
+exitStatements: EXIT exitTypes;
 
 continueStatements: CONTINUE exitTypes;
 

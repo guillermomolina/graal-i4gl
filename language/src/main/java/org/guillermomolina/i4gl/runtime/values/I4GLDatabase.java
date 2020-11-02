@@ -18,11 +18,11 @@ import org.guillermomolina.i4gl.runtime.types.complex.I4GLDatabaseType;
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLDatabase implements TruffleObject {
 
-    private final String aliasName;
+    private final String alias;
     private SquirrelSession session;
 
-    public I4GLDatabase(final String aliasName) {
-        this.aliasName = aliasName;
+    public I4GLDatabase(final String alias) {
+        this.alias = alias;
     }
 
     public SquirrelSession getSession() {
@@ -31,7 +31,7 @@ public final class I4GLDatabase implements TruffleObject {
 
     public void connect() {
         if (session == null) {
-            session = new SquirrelSession(aliasName);
+            session = new SquirrelSession(alias);
         }
     }
 
@@ -49,7 +49,7 @@ public final class I4GLDatabase implements TruffleObject {
 
     @Override
     public String toString() {
-        return aliasName;
+        return alias;
     }
 
     @ExportMessage
@@ -75,6 +75,6 @@ public final class I4GLDatabase implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLDatabaseType.SINGLETON;
+        return new I4GLDatabaseType(alias);
     }
 }

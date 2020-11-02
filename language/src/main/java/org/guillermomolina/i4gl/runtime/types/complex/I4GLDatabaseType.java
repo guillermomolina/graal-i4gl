@@ -4,7 +4,6 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
@@ -13,9 +12,10 @@ import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
  */
 public class I4GLDatabaseType extends I4GLType {
 
-    public static final I4GLDatabaseType SINGLETON = new I4GLDatabaseType();
+    private final String alias;
 
-    private I4GLDatabaseType() {
+    public I4GLDatabaseType(String alias) {
+        this.alias = alias;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class I4GLDatabaseType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        throw new NotImplementedException();
+        return new I4GLDatabase(alias);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class I4GLDatabaseType extends I4GLType {
 
     @Override
     public String toString() {
-        return "DATABASE";
+        return "DATABASE(" + alias + ")";
     }
 }

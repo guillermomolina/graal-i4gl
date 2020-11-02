@@ -55,7 +55,6 @@ import org.guillermomolina.i4gl.nodes.logic.I4GLOrNodeGen;
 import org.guillermomolina.i4gl.nodes.root.I4GLMainRootNode;
 import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLCursorNode;
-import org.guillermomolina.i4gl.nodes.sql.I4GLDatabaseNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLForEachNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLSelectNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
@@ -83,7 +82,6 @@ import org.guillermomolina.i4gl.runtime.types.complex.I4GLCursorType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLArrayType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
-import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;
 
 public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private static final String RECORD_STRING = "Record";
@@ -283,10 +281,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         for (final ParseTree child : ctx.children) {
             if (!(child instanceof TerminalNodeImpl)) {
                 I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
-                if (statementNode == null) {
-                    throw new ParseException(source, ctx, "Visited an unimplemented Node");
+                if(statementNode != null) {
+                    statementNodes.add(statementNode);
+                } else if (!(child instanceof I4GLParser.DatabaseDeclarationContext)) {
+                    throw new ParseException(source, ctx, "Visited an unimplemented Node in MAIN");
                 }
-                statementNodes.add(statementNode);
+                
             }
         }
         I4GLBlockNode node = new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
@@ -357,10 +357,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             throws LexicalException {
         return doLookup(identifier,
                 (final I4GLParseScope foundInScope, final String foundIdentifier) -> createAssignToVariableFromScope(
-                        foundIdentifier, foundInScope, valueNode));
+                    foundInScope, foundIdentifier, valueNode));
     }
 
-    private I4GLStatementNode createAssignToVariableFromScope(final String identifier, final I4GLParseScope scope,
+    private I4GLStatementNode createAssignToVariableFromScope(final I4GLParseScope scope, final String identifier,
             final I4GLExpressionNode valueNode) {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
         final I4GLType type = scope.getIdentifierType(identifier);
@@ -369,7 +369,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (isLocal) {
             return I4GLAssignToLocalVariableNodeGen.create(valueNode, variableSlot, type);
         }
-        return I4GLAssignToNonLocalVariableNodeGen.create(valueNode, scope.getName(), variableSlot, type);
+        return I4GLAssignToNonLocalVariableNodeGen.create(valueNode, variableSlot, type, scope.getName());
     }
 
     @Override
@@ -379,6 +379,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             I4GLStatementNode statementNode = (I4GLStatementNode) visit(child);
             if (statementNode != null) {
                 statementNodes.add(statementNode);
+            } else if (!(child instanceof I4GLParser.DatabaseDeclarationContext)) {
+                throw new ParseException(source, ctx, "Visited an unimplemented Node in FUNCTION");
             }
         }
         I4GLBlockNode node = new I4GLBlockNode(statementNodes.toArray(new I4GLStatementNode[statementNodes.size()]));
@@ -974,13 +976,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitDatabaseDeclaration(final I4GLParser.DatabaseDeclarationContext ctx) {
         try {
-            String identifier = ctx.identifier(0).getText();
-            final FrameSlot databaseSlot = currentParseScope.addDatabaseVariable();
-            final I4GLDatabase databaseValue = new I4GLDatabase(identifier);
-            I4GLDatabaseNode node = new I4GLDatabaseNode(databaseSlot, databaseValue);
-            setSourceFromContext(node, ctx);
-            node.addStatementTag();
-            return node;
+            String alias = ctx.identifier(0).getText();
+            currentParseScope.addDatabaseVariable(alias);
+            return null;
         } catch (final LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
         }
