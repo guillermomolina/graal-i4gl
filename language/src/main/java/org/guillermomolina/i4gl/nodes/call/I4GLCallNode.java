@@ -14,16 +14,14 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromResultNode;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignResultsNode;
 import org.guillermomolina.i4gl.runtime.context.I4GLFunction;
-import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 
 @NodeInfo(shortName = "CALL")
 public final class I4GLCallNode extends I4GLStatementNode {
 
     private final String functionIdentifier;
-    private final I4GLReadFromResultNode[] readResultNodes;
-    private final I4GLStatementNode[] assignResultNodes;
+    private final I4GLAssignResultsNode assignResultsNode;
     @Children
     private final I4GLExpressionNode[] argumentNodes;
     @CompilationFinal
@@ -32,15 +30,11 @@ public final class I4GLCallNode extends I4GLStatementNode {
     private InteropLibrary library;
 
     public I4GLCallNode(final String identifier, final I4GLExpressionNode[] argumentNodes,
-            final I4GLReadFromResultNode[] readResultNodes, final I4GLStatementNode[] assignResultNodes) {
+            final I4GLAssignResultsNode assignResultsNode) {
         this.functionIdentifier = identifier;
         this.argumentNodes = argumentNodes;
         this.library = InteropLibrary.getFactory().createDispatched(3);
-        if( readResultNodes.length != assignResultNodes.length) {
-            throw new IncorrectNumberOfReturnValuesException(assignResultNodes.length, readResultNodes.length);
-        }
-        this.readResultNodes = readResultNodes;
-        this.assignResultNodes = assignResultNodes;
+        this.assignResultsNode = assignResultsNode;
     }
 
     private I4GLFunction getFunction() {
@@ -56,7 +50,7 @@ public final class I4GLCallNode extends I4GLStatementNode {
         Object[] argumentValues = this.evaluateArguments(frame);
         CallTarget function = cachedFunction.getCallTarget();
         final Object callOutput = function.call(argumentValues);
-        if( readResultNodes.length != 0) {
+        if (assignResultsNode != null) {
             Object[] results;
             if (callOutput instanceof Object[]) {
                 results = (Object[]) callOutput;
@@ -64,15 +58,8 @@ public final class I4GLCallNode extends I4GLStatementNode {
                 results = new Object[1];
                 results[0] = callOutput;
             }
-            if (results.length != readResultNodes.length) {
-                throw new IncorrectNumberOfReturnValuesException(assignResultNodes.length, results.length);
-            }
-            for (int i = 0; i < readResultNodes.length; i++) {
-                readResultNodes[i].setResult(results[i]);
-            }
-            if (assignResultNodes.length != 0) {
-                evaluateResults(frame, results);
-            }    
+            assignResultsNode.setResults(results);
+            assignResultsNode.executeVoid(frame);
         }
     }
 
@@ -86,15 +73,6 @@ public final class I4GLCallNode extends I4GLStatementNode {
         }
 
         return argumentValues;
-    }
-
-    @ExplodeLoop
-    private void evaluateResults(VirtualFrame frame, Object[] results) {
-        CompilerAsserts.compilationConstant(assignResultNodes.length);
-
-        for (int i = 0; i < assignResultNodes.length; i++) {
-            assignResultNodes[i].executeVoid(frame);
-        }
     }
 
     @Override

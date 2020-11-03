@@ -125,7 +125,11 @@ secondQualifier: SECOND | fractionQualifier;
 
 fractionQualifier: FRACTION (LPAREN numericConstant RPAREN)?;
 
-structuredType: recordLikeType | recordType | arrayType | dynArrayType;
+structuredType:
+	recordLikeType
+	| recordType
+	| arrayType
+	| dynArrayType;
 
 recordLikeType: RECORD LIKE tableIdentifier DOT STAR;
 
@@ -203,7 +207,8 @@ assignmentValue: expressionList | NULL;
 multipleAssignmentStatement:
 	identifier DOT STAR EQUAL identifier DOT STAR;
 
-callStatement: CALL function (RETURNING variableList)?;
+callStatement:
+	CALL function (RETURNING variableOrComponentList)?;
 
 actualParameter: STAR | expression;
 
@@ -294,22 +299,18 @@ usingVariableList: USING variableList;
 
 intoVariableList: INTO variableOrComponentList;
 
-variableOrComponentList: variableOrComponent (COMMA variableOrComponent)*;
+variableOrComponentList:
+	variableOrComponent (COMMA variableOrComponent)*;
 
-variableOrComponent: variable | componentVariable;
+variableOrComponent:
+	variable
+	| componentVariable
+	| componentVariableThrouh;
 
-/*
- thruNotation : ( (THROUGH |THRU) (SAME DOT)? identifier )? ;
- */
-componentVariable:
-	identifier (
-		(DOT STAR)
-		| (
-			DOT componentVariable (
-				(THROUGH | THRU) componentVariable
-			)?
-		)
-	);
+componentVariable: notIndexedVariable DOT STAR;
+
+componentVariableThrouh:
+	recordVariable (THROUGH | THRU) recordVariable;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (

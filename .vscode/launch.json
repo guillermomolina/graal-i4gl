@@ -2,11 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "graalvm",
+            "type": "antlr-debug",
+            "name": "Debug ANTLR4 grammar Current File",
             "request": "launch",
-            "name": "Launch i4gl Script",
-            "runtimeExecutable": "/home/guille/Fuentes/graal/languages/graal-i4gl/i4gl",
-            "program": "${file}"
+            "input": "${file}",
+            "grammar": "language/src/main/antlr4/org/guillermomolina/i4gl/parser/I4GLParser.g4",
+            "startRule": "module",
+            "printParseTree": true,
+            "visualParseTree": true
         },
         {
             "type": "java",
@@ -16,7 +19,7 @@
             "projectName": "launcher",
             "args": ["--log.i4gl.level=FINEST","${file}"],
             "vmArgs": [
-                "-Dtruffle.class.path.append=./language/target/i4gl.jar",
+                "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
             "stepFilters": {
@@ -29,16 +32,6 @@
                 "skipConstructors": false
             },
             "console": "internalConsole"
-        },
-        {
-            "type": "antlr-debug",
-            "name": "Debug ANTLR4 grammar Current File",
-            "request": "launch",
-            "input": "${file}",
-            "grammar": "language/src/main/antlr4/org/guillermomolina/i4gl/parser/I4GLParser.g4",
-            "startRule": "module",
-            "printParseTree": true,
-            "visualParseTree": true
         },
         {
             "type": "java",
@@ -89,6 +82,13 @@
                 "skipConstructors": false
             },
             "console": "internalConsole"
+        },
+        {
+            "type": "graalvm",
+            "request": "launch",
+            "name": "Launch i4gl Script",
+            "runtimeExecutable": "/home/guille/Fuentes/graal/languages/graal-i4gl/i4gl",
+            "program": "${file}"
         },
         {
             "type": "graalvm",

@@ -1,14 +1,11 @@
 package org.guillermomolina.i4gl.nodes.sql;
 
-import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromResultNode;
-import org.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignResultsNode;
 import org.guillermomolina.i4gl.runtime.values.I4GLCursor;
 
 /**
@@ -16,40 +13,17 @@ import org.guillermomolina.i4gl.runtime.values.I4GLCursor;
  */
 @NodeInfo(shortName = "FOREACH", description = "The node implementing a foreach loop on a cursor")
 public class I4GLForEachNode extends I4GLStatementNode {
-    private final I4GLReadFromResultNode[] readResultNodes;
-    private final I4GLStatementNode[] assignResultNodes;
+    private final I4GLAssignResultsNode assignResultsNode;
     @Child
     private I4GLExpressionNode cursorVariableNode;
     @Child
     private I4GLStatementNode body;
 
-    public I4GLForEachNode(I4GLExpressionNode cursorVariableNode, final I4GLReadFromResultNode[] readResultNodes,
-            final I4GLStatementNode[] assignResultNodes, final I4GLStatementNode body) {
+    public I4GLForEachNode(I4GLExpressionNode cursorVariableNode, final I4GLAssignResultsNode assignResultsNode,
+            final I4GLStatementNode body) {
         this.cursorVariableNode = cursorVariableNode;
-        this.readResultNodes = readResultNodes;
-        this.assignResultNodes = assignResultNodes;
+        this.assignResultsNode = assignResultsNode;
         this.body = body;
-    }
-
-    public void evaluateResult(VirtualFrame frame, Object[] results) {
-        if (results.length != readResultNodes.length) {
-            throw new IncorrectNumberOfReturnValuesException(assignResultNodes.length, results.length);
-        }
-        for (int i = 0; i < readResultNodes.length; i++) {
-            readResultNodes[i].setResult(results[i]);
-        }
-        if (assignResultNodes.length != 0) {
-            evaluateResults(frame, results);
-        }    
-    }
-
-    @ExplodeLoop
-    private void evaluateResults(VirtualFrame frame, Object[] results) {
-        CompilerAsserts.compilationConstant(assignResultNodes.length);
-
-        for (int i = 0; i < assignResultNodes.length; i++) {
-            assignResultNodes[i].executeVoid(frame);
-        }
     }
 
     @Override
@@ -57,7 +31,10 @@ public class I4GLForEachNode extends I4GLStatementNode {
         final I4GLCursor cursor = (I4GLCursor) cursorVariableNode.executeGeneric(frame);
         cursor.start();
         while (cursor.next()) {
-            evaluateResult(frame, cursor.getRow());
+            if (assignResultsNode != null) {
+                assignResultsNode.setResults(cursor.getRow());
+                assignResultsNode.executeVoid(frame);
+            }
             body.executeVoid(frame);
         }
         cursor.end();

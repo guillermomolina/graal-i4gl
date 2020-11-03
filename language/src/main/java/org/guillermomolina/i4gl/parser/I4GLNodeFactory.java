@@ -66,6 +66,7 @@ import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromResultNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadNonLocalVariableNodeGen;
+import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignResultsNode;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToLocalVariableNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.write.I4GLAssignToNonLocalVariableNodeGen;
@@ -426,20 +427,11 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             parameterNodes.add((I4GLExpressionNode) visit(parameterCtx));
         }
         final I4GLExpressionNode[] arguments = parameterNodes.toArray(new I4GLExpressionNode[parameterNodes.size()]);
-        I4GLStatementNode[] asssignResultNodes = new I4GLStatementNode[0];
-        I4GLReadFromResultNode[] readResultNodes = new I4GLReadFromResultNode[0];
-        if (ctx.RETURNING() != null) {
-            final int size = ctx.variableList().variable().size();
-            readResultNodes = new I4GLReadFromResultNode[size];
-            asssignResultNodes = new I4GLStatementNode[size];
-            int index = 0;
-            for (final I4GLParser.VariableContext variableCtx : ctx.variableList().variable()) {
-                readResultNodes[index] = new I4GLReadFromResultNode();
-                asssignResultNodes[index] = createAssignmentNode(variableCtx, readResultNodes[index]);
-                index++;
-            }
+        I4GLAssignResultsNode assignResultsNode = null;
+        if (ctx.variableOrComponentList() != null) {
+            assignResultsNode = (I4GLAssignResultsNode) visit(ctx.variableOrComponentList());
         }
-        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments, readResultNodes, asssignResultNodes);
+        I4GLCallNode node = new I4GLCallNode(functionIdentifier, arguments, assignResultsNode);
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -527,6 +519,62 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
     }
 
+    private Map<I4GLReadFromResultNode, I4GLStatementNode> createAssignmentsToComponentVariable(
+            final I4GLParser.ComponentVariableContext ctx) {
+        try {
+            final I4GLParser.RecordVariableContext recordCtx = ctx.notIndexedVariable().recordVariable();
+            I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(recordCtx.simpleVariable());
+            int index = 0;
+            while (index < recordCtx.identifier().size()) {
+                String identifier = recordCtx.identifier(index++).getText();
+                variableNode = createReadFromRecordNode(variableNode, identifier);
+            }
+            I4GLType expressionType = variableNode.getType();
+            if (expressionType instanceof I4GLRecordType) {
+                I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
+                Map<String, I4GLType> variables = accessedRecordType.getVariables();
+                final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new HashMap<>(variables.size());
+                for (Map.Entry<String, I4GLType> variable : variables.entrySet()) {
+                    final String identifier = variable.getKey();
+                    final I4GLType recordType = variable.getValue();
+                    final I4GLReadFromResultNode readResultNode = new I4GLReadFromResultNode();
+                    final I4GLStatementNode assignResultNode = I4GLAssignToRecordFieldNodeGen.create(identifier,
+                            recordType, variableNode, readResultNode);
+                    assignResultNode.addStatementTag();
+                    setSourceFromContext(assignResultNode, ctx);
+                    pairs.put(readResultNode, assignResultNode);
+                }
+                return pairs;
+            } else {
+                throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
+            }
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
+    }
+
+    @Override
+    public Node visitVariableOrComponentList(final I4GLParser.VariableOrComponentListContext ctx) {
+        final int size = ctx.variableOrComponent().size();
+        final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new HashMap<>(size);
+        for (final I4GLParser.VariableOrComponentContext variableOrComponentCtx : ctx.variableOrComponent()) {
+            if (variableOrComponentCtx.componentVariable() != null) {
+                pairs.putAll(createAssignmentsToComponentVariable(variableOrComponentCtx.componentVariable()));
+            } else if (variableOrComponentCtx.componentVariableThrouh() != null) {
+                throw new NotImplementedException();
+            } else {
+                final I4GLReadFromResultNode readResultNode = new I4GLReadFromResultNode();
+                final I4GLStatementNode assignResultNode = createAssignmentNode(variableOrComponentCtx.variable(),
+                        readResultNode);
+                pairs.put(readResultNode, assignResultNode);
+            }
+        }
+        I4GLAssignResultsNode node = new I4GLAssignResultsNode(pairs);
+        setSourceFromContext(node, ctx);
+        node.addStatementTag();
+        return node;
+    }
+
     @Override
     public Node visitForEachStatement(final I4GLParser.ForEachStatementContext ctx) {
         if (ctx.usingVariableList() != null || ctx.WITH() != null) {
@@ -534,27 +582,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
         try {
             final String cursorName = ctx.cursorName().identifier().getText();
-            final List<I4GLParser.VariableOrComponentContext> variableOrComponentCtxList = ctx.intoVariableList()
-                    .variableOrComponentList().variableOrComponent();
-            final int size = variableOrComponentCtxList.size();
-            final I4GLReadFromResultNode[] readResultNodes = new I4GLReadFromResultNode[size];
-            final I4GLStatementNode[] asssignResultNodes = new I4GLStatementNode[size];
-            int index = 0;
-            for (final I4GLParser.VariableOrComponentContext variableOrComponentCtx : variableOrComponentCtxList) {
-                readResultNodes[index] = new I4GLReadFromResultNode();
-                if (variableOrComponentCtx.componentVariable() != null) {
-                    throw new NotImplementedException();
-                } else {
-                    asssignResultNodes[index] = createAssignmentNode(variableOrComponentCtx.variable(),
-                            readResultNodes[index]);
-                }
-                index++;
+            I4GLAssignResultsNode assignResultsNode = null;
+            if (ctx.intoVariableList() != null) {
+                assignResultsNode = (I4GLAssignResultsNode) visit(ctx.intoVariableList());
             }
             I4GLExpressionNode cursorVariableNode = createReadVariableNode(cursorName);
             I4GLStatementNode loopBody = ctx.codeBlock() == null ? new I4GLBlockNode(null)
                     : (I4GLStatementNode) visit(ctx.codeBlock());
-            I4GLForEachNode node = new I4GLForEachNode(cursorVariableNode, readResultNodes, asssignResultNodes,
-                    loopBody);
+            I4GLForEachNode node = new I4GLForEachNode(cursorVariableNode, assignResultsNode, loopBody);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
@@ -1176,37 +1211,20 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             Interval interval;
             String sql = "";
 
-            I4GLReadFromResultNode[] readResultNodes = new I4GLReadFromResultNode[0];
-            I4GLStatementNode[] asssignResultNodes = new I4GLStatementNode[0];
+            I4GLAssignResultsNode assignResultsNode = null;
             if (ctx.intoVariableList() != null) {
                 end = ctx.intoVariableList().start.getStartIndex() - 1;
                 interval = new Interval(start, end);
                 sql = ctx.start.getInputStream().getText(interval);
                 start = ctx.intoVariableList().stop.getStopIndex() + 1;
-
-                final List<I4GLParser.VariableOrComponentContext> variableOrComponentCtxList = ctx.intoVariableList()
-                        .variableOrComponentList().variableOrComponent();
-                final int size = variableOrComponentCtxList.size();
-                readResultNodes = new I4GLReadFromResultNode[size];
-                asssignResultNodes = new I4GLStatementNode[size];
-                int index = 0;
-                for (final I4GLParser.VariableOrComponentContext variableOrComponentCtx : variableOrComponentCtxList) {
-                    readResultNodes[index] = new I4GLReadFromResultNode();
-                    if (variableOrComponentCtx.componentVariable() != null) {
-                        throw new NotImplementedException();
-                    } else {
-                        asssignResultNodes[index] = createAssignmentNode(variableOrComponentCtx.variable(),
-                                readResultNodes[index]);
-                    }
-                    index++;
-                }
+                assignResultsNode = (I4GLAssignResultsNode) visit(ctx.intoVariableList());
             }
 
             end = ctx.stop.getStopIndex();
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
             I4GLExpressionNode databaseVariableNode = createReadDatabaseVariableNode();
-            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, readResultNodes, asssignResultNodes);
+            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, assignResultsNode);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;

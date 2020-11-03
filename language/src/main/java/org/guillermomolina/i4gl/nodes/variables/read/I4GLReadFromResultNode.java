@@ -4,6 +4,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 public class I4GLReadFromResultNode extends I4GLExpressionNode {
@@ -20,7 +21,9 @@ public class I4GLReadFromResultNode extends I4GLExpressionNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        assert result != null;
+        if(result == null) {
+            throw new UnexpectedRuntimeException();
+        }
         return result;
     }
     

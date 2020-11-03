@@ -25,6 +25,10 @@ public class I4GLRecordType extends I4GLType {
         this.variables = variables;
     }
 
+    public Map<String, I4GLType> getVariables() {
+        return variables;
+    }
+
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
