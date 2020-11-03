@@ -522,11 +522,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private Map<I4GLReadFromResultNode, I4GLStatementNode> createAssignmentsToComponentVariable(
             final I4GLParser.ComponentVariableContext ctx) {
         try {
-            final I4GLParser.RecordVariableContext recordCtx = ctx.notIndexedVariable().recordVariable();
-            I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(recordCtx.simpleVariable());
+            I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
             int index = 0;
-            while (index < recordCtx.identifier().size()) {
-                String identifier = recordCtx.identifier(index++).getText();
+            while (index < ctx.identifier().size()) {
+                String identifier = ctx.identifier(index++).getText();
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
             I4GLType expressionType = variableNode.getType();

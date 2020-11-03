@@ -307,7 +307,7 @@ variableOrComponent:
 	| componentVariable
 	| componentVariableThrouh;
 
-componentVariable: notIndexedVariable DOT STAR;
+componentVariable:  simpleVariable (DOT identifier)* DOT STAR;
 
 componentVariableThrouh:
 	recordVariable (THROUGH | THRU) recordVariable;

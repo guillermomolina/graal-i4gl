@@ -30,7 +30,11 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
 
     @Specialization(guards = "isInt()")
     int readInt(I4GLRecord record) {
-        return (int)record.get(getIdentifier());
+        try {
+            return (int)record.get(getIdentifier());
+        } catch (NullPointerException|ClassCastException e) {
+            return 0;
+        }
     }
 
     @Specialization(guards = "isBigInt()")

@@ -35,13 +35,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) I4GLMain Like3.4gl",
+            "name": "Debug (Launch) I4GLMain CallReturn3.4gl",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Like3.4gl",
+                "${workspaceFolder}/language/tests/simple/CallReturn3.4gl",
             ],
             "vmArgs": [
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
