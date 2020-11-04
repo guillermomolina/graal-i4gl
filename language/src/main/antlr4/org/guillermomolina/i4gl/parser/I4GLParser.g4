@@ -262,7 +262,7 @@ factorTypes:
 function:
 	identifier LPAREN (actualParameter (COMMA actualParameter)*)? RPAREN;
 
-constant: numericConstant | string;
+constant: TRUE | FALSE | numericConstant | string;
 
 numericConstant: integer | real;
 
@@ -304,12 +304,15 @@ variableOrComponentList:
 
 variableOrComponent: variable | componentVariable;
 
-componentVariable: starComponentVariable
+componentVariable:
+	starComponentVariable
 	| thruComponentVariable;
 
-starComponentVariable: simpleVariable (DOT identifier)* DOT STAR;
+starComponentVariable:
+	simpleVariable (DOT identifier)* DOT STAR;
 
-thruComponentVariable: recordVariable (THROUGH | THRU) recordVariable;
+thruComponentVariable:
+	recordVariable (THROUGH | THRU) recordVariable;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
