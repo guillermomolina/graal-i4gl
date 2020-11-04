@@ -25,33 +25,29 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
 
     protected abstract String getIdentifier();
 
-    @Specialization(guards = "isSmallInt()")
+    @Specialization(guards = "record.isSmallInt(getIdentifier())")
     short readSmallInt(I4GLRecord record) {
-        return (short)record.get(getIdentifier());
+        return record.getSmallIntSafe(getIdentifier());
     }
 
-    @Specialization(guards = "isInt()")
+    @Specialization(guards = "record.isInt(getIdentifier())")
     int readInt(I4GLRecord record) {
-        try {
-            return (int)record.get(getIdentifier());
-        } catch (NullPointerException|ClassCastException e) {
-            return -1;
-        }
+        return record.getIntSafe(getIdentifier());
     }
 
-    @Specialization(guards = "isBigInt()")
+    @Specialization(guards = "record.isBigInt(getIdentifier())")
     long readBigInt(I4GLRecord record) {
-        return (long)record.get(getIdentifier());
+        return record.getBigIntSafe(getIdentifier());
     }
 
-    @Specialization(guards = "isSmallFloat()")
+    @Specialization(guards = "record.isSmallFloat(getIdentifier())")
     float readSmallFloat(I4GLRecord record) {
-        return (float)record.get(getIdentifier());
+        return (float)record.getSmallFloatSafe(getIdentifier());
     }
 
-    @Specialization(guards = "isFloat()")
+    @Specialization(guards = "record.isFloat(getIdentifier())")
     double readFloat(I4GLRecord record) {
-        return (double)record.get(getIdentifier());
+        return (double)record.getFloatSafe(getIdentifier());
     }
 
     @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readFloat" })

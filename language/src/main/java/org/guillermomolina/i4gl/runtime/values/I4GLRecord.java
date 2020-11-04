@@ -15,7 +15,13 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.runtime.context.I4GLContext;
+import org.guillermomolina.i4gl.runtime.exceptions.InvalidCastException;
 import org.guillermomolina.i4gl.runtime.types.compound.I4GLRecordType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 
 @ExportLibrary(InteropLibrary.class)
 public class I4GLRecord implements TruffleObject {
@@ -31,6 +37,76 @@ public class I4GLRecord implements TruffleObject {
     public I4GLRecord(I4GLRecord source) {
         this.recordType = source.recordType;
         this.properties = source.properties;
+    }
+
+    public boolean isSmallInt(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Short;
+    }
+
+    public short getSmallIntSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (short)value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, I4GLSmallIntType.SINGLETON);
+        }
+    }
+
+    public boolean isInt(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Integer;
+    }
+
+    public int getIntSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (int)value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, I4GLIntType.SINGLETON);
+        }
+    }
+
+    public boolean isBigInt(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Long;
+    }
+
+    public long getBigIntSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (long)value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, I4GLBigIntType.SINGLETON);
+        }
+    }
+
+    public boolean isSmallFloat(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Float;
+    }
+
+    public float getSmallFloatSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (float)value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, I4GLSmallFloatType.SINGLETON);
+        }
+    }
+
+    public boolean isFloat(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Double;
+    }
+
+    public double getFloatSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (double)value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, I4GLFloatType.SINGLETON);
+        }
     }
 
     public Object get(String name) {

@@ -7,7 +7,6 @@ import com.oracle.truffle.api.source.SourceSection;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.exceptions.HaltException;
-import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 public class I4GLMainRootNode extends I4GLRootNode {
     public I4GLMainRootNode(I4GLLanguage language, FrameDescriptor frameDescriptor, I4GLStatementNode bodyNode,
@@ -25,8 +24,6 @@ public class I4GLMainRootNode extends I4GLRootNode {
             return result;
         } catch (HaltException e) {
             return e.getExitCode();
-        } catch (IndexOutOfBoundsException e) {
-            return I4GLNull.SINGLETON;
         }
     }    
 }

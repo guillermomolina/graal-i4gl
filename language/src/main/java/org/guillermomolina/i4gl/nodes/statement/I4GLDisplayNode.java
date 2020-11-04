@@ -8,9 +8,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
-import org.guillermomolina.i4gl.runtime.exceptions.I4GLRuntimeException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
-import org.guillermomolina.i4gl.runtime.types.compound.I4GLTextType;
 import org.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 @NodeInfo(shortName = "DISPLAY", description = "The node implementing the DISPLAY statement")
@@ -32,7 +30,10 @@ public final class I4GLDisplayNode extends I4GLStatementNode {
         final PrintWriter output = I4GLLanguage.getCurrentContext().getOutput();
         for (int i = 0; i < argumentNodes.length; i++) {
             Object value = argumentNodes[i].executeGeneric(frame);
-            if (value instanceof Short) {
+            if (value == I4GLNull.SINGLETON) {
+                I4GLType type = argumentNodes[i].getType();
+                output.print(type.getDefaultValue());
+            } else if (value instanceof Short) {
                 output.printf("%6d", (short) value);
             } else if (value instanceof Integer) {
                 output.printf("%11d", (int) value);
@@ -42,13 +43,6 @@ public final class I4GLDisplayNode extends I4GLStatementNode {
                 output.printf("%14.2f", (float) value);
             } else if (value instanceof Double) {
                 output.printf("%14.2f", (double) value);
-            } else if (value == I4GLNull.SINGLETON) {
-                I4GLType type = argumentNodes[i].getType();
-                if (type instanceof I4GLTextType) {
-                    output.print(type.getDefaultValue());
-                } else {
-                    throw new I4GLRuntimeException("Variable is NULL and is not a String");
-                }
             } else {
                 output.print(value.toString());
             }
