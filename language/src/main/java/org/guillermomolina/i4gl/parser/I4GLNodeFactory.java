@@ -3,6 +3,7 @@ package org.guillermomolina.i4gl.parser;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -532,7 +533,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             if (expressionType instanceof I4GLRecordType) {
                 I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
                 Map<String, I4GLType> variables = accessedRecordType.getVariables();
-                final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new HashMap<>(variables.size());
+                final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new LinkedHashMap<>(variables.size());
                 for (Map.Entry<String, I4GLType> variable : variables.entrySet()) {
                     final String identifier = variable.getKey();
                     final I4GLType recordType = variable.getValue();
@@ -555,7 +556,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitVariableOrComponentList(final I4GLParser.VariableOrComponentListContext ctx) {
         final int size = ctx.variableOrComponent().size();
-        final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new HashMap<>(size);
+        final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new LinkedHashMap<>(size);
         for (final I4GLParser.VariableOrComponentContext variableOrComponentCtx : ctx.variableOrComponent()) {
             if (variableOrComponentCtx.componentVariable() != null) {
                 pairs.putAll(createAssignmentsToComponentVariable(variableOrComponentCtx.componentVariable()));

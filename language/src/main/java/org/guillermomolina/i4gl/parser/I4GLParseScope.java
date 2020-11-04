@@ -1,7 +1,7 @@
 package org.guillermomolina.i4gl.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class I4GLParseScope {
      * @param name             name of the current lexical scope
      */
     I4GLParseScope(I4GLParseScope outer, String type, String name) {
-        this.variables = new HashMap<>();
+        this.variables = new LinkedHashMap<>();
         this.frameDescriptor = new FrameDescriptor();
         this.name = name;
         this.outer = outer;
