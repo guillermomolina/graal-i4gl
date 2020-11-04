@@ -3,7 +3,6 @@ package org.guillermomolina.i4gl.nodes.variables.read;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeField;
-import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameUtil;
@@ -23,11 +22,9 @@ import org.guillermomolina.i4gl.runtime.types.I4GLType;
  * {@link ReadGlobalVariableNodeGen}
  */
 
-@NodeFields({ 
-    @NodeField(name = "frameName", type = String.class),
-    @NodeField(name = "slot", type = FrameSlot.class),
-    @NodeField(name = "type", type = I4GLType.class)
-})
+@NodeField(name = "frameName", type = String.class)
+@NodeField(name = "slot", type = FrameSlot.class)
+@NodeField(name = "type", type = I4GLType.class)
 public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;
