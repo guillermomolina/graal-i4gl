@@ -7,6 +7,6 @@ MAIN
         FROM customers
         LIMIT 10
     FOREACH aCursor INTO customer.*
-        DISPLAY "|",customer.customerNumber,"|",customer.customerName,"|"
+        DISPLAY customer.*
     END FOREACH
 END MAIN

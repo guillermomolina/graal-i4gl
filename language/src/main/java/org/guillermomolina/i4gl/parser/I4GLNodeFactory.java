@@ -522,6 +522,16 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     private Map<I4GLReadFromResultNode, I4GLStatementNode> createAssignmentsToComponentVariable(
             final I4GLParser.ComponentVariableContext ctx) {
+        if (ctx.starComponentVariable() != null) {
+            return createAssignmentsToStarComponentVariable(ctx.starComponentVariable());
+        } else if (ctx.thruComponentVariable() != null) {
+            throw new NotImplementedException();
+        }
+        throw new ParseException(source, ctx, "Malformed component variable");
+    }
+
+    private Map<I4GLReadFromResultNode, I4GLStatementNode> createAssignmentsToStarComponentVariable(
+            final I4GLParser.StarComponentVariableContext ctx) {
         try {
             I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
             int index = 0;
@@ -560,9 +570,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         for (final I4GLParser.VariableOrComponentContext variableOrComponentCtx : ctx.variableOrComponent()) {
             if (variableOrComponentCtx.componentVariable() != null) {
                 pairs.putAll(createAssignmentsToComponentVariable(variableOrComponentCtx.componentVariable()));
-            } else if (variableOrComponentCtx.componentVariableThrouh() != null) {
-                throw new NotImplementedException();
-            } else {
+            } else { // variableOrComponentCtx.variable() != null
                 final I4GLReadFromResultNode readResultNode = new I4GLReadFromResultNode();
                 final I4GLStatementNode assignResultNode = createAssignmentNode(variableOrComponentCtx.variable(),
                         readResultNode);
@@ -801,12 +809,62 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return visit(ctx.factorTypes());
     }
 
+    private List<I4GLExpressionNode> createReadComponentVariable(
+            final I4GLParser.ComponentVariableContext ctx) {
+        if (ctx.starComponentVariable() != null) {
+            return createReadStarComponentVariable(ctx.starComponentVariable());
+        } else if (ctx.thruComponentVariable() != null) {
+            throw new NotImplementedException();
+        }
+        throw new ParseException(source, ctx, "Malformed component variable");
+    }
+
+    private List<I4GLExpressionNode> createReadStarComponentVariable(
+            final I4GLParser.StarComponentVariableContext ctx) {
+        try {
+            I4GLExpressionNode variableNode = (I4GLExpressionNode) visit(ctx.simpleVariable());
+            int index = 0;
+            while (index < ctx.identifier().size()) {
+                String identifier = ctx.identifier(index++).getText();
+                variableNode = createReadFromRecordNode(variableNode, identifier);
+            }
+            I4GLType expressionType = variableNode.getType();
+            if (expressionType instanceof I4GLRecordType) {
+                I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
+                Map<String, I4GLType> variables = accessedRecordType.getVariables();
+                final List<I4GLExpressionNode> readNodes = new ArrayList<>(variables.size());
+                for (Map.Entry<String, I4GLType> variable : variables.entrySet()) {
+                    final String identifier = variable.getKey();
+                    final I4GLExpressionNode readNode = createReadFromRecordNode(variableNode, identifier);
+                    setSourceFromContext(readNode, ctx);
+                    readNodes.add(readNode);
+                }
+                return readNodes;
+            } else {
+                throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
+            }
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
+    }
+
     @Override
     public Node visitDisplayStatement(final I4GLParser.DisplayStatementContext ctx) {
-        final List<I4GLParser.DisplayValueContext> valueListCtx = ctx.displayValue();
-        final List<I4GLExpressionNode> parameterNodes = new ArrayList<>(valueListCtx.size());
-        for (final I4GLParser.DisplayValueContext valueCtx : valueListCtx) {
-            parameterNodes.add((I4GLExpressionNode) visit(valueCtx));
+        final List<I4GLParser.DisplayValueContext> displayValueContextList = ctx.displayValue();
+        final List<I4GLExpressionNode> parameterNodes = new ArrayList<>(displayValueContextList.size());
+        for (final I4GLParser.DisplayValueContext displayValueContext : displayValueContextList) {
+            if (displayValueContext.expression() != null) {
+                if (displayValueContext.CLIPPED() != null) {
+                    throw new NotImplementedException();
+                }
+                parameterNodes.add((I4GLExpressionNode) visit(displayValueContext.expression()));
+            } else if (displayValueContext.ASCII() != null) {
+                throw new NotImplementedException();
+            } else if (displayValueContext.componentVariable() != null) {
+                parameterNodes.addAll(createReadComponentVariable(displayValueContext.componentVariable()));
+            } else { 
+                throw new ParseException(source, ctx, "Malformed display value");
+            }
         }
         I4GLDisplayNode node = new I4GLDisplayNode(
                 parameterNodes.toArray(new I4GLExpressionNode[parameterNodes.size()]));

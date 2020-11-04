@@ -2,7 +2,6 @@ package org.guillermomolina.i4gl.nodes.variables.read;
 
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
-import com.oracle.truffle.api.dsl.NodeFields;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
@@ -18,10 +17,8 @@ import org.guillermomolina.i4gl.runtime.values.I4GLRecord;
  * {@link ReadFromRecordNodeGen}
  */
 @NodeChild(value = "record", type = I4GLExpressionNode.class)
-@NodeFields({
-    @NodeField(name = "identifier", type = String.class),
-    @NodeField(name = "returnType", type = I4GLType.class)
-})
+@NodeField(name = "identifier", type = String.class)
+@NodeField(name = "returnType", type = I4GLType.class)
 public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
 
     protected abstract I4GLType getReturnType();

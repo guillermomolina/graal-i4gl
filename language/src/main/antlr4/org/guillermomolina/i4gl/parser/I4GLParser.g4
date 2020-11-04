@@ -302,15 +302,14 @@ intoVariableList: INTO variableOrComponentList;
 variableOrComponentList:
 	variableOrComponent (COMMA variableOrComponent)*;
 
-variableOrComponent:
-	variable
-	| componentVariable
-	| componentVariableThrouh;
+variableOrComponent: variable | componentVariable;
 
-componentVariable:  simpleVariable (DOT identifier)* DOT STAR;
+componentVariable: starComponentVariable
+	| thruComponentVariable;
 
-componentVariableThrouh:
-	recordVariable (THROUGH | THRU) recordVariable;
+starComponentVariable: simpleVariable (DOT identifier)* DOT STAR;
+
+thruComponentVariable: recordVariable (THROUGH | THRU) recordVariable;
 
 forStatement:
 	FOR controlVariable EQUAL initialValue TO finalValue (
@@ -472,7 +471,8 @@ displayStatement:
 
 displayValue:
 	expression (CLIPPED | USING string)?
-	| ASCII UNSIGNED_INTEGER;
+	| ASCII UNSIGNED_INTEGER
+	| componentVariable;
 
 errorStatement: ERROR expressionList attributeList?;
 
