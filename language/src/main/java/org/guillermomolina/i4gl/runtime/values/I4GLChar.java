@@ -67,6 +67,15 @@ public class I4GLChar implements TruffleObject {
         return new I4GLChar(this);
     }
 
+    public Object clipped() {
+        int i = data.length()-1;
+        while (i >= 0 && Character.isWhitespace(data.charAt(i))) {
+            i--;
+        }
+        String clipped = data.substring(0,i+1);
+        return new I4GLChar(clipped);
+    }
+
     private void checkArrayIndex(int index) {
         if (index >= getSize()) {
             throw new IndexOutOfBoundsException();

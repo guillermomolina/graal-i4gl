@@ -4,23 +4,16 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import org.guillermomolina.i4gl.runtime.values.I4GLChar;
-import org.guillermomolina.i4gl.runtime.values.I4GLVarchar;
 
 @NodeInfo(shortName = "CLIPPED")
 public abstract class I4GLClippedNode extends I4GLUnaryNode {
-
 	@Specialization
-	I4GLVarchar clip(I4GLVarchar argument) {
-		return argument;
+	Object clip(I4GLChar argument) {
+		return argument.clipped();
 	}
 
 	@Specialization
-	I4GLChar clip(I4GLChar argument) {
-		return argument;
-	}
-
-	@Specialization
-	String clip(String argument) {
+	Object clip(Object argument) {
 		return argument;
 	}
 }
