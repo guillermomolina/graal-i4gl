@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.nodes;
+package org.guillermomolina.i4gl.nodes.expression;
 
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -9,6 +9,8 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
+import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
+import org.guillermomolina.i4gl.nodes.I4GLTypeSystemGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLBigIntType;

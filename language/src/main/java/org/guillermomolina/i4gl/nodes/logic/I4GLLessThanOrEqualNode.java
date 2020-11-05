@@ -1,9 +1,10 @@
 package org.guillermomolina.i4gl.nodes.logic;
 
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLBinaryExpressionNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 
@@ -15,22 +16,32 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
  */
 @NodeInfo(shortName = "<=")
 public abstract class I4GLLessThanOrEqualNode extends I4GLBinaryExpressionNode {
+
     @Specialization
     int lessThanOrEqual(int left, int right) {
         return left <= right ? 1 : 0;
     }
 
-	@Specialization
+    @Specialization
+    @TruffleBoundary
+    int lessThanOrEqual(short left, short right) {
+        return left <= right ? 1 : 0;
+    }
+
+    @Specialization
+    @TruffleBoundary
 	int lessThanOrEqual(long left, long right) {
 		return left <= right ? 1 : 0;
 	}
 
-	@Specialization
+    @Specialization
+    @TruffleBoundary
 	int lessThanOrEqual(float left, float right) {
 		return left <= right ? 1 : 0;
 	}
 
-	@Specialization
+    @Specialization
+    @TruffleBoundary
 	int lessThanOrEqual(double left, double right) {
 		return left <= right ? 1 : 0;
 	}

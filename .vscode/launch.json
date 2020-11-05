@@ -19,6 +19,7 @@
             "projectName": "launcher",
             "args": ["--log.i4gl.level=FINEST","${file}"],
             "vmArgs": [
+                "-ea",
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
@@ -35,15 +36,16 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) I4GLMain Like3.4gl",
+            "name": "Debug (Launch) I4GLMain Clipped.4gl",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Like3.4gl",
+                "${workspaceFolder}/language/tests/simple/Clipped.4gl",
             ],
             "vmArgs": [
+                "-ea",
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
@@ -69,6 +71,7 @@
                 "${file}"
             ],
             "vmArgs": [
+                "-ea",
                 "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],

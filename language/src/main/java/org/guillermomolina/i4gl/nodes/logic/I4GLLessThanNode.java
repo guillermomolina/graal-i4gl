@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLBinaryExpressionNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 
@@ -15,6 +15,11 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
  */
 @NodeInfo(shortName = "<")
 public abstract class I4GLLessThanNode extends I4GLBinaryExpressionNode {
+    @Specialization
+    int lessThan(short left, short right) {
+        return left < right ? 1 : 0;
+    }
+
     @Specialization
     int lessThan(int left, int right) {
         return left < right ? 1 : 0;

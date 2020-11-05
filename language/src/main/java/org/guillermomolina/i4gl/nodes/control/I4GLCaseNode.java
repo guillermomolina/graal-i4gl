@@ -2,7 +2,7 @@ package org.guillermomolina.i4gl.nodes.control;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 
 /**

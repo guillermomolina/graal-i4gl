@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.nodes.arithmetic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLBinaryExpressionNode;
 
 /**
  * Node representing modulo operation.

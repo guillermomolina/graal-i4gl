@@ -22,6 +22,7 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLDecimalType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLFloatType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import org.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -49,13 +50,15 @@ public abstract class I4GLType implements TruffleObject {
         switch (info.getDataType()) {
             case Types.VARCHAR:
                 return new I4GLVarcharType(info.getColumnSize());
+            case Types.SMALLINT:
+                return I4GLSmallIntType.SINGLETON;
             case Types.INTEGER:
                 return I4GLIntType.SINGLETON;
             case Types.BIGINT:
                 return I4GLBigIntType.SINGLETON;
             case Types.REAL:
                 return I4GLSmallFloatType.SINGLETON;
-                case Types.FLOAT:
+            case Types.FLOAT:
                 return I4GLFloatType.SINGLETON;
             case Types.DECIMAL:
                 return new I4GLDecimalType(info.getColumnSize(), info.getDecimalDigits());
@@ -71,12 +74,14 @@ public abstract class I4GLType implements TruffleObject {
     public abstract boolean isInstance(Object value, InteropLibrary interop);
 
     /**
-     * Gets the {@link FrameSlotKind} of the value that is represented by this descriptor.
+     * Gets the {@link FrameSlotKind} of the value that is represented by this
+     * descriptor.
      */
     public abstract FrameSlotKind getSlotKind();
 
     /**
-     * Gets the default value of this type. It is used mainly for initialization of variables.
+     * Gets the default value of this type. It is used mainly for initialization of
+     * variables.
      */
     public abstract Object getDefaultValue();
 

@@ -4,7 +4,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.arithmetic.I4GLUnaryNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLUnaryNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
 
@@ -19,6 +19,11 @@ public abstract class I4GLNotNode extends I4GLUnaryNode {
 
 	@Override
 	public abstract int executeInt(VirtualFrame frame);
+
+	@Specialization
+	int logicalNot(short child) {
+		return child == 0 ? 1 : 0;
+	}
 
 	@Specialization
 	int logicalNot(int child) {

@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.nodes.sql;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.values.I4GLCursor;
 import org.guillermomolina.i4gl.runtime.values.I4GLDatabase;

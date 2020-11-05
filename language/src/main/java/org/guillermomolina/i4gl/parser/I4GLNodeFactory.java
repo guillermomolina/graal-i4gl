@@ -23,7 +23,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLClippedNodeGen;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLAddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideIntegerNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideNodeGen;
@@ -58,6 +59,7 @@ import org.guillermomolina.i4gl.nodes.root.I4GLRootNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLCursorNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLForEachNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLSelectNode;
+import org.guillermomolina.i4gl.nodes.sql.I4GLSqlNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
@@ -242,9 +244,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return currentParseScope;
     }
 
-    private static void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
+    private void setSourceFromContext(I4GLStatementNode node, ParserRuleContext ctx) {
         Interval sourceInterval = srcFromContext(ctx);
         assert sourceInterval != null;
+        if (node == null) {
+            throw new ParseException(source, ctx, "Node is null");
+        }
         assert node != null;
         node.setSourceSection(sourceInterval.a, sourceInterval.length());
     }
@@ -670,11 +675,11 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitIfCondition(final I4GLParser.IfConditionContext ctx) {
-        if (ctx.TRUE() != null) {
-            return I4GLIntLiteralNodeGen.create(0);
-        }
-        if (ctx.FALSE() != null) {
-            return I4GLIntLiteralNodeGen.create(1);
+        if (ctx.booleanConstant() != null) {
+            I4GLExpressionNode booleanConstantNode = (I4GLExpressionNode) visit(ctx.booleanConstant());
+            setSourceFromContext(booleanConstantNode, ctx);
+            booleanConstantNode.addExpressionTag();
+            return booleanConstantNode;
         }
         I4GLExpressionNode leftNode = (I4GLExpressionNode) visit(ctx.ifCondition2(0));
         final I4GLParser.RelationalOperatorContext operatorCtx = ctx.relationalOperator();
@@ -803,13 +808,16 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitFactor(final I4GLParser.FactorContext ctx) {
+        I4GLExpressionNode node = (I4GLExpressionNode) visit(ctx.factorTypes());
         if (ctx.CLIPPED() != null) {
-            throw new NotImplementedException();
+            node = I4GLClippedNodeGen.create(node);
+            setSourceFromContext(node, ctx);
+            node.addExpressionTag();
         }
         if (ctx.unitType() != null) {
             throw new NotImplementedException();
         }
-        return visit(ctx.factorTypes());
+        return node;
     }
 
     private List<I4GLExpressionNode> createReadComponentVariable(final I4GLParser.ComponentVariableContext ctx) {
@@ -1063,6 +1071,17 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitBooleanConstant(final I4GLParser.BooleanConstantContext ctx) {
+        if (ctx.TRUE() != null) {
+            return I4GLIntLiteralNodeGen.create(0);
+        }
+        if (ctx.FALSE() != null) {
+            return I4GLIntLiteralNodeGen.create(1);
+        }
+        throw new ParseException(source, ctx, "Invalid boolean constant");
+    }
+
+    @Override
     public Node visitInteger(final I4GLParser.IntegerContext ctx) {
         final String literal = ctx.getText();
         I4GLExpressionNode node;
@@ -1258,6 +1277,22 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             return createAssignmentToNotIndexedVariable(ctx.notIndexedVariable(), valueNode);
         }
         return createAssignmentToIndexedVariable(ctx.indexedVariable(), valueNode);
+    }
+
+    @Override
+    public Node visitSqlStatement(final I4GLParser.SqlStatementContext ctx) {
+        I4GLStatementNode node = (I4GLStatementNode) super.visitSqlStatement(ctx);
+        if (node == null) {
+            try {
+                I4GLExpressionNode databaseVariableNode = createReadDatabaseVariableNode();
+                node = new I4GLSqlNode(databaseVariableNode, ctx.getText());
+                setSourceFromContext(node, ctx);
+                node.addStatementTag();
+            } catch (LexicalException e) {
+                throw new ParseException(source, ctx, e.getMessage());
+            }
+        }
+        return node;
     }
 
     @Override

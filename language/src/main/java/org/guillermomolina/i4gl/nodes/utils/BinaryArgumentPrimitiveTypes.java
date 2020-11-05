@@ -6,7 +6,7 @@ import org.guillermomolina.i4gl.runtime.types.I4GLType;
  * Stores one set of types of arguments of binary operations. This utility class is used for static type checking. We
  * store allowed combinations of types of arguments into a table in each binary node and during the parsing the given
  * values are matched against this table.
- * {@link org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode}
+ * {@link org.guillermomolina.i4gl.nodes.expression.I4GLBinaryExpressionNode}
  */
 public class BinaryArgumentPrimitiveTypes {
 

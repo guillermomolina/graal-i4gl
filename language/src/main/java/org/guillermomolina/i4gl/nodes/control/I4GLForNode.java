@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.logic.I4GLLessThanNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLLessThanOrEqualNodeGen;
 import org.guillermomolina.i4gl.nodes.logic.I4GLNotNodeGen;

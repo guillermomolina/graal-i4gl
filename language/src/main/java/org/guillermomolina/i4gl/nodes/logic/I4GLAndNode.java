@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.nodes.logic;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLBinaryExpressionNode;
 
 /**
  * Node representing logical and operation.
@@ -13,6 +13,11 @@ import org.guillermomolina.i4gl.nodes.I4GLBinaryExpressionNode;
  */
 @NodeInfo(shortName = "AND")
 public abstract class I4GLAndNode extends I4GLBinaryExpressionNode {
+    @Specialization
+    int and(short left, short right) {
+        return (left != 0 && right != 0) ? 1 : 0;
+    }
+
     @Specialization
     int and(int left, int right) {
         return (left != 0 && right != 0) ? 1 : 0;

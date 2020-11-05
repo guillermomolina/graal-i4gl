@@ -3,7 +3,7 @@ package org.guillermomolina.i4gl.nodes.variables.read;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.runtime.exceptions.UnexpectedRuntimeException;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 

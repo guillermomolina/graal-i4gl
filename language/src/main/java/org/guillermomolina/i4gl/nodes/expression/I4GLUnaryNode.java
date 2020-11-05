@@ -1,8 +1,7 @@
-package org.guillermomolina.i4gl.nodes.arithmetic;
+package org.guillermomolina.i4gl.nodes.expression;
 
 import com.oracle.truffle.api.dsl.NodeChild;
 
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**

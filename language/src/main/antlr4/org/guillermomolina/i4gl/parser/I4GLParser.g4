@@ -168,7 +168,7 @@ unlabelledStatement: simpleStatement | structuredStatement;
 simpleStatement:
 	assignmentStatement
 	| callStatement
-	| sqlStatements SEMI?
+	| sqlStatement SEMI?
 	| otherI4GLStatement
 	| menuInsideStatement
 	| constructInsideStatement
@@ -225,8 +225,7 @@ relationalOperator:
 	| NOT? MATCHES;
 
 ifCondition:
-	TRUE
-	| FALSE
+	booleanConstant
 	| ifCondition2 (relationalOperator ifCondition2)?;
 
 ifCondition2: ifLogicalTerm (OR ifLogicalTerm)*;
@@ -262,7 +261,9 @@ factorTypes:
 function:
 	identifier LPAREN (actualParameter (COMMA actualParameter)*)? RPAREN;
 
-constant: TRUE | FALSE | numericConstant | string;
+constant: booleanConstant | numericConstant | string;
+
+booleanConstant: TRUE | FALSE;
 
 numericConstant: integer | real;
 
@@ -611,7 +612,7 @@ screenStatement:
 		BY numericConstant
 	)?;
 
-sqlStatements:
+sqlStatement:
 	cursorManipulationStatement
 	| dataDefinitionStatement
 	| dataManipulationStatement

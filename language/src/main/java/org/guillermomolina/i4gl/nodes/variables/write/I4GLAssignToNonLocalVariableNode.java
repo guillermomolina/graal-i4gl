@@ -14,7 +14,7 @@ import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import org.guillermomolina.i4gl.I4GLLanguage;
-import org.guillermomolina.i4gl.nodes.I4GLExpressionNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.I4GLTypeSystem;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.runtime.types.I4GLType;
@@ -129,6 +129,11 @@ public abstract class I4GLAssignToNonLocalVariableNode extends I4GLStatementNode
     }
 
     @Specialization
+    void assignSmallIntArray(final VirtualFrame frame, final short[] array) {
+        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
+    }
+
+    @Specialization
     void assignBigIntArray(final VirtualFrame frame, final long[] array) {
         getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
@@ -151,7 +156,7 @@ public abstract class I4GLAssignToNonLocalVariableNode extends I4GLStatementNode
         getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
-    @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
+    @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignSmallIntArray", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
     void assign(final VirtualFrame frame, final Object value) {
         getGlobalFrame().setObject(getSlot(), value);
     }

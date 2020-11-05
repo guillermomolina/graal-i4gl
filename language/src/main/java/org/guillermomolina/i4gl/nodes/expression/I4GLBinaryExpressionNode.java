@@ -1,4 +1,4 @@
-package org.guillermomolina.i4gl.nodes;
+package org.guillermomolina.i4gl.nodes.expression;
 
 import com.oracle.truffle.api.dsl.NodeChild;
 
