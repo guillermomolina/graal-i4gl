@@ -39,17 +39,6 @@ public abstract class I4GLAddNode extends I4GLBinaryExpressionNode {
         return left + right;
     }
 
-    protected boolean isText(Object a, Object b) {
-        return a instanceof String || b instanceof String;
-    }
-
-    /* Adding strings does not actually work in c4gl */
-    @Specialization(guards = "isText(left, right)")
-    @TruffleBoundary
-    protected String add(Object left, Object right) {
-        return left.toString() + right.toString();
-    }
-
     @Fallback
     protected Object typeError(Object left, Object right) {
         throw new I4GLRuntimeException("Type error doing: " + left + " + " + right);

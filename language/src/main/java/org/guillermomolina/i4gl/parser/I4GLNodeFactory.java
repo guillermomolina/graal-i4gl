@@ -23,8 +23,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.guillermomolina.i4gl.I4GLLanguage;
 import org.guillermomolina.i4gl.exceptions.NotImplementedException;
-import org.guillermomolina.i4gl.nodes.expression.I4GLClippedNodeGen;
-import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLAddNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideIntegerNodeGen;
 import org.guillermomolina.i4gl.nodes.arithmetic.I4GLDivideNodeGen;
@@ -40,6 +38,9 @@ import org.guillermomolina.i4gl.nodes.control.I4GLDebuggerNode;
 import org.guillermomolina.i4gl.nodes.control.I4GLForNode;
 import org.guillermomolina.i4gl.nodes.control.I4GLIfNode;
 import org.guillermomolina.i4gl.nodes.control.I4GLWhileNode;
+import org.guillermomolina.i4gl.nodes.expression.I4GLClippedNodeGen;
+import org.guillermomolina.i4gl.nodes.expression.I4GLConcatenationNodeGen;
+import org.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import org.guillermomolina.i4gl.nodes.literals.I4GLBigIntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.I4GLIntLiteralNodeGen;
 import org.guillermomolina.i4gl.nodes.literals.I4GLSmallFloatLiteralNode;
@@ -62,6 +63,7 @@ import org.guillermomolina.i4gl.nodes.sql.I4GLSelectNode;
 import org.guillermomolina.i4gl.nodes.sql.I4GLSqlNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLBlockNode;
 import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNode;
+import org.guillermomolina.i4gl.nodes.statement.I4GLDisplayNodeGen;
 import org.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromIndexedNodeGen;
 import org.guillermomolina.i4gl.nodes.variables.read.I4GLReadFromRecordNode;
@@ -859,25 +861,42 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitDisplayStatement(final I4GLParser.DisplayStatementContext ctx) {
-        final List<I4GLParser.DisplayValueContext> displayValueContextList = ctx.displayValue();
-        final List<I4GLExpressionNode> parameterNodes = new ArrayList<>(displayValueContextList.size());
-        for (final I4GLParser.DisplayValueContext displayValueContext : displayValueContextList) {
-            if (displayValueContext.expression() != null) {
-                parameterNodes.add((I4GLExpressionNode) visit(displayValueContext.expression()));
-            } else if (displayValueContext.ASCII() != null) {
-                throw new NotImplementedException();
-            } else if (displayValueContext.componentVariable() != null) {
-                parameterNodes.addAll(createReadComponentVariable(displayValueContext.componentVariable()));
+    public Node visitDisplayValueList(final I4GLParser.DisplayValueListContext ctx) {
+        I4GLExpressionNode leftNode = null;
+        for (final I4GLParser.DisplayValueContext displayValueCtx : ctx.displayValue()) {
+            final I4GLExpressionNode rightNode = (I4GLExpressionNode) visit(displayValueCtx);
+            if (leftNode == null) {
+                leftNode = rightNode;
             } else {
-                throw new ParseException(source, ctx, "Malformed display value");
+                leftNode = I4GLConcatenationNodeGen.create(leftNode, rightNode);
+                setSourceFromContext(leftNode, displayValueCtx);
+                leftNode.addExpressionTag();
             }
         }
-        I4GLDisplayNode node = new I4GLDisplayNode(
-                parameterNodes.toArray(new I4GLExpressionNode[parameterNodes.size()]));
-        setSourceFromContext(node, ctx);
-        node.addStatementTag();
-        return node;
+        return leftNode;
+    }
+
+    @Override
+    public Node visitDisplayStatement(final I4GLParser.DisplayStatementContext ctx) {
+        if(ctx.attributeList() != null) {
+            throw new NotImplementedException();
+        }
+        if(ctx.displayValueList() != null) {
+            I4GLExpressionNode displayValueListNode = (I4GLExpressionNode) visit(ctx.displayValueList());
+            if(ctx.TO() != null) {
+                throw new NotImplementedException();
+            }
+            if(ctx.AT() != null) {
+                throw new NotImplementedException();
+            }
+            I4GLDisplayNode node = I4GLDisplayNodeGen.create(displayValueListNode);
+            setSourceFromContext(node, ctx);
+            node.addStatementTag();
+            return node;
+        }
+        else {
+            throw new NotImplementedException();
+        }
     }
 
     @Override
@@ -901,10 +920,18 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (ctx.NULL() != null) {
             throw new NotImplementedException();
         }
-        if (ctx.expressionList().expression().size() != 1) {
-            throw new NotImplementedException();
+        I4GLExpressionNode leftNode = null;
+        for (final I4GLParser.ExpressionContext expressionCtx : ctx.expressionList().expression()) {
+            final I4GLExpressionNode rightNode = (I4GLExpressionNode) visit(expressionCtx);
+            if (leftNode == null) {
+                leftNode = rightNode;
+            } else {
+                leftNode = I4GLConcatenationNodeGen.create(leftNode, rightNode);
+                setSourceFromContext(leftNode, expressionCtx);
+                leftNode.addExpressionTag();
+            }
         }
-        return visit(ctx.expressionList().expression(0));
+        return leftNode;
     }
 
     @Override

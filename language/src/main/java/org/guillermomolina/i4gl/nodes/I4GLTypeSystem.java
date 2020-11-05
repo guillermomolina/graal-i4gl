@@ -98,26 +98,26 @@ public class I4GLTypeSystem {
 
     @ImplicitCast
     public static String castShortToText(short value) {
-        return String.valueOf(value);
+        return String.format("%6d", value);
     }
 
     @ImplicitCast
     public static String castIntToText(int value) {
-        return String.valueOf(value);
+        return String.format("%11d", value);
     }
 
     @ImplicitCast
     public static String castBigIntToText(long value) {
-        return String.valueOf(value);
+        return String.format("%20d", value);
     }
 
     @ImplicitCast
     public static String castSmallFloatToText(float value) {
-        return String.valueOf(value);
+        return String.format("%14.2f", value);
     }
 
     @ImplicitCast
     public static String castFloatToText(double value) {
-        return String.valueOf(value);
+        return String.format("%14.2f", value);
     }
 }

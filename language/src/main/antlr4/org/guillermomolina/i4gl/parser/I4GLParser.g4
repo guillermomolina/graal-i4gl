@@ -467,11 +467,13 @@ displayEvents: ON KEY LPAREN keyList RPAREN codeBlock+;
 displayStatement:
 	DISPLAY (
 		BY NAME variableList
-		| (displayValue (COMMA displayValue)*) (
+		| displayValueList (
 			TO fieldList
 			| AT expression COMMA expression
 		)?
 	) attributeList?;
+
+displayValueList: displayValue (COMMA displayValue)*;
 
 displayValue:
 	expression (USING string)?
