@@ -250,7 +250,7 @@ term: factor (multiplyingOperator factor)*;
 
 multiplyingOperator: STAR | SLASH | DIV | MOD;
 
-factor: factorTypes (UNITS unitType)?;
+factor: factorTypes CLIPPED? (UNITS unitType)?;
 
 factorTypes:
 	GROUP? function
@@ -473,7 +473,7 @@ displayStatement:
 	) attributeList?;
 
 displayValue:
-	expression (CLIPPED | USING string)?
+	expression (USING string)?
 	| ASCII UNSIGNED_INTEGER
 	| componentVariable;
 
