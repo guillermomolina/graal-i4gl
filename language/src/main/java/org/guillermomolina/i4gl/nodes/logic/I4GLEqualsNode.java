@@ -15,11 +15,13 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
  */
 @NodeInfo(shortName = "=")
 public abstract class I4GLEqualsNode extends I4GLBinaryExpressionNode {
+    /* TODO: NOT WORKING
     @Specialization
     protected int equals(short left, short right) {
         return left == right ? 1 : 0;
     }
-
+    */
+    
     @Specialization
     protected int equals(int left, int right) {
         return left == right ? 1 : 0;

@@ -20,11 +20,13 @@ public abstract class I4GLNotNode extends I4GLUnaryNode {
 	@Override
 	public abstract int executeInt(VirtualFrame frame);
 
+    /* TODO: NOT WORKING
 	@Specialization
 	int logicalNot(short child) {
 		return child == 0 ? 1 : 0;
 	}
-
+	*/
+	
 	@Specialization
 	int logicalNot(int child) {
 		return child == 0 ? 1 : 0;
