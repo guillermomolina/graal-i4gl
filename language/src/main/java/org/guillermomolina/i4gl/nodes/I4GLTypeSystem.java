@@ -67,14 +67,6 @@ public class I4GLTypeSystem {
     }
 
     @ImplicitCast
-    public static short castIntToShort(int value) {
-        if(value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-            return (short) value;
-        }
-        throw new ClassCastException();
-    }
-
-    @ImplicitCast
     public static int castShortToInt(short value) {
         return value;
     }
@@ -85,7 +77,7 @@ public class I4GLTypeSystem {
     }
 
     @ImplicitCast
-    public static float castShortToSmallFloat(short value) {
+    public static float castSmallIntToSmallFloat(short value) {
         return value;
     }
 
@@ -96,16 +88,6 @@ public class I4GLTypeSystem {
 
     @ImplicitCast
     public static float castBigIntToSmallFloat(long value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static double castIntToFloat(int value) {
-        return value;
-    }
-
-    @ImplicitCast
-    public static double castBigIntToFloat(long value) {
         return value;
     }
 
@@ -126,6 +108,11 @@ public class I4GLTypeSystem {
 
     @ImplicitCast
     public static String castBigIntToText(long value) {
+        return String.valueOf(value);
+    }
+
+    @ImplicitCast
+    public static String castSmallFloatToText(float value) {
         return String.valueOf(value);
     }
 

@@ -6,9 +6,9 @@ MAIN
     LET aVarchar = "Hello how are you"
     LET aChar = "Hello how are you"
     LET aText = "Hello how are you"
-    #LET anInteger = 65537
+    LET anInteger = 65537
     DISPLAY "|", aVarchar CLIPPED, "|"
     DISPLAY "|", aChar CLIPPED, "|"
     DISPLAY "|", aText CLIPPED, "|"
-    #DISPLAY "|", anInteger CLIPPED, "|"
+    DISPLAY "|", anInteger CLIPPED, "|"
 END MAIN
