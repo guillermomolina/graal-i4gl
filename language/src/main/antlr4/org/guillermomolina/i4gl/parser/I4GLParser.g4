@@ -159,7 +159,7 @@ statement: (label COLON)? unlabelledStatement;
 
 codeBlock: (statement | databaseDeclaration | returnStatement)+;
 
-returnStatement: RETURN expressionList?;
+returnStatement: RETURN expressionOrComponentVariableList?;
 
 label: identifier;
 
@@ -202,15 +202,13 @@ assignmentStatement:
 
 simpleAssignmentStatement: variable EQUAL assignmentValue;
 
-assignmentValue: expressionList | NULL;
+assignmentValue: concatExpression | NULL;
 
 multipleAssignmentStatement:
 	identifier DOT STAR EQUAL identifier DOT STAR;
 
 callStatement:
 	CALL function (RETURNING variableOrComponentList)?;
-
-actualParameter: STAR | expression;
 
 gotoStatement: GOTO COLON? label;
 
@@ -249,7 +247,7 @@ term: factor (multiplyingOperator factor)*;
 
 multiplyingOperator: STAR | SLASH | DIV | MOD;
 
-factor: factorTypes CLIPPED? (UNITS unitType)?;
+factor: factorTypes CLIPPED? (USING string)? (UNITS unitType)?;
 
 factorTypes:
 	GROUP? function
@@ -259,9 +257,11 @@ factorTypes:
 	| NOT factor;
 
 function:
-	identifier LPAREN (actualParameter (COMMA actualParameter)*)? RPAREN;
+	identifier LPAREN expressionOrComponentVariableList? RPAREN;
 
-constant: booleanConstant | numericConstant | string;
+constant: asciiConstant | booleanConstant | numericConstant | string;
+
+asciiConstant: ASCII UNSIGNED_INTEGER;
 
 booleanConstant: TRUE | FALSE;
 
@@ -464,25 +464,24 @@ displayInsideStatement: CONTINUE DISPLAY | EXIT DISPLAY;
 
 displayEvents: ON KEY LPAREN keyList RPAREN codeBlock+;
 
+concatExpression: expressionOrComponentVariableList;
+
+expressionOrComponentVariableList: expressionOrComponentVariable (COMMA expressionOrComponentVariable)*;
+
+expressionOrComponentVariable: expression | componentVariable;
+
 displayStatement:
 	DISPLAY (
 		BY NAME variableList
-		| displayValueList (
+		| concatExpression (
 			TO fieldList
 			| AT expression COMMA expression
 		)?
 	) attributeList?;
 
-displayValueList: displayValue (COMMA displayValue)*;
+errorStatement: ERROR concatExpression attributeList?;
 
-displayValue:
-	expression (USING string)?
-	| ASCII UNSIGNED_INTEGER
-	| componentVariable;
-
-errorStatement: ERROR expressionList attributeList?;
-
-messageStatement: MESSAGE expressionList attributeList?;
+messageStatement: MESSAGE concatExpression attributeList?;
 
 promptStatement:
 	PROMPT expressionList attributeList? FOR CHAR? variable (

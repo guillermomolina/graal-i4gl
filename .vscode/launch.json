@@ -62,11 +62,12 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch and Wait) I4GLMain",
+            "name": "Debug (Launch and Wait) Current File",
             "request": "launch",
             "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
+                "--inspect",
                 "--log.i4gl.level=FINEST",
                 "${file}"
             ],
