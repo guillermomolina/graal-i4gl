@@ -1104,6 +1104,21 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitAsciiConstant(final I4GLParser.AsciiConstantContext ctx) {
+        final String asciiCodeText = ctx.UNSIGNED_INTEGER().getText();
+        I4GLExpressionNode node;
+        try {
+            final String charValue = Character.toString(Integer.parseUnsignedInt(asciiCodeText));
+            node = new I4GLTextLiteralNode(charValue.intern());
+        } catch(final NumberFormatException e) {
+            throw new ParseException(source, ctx, "Invalid ASCII constant");
+        }
+        setSourceFromContext(node, ctx);
+        node.addExpressionTag();
+        return node;        
+    }
+
+    @Override
     public Node visitBooleanConstant(final I4GLParser.BooleanConstantContext ctx) {
         if (ctx.TRUE() != null) {
             return I4GLIntLiteralNodeGen.create(0);

@@ -28,13 +28,9 @@ public final class I4GLNull implements TruffleObject {
     private I4GLNull() {
     }
 
-    /**
-     * This method is, e.g., called when using the {@code NULL} value in a string concatenation. So
-     * changing it has an effect on SL programs.
-     */
     @Override
     public String toString() {
-        return "NULL";
+        return "";
     }
 
     @ExportMessage

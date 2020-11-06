@@ -37,6 +37,10 @@ public class I4GLChar implements TruffleObject {
         this.data = value;
     }
 
+    public I4GLChar(Character value) {
+        this.data = value.toString();
+    }
+
     public int getSize() {
         return data.length();
     }
