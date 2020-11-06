@@ -16,12 +16,10 @@ import org.guillermomolina.i4gl.runtime.types.primitive.I4GLIntType;
  */
 @NodeInfo(shortName = "<=")
 public abstract class I4GLLessThanOrEqualNode extends I4GLBinaryExpressionNode {
-    /* TODO: NOT WORKING
     @Specialization
     int lessThanOrEqual(short left, short right) {
         return left <= right ? 1 : 0;
     }
-    */
 
     @Specialization
     int lessThanOrEqual(int left, int right) {
