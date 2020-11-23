@@ -47,5 +47,5 @@ fi
 "$JAVA_HOME"/bin/native-image \
     --macro:truffle --no-fallback --initialize-at-build-time \
     -cp ../language/target/i4gl.jar:../launcher/target/i4gl-launcher.jar \
-    org.guillermomolina.i4gl.launcher.I4GLMain \
+    com.guillermomolina.i4gl.launcher.I4GLMain \
     slnative

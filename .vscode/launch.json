@@ -6,7 +6,7 @@
             "name": "Debug ANTLR4 grammar Current File",
             "request": "launch",
             "input": "${file}",
-            "grammar": "language/src/main/antlr4/org/guillermomolina/i4gl/parser/I4GLParser.g4",
+            "grammar": "language/src/main/antlr4/com/guillermomolina/i4gl/parser/I4GLParser.g4",
             "startRule": "module",
             "printParseTree": true,
             "visualParseTree": true
@@ -15,7 +15,7 @@
             "type": "java",
             "name": "Debug (Launch) Current File",
             "request": "launch",
-            "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
+            "mainClass": "com.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": ["--log.i4gl.level=FINEST","${file}"],
             "vmArgs": [
@@ -38,7 +38,7 @@
             "type": "java",
             "name": "Debug (Launch and Wait) Current File",
             "request": "launch",
-            "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
+            "mainClass": "com.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--inspect",
@@ -65,7 +65,7 @@
             "type": "java",
             "name": "Debug (Launch) Record3.4gl",
             "request": "launch",
-            "mainClass": "org.guillermomolina.i4gl.launcher.I4GLMain",
+            "mainClass": "com.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
