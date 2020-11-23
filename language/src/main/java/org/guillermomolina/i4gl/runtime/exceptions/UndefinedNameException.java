@@ -5,9 +5,6 @@ import com.oracle.truffle.api.nodes.Node;
 
 public final class UndefinedNameException extends I4GLRuntimeException {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -4386063483849151838L;
 
     @TruffleBoundary
