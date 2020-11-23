@@ -64,8 +64,8 @@ public class ParseException extends RuntimeException implements TruffleException
     }
 
     public ParseException(Source source, Token token, String message) {
-        this(source, token.getLine(), token.getCharPositionInLine() + 1, token.getStopIndex() - token.getStartIndex(),
-                message);
+        this(source, token.getLine(), token.getCharPositionInLine() + 1,
+                token == null ? 1 : Math.max(token.getStopIndex() - token.getStartIndex(), 0), message);
     }
 
     public ParseException(Source source, int line, int column, int length, String message) {
