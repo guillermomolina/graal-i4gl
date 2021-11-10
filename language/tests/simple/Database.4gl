@@ -2,13 +2,13 @@ DATABASE test
 
 MAIN
     DEFINE theTotal BIGINT
-    DEFINE customerNumber INT
-    DEFINE customerName VARCHAR(50)
+    DEFINE CustomerId INT
+    DEFINE LastName VARCHAR(20)
     SELECT COUNT(*) INTO theTotal
         FROM customers
     DISPLAY theTotal
     # mysql syntax for 1 row limit
-    SELECT customerNumber,customerName INTO customerNumber,customerName
+    SELECT CustomerId,LastName INTO CustomerId,LastName
         FROM customers LIMIT 1
-    DISPLAY "|",customerNumber,"|",customerName,"|"
+    DISPLAY "|",CustomerId,"|",LastName,"|"
 END MAIN

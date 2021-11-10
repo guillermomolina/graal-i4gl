@@ -91,7 +91,7 @@
             "type": "graalvm",
             "request": "launch",
             "name": "Launch i4gl Script",
-            "runtimeExecutable": "/home/guille/Fuentes/graal/languages/graal-i4gl/i4gl",
+            "runtimeExecutable": "${workspaceFolder}/i4gl",
             "program": "${file}"
         },
         {

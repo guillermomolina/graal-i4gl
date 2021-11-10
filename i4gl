@@ -86,7 +86,7 @@ else
     LAUNCHER_PATH="$SCRIPT_HOME/launcher/target/launcher-$VERSION.jar"
     # Check the GraalVM version in JAVA_HOME
     if [[ "$JAVA_HOME" == "" ]]; then
-        JAVA_HOME="/usr/local/java/graalvm-ce-java11-20.3.0"
+        JAVA_HOME="/opt/graalvm-ce-java11-20.3.0"
     fi
     GRAALVM_VERSION=$(extractGraalVMVersion "$JAVA_HOME"/release)
     if [[ "$GRAALVM_VERSION" != "" ]]; then

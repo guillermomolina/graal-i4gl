@@ -15,11 +15,14 @@
     "git.autofetch": true,
     "editor.minimap.enabled": false,
     "java.saveActions.organizeImports": true,
-    "java.home": "",
+    "java.home": "/opt/graalvm-ce-java11-20.3.0",
     "java.test.config": {
         "vmargs": [
             "-Dgraalvm.locatorDisabled=true"
         ]
     },
-    "python.pythonPath": "/bin/python"
+    "python.pythonPath": "/bin/python",
+    "java.completion.enabled": false,
+    "java.debug.settings.enableRunDebugCodeLens": false,
+    "java.test.editor.enableShortcuts": false
 }
