@@ -45,7 +45,7 @@
   <parent>
     <groupId>com.guillermomolina</groupId>
     <artifactId>i4gl-parent</artifactId>
-    <version>20.3.0</version>
+    <version>21.3.0</version>
   </parent>
   <packaging>pom</packaging>
   <build>

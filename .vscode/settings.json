@@ -15,7 +15,7 @@
     "git.autofetch": true,
     "editor.minimap.enabled": false,
     "java.saveActions.organizeImports": true,
-    "java.home": "/opt/graalvm-ce-java11-20.3.0",
+    "java.home": "/usr/java/default",
     "java.test.config": {
         "vmargs": [
             "-Dgraalvm.locatorDisabled=true"
