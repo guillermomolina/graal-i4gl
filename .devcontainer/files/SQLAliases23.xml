@@ -1,0 +1,44 @@
+<Beans>
+    <Bean Class="net.sourceforge.squirrel_sql.client.gui.db.SQLAlias">
+        <aliasVersionTimeMills>1636539863555</aliasVersionTimeMills>
+        <autoLogon>true</autoLogon>
+        <colorProperties Class="net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties">
+            <aliasBackgroundColorRgbValue>0</aliasBackgroundColorRgbValue>
+            <objectTreeBackgroundColorRgbValue>0</objectTreeBackgroundColorRgbValue>
+            <overrideAliasBackgroundColor>false</overrideAliasBackgroundColor>
+            <overrideObjectTreeBackgroundColor>false</overrideObjectTreeBackgroundColor>
+            <overrideStatusBarBackgroundColor>false</overrideStatusBarBackgroundColor>
+            <overrideToolbarBackgroundColor>false</overrideToolbarBackgroundColor>
+            <statusBarBackgroundColorRgbValue>0</statusBarBackgroundColorRgbValue>
+            <toolbarBackgroundColorRgbValue>0</toolbarBackgroundColorRgbValue>
+        </colorProperties>
+        <connectAtStartup>false</connectAtStartup>
+        <connectionProperties Class="net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties">
+            <enableConnectionKeepAlive>false</enableConnectionKeepAlive>
+            <keepAliveSleepTimeSeconds>120</keepAliveSleepTimeSeconds>
+            <keepAliveSqlStatement/>
+        </connectionProperties>
+        <driverIdentifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-65</string>
+        </driverIdentifier>
+        <driverProperties Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection">
+            <driverProperties Indexed="true"/>
+        </driverProperties>
+        <encryptPassword>false</encryptPassword>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>741f67d8:17d095ecdce:-7f23</string>
+        </identifier>
+        <name>test</name>
+        <password/>
+        <schemaProperties Class="net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties">
+            <byLikeStringExclude/>
+            <byLikeStringInclude/>
+            <cacheSchemaIndependentMetaData>false</cacheSchemaIndependentMetaData>
+            <globalState>0</globalState>
+            <schemaDetails Indexed="true"/>
+        </schemaProperties>
+        <url>jdbc:sqlite:/database/chinook.db</url>
+        <useDriverProperties>false</useDriverProperties>
+        <userName/>
+    </Bean>
+</Beans>

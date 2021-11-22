@@ -3,16 +3,19 @@
 {
 	"name": "GraalVM i4GL",
 	// Sets the run context to one level up instead of the .devcontainer folder.
-	"context": "..",
+	// "context": "..",
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-	"dockerFile": "../Dockerfile",
+	"dockerFile": "Dockerfile",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"java.home": "/opt/graalvm-ce-java11-20.3.0"
+		"java.home": "/usr/java/default"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"oracle-labs-graalvm.graalvm",
+		// Not working Apache Language Server
+		//"oracle-labs-graalvm.graalvm",
+		"vscjava.vscode-java-pack",
+		"dotjoshjohnson.xml",
 		"guillermomolina.graalvm-i4gl",
 		"mike-lischke.vscode-antlr4"
 	],
