@@ -13,10 +13,10 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		// Not working Apache Language Server
-		//"oracle-labs-graalvm.graalvm",
+		// "oracle-labs-graalvm.graalvm",
+		// "guillermomolina.graalvm-i4gl",
 		"vscjava.vscode-java-pack",
 		"dotjoshjohnson.xml",
-		"guillermomolina.graalvm-i4gl",
 		"mike-lischke.vscode-antlr4"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
