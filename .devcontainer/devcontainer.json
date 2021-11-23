@@ -13,9 +13,10 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		// Not working Apache Language Server
-		// "oracle-labs-graalvm.graalvm",
-		// "guillermomolina.graalvm-i4gl",
-		"vscjava.vscode-java-pack",
+		"oracle-labs-graalvm.graalvm",
+		//"guillermomolina.graalvm-i4gl",
+		"cristianrengifo.informix4gl", 
+		//"vscjava.vscode-java-pack",
 		"dotjoshjohnson.xml",
 		"mike-lischke.vscode-antlr4"
 	],
