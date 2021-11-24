@@ -1,13 +1,13 @@
 DATABASE test
 
 MAIN
-    DEFINE customerNumber LIKE customers.customerNumber
-    DEFINE customerName LIKE customers.customerName
+    DEFINE customerId LIKE customers.CustomerId
+    DEFINE company LIKE customers.Company
     DECLARE aCursor CURSOR FOR 
-        SELECT customerNumber,customerName
+        SELECT customerId,company
         FROM customers
         LIMIT 10
-    FOREACH aCursor INTO customerNumber,customerName
-        DISPLAY "|",customerNumber,"|",customerName,"|"
+    FOREACH aCursor INTO customerId,company
+        DISPLAY "|",customerId,"|",company,"|"
     END FOREACH
 END MAIN
