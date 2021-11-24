@@ -41,15 +41,21 @@
 
 package com.guillermomolina.i4gl.parser.exceptions;
 
-import com.oracle.truffle.api.TruffleException;
-import com.oracle.truffle.api.nodes.Node;
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.exception.AbstractTruffleException;
+import com.oracle.truffle.api.interop.ExceptionType;
+import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.UnsupportedMessageException;
+import com.oracle.truffle.api.library.ExportLibrary;
+import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-public class ParseException extends RuntimeException implements TruffleException {
+@ExportLibrary(InteropLibrary.class)
+public class ParseException extends AbstractTruffleException {
 
     private static final long serialVersionUID = -8856095491491956089L;
 
@@ -76,18 +82,22 @@ public class ParseException extends RuntimeException implements TruffleException
         this.length = length;
     }
 
-    @Override
-    public SourceSection getSourceLocation() {
+    @ExportMessage
+    ExceptionType getExceptionType() {
+        return ExceptionType.PARSE_ERROR;
+    }
+
+    @ExportMessage
+    boolean hasSourceLocation() {
+        return source != null;
+    }
+
+    @ExportMessage(name = "getSourceLocation")
+    @TruffleBoundary
+    SourceSection getSourceSection() throws UnsupportedMessageException {
+        if (source == null) {
+            throw UnsupportedMessageException.create();
+        }
         return source.createSection(line, column, length);
-    }
-
-    @Override
-    public Node getLocation() {
-        return null;
-    }
-
-    @Override
-    public boolean isSyntaxError() {
-        return true;
     }
 }
