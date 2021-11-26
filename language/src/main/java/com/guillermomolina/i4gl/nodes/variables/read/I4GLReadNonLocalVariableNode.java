@@ -1,5 +1,9 @@
 package com.guillermomolina.i4gl.nodes.variables.read;
 
+import com.guillermomolina.i4gl.exceptions.NotImplementedException;
+import com.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
+import com.guillermomolina.i4gl.runtime.context.I4GLContext;
+import com.guillermomolina.i4gl.runtime.types.I4GLType;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -9,11 +13,6 @@ import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
-
-import com.guillermomolina.i4gl.I4GLLanguage;
-import com.guillermomolina.i4gl.exceptions.NotImplementedException;
-import com.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
-import com.guillermomolina.i4gl.runtime.types.I4GLType;
 
 /**
  * This node reads value of specified global variable (by its frame slot).
@@ -85,7 +84,7 @@ public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            globalFrame = lookupContextReference(I4GLLanguage.class).get().getModuleFrame(getFrameName());
+            globalFrame = I4GLContext.get(this).getModuleFrame(getFrameName());
         }
         return globalFrame;
     }

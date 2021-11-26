@@ -88,19 +88,6 @@ public class I4GLDebugTest {
         checkDebugValues("variables", frame.getScope(), expectedFrame);
     }
 
-    protected void checkArgs(DebugStackFrame frame, String... expectedArgs) {
-        Iterable<DebugValue> arguments = null;
-        DebugScope scope = frame.getScope();
-        while (scope != null) {
-            if (scope.isFunctionScope()) {
-                arguments = scope.getArguments();
-                break;
-            }
-            scope = scope.getParent();
-        }
-        checkDebugValues("arguments", arguments, expectedArgs);
-    }
-
     private static void checkDebugValues(String msg, DebugScope scope, String... expected) {
         Map<String, DebugValue> valMap = new HashMap<>();
         DebugScope currentScope = scope;
@@ -109,14 +96,6 @@ public class I4GLDebugTest {
                 valMap.put(value.getName(), value);
             }
             currentScope = currentScope.getParent();
-        }
-        checkDebugValues(msg, valMap, expected);
-    }
-
-    private static void checkDebugValues(String msg, Iterable<DebugValue> values, String... expected) {
-        Map<String, DebugValue> valMap = new HashMap<>();
-        for (DebugValue value : values) {
-            valMap.put(value.getName(), value);
         }
         checkDebugValues(msg, valMap, expected);
     }

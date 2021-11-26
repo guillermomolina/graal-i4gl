@@ -1,5 +1,11 @@
 package com.guillermomolina.i4gl.nodes.root;
 
+import com.guillermomolina.i4gl.I4GLLanguage;
+import com.guillermomolina.i4gl.nodes.I4GLTypeSystem;
+import com.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import com.guillermomolina.i4gl.runtime.context.I4GLContext;
+import com.guillermomolina.i4gl.runtime.exceptions.ReturnException;
+import com.guillermomolina.i4gl.runtime.values.I4GLNull;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -7,12 +13,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.profiles.BranchProfile;
 import com.oracle.truffle.api.source.SourceSection;
-
-import com.guillermomolina.i4gl.I4GLLanguage;
-import com.guillermomolina.i4gl.nodes.I4GLTypeSystem;
-import com.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
-import com.guillermomolina.i4gl.runtime.exceptions.ReturnException;
-import com.guillermomolina.i4gl.runtime.values.I4GLNull;
 
 /**
  * This node represents the root node of AST of any function or main program.
@@ -53,7 +53,7 @@ public class I4GLRootNode extends RootNode {
 
     @Override
     public Object execute(VirtualFrame frame) {
-        assert lookupContextReference(I4GLLanguage.class).get() != null;
+        assert I4GLContext.get(this) != null;
         try {
             /* Execute the function body. */
             bodyNode.executeVoid(frame);

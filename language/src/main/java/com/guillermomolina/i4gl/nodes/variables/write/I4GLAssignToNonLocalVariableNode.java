@@ -2,21 +2,10 @@ package com.guillermomolina.i4gl.nodes.variables.write;
 
 import java.util.Arrays;
 
-import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
-import com.oracle.truffle.api.dsl.NodeChild;
-import com.oracle.truffle.api.dsl.NodeField;
-import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.dsl.TypeSystemReference;
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
-import com.oracle.truffle.api.instrumentation.Tag;
-
-import com.guillermomolina.i4gl.I4GLLanguage;
-import com.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import com.guillermomolina.i4gl.nodes.I4GLTypeSystem;
+import com.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
 import com.guillermomolina.i4gl.nodes.statement.I4GLStatementNode;
+import com.guillermomolina.i4gl.runtime.context.I4GLContext;
 import com.guillermomolina.i4gl.runtime.types.I4GLType;
 import com.guillermomolina.i4gl.runtime.types.compound.I4GLCharType;
 import com.guillermomolina.i4gl.runtime.types.compound.I4GLVarcharType;
@@ -28,6 +17,16 @@ import com.guillermomolina.i4gl.runtime.types.primitive.I4GLSmallIntType;
 import com.guillermomolina.i4gl.runtime.values.I4GLChar;
 import com.guillermomolina.i4gl.runtime.values.I4GLRecord;
 import com.guillermomolina.i4gl.runtime.values.I4GLVarchar;
+import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
+import com.oracle.truffle.api.dsl.NodeChild;
+import com.oracle.truffle.api.dsl.NodeField;
+import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.dsl.TypeSystemReference;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
+import com.oracle.truffle.api.instrumentation.Tag;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -164,7 +163,7 @@ public abstract class I4GLAssignToNonLocalVariableNode extends I4GLStatementNode
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            globalFrame = lookupContextReference(I4GLLanguage.class).get().getModuleFrame(getFrameName());
+            globalFrame = I4GLContext.get(this).getModuleFrame(getFrameName());
         }
         return globalFrame;
     }

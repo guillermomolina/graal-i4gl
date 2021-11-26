@@ -1,5 +1,11 @@
 package com.guillermomolina.i4gl.nodes.call;
 
+import com.guillermomolina.i4gl.exceptions.NotImplementedException;
+import com.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
+import com.guillermomolina.i4gl.runtime.context.I4GLContext;
+import com.guillermomolina.i4gl.runtime.context.I4GLFunction;
+import com.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
+import com.guillermomolina.i4gl.runtime.types.I4GLType;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
@@ -10,13 +16,6 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
-
-import com.guillermomolina.i4gl.I4GLLanguage;
-import com.guillermomolina.i4gl.exceptions.NotImplementedException;
-import com.guillermomolina.i4gl.nodes.expression.I4GLExpressionNode;
-import com.guillermomolina.i4gl.runtime.context.I4GLFunction;
-import com.guillermomolina.i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
-import com.guillermomolina.i4gl.runtime.types.I4GLType;
 
 @NodeInfo(shortName = "INVOKE")
 public final class I4GLInvokeNode extends I4GLExpressionNode {
@@ -38,7 +37,7 @@ public final class I4GLInvokeNode extends I4GLExpressionNode {
     }
 
     private I4GLFunction getFunction() {
-        return lookupContextReference(I4GLLanguage.class).get().getFunctionRegistry().lookup(functionIdentifier, true);
+        return I4GLContext.get(this).getFunctionRegistry().lookup(functionIdentifier, true);
     }
 
     @Override
