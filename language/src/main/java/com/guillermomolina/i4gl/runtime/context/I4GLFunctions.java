@@ -3,6 +3,8 @@ package com.guillermomolina.i4gl.runtime.context;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.guillermomolina.i4gl.I4GLLanguage;
+import com.guillermomolina.i4gl.runtime.types.primitive.I4GLObjectType;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -11,9 +13,6 @@ import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
-
-import com.guillermomolina.i4gl.I4GLLanguage;
-import com.guillermomolina.i4gl.runtime.types.primitive.I4GLObjectType;
 
 @ExportLibrary(InteropLibrary.class)
 final class I4GLFunctions implements TruffleObject {
@@ -64,6 +63,11 @@ final class I4GLFunctions implements TruffleObject {
     @ExportMessage
     Object getMetaObject() {
         return I4GLObjectType.SINGLETON;
+    }
+
+    @ExportMessage
+    boolean isScope() {
+        return true;
     }
 
     @ExportMessage
