@@ -2,14 +2,15 @@ package com.guillermomolina.i4gl.runtime.context;
 
 import java.util.logging.Level;
 
+import com.guillermomolina.i4gl.I4GLLanguage;
 import com.oracle.truffle.api.Assumption;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.RootCallTarget;
-import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.TruffleLogger;
 import com.oracle.truffle.api.dsl.Cached;
+import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.ReportPolymorphism;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.interop.InteropLibrary;
@@ -20,16 +21,14 @@ import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.IndirectCallNode;
 import com.oracle.truffle.api.source.SourceSection;
 import com.oracle.truffle.api.utilities.CyclicAssumption;
-
-import com.guillermomolina.i4gl.I4GLLanguage;
-import com.guillermomolina.i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
+import com.oracle.truffle.api.utilities.TriState;
 
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLFunction implements TruffleObject {
 
     public static final int INLINE_CACHE_SIZE = 2;
 
-    private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(I4GLFunction.class);
+    private static final TruffleLogger LOG = TruffleLogger.getLogger(I4GLLanguage.ID, I4GLFunction.class);
 
     /** The name of the function. */
     private final String name;
@@ -44,24 +43,31 @@ public final class I4GLFunction implements TruffleObject {
      */
     private final CyclicAssumption callTargetStable;
 
-    public I4GLFunction(I4GLLanguage language, String name) {
-        this.name = name;
-        this.callTarget = Truffle.getRuntime().createCallTarget(new I4GLUndefinedFunctionRootNode(language, name));
+    protected I4GLFunction(I4GLLanguage language, String name) {
+        this(language.getOrCreateUndefinedFunction(name));
+    }
+
+    protected I4GLFunction(RootCallTarget callTarget) {
+        this.name = callTarget.getRootNode().getName();
         this.callTargetStable = new CyclicAssumption(name);
+        setCallTarget(callTarget);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setCallTarget(RootCallTarget callTarget) {
+    protected void setCallTarget(RootCallTarget callTarget) {
+        boolean wasNull = this.callTarget == null;
         this.callTarget = callTarget;
         /*
          * We have a new call target. Invalidate all code that speculated that the old call target
          * was stable.
          */
-        LOGGER.log(Level.FINE, "Installed call target for: {0}", name);
-        callTargetStable.invalidate();
+        LOG.log(Level.FINE, "Installed call target for: {0}", name);
+        if (!wasNull) {
+            callTargetStable.invalidate();
+        }
     }
 
     public RootCallTarget getCallTarget() {
@@ -87,7 +93,7 @@ public final class I4GLFunction implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+    Class<? extends TruffleLanguage<?>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -124,6 +130,28 @@ public final class I4GLFunction implements TruffleObject {
     }
 
     @ExportMessage
+    static final class IsIdenticalOrUndefined {
+        @Specialization
+        static TriState doI4GLFunction(I4GLFunction receiver, I4GLFunction other) {
+            /*
+             * I4GLFunctions are potentially identical to other I4GLFunctions.
+             */
+            return receiver == other ? TriState.TRUE : TriState.FALSE;
+        }
+
+        @Fallback
+        static TriState doOther(I4GLFunction receiver, Object other) {
+            return TriState.UNDEFINED;
+        }
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    static int identityHashCode(I4GLFunction receiver) {
+        return System.identityHashCode(receiver);
+    }
+
+    @ExportMessage
     Object toDisplayString(boolean allowSideEffects) {
         return name;
     }
@@ -131,7 +159,7 @@ public final class I4GLFunction implements TruffleObject {
     /**
      * We allow languages to execute this function. We implement the interop execute message that
      * forwards to a function dispatch.
-     * 
+     *
      * Since invocations are potentially expensive (result in an indirect call, which is expensive
      * by itself but also limits function inlining which can hinder other optimisations) if the node
      * turns megamorphic (i.e. cache limit is exceeded) we annotate it with {@ReportPolymorphism}.
@@ -143,9 +171,6 @@ public final class I4GLFunction implements TruffleObject {
     @ReportPolymorphism
     @ExportMessage
     abstract static class Execute {
-
-        protected Execute() {
-        }
 
         /**
          * Inline cached specialization of the dispatch.
@@ -196,7 +221,8 @@ public final class I4GLFunction implements TruffleObject {
                         @Cached("create(cachedTarget)") DirectCallNode callNode) {
 
             /* Inline cache hit, we are safe to execute the cached call target. */
-            return callNode.call(arguments);
+            Object returnValue = callNode.call(arguments);
+            return returnValue;
         }
 
         /**
