@@ -24,15 +24,16 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.oracle.truffle.api.dsl.NodeFactory;
-
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.PolyglotException;
-import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
 import com.guillermomolina.i4gl.I4GLLanguage;
 import com.guillermomolina.i4gl.nodes.builtin.I4GLBuiltinNode;
 import com.guillermomolina.i4gl.test.I4GLSimpleTestRunner.TestCase;
+import com.oracle.truffle.api.dsl.NodeFactory;
+
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.internal.TextListener;
@@ -47,6 +48,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 public class I4GLSimpleTestRunner extends ParentRunner<TestCase> {
+
     private static final String SOURCE_SUFFIX = ".4gl";
     private static final String INPUT_SUFFIX = ".input";
     private static final String OUTPUT_SUFFIX = ".output";
@@ -198,9 +200,8 @@ public class I4GLSimpleTestRunner extends ParentRunner<TestCase> {
                     Files.copy(jarfile.getInputStream(e), path.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-            final String path = jarfileDir.toFile().getAbsolutePath();
             jarfile.close();
-            return path;
+            return jarfileDir.toFile().getAbsolutePath();
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -263,7 +264,8 @@ public class I4GLSimpleTestRunner extends ParentRunner<TestCase> {
                 I4GLLanguage.installBuiltin(builtin);
             }
 
-            Context.Builder builder = Context.newBuilder().allowExperimentalOptions(true).in(new ByteArrayInputStream(testCase.testInput.getBytes("UTF-8"))).out(out);
+            Context.Builder builder = Context.newBuilder().allowExperimentalOptions(true).allowHostClassLookup((s) -> true).allowHostAccess(HostAccess.ALL).in(
+                            new ByteArrayInputStream(testCase.testInput.getBytes("UTF-8"))).out(out);
             for (Map.Entry<String, String> e : testCase.options.entrySet()) {
                 builder.option(e.getKey(), e.getValue());
             }
@@ -333,5 +335,6 @@ public class I4GLSimpleTestRunner extends ParentRunner<TestCase> {
         public String describe() {
             return "Filter contains " + pattern;
         }
-    }    
+    }
+
 }
