@@ -63,13 +63,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) Arithmetic.4gl",
+            "name": "Debug (Launch) Like2.4gl",
             "request": "launch",
             "mainClass": "com.guillermomolina.i4gl.launcher.I4GLMain",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Arithmetic.4gl",
+                "${workspaceFolder}/language/tests/simple/Like2.4gl",
             ],
             "vmArgs": [
                 "-ea",
