@@ -47,13 +47,19 @@
   <artifactId>i4gl-parent</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <m2e.apt.activation>jdt_apt</m2e.apt.activation>
     <!-- If you update this number make sure the VERSION value in ./i4gl matches -->
     <graalvm.version>21.3.0</graalvm.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+    <junit.version>5.7.2</junit.version>
+    <junit.platform.version>1.7.1</junit.platform.version>
+    <antlr.version>4.9.2</antlr.version>
+    <antlr4.junit.autocomplete.version>0.0.1-SNAPSHOT</antlr4.junit.autocomplete.version>
   </properties>
   <packaging>pom</packaging>
   <modules>
+    <module>parser</module>
     <module>language</module>
     <module>launcher</module>
     <!--<module>native</module>-->

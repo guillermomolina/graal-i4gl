@@ -85,10 +85,14 @@
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-engine</exclude>
                   <exclude>org.oracle.truffle:truffle-api</exclude>
                   <exclude>org.oracle.truffle:truffle-dsl-processor</exclude>
                   <exclude>org.oracle.truffle:truffle-tck</exclude>
                   <exclude>org.graalvm:graal-sdk</exclude>
+                  <exclude>org.graalvm:launcher-common</exclude>
+                  <exclude>org.antlr:antlr4</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
@@ -110,6 +114,11 @@
     </pluginManagement>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <!-- Only need graal-sdk if using jdk 1.8
     <dependency>
       <groupId>org.graalvm.sdk</groupId>
@@ -118,5 +127,42 @@
       <scope>provided</scope>
     </dependency>
     -->
+    <!-- 
+    <dependency>
+      <groupId>com.github.akovari</groupId>
+      <artifactId>antlr4-autocomplete</artifactId>
+      <version>${antlr4.junit.autocomplete.version}</version>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>1.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

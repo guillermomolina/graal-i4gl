@@ -39,7 +39,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.guillermomolina</groupId>
@@ -59,8 +60,6 @@
           --add-opens org.graalvm.sdk/org.graalvm.polyglot=ALL-UNNAMED 
           --add-exports java.base/jdk.internal.module=ALL-UNNAMED
         </test.argLine>
-        <antlr4.visitor>true</antlr4.visitor>
-        <antlr4.listener>false</antlr4.listener>
       </properties>
     </profile>
     <profile>
@@ -70,26 +69,11 @@
       </activation>
       <properties>
         <test.argLine>-XX:-UseJVMCIClassLoader</test.argLine>
-        <antlr4.visitor>true</antlr4.visitor>
-        <antlr4.listener>false</antlr4.listener>
       </properties>
     </profile>
   </profiles>
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.9.2</version>
-        <executions>
-          <execution>
-            <id>antlr</id>
-            <goals>
-              <goal>antlr4</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
@@ -126,6 +110,8 @@
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-engine</exclude>
                   <exclude>org.graalvm.truffle:truffle-api</exclude>
                   <exclude>org.graalvm.truffle:truffle-dsl-processor</exclude>
                   <exclude>org.graalvm.truffle:truffle-tck</exclude>
@@ -151,6 +137,11 @@
     </pluginManagement>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.graalvm.truffle</groupId>
       <artifactId>truffle-api</artifactId>
@@ -196,9 +187,27 @@
     </dependency >
     -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.platform.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-commons</artifactId>
+      <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -206,12 +215,6 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.36.0.3</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-runtime</artifactId>
-      <version>4.9.2</version>
-      <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>net.sf.squirrel-sql</groupId>
