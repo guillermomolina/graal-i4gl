@@ -46,6 +46,6 @@ if [[ $I4GL_BUILD_NATIVE == "false" ]]; then
 fi
 "$JAVA_HOME"/bin/native-image \
     --macro:truffle --no-fallback --initialize-at-build-time \
-    -cp ../language/target/i4gl.jar:../launcher/target/i4gl-launcher.jar \
-    com.guillermomolina.i4gl.launcher.I4GLMain \
+    -cp ../language/target/language.jar:../launcher/target/i4gl-launcher.jar \
+    i4gl.launcher.I4GLMain \
     slnative

@@ -59,7 +59,7 @@ fi
 rm -rf COMPONENT_DIR
 
 mkdir -p "$LANGUAGE_PATH"
-cp ../language/target/i4gl.jar "$LANGUAGE_PATH"
+cp ../language/target/language.jar "$LANGUAGE_PATH"
 
 mkdir -p "$LANGUAGE_PATH/launcher"
 cp ../launcher/target/i4gl-launcher.jar "$LANGUAGE_PATH/launcher/"
@@ -75,7 +75,7 @@ touch "$LANGUAGE_PATH/native-image.properties"
 mkdir -p "$COMPONENT_DIR/META-INF"
 {
     echo "Bundle-Name: Simple Language";
-    echo "Bundle-Symbolic-Name: com.guillermomolina.i4gl";
+    echo "Bundle-Symbolic-Name: i4gl";
     echo "Bundle-Version: $GRAALVM_VERSION";
     echo "Bundle-RequireCapability: org.graalvm; filter:=\"(&(graalvm_version=$GRAALVM_VERSION)(os_arch=amd64))\"";
     echo "x-GraalVM-Polyglot-Part: True"
