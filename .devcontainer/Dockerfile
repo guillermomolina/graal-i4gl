@@ -29,16 +29,5 @@ ADD files/chinook.tar.xz /database
 COPY files/SQLDrivers.xml /home/vscode/.squirrel-sql/SQLDrivers.xml
 COPY files/SQLAliases23.xml /home/vscode/.squirrel-sql/SQLAliases23.xml
 
-# RUN git clone https://github.com/guillermomolina/graal-i4gl /i4gl && \
-#     cd i4gl/ && \
-#     mvn -B dependency:resolve && \
-#     mvn -B package -DskipTests
-
-# RUN gu install -L /i4gl/component/i4gl-component.jar
-
-# WORKDIR /workspaces
-
-# ENTRYPOINT ["/opt/graalvm-ce-java11-21.3.0/bin/i4gl"]
-
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
