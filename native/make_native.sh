@@ -40,12 +40,15 @@
 # SOFTWARE.
 #
 
+I4GL_BUILD_NATIVE=false
 if [[ $I4GL_BUILD_NATIVE == "false" ]]; then
     echo "Skipping the native image build because I4GL_BUILD_NATIVE is set to false."
     exit 0
 fi
 "$JAVA_HOME"/bin/native-image \
+    --enable-http --enable-https --enable-all-security-services --report-unsupported-elements-at-runtime \
     --macro:truffle --no-fallback --initialize-at-build-time \
-    -cp ../language/target/language.jar:../launcher/target/i4gl-launcher.jar \
-    i4gl.launcher.I4GLMain \
-    slnative
+    -H:ReflectionConfigurationFiles=reflection-config.json -H:ResourceConfigurationFiles=resource-config.json \
+    -cp ../language/target/language.jar:../launcher/target/i4gl-launcher.jar:/opt/squirrel-sql/squirrel-sql.jar:/opt/squirrel-sql/lib/log4j.jar:$JAVA_HOME/lib/graalvm/launcher-common.jar \
+    i4gl.Launcher \
+    yonanative

@@ -1,4 +1,4 @@
-package i4gl.launcher;
+package i4gl;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 
-public final class I4GLMain {
+public final class Launcher {
 
     private static final String LANGUAGE_ID = "i4gl";
 

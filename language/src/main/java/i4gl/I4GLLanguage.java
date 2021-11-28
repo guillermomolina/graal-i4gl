@@ -7,13 +7,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-import i4gl.exceptions.NotImplementedException;
-import i4gl.nodes.builtin.I4GLBuiltinNode;
-import i4gl.nodes.root.I4GLModuleRootNode;
-import i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
-import i4gl.parser.I4GLFullParser;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.context.I4GLLanguageView;
 import com.oracle.truffle.api.Assumption;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
@@ -31,6 +24,14 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
+
+import i4gl.exceptions.NotImplementedException;
+import i4gl.nodes.builtin.I4GLBuiltinNode;
+import i4gl.nodes.root.I4GLModuleRootNode;
+import i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
+import i4gl.parser.I4GLFullParser;
+import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.I4GLLanguageView;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the
@@ -52,8 +53,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     private final Assumption singleContext = Truffle.getRuntime().createAssumption("Single I4GL context.");
 
     private final Map<String, RootCallTarget> undefinedFunctions = new ConcurrentHashMap<>();
-
-
+    
     public I4GLLanguage() {
         counter++;
     }

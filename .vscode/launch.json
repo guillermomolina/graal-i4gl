@@ -6,7 +6,7 @@
             "name": "Debug ANTLR4 grammar Current File",
             "request": "launch",
             "input": "${file}",
-            "grammar": "language/src/main/antlr4/i4gl/parser/I4GLParser.g4",
+            "grammar": "parser/src/main/antlr4/i4gl/parser/I4GLParser.g4",
             "startRule": "module",
             "printParseTree": true,
             "visualParseTree": true

@@ -26,8 +26,9 @@ RUN export SQUIRRELSQL_VERSION=4.1.0 && \
         https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.36.0.3/sqlite-jdbc-3.36.0.3.jar
 
 ADD files/chinook.tar.xz /database
-COPY files/SQLDrivers.xml /home/vscode/.squirrel-sql/SQLDrivers.xml
-COPY files/SQLAliases23.xml /home/vscode/.squirrel-sql/SQLAliases23.xml
+COPY files/SQLDrivers.xml /home/$USERNAME/.squirrel-sql/SQLDrivers.xml
+COPY files/SQLAliases23.xml /home/$USERNAME/.squirrel-sql/SQLAliases23.xml
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME

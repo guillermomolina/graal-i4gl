@@ -5,3 +5,4 @@ Version 0.1.0
 - Decouple project version from graal version
 - Split parser from language
 - Take out com.guillermomolina from class path
+- Move launcher.I4GLMain to Launcher
