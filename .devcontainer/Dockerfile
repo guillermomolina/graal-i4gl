@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-ce:java11-21.3
+FROM ghcr.io/graalvm/graalvm-ce:java11-21.3.0
 
 LABEL org.opencontainers.image.authors "Guillermo Adrián Molina <guillermoadrianmolina@hotmail.com>"
 
