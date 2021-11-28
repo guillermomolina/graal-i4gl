@@ -27,6 +27,15 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
+RUN export SQUIRRELSQL_VERSION=4.1.0 && \
+    curl -sLo /squirrelsql-${SQUIRRELSQL_VERSION}-base.zip \
+        http://downloads.sourceforge.net/squirrel-sql/squirrelsql-${SQUIRRELSQL_VERSION}-base.zip && \
+    unzip -d /opt /squirrelsql-${SQUIRRELSQL_VERSION}-base.zip && \
+    ln -s /opt/squirrelsql-${SQUIRRELSQL_VERSION}-base /opt/squirrel-sql && \
+    rm -f /squirrelsql-${SQUIRRELSQL_VERSION}-base.zip && \
+    curl -sLo /opt/squirrel-sql/lib/sqlite-jdbc-3.36.0.3.jar \
+        https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.36.0.3/sqlite-jdbc-3.36.0.3.jar
+
 RUN git clone https://github.com/guillermomolina/graal-i4gl /i4gl
 RUN cd i4gl/; mvn -B dependency:resolve
 RUN cd /i4gl/; mvn -B package -DskipTests
