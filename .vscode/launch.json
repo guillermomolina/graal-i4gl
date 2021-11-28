@@ -20,7 +20,7 @@
             "args": ["--log.i4gl.level=FINEST","${file}"],
             "vmArgs": [
                 "-ea",
-                "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
+                "-Dtruffle.class.path.append=./language/target/language.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
             "stepFilters": {
@@ -47,7 +47,7 @@
             ],
             "vmArgs": [
                 "-ea",
-                "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
+                "-Dtruffle.class.path.append=./language/target/language.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
             "stepFilters": {
@@ -73,7 +73,7 @@
             ],
             "vmArgs": [
                 "-ea",
-                "-Dtruffle.class.path.append=./language/target/i4gl.jar:/opt/squirrel-sql/squirrel-sql.jar",
+                "-Dtruffle.class.path.append=./language/target/language.jar:/opt/squirrel-sql/squirrel-sql.jar",
                 "-Dsquirrel.home=/opt/squirrel-sql"
             ],
             "stepFilters": {
