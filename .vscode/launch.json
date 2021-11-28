@@ -15,7 +15,7 @@
             "type": "java",
             "name": "Debug (Launch) Current File",
             "request": "launch",
-            "mainClass": "i4gl.launcher.I4GLMain",
+            "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": ["--log.i4gl.level=FINEST","${file}"],
             "vmArgs": [
@@ -38,7 +38,7 @@
             "type": "java",
             "name": "Debug (Launch and Wait) Current File",
             "request": "launch",
-            "mainClass": "i4gl.launcher.I4GLMain",
+            "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--inspect",
@@ -65,7 +65,7 @@
             "type": "java",
             "name": "Debug (Launch) Like2.4gl",
             "request": "launch",
-            "mainClass": "i4gl.launcher.I4GLMain",
+            "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
