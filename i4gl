@@ -76,14 +76,13 @@ function fail() {
 #######################################################################
 GRAALVM_VERSION=$(extractGraalVMVersion "$SCRIPT_HOME/../release")
 if [[ "$GRAALVM_VERSION" != "" ]]; then
-    LANGUAGE_PATH=""
-    # contains paths for both jdk8 and jdk11
-    LAUNCHER_PATH="$SCRIPT_HOME/../jre/languages/i4gl/launcher/i4gl-launcher.jar:$SCRIPT_HOME/../languages/i4gl/launcher/i4gl-launcher.jar"
+    LANGUAGE_PATH="$SCRIPT_HOME/../languages/i4gl/language/language.jar"
+    LAUNCHER_PATH="$SCRIPT_HOME/../languages/i4gl/launcher/i4gl-launcher.jar"
     JAVACMD="$SCRIPT_HOME/java"
     versionCheck "Installed in wrong version of GraalVM. Expected: $VERSION, found $GRAALVM_VERSION"
 else
-    LANGUAGE_PATH="$SCRIPT_HOME/language/target/i4gl.jar"
-    LAUNCHER_PATH="$SCRIPT_HOME/launcher/target/launcher-$VERSION.jar"
+    LANGUAGE_PATH="$SCRIPT_HOME/language/target/language.jar"
+    LAUNCHER_PATH="$SCRIPT_HOME/launcher/target/i4gl-launcher.jar"
     # Check the GraalVM version in JAVA_HOME
     if [[ "$JAVA_HOME" == "" ]]; then
         JAVA_HOME="/opt/graalvm-ce-java11-21.3.0"
