@@ -18,7 +18,9 @@
     "java.home": "/usr/java/default",
     "java.test.config": {
         "vmargs": [
-            "-Dgraalvm.locatorDisabled=true"
+            "-ea",
+            "-Dgraalvm.locatorDisabled=true",
+            "-Dsquirrel.home=/opt/squirrel-sql"
         ]
     },
     "python.pythonPath": "/bin/python",
