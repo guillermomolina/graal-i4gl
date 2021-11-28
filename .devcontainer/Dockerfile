@@ -8,7 +8,7 @@ ARG USER_GID=1000
 #ARG USER_GID=$USER_UID
 
 RUN microdnf install -y git maven unzip shadow-utils sudo
-#RUN gu install native-image
+RUN gu install native-image
 
 # Create the user
 RUN groupadd --gid $USER_GID $USERNAME && \
