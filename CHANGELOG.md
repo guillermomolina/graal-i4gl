@@ -1,5 +1,6 @@
 Version 0.2.0
 
+- Add support for single quoted string literals
 
 Version 0.1.0
 

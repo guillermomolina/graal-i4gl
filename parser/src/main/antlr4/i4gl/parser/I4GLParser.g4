@@ -153,7 +153,7 @@ dynArrayType:
 
 dynArrayTypeType: recordType | typeIdentifier;
 
-string: STRING_LITERAL;
+string: STRING_LITERAL_DQ | STRING_LITERAL_SQ;
 
 statement: (label COLON)? unlabelledStatement;
 
@@ -251,15 +251,19 @@ factor: factorTypes CLIPPED? (USING string)? (UNITS unitType)?;
 
 factorTypes:
 	GROUP? function
-	| variable // or function without arguments
 	| constant
+	| variable // or function without arguments
 	| LPAREN expression RPAREN
 	| NOT factor;
 
 function:
 	identifier LPAREN expressionOrComponentVariableList? RPAREN;
 
-constant: asciiConstant | booleanConstant | numericConstant | string;
+constant:
+	asciiConstant
+	| booleanConstant
+	| numericConstant
+	| string;
 
 asciiConstant: ASCII UNSIGNED_INTEGER;
 
@@ -466,7 +470,10 @@ displayEvents: ON KEY LPAREN keyList RPAREN codeBlock+;
 
 concatExpression: expressionOrComponentVariableList;
 
-expressionOrComponentVariableList: expressionOrComponentVariable (COMMA expressionOrComponentVariable)*;
+expressionOrComponentVariableList:
+	expressionOrComponentVariable (
+		COMMA expressionOrComponentVariable
+	)*;
 
 expressionOrComponentVariable: expression | componentVariable;
 

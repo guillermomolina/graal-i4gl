@@ -24,9 +24,6 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import i4gl.I4GLLanguage;
-import i4gl.nodes.builtin.I4GLBuiltinNode;
-import i4gl.test.I4GLSimpleTestRunner.TestCase;
 import com.oracle.truffle.api.dsl.NodeFactory;
 
 import org.graalvm.polyglot.Context;
@@ -46,6 +43,10 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+
+import i4gl.I4GLLanguage;
+import i4gl.nodes.builtin.I4GLBuiltinNode;
+import i4gl.test.I4GLSimpleTestRunner.TestCase;
 
 public class I4GLSimpleTestRunner extends ParentRunner<TestCase> {
 

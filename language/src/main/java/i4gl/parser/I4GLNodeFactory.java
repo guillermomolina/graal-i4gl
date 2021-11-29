@@ -21,6 +21,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
+
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.arithmetic.I4GLAddNodeGen;
@@ -444,10 +445,11 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitFunction(final I4GLParser.FunctionContext ctx) {
         final String functionIdentifier = ctx.identifier().getText();
         List<I4GLExpressionNode> argumentNodeList = new ArrayList<>();
-        if(ctx.expressionOrComponentVariableList() != null) {
+        if (ctx.expressionOrComponentVariableList() != null) {
             argumentNodeList = createExpressionOrComponentVariableList(ctx.expressionOrComponentVariableList());
         }
-        final I4GLExpressionNode[] argumentNodes = argumentNodeList.toArray(new I4GLExpressionNode[argumentNodeList.size()]);
+        final I4GLExpressionNode[] argumentNodes = argumentNodeList
+                .toArray(new I4GLExpressionNode[argumentNodeList.size()]);
         I4GLInvokeNode node = new I4GLInvokeNode(functionIdentifier, argumentNodes);
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
@@ -457,7 +459,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitReturnStatement(final I4GLParser.ReturnStatementContext ctx) {
         List<I4GLExpressionNode> resultNodeList = new ArrayList<>();
-        if(ctx.expressionOrComponentVariableList() != null) {
+        if (ctx.expressionOrComponentVariableList() != null) {
             resultNodeList = createExpressionOrComponentVariableList(ctx.expressionOrComponentVariableList());
         }
         final I4GLExpressionNode[] resultNodes = resultNodeList.toArray(new I4GLExpressionNode[resultNodeList.size()]);
@@ -817,16 +819,16 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return node;
     }
 
-    private List<I4GLExpressionNode> createExpressionOrComponentVariableList(final I4GLParser.ExpressionOrComponentVariableListContext ctx) {
+    private List<I4GLExpressionNode> createExpressionOrComponentVariableList(
+            final I4GLParser.ExpressionOrComponentVariableListContext ctx) {
         List<I4GLExpressionNode> nodeList = new ArrayList<>();
-        for(final I4GLParser.ExpressionOrComponentVariableContext exprOrCompCtx: ctx.expressionOrComponentVariable()) {
-            if(exprOrCompCtx.expression() != null) {
-                nodeList.add((I4GLExpressionNode)visit(exprOrCompCtx.expression()));
-            }
-            else if (exprOrCompCtx.componentVariable()!=null) {
+        for (final I4GLParser.ExpressionOrComponentVariableContext exprOrCompCtx : ctx
+                .expressionOrComponentVariable()) {
+            if (exprOrCompCtx.expression() != null) {
+                nodeList.add((I4GLExpressionNode) visit(exprOrCompCtx.expression()));
+            } else if (exprOrCompCtx.componentVariable() != null) {
                 nodeList.addAll(createReadComponentVariable(exprOrCompCtx.componentVariable()));
-            }
-            else {
+            } else {
                 throw new ParseException(source, ctx, "Can not be here");
             }
         }
@@ -873,23 +875,22 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitDisplayStatement(final I4GLParser.DisplayStatementContext ctx) {
-        if(ctx.attributeList() != null) {
+        if (ctx.attributeList() != null) {
             throw new NotImplementedException();
         }
-        if(ctx.concatExpression() != null) {
+        if (ctx.concatExpression() != null) {
             I4GLExpressionNode displayValueListNode = (I4GLExpressionNode) visit(ctx.concatExpression());
-            if(ctx.TO() != null) {
+            if (ctx.TO() != null) {
                 throw new NotImplementedException();
             }
-            if(ctx.AT() != null) {
+            if (ctx.AT() != null) {
                 throw new NotImplementedException();
             }
             I4GLDisplayNode node = I4GLDisplayNodeGen.create(displayValueListNode);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
-        }
-        else {
+        } else {
             throw new NotImplementedException();
         }
     }
@@ -913,7 +914,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitConcatExpression(final I4GLParser.ConcatExpressionContext ctx) {
         List<I4GLExpressionNode> argumentNodeList = new ArrayList<>();
-        if(ctx.expressionOrComponentVariableList() != null) {
+        if (ctx.expressionOrComponentVariableList() != null) {
             argumentNodeList = createExpressionOrComponentVariableList(ctx.expressionOrComponentVariableList());
         }
         I4GLExpressionNode leftNode = null;
@@ -931,13 +932,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitAssignmentValue(final I4GLParser.AssignmentValueContext ctx) {
-        if(ctx.concatExpression() != null) {
+        if (ctx.concatExpression() != null) {
             return visit(ctx.concatExpression());
         }
         if (ctx.NULL() != null) {
             throw new NotImplementedException();
         }
-        throw new ParseException(source, ctx, "Parse Error"); 
+        throw new ParseException(source, ctx, "Parse Error");
     }
 
     @Override
@@ -1094,7 +1095,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         String literal = ctx.getText();
 
         // Remove the trailing and ending "
-        assert literal.length() >= 2 && literal.startsWith("\"") && literal.endsWith("\"");
+        assert literal.length() >= 2 && ((literal.startsWith("\"") && literal.endsWith("\""))
+                || (literal.startsWith("'") && literal.endsWith("'")));
         literal = literal.substring(1, literal.length() - 1);
 
         I4GLTextLiteralNode node = new I4GLTextLiteralNode(literal.intern());
@@ -1110,12 +1112,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         try {
             final String charValue = Character.toString(Integer.parseUnsignedInt(asciiCodeText));
             node = new I4GLTextLiteralNode(charValue.intern());
-        } catch(final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new ParseException(source, ctx, "Invalid ASCII constant");
         }
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
-        return node;        
+        return node;
     }
 
     @Override

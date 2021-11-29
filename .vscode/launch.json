@@ -63,13 +63,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) Like2.4gl",
+            "name": "Debug (Launch) Quote.4gl",
             "request": "launch",
             "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Like2.4gl",
+                "${workspaceFolder}/language/tests/simple/Quote.4gl",
             ],
             "vmArgs": [
                 "-ea",
@@ -86,19 +86,6 @@
                 "skipConstructors": false
             },
             "console": "internalConsole"
-        },
-        {
-            "type": "graalvm",
-            "request": "launch",
-            "name": "Launch i4gl Script",
-            "runtimeExecutable": "${workspaceFolder}/i4gl",
-            "program": "${file}"
-        },
-        {
-            "type": "graalvm",
-            "request": "attach",
-            "name": "GraalVM Attach",
-            "port": 9229
         }
     ],
     "compounds": [
