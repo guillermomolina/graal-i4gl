@@ -626,9 +626,6 @@ IDENT: ('a' .. 'z' | 'A' .. 'Z' | '_') (
 		| '0' .. '9'
 	)*;
 
-// character literals
-CHAR_LITERAL: '\'' ( ~'\'') '\'';
-
 STRING_LITERAL_DQ: ('"') (~ ('"' | '\\'))* ('"');
 STRING_LITERAL_SQ: ('\'') (~ ('\\' | '\''))* ('\'');
 
