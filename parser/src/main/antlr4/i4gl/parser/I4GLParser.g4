@@ -214,6 +214,21 @@ callStatement:
 
 gotoStatement: GOTO COLON? label;
 
+ifCondition:
+	booleanConstant
+	| ifLogicalTerm (OR ifLogicalTerm)*;
+
+ifLogicalTerm: ifLogicalFactor (AND ifLogicalFactor)*;
+
+ifLogicalFactor:
+	// Added "prior" to a comparison expression to support use of a condition in a connect_clause.
+	expression IS NOT? NULL
+	| NOT ifCondition
+	| LPAREN ifCondition RPAREN
+	| ifLogicalRelation;
+
+ifLogicalRelation: expression (relationalOperator expression)?;
+
 relationalOperator:
 	EQUAL
 	| NOT_EQUAL
@@ -223,21 +238,6 @@ relationalOperator:
 	| GT
 	| LIKE
 	| NOT? MATCHES;
-
-ifCondition:
-	booleanConstant
-	| ifCondition2 (relationalOperator ifCondition2)?;
-
-ifCondition2: ifLogicalTerm (OR ifLogicalTerm)*;
-
-ifLogicalTerm: ifLogicalFactor (AND ifLogicalFactor)*;
-
-ifLogicalFactor:
-	// Added "prior" to a comparison expression to support use of a condition in a connect_clause.
-	expression IS NOT? NULL
-	| NOT ifCondition
-	| LPAREN ifCondition RPAREN
-	| expression;
 
 expressionList: expression (COMMA expression)*;
 

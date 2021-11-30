@@ -677,38 +677,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             booleanConstantNode.addExpressionTag();
             return booleanConstantNode;
         }
-        I4GLExpressionNode leftNode = (I4GLExpressionNode) visit(ctx.ifCondition2(0));
-        final I4GLParser.RelationalOperatorContext operatorCtx = ctx.relationalOperator();
-        if (operatorCtx != null) {
-            I4GLExpressionNode rightNode = (I4GLExpressionNode) visit(ctx.ifCondition2(1));
-            if (operatorCtx.EQUAL() != null) {
-                leftNode = I4GLEqualsNodeGen.create(leftNode, rightNode);
-            } else if (operatorCtx.NOT_EQUAL() != null) {
-                leftNode = I4GLNotNodeGen.create(I4GLEqualsNodeGen.create(leftNode, rightNode));
-            } else if (operatorCtx.LT() != null) {
-                leftNode = I4GLLessThanNodeGen.create(leftNode, rightNode);
-            } else if (operatorCtx.LE() != null) {
-                leftNode = I4GLLessThanOrEqualNodeGen.create(leftNode, rightNode);
-            } else if (operatorCtx.GT() != null) {
-                leftNode = I4GLNotNodeGen.create(I4GLLessThanOrEqualNodeGen.create(leftNode, rightNode));
-            } else if (operatorCtx.GE() != null) {
-                leftNode = I4GLNotNodeGen.create(I4GLLessThanNodeGen.create(leftNode, rightNode));
-            } else if (operatorCtx.LIKE() != null) {
-                leftNode = I4GLLikeNodeGen.create(leftNode, rightNode);
-            } else /* operatorCtx.MATCHES() != null */ {
-                leftNode = I4GLMatchesNodeGen.create(leftNode, rightNode);
-                if (operatorCtx.NOT() != null) {
-                    leftNode = I4GLNotNodeGen.create(leftNode);
-                }
-            }
-        }
-        setSourceFromContext(leftNode, ctx);
-        leftNode.addExpressionTag();
-        return leftNode;
-    }
-
-    @Override
-    public Node visitIfCondition2(final I4GLParser.IfCondition2Context ctx) {
         I4GLExpressionNode leftNode = null;
         for (final I4GLParser.IfLogicalTermContext context : ctx.ifLogicalTerm()) {
             final I4GLExpressionNode rightNode = (I4GLExpressionNode) visit(context);
@@ -740,6 +708,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (ctx.expression() != null) {
             node = (I4GLExpressionNode) visit(ctx.expression());
         }
+        if (ctx.ifLogicalRelation() != null) {
+            node = (I4GLExpressionNode) visit(ctx.ifLogicalRelation());
+        }
         assert node != null;
         if (ctx.IS() != null && ctx.NULL() != null) {
             node = I4GLIsNullNodeGen.create(node);
@@ -752,6 +723,38 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             node.addExpressionTag();
         }
         return node;
+    }
+
+    @Override
+    public Node visitIfLogicalRelation(final I4GLParser.IfLogicalRelationContext ctx) {
+        I4GLExpressionNode leftNode = (I4GLExpressionNode) visit(ctx.expression(0));
+        final I4GLParser.RelationalOperatorContext operatorCtx = ctx.relationalOperator();
+        if (operatorCtx != null) {
+            I4GLExpressionNode rightNode = (I4GLExpressionNode) visit(ctx.expression(1));
+            if (operatorCtx.EQUAL() != null) {
+                leftNode = I4GLEqualsNodeGen.create(leftNode, rightNode);
+            } else if (operatorCtx.NOT_EQUAL() != null) {
+                leftNode = I4GLNotNodeGen.create(I4GLEqualsNodeGen.create(leftNode, rightNode));
+            } else if (operatorCtx.LT() != null) {
+                leftNode = I4GLLessThanNodeGen.create(leftNode, rightNode);
+            } else if (operatorCtx.LE() != null) {
+                leftNode = I4GLLessThanOrEqualNodeGen.create(leftNode, rightNode);
+            } else if (operatorCtx.GT() != null) {
+                leftNode = I4GLNotNodeGen.create(I4GLLessThanOrEqualNodeGen.create(leftNode, rightNode));
+            } else if (operatorCtx.GE() != null) {
+                leftNode = I4GLNotNodeGen.create(I4GLLessThanNodeGen.create(leftNode, rightNode));
+            } else if (operatorCtx.LIKE() != null) {
+                leftNode = I4GLLikeNodeGen.create(leftNode, rightNode);
+            } else /* operatorCtx.MATCHES() != null */ {
+                leftNode = I4GLMatchesNodeGen.create(leftNode, rightNode);
+                if (operatorCtx.NOT() != null) {
+                    leftNode = I4GLNotNodeGen.create(leftNode);
+                }
+            }
+        }
+        setSourceFromContext(leftNode, ctx);
+        leftNode.addExpressionTag();
+        return leftNode;
     }
 
     @Override
