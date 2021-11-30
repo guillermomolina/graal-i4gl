@@ -11,15 +11,7 @@ import i4gl.runtime.types.compound.I4GLTextType;
 public abstract class ICGIGetValueBuiltinNode extends I4GLBuiltinNode {
 
     @Specialization
-    String icgiGetValue(Object... arguments) {
-        return (arguments.length == 1)? getValue((String) arguments[0]) : getValue((String) arguments[0], (int) arguments[1]);
-    }
-
-    public String getValue(String name) {
-        return "value";
-    }
-
-    public String getValue(String name, int n) {
+    protected String getValue(String name) {
         return "value";
     }
 

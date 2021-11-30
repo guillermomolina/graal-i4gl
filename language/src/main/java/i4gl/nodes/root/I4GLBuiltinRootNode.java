@@ -57,10 +57,4 @@ public class I4GLBuiltinRootNode extends RootNode {
     public boolean isCloningAllowed() {
         return isCloningAllowed;
     }
-
-    @Override
-    public String toString() {
-        return "root " + name;
-    }
-
 }
