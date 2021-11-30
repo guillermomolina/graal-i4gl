@@ -163,12 +163,14 @@ returnStatement: RETURN expressionOrComponentVariableList?;
 
 label: identifier;
 
-unlabelledStatement: simpleStatement | structuredStatement;
+unlabelledStatement:
+	simpleStatement SEMI?
+	| structuredStatement;
 
 simpleStatement:
 	assignmentStatement
 	| callStatement
-	| sqlStatement SEMI?
+	| sqlStatement
 	| otherI4GLStatement
 	| menuInsideStatement
 	| constructInsideStatement
