@@ -15,6 +15,8 @@ RUN export SQUIRRELSQL_VERSION=4.1.0 && \
     curl -sLo /opt/squirrel-sql/lib/sqlite-jdbc-3.36.0.3.jar \
         https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.36.0.3/sqlite-jdbc-3.36.0.3.jar
 
+# Force clone
+ADD https://api.github.com/repos/guillermomolina/graal-i4gl/git/refs/heads/master version.json        
 RUN git clone https://github.com/guillermomolina/graal-i4gl /i4gl
 #RUN cd /i4gl; mvn -B dependency:resolve
 RUN cd /i4gl; mvn -B package -DskipTests
