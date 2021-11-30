@@ -63,13 +63,13 @@
         },
         {
             "type": "java",
-            "name": "Debug (Launch) Quote.4gl",
+            "name": "Debug (Launch) Cgi.4gl",
             "request": "launch",
             "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Quote.4gl",
+                "${workspaceFolder}/language/tests/simple/Cgi.4gl",
             ],
             "vmArgs": [
                 "-ea",
@@ -86,15 +86,6 @@
                 "skipConstructors": false
             },
             "console": "internalConsole"
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Debug I4GL + Attach",
-            "configurations": [
-                "Debug (Launch and Wait) Current File",
-                "GraalVM Attach"
-            ]
         }
     ]
 }

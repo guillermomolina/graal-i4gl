@@ -1,11 +1,5 @@
 package i4gl.nodes.root;
 
-import i4gl.I4GLLanguage;
-import i4gl.nodes.I4GLTypeSystem;
-import i4gl.nodes.statement.I4GLStatementNode;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.exceptions.ReturnException;
-import i4gl.runtime.values.I4GLNull;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -13,6 +7,13 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.profiles.BranchProfile;
 import com.oracle.truffle.api.source.SourceSection;
+
+import i4gl.I4GLLanguage;
+import i4gl.nodes.I4GLTypeSystem;
+import i4gl.nodes.statement.I4GLStatementNode;
+import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.exceptions.ReturnException;
+import i4gl.runtime.values.I4GLNull;
 
 /**
  * This node represents the root node of AST of any function or main program.
@@ -55,24 +56,21 @@ public class I4GLRootNode extends RootNode {
     public Object execute(VirtualFrame frame) {
         assert I4GLContext.get(this) != null;
         try {
-            /* Execute the function body. */
+            // Execute the function body.
             bodyNode.executeVoid(frame);
         } catch (ReturnException ex) {
-            /*
-             * In the interpreter, record profiling information that the function has an
-             * explicit return.
-             */
+            // In the interpreter, record profiling information that the function has an
+            // explicit return.
             exceptionTaken.enter();
-            /* The exception transports the actual return value. */
+            // The exception transports the actual return value.
             return ex.getResult();
         }
 
-        /*
-         * In the interpreter, record profiling information that the function ends
-         * without an explicit return.
-         */
+
+        // In the interpreter, record profiling information that the function ends
+        // without an explicit return.         
         nullTaken.enter();
-        /* Return the default null value. */
+        // Return the default null value. 
         return I4GLNull.SINGLETON;
     }
 

@@ -374,7 +374,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 if (type == null) {
                     throw new LexicalException("Function parameter " + parameteridentifier + " must be declared");
                 }
-                final I4GLExpressionNode readNode = new I4GLReadArgumentNode(argumentIndex++, type);
+                final I4GLExpressionNode readNode = new I4GLReadArgumentNode(argumentIndex++);
                 blockNodes.add(createAssignToVariableNode(parameteridentifier, readNode));
             }
         }

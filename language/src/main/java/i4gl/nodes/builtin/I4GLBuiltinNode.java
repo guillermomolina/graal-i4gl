@@ -62,4 +62,5 @@ public abstract class I4GLBuiltinNode extends I4GLExpressionNode {
     }
 
     protected abstract Object execute(VirtualFrame frame);
+
 }
