@@ -3,3 +3,6 @@ build:
 
 dependency:
 	mvn -B dependency:resolve
+
+clean:
+	mvn clean
