@@ -18,6 +18,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.types.compound.I4GLCharType;
 import i4gl.runtime.types.compound.I4GLVarcharType;
 import i4gl.runtime.types.primitive.I4GLBigIntType;
 import i4gl.runtime.types.primitive.I4GLDecimalType;
@@ -51,6 +52,8 @@ public abstract class I4GLType implements TruffleObject {
 
     public static I4GLType fromTableColumInfo(final TableColumnInfo info) {
         switch (info.getDataType()) {
+            case Types.CHAR:
+                return new I4GLCharType(info.getColumnSize());
             case Types.VARCHAR:
                 return new I4GLVarcharType(info.getColumnSize());
             case Types.SMALLINT:
