@@ -70,7 +70,7 @@ public class ParseException extends AbstractTruffleException {
     }
 
     public ParseException(Source source, Token token, String message) {
-        this(source, token.getLine(), token.getCharPositionInLine() + 1,
+        this(source, token == null ? 1 : token.getLine(), token == null ? 1 : token.getCharPositionInLine() + 1,
                 token == null ? 1 : Math.max(token.getStopIndex() - token.getStartIndex(), 0), message);
     }
 
