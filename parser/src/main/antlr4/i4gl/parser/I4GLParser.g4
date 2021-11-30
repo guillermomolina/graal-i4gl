@@ -153,7 +153,7 @@ dynArrayType:
 
 dynArrayTypeType: recordType | typeIdentifier;
 
-string: STRING_LITERAL_DQ | STRING_LITERAL_SQ;
+string: STRING_LITERAL;
 
 statement: (label COLON)? unlabelledStatement;
 

@@ -626,8 +626,20 @@ IDENT: ('a' .. 'z' | 'A' .. 'Z' | '_') (
 		| '0' .. '9'
 	)*;
 
-STRING_LITERAL_DQ: ('"') (~ ('"' | '\\'))* ('"');
-STRING_LITERAL_SQ: ('\'') (~ ('\\' | '\''))* ('\'');
+STRING_LITERAL: (
+		'"' STRING_CHARACTER_DQ* '"'
+		| '\'' STRING_CHARACTER_SQ* '\''
+	);
+
+fragment STRING_CHARACTER_DQ:
+	~["\\\r\n]
+	| '\\' ESCAPE_CHARACTER;
+
+fragment STRING_CHARACTER_SQ:
+	~['\\\r\n]
+	| '\\' ESCAPE_CHARACTER;
+
+fragment ESCAPE_CHARACTER: ['"\\bfnrtv];
 
 // a numeric literal
 
