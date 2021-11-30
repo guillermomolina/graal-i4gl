@@ -1,9 +1,11 @@
 package i4gl.runtime.types;
 
+import java.sql.JDBCType;
 import java.sql.Types;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.TruffleLogger;
 import com.oracle.truffle.api.dsl.Cached;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -23,7 +25,6 @@ import i4gl.runtime.types.primitive.I4GLFloatType;
 import i4gl.runtime.types.primitive.I4GLIntType;
 import i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import i4gl.runtime.types.primitive.I4GLSmallIntType;
-
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -46,6 +47,8 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 @ExportLibrary(InteropLibrary.class)
 public abstract class I4GLType implements TruffleObject {
 
+    private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(I4GLType.class);
+
     public static I4GLType fromTableColumInfo(final TableColumnInfo info) {
         switch (info.getDataType()) {
             case Types.VARCHAR:
@@ -63,6 +66,7 @@ public abstract class I4GLType implements TruffleObject {
             case Types.DECIMAL:
                 return new I4GLDecimalType(info.getColumnSize(), info.getDecimalDigits());
             default:
+                LOGGER.warning("Unknown SQL type: " + JDBCType.valueOf(info.getDataType()).getName());
                 throw new NotImplementedException();
         }
     }
