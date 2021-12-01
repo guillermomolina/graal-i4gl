@@ -4,6 +4,7 @@ Version 0.2.0
 - Remove i4gl sources from final image
 - Implement initial icgi library support
 - Add fgl_getenv builtin
+- Implement visitFactorTypes in Node Factory
 
 Version 0.1.0
 

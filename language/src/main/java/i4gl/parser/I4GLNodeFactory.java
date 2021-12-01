@@ -419,6 +419,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             if (statementNode != null) {
                 statementNodes.add(statementNode);
             } else if (!(child instanceof I4GLParser.DatabaseDeclarationContext)) {
+                statementNode = (I4GLStatementNode) visit(child);
                 throw new ParseException(source, ctx, "Visited an unimplemented Node in FUNCTION");
             }
         }
@@ -815,6 +816,33 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (ctx.USING() != null) {
             throw new NotImplementedException();
         }
+        return node;
+    }
+
+    @Override
+    public Node visitFactorTypes(final I4GLParser.FactorTypesContext ctx) {
+        if (ctx.constant() != null) {
+            return visit(ctx.constant());
+        }
+        if (ctx.variable() != null) {
+            return visit(ctx.variable());
+        }
+        I4GLExpressionNode node = null;
+        if (ctx.function() != null) {
+            node = (I4GLExpressionNode) visit(ctx.function());;
+            if (ctx.GROUP() != null) {
+                throw new NotImplementedException();
+            }
+        }
+        else if (ctx.expression() != null) {
+            node = (I4GLExpressionNode) visit(ctx.expression());;
+        }
+        else if (ctx.NOT() != null && ctx.factor() != null) {
+            node = (I4GLExpressionNode) visit(ctx.factor());;
+            node = I4GLNotNodeGen.create(node);
+        }
+        setSourceFromContext(node, ctx);
+        node.addExpressionTag();
         return node;
     }
 
