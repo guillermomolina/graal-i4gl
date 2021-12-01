@@ -164,7 +164,7 @@ returnStatement: RETURN expressionOrComponentVariableList?;
 label: identifier;
 
 unlabelledStatement:
-	simpleStatement SEMI?
+	simpleStatement
 	| structuredStatement;
 
 simpleStatement:
@@ -259,7 +259,7 @@ factorTypes:
 	| NOT factor;
 
 function:
-	identifier LPAREN expressionOrComponentVariableList? RPAREN;
+	identifier LPAREN expressionOrComponentVariableList? RPAREN SEMI?;
 
 constant:
 	asciiConstant

@@ -419,7 +419,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             if (statementNode != null) {
                 statementNodes.add(statementNode);
             } else if (!(child instanceof I4GLParser.DatabaseDeclarationContext)) {
-                statementNode = (I4GLStatementNode) visit(child);
                 throw new ParseException(source, ctx, "Visited an unimplemented Node in FUNCTION");
             }
         }
