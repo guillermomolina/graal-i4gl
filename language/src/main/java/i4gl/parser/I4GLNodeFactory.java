@@ -702,26 +702,22 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitIfLogicalFactor(final I4GLParser.IfLogicalFactorContext ctx) {
         I4GLExpressionNode node = null;
-        if (ctx.ifCondition() != null) {
-            node = (I4GLExpressionNode) visit(ctx.ifCondition());
-        }
-        if (ctx.expression() != null) {
+        if (ctx.expression() != null && ctx.IS() != null && ctx.NULL() != null) {
             node = (I4GLExpressionNode) visit(ctx.expression());
-        }
-        if (ctx.ifLogicalRelation() != null) {
+            node = I4GLIsNullNodeGen.create(node);
+            if (ctx.NOT() != null) {
+                node = I4GLNotNodeGen.create(node);
+            }
+        } else if (ctx.ifCondition() != null) {
+            node = (I4GLExpressionNode) visit(ctx.ifCondition());
+            if (ctx.NOT() != null) {
+                node = I4GLNotNodeGen.create(node);
+            }
+        } else if (ctx.ifLogicalRelation() != null) {
             node = (I4GLExpressionNode) visit(ctx.ifLogicalRelation());
         }
-        assert node != null;
-        if (ctx.IS() != null && ctx.NULL() != null) {
-            node = I4GLIsNullNodeGen.create(node);
-            setSourceFromContext(node, ctx);
-            node.addExpressionTag();
-        }
-        if (ctx.NOT() != null) {
-            node = I4GLNotNodeGen.create(node);
-            setSourceFromContext(node, ctx);
-            node.addExpressionTag();
-        }
+        setSourceFromContext(node, ctx);
+        node.addExpressionTag();
         return node;
     }
 

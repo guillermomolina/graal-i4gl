@@ -86,6 +86,33 @@
                 "skipConstructors": false
             },
             "console": "internalConsole"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch) rh_0.4gl",
+            "request": "launch",
+            "mainClass": "i4gl.Launcher",
+            "projectName": "launcher",
+            "args": [
+                "--log.i4gl.level=FINEST",
+                "/workspaces/4gl-cgi/rh/rh_0.4gl",
+                "/workspaces/llibreria/BASEonline/ajudes.4gl"
+            ],
+            "vmArgs": [
+                "-ea",
+                "-Dtruffle.class.path.append=./language/target/language.jar:/opt/squirrel-sql/squirrel-sql.jar",
+                "-Dsquirrel.home=/opt/squirrel-sql"
+            ],
+            "stepFilters": {
+                "skipClasses": [
+                    "$JDK",
+                    "junit.*"
+                ],
+                "skipSynthetics": true,
+                "skipStaticInitializers": true,
+                "skipConstructors": false
+            },
+            "console": "internalConsole"
         }
     ]
 }
