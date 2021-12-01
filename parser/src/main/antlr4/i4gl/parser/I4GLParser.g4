@@ -163,9 +163,7 @@ returnStatement: RETURN expressionOrComponentVariableList?;
 
 label: identifier;
 
-unlabelledStatement:
-	simpleStatement
-	| structuredStatement;
+unlabelledStatement: simpleStatement | structuredStatement;
 
 simpleStatement:
 	assignmentStatement
@@ -204,13 +202,13 @@ assignmentStatement:
 
 simpleAssignmentStatement: variable EQUAL assignmentValue;
 
-assignmentValue: concatExpression | NULL;
+assignmentValue: concatExpression | function SEMI | NULL;
 
 multipleAssignmentStatement:
 	identifier DOT STAR EQUAL identifier DOT STAR;
 
 callStatement:
-	CALL function (RETURNING variableOrComponentList)?;
+	CALL function (SEMI | RETURNING variableOrComponentList)?;
 
 gotoStatement: GOTO COLON? label;
 
@@ -259,7 +257,7 @@ factorTypes:
 	| NOT factor;
 
 function:
-	identifier LPAREN expressionOrComponentVariableList? RPAREN SEMI?;
+	identifier LPAREN expressionOrComponentVariableList? RPAREN;
 
 constant:
 	asciiConstant

@@ -1,0 +1,20 @@
+MAIN
+  DEFINE result INT
+
+  LET result = f1(101);
+  DISPLAY result  
+END MAIN 
+
+FUNCTION f1(f1_var)
+  DEFINE f1_var INT
+
+  CALL f2(201);
+  RETURN 102
+END FUNCTION
+
+FUNCTION f2(f2_var)
+  DEFINE f2_var INT
+
+  DISPLAY f2_var
+  RETURN 202
+END FUNCTION

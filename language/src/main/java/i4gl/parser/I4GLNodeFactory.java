@@ -961,6 +961,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (ctx.concatExpression() != null) {
             return visit(ctx.concatExpression());
         }
+        if (ctx.function() != null) {
+            return visit(ctx.function());
+        }
         if (ctx.NULL() != null) {
             throw new NotImplementedException();
         }
