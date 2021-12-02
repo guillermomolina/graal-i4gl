@@ -338,17 +338,21 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitFunctionDefinition(final I4GLParser.FunctionDefinitionContext ctx) {
         try {
             final String functionIdentifier = ctx.identifier().getText();
-            List<String> parameteridentifiers = null;
+            List<String> parameterIdentifiers = null;
             if (ctx.parameterList() != null) {
-                parameteridentifiers = new ArrayList<>(ctx.parameterList().parameterGroup().size());
-                for (final I4GLParser.ParameterGroupContext parameterCtx : ctx.parameterList().parameterGroup()) {
-                    parameteridentifiers.add(parameterCtx.getText());
+                var parameterList = ctx.parameterList();
+                if (parameterList.parameterGroup() != null) {
+                    var parameterGroup = parameterList.parameterGroup();
+                    parameterIdentifiers = new ArrayList<>(parameterGroup.identifier().size());
+                    for (final I4GLParser.IdentifierContext identifierCtx : parameterGroup.identifier()) {
+                       parameterIdentifiers.add(identifierCtx.getText());
+                    }
                 }
             }
             Interval sourceInterval = srcFromContext(ctx);
             final SourceSection sourceSection = source.createSection(sourceInterval.a, sourceInterval.length());
             pushNewScope(I4GLParseScope.FUNCTION_TYPE, functionIdentifier);
-            I4GLBlockNode bodyNode = createFunctionBody(sourceSection, parameteridentifiers, ctx.typeDeclarations(),
+            I4GLBlockNode bodyNode = createFunctionBody(sourceSection, parameterIdentifiers, ctx.typeDeclarations(),
                     ctx.codeBlock());
             final I4GLRootNode rootNode = new I4GLRootNode(language, currentParseScope.getFrameDescriptor(), bodyNode,
                     sourceSection, functionIdentifier);
@@ -832,16 +836,17 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
         I4GLExpressionNode node = null;
         if (ctx.function() != null) {
-            node = (I4GLExpressionNode) visit(ctx.function());;
+            node = (I4GLExpressionNode) visit(ctx.function());
+            ;
             if (ctx.GROUP() != null) {
                 throw new NotImplementedException();
             }
-        }
-        else if (ctx.expression() != null) {
-            node = (I4GLExpressionNode) visit(ctx.expression());;
-        }
-        else if (ctx.NOT() != null && ctx.factor() != null) {
-            node = (I4GLExpressionNode) visit(ctx.factor());;
+        } else if (ctx.expression() != null) {
+            node = (I4GLExpressionNode) visit(ctx.expression());
+            ;
+        } else if (ctx.NOT() != null && ctx.factor() != null) {
+            node = (I4GLExpressionNode) visit(ctx.factor());
+            ;
             node = I4GLNotNodeGen.create(node);
         }
         setSourceFromContext(node, ctx);

@@ -37,7 +37,7 @@ functionOrReportDefinitions: (
 functionDefinition:
 	FUNCTION identifier parameterList? typeDeclarations? codeBlock? END FUNCTION;
 
-parameterList: LPAREN parameterGroup* RPAREN;
+parameterList: LPAREN parameterGroup? RPAREN;
 
 parameterGroup: identifier (COMMA identifier)*;
 

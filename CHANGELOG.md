@@ -6,6 +6,7 @@ Version 0.2.0
 - Add fgl_getenv builtin
 - Implement visitFactorTypes in Node Factory
 - Implement using operator
+- Fix function definition parameters
 
 Version 0.1.0
 
