@@ -25,6 +25,7 @@ public class NumberFormatter {
     }
 
     public static String Format(String format, double data) {
+        int formatLength = format.length();
         Boolean isNegativeData = data < 0;
         double unsignedData = isNegativeData ? -data : data;
         int iod = format.indexOf(".");
@@ -34,8 +35,9 @@ public class NumberFormatter {
         Boolean isLeftJustified = false;
         int dolarEndPosition = -1;
         int minusEndPosition = -1;
+        int parenthesisEndPosition = -1;
         String blankCharacter = " ";
-        for (int i = 0; i < format.length(); i++) {
+        for (int i = 0; i < formatLength; i++) {
             char c = format.charAt(i);
             if (c == '$') {
                 if (!isMoney) {
@@ -46,12 +48,28 @@ public class NumberFormatter {
                 c = '#';
             }
             if (c == '-') {
+                assert parenthesisEndPosition == -1;
                 if (!isNegativeFormat) {
                     isNegativeFormat = true;
                     isLeftJustified = true;
                 }
                 minusEndPosition = i;
                 c = '#';
+            }
+            if (c == '(') {
+                assert minusEndPosition == -1;
+                if (!isNegativeFormat) {
+                    isNegativeFormat = true;
+                    isLeftJustified = true;
+                }
+                parenthesisEndPosition = i;
+                c = '#';
+            }
+            if (c == ')') {
+                assert minusEndPosition == -1;
+                assert parenthesisEndPosition >= 0;
+                assert i == formatLength - 1;
+                assert modifiedFormat.length() == formatLength - 1;
             }
             if (c == '&') {
                 c = '0';
@@ -60,7 +78,7 @@ public class NumberFormatter {
                 isLeftJustified = true;
                 c = '#';
             }
-            if(c == '*') {
+            if (c == '*') {
                 blankCharacter = "*";
                 c = '#';
             }
@@ -72,7 +90,7 @@ public class NumberFormatter {
             }
             if (i == iod) {
             }
-            if (i > iod) {
+            if (i > iod && c != ')') {
                 c = '0';
             }
             modifiedFormat += c;
@@ -89,24 +107,38 @@ public class NumberFormatter {
             }
         }
         output = sb.toString();
-        int length = modifiedFormat.length();
         if (isMoney) {
-            int spacesCount = length - (output.length() + 1);
+            int spacesCount = formatLength - (output.length() + 1);
             spacesCount -= dolarEndPosition;
             String spaces = spacesCount > 0 ? blankCharacter.repeat(spacesCount) : "";
             output = "$" + spaces + output;
         }
-        if (isNegativeFormat && isNegativeData) {
-            int spacesCount = length - (output.length() + 1);
-            spacesCount -= minusEndPosition;
-            String spaces = spacesCount > 0 ? blankCharacter.repeat(spacesCount) : "";
-            output = "-" + spaces + output;
+        if (isNegativeFormat) {
+            if(isNegativeData) {
+                if (minusEndPosition != -1) {
+                    int spacesCount = formatLength - (output.length() + 1);
+                    spacesCount -= minusEndPosition;
+                    String spaces = spacesCount > 0 ? blankCharacter.repeat(spacesCount) : "";
+                    output = "-" + spaces + output;
+                } 
+                if (parenthesisEndPosition != -1) {
+                    int spacesCount = formatLength - (output.length() + 1);
+                    spacesCount -= parenthesisEndPosition;
+                    String spaces = spacesCount > 0 ? blankCharacter.repeat(spacesCount) : "";
+                    output = "(" + spaces + output;
+                }    
+            } else {
+                if (parenthesisEndPosition != -1) {
+                    assert output.charAt(output.length() - 1) == ')';
+                    output = output.substring(0, output.length() - 1);
+                }
+            }
         }
-        if (output.length() > length) {
-            return "*".repeat(length);
+        if (output.length() > formatLength) {
+            return "*".repeat(formatLength);
         }
         if (!isLeftJustified) {
-            int spacesCount = length - output.length();
+            int spacesCount = formatLength - output.length();
             String spaces = spacesCount > 0 ? blankCharacter.repeat(spacesCount) : "";
             output = spaces + output;
         }
