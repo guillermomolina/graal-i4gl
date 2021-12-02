@@ -12,6 +12,9 @@ public abstract class I4GLConcatenationNode extends I4GLBinaryExpressionNode {
 
     @Specialization
     protected String concat(String left, Object right) {
+        if (right == null) {
+            return left;
+        }
         return left + right.toString();
     }
 }

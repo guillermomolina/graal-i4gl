@@ -42,6 +42,7 @@ import i4gl.nodes.control.I4GLWhileNode;
 import i4gl.nodes.expression.I4GLClippedNodeGen;
 import i4gl.nodes.expression.I4GLConcatenationNodeGen;
 import i4gl.nodes.expression.I4GLExpressionNode;
+import i4gl.nodes.expression.I4GLUsingNodeGen;
 import i4gl.nodes.literals.I4GLBigIntLiteralNodeGen;
 import i4gl.nodes.literals.I4GLIntLiteralNodeGen;
 import i4gl.nodes.literals.I4GLSmallFloatLiteralNode;
@@ -813,7 +814,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             throw new NotImplementedException();
         }
         if (ctx.USING() != null) {
-            throw new NotImplementedException();
+            I4GLExpressionNode format = (I4GLExpressionNode) visit(ctx.string());
+            node = I4GLUsingNodeGen.create(node, format);
+            setSourceFromContext(node, ctx);
+            node.addExpressionTag();
         }
         return node;
     }

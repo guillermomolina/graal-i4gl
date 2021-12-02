@@ -5,6 +5,7 @@ Version 0.2.0
 - Implement initial icgi library support
 - Add fgl_getenv builtin
 - Implement visitFactorTypes in Node Factory
+- Implement using operator
 
 Version 0.1.0
 
