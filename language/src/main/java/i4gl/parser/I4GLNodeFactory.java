@@ -45,6 +45,7 @@ import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.expression.I4GLUsingNodeGen;
 import i4gl.nodes.literals.I4GLBigIntLiteralNodeGen;
 import i4gl.nodes.literals.I4GLIntLiteralNodeGen;
+import i4gl.nodes.literals.I4GLNullLiteralNode;
 import i4gl.nodes.literals.I4GLSmallFloatLiteralNode;
 import i4gl.nodes.literals.I4GLSmallFloatLiteralNodeGen;
 import i4gl.nodes.literals.I4GLTextLiteralNode;
@@ -713,6 +714,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             if (ctx.NOT() != null) {
                 node = I4GLNotNodeGen.create(node);
             }
+            if (ctx.NULL() != null) {
+                throw new NotImplementedException("NULL not implemented");
+            }
         } else if (ctx.ifCondition() != null) {
             node = (I4GLExpressionNode) visit(ctx.ifCondition());
             if (ctx.NOT() != null) {
@@ -974,7 +978,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             return visit(ctx.function());
         }
         if (ctx.NULL() != null) {
-            throw new NotImplementedException();
+            return new I4GLNullLiteralNode();
         }
         throw new ParseException(source, ctx, "Parse Error");
     }

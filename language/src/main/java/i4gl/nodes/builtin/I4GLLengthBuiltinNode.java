@@ -10,6 +10,7 @@ import i4gl.runtime.values.I4GLBigIntArray;
 import i4gl.runtime.values.I4GLChar;
 import i4gl.runtime.values.I4GLFloatArray;
 import i4gl.runtime.values.I4GLIntArray;
+import i4gl.runtime.values.I4GLNull;
 import i4gl.runtime.values.I4GLSmallFloatArray;
 import i4gl.runtime.values.I4GLSmallIntArray;
 import i4gl.runtime.values.I4GLVarchar;
@@ -57,6 +58,11 @@ public abstract class I4GLLengthBuiltinNode extends I4GLBuiltinNode {
     @Specialization
     int length(I4GLFloatArray array) {
         return array.getSize();
+    }
+
+    @Specialization
+    int length(I4GLNull string) {
+        return 0;
     }
 
     @Specialization
