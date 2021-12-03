@@ -12,7 +12,9 @@ module:
 	databaseDeclaration? globalsDeclaration? typeDeclarations? mainFunctionDefinition?
 		functionOrReportDefinitions? EOF;
 
-identifier: IDENT;
+identifier: keywordAsIdentifier | IDENT;
+
+keywordAsIdentifier: LENGTH;
 
 mainFunctionDefinition:
 	MAIN typeDeclarations? mainStatements? END MAIN;

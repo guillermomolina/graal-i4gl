@@ -3,13 +3,13 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) Using.4gl",
+            "name": "Debug (Launch) Length.4gl",
             "request": "launch",
             "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Using.4gl",
+                "${workspaceFolder}/language/tests/simple/Length.4gl",
             ],
             "vmArgs": [
                 "-ea",
@@ -36,7 +36,8 @@
             "args": [
                 "--log.i4gl.level=FINEST",
                 "/workspaces/4gl-cgi/rh/rh_0.4gl",
-                "/workspaces/llibreria/BASEonline/ajudes.4gl"
+                "/workspaces/llibreria/BASEonline/ajudes.4gl",
+                "/workspaces/llibreria/BASEonline/configuracio.4gl"
             ],
             "vmArgs": [
                 "-ea",

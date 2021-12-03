@@ -29,6 +29,7 @@ import com.oracle.truffle.api.source.Source;
 
 import i4gl.I4GLLanguage;
 import i4gl.nodes.builtin.I4GLBuiltinNode;
+import i4gl.nodes.builtin.I4GLLengthBuiltinNodeFactory;
 import i4gl.nodes.builtin.fgl.FGLGetEnvBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIDecodeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIEncodeBuiltinNodeFactory;
@@ -142,6 +143,7 @@ public final class I4GLContext {
      * {@link I4GLBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
+        installBuiltin(I4GLLengthBuiltinNodeFactory.getInstance());
         installBuiltin(ICGIDecodeBuiltinNodeFactory.getInstance());
         installBuiltin(FGLGetEnvBuiltinNodeFactory.getInstance());
         installBuiltin(ICGIEncodeBuiltinNodeFactory.getInstance());

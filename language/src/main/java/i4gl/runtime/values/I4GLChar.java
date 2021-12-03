@@ -45,6 +45,14 @@ public class I4GLChar implements TruffleObject {
         return data.length();
     }
 
+    public int getLength() {
+        int i = data.length() - 1;
+        while (i >= 0 && Character.isWhitespace(data.charAt(i))) {
+            i--;
+        }
+        return i + 1;
+    }
+
     public void assignString(String value) {
         final int size = getSize();
         if (value.length() > size) {
@@ -72,11 +80,7 @@ public class I4GLChar implements TruffleObject {
     }
 
     public Object clipped() {
-        int i = data.length()-1;
-        while (i >= 0 && Character.isWhitespace(data.charAt(i))) {
-            i--;
-        }
-        String clipped = data.substring(0,i+1);
+        String clipped = data.substring(0, getLength());
         return new I4GLChar(clipped);
     }
 
@@ -118,7 +122,7 @@ public class I4GLChar implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        if(getSize() == 1) {
+        if (getSize() == 1) {
             return I4GLChar1Type.SINGLETON;
         }
         return new I4GLCharType(getSize());

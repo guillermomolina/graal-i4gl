@@ -46,6 +46,10 @@ public class I4GLVarchar implements TruffleObject {
         data = value.substring(0, Math.min(size, value.length()));
     }
 
+    public int getSize() {
+        return data.length();
+    }
+
     public char getCharAt(int index) {
         checkArrayIndex(index);
         return data.charAt(index);
