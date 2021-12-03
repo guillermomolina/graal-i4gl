@@ -25,7 +25,8 @@ public class I4GLChar implements TruffleObject {
 
     public I4GLChar(int size) {
         char[] chars = new char[size];
-        Arrays.fill(chars, ' ');
+        char value = 0;
+        Arrays.fill(chars, value);
         this.data = new String(chars);
     }
 

@@ -9,6 +9,7 @@ Version 0.2.0
 - Fix function definition parameters
 - Add length builtin
 - Implement NULL assignment
+- Fix CHAR uninitialized value
 
 Version 0.1.0
 

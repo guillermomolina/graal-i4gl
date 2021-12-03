@@ -714,9 +714,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             if (ctx.NOT() != null) {
                 node = I4GLNotNodeGen.create(node);
             }
-            if (ctx.NULL() != null) {
-                throw new NotImplementedException("NULL not implemented");
-            }
         } else if (ctx.ifCondition() != null) {
             node = (I4GLExpressionNode) visit(ctx.ifCondition());
             if (ctx.NOT() != null) {

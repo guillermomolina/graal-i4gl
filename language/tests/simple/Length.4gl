@@ -26,14 +26,11 @@ MAIN
   LET l = length(aVarchar)
   DISPLAY l
 
-  -- LET l = length(anArray)
-  -- DISPLAY l
-  -- LET anArray = NULL
-  -- LET l = length(anArray)
-  -- DISPLAY l
-  -- LET anArray[1] = 101.5
-  -- LET anArray[2] = 102.74
-  -- LET l = length(anArray)
-  -- DISPLAY l
+  LET l = length(anArray)
+  DISPLAY l
+  LET anArray[1] = 101.5
+  LET anArray[2] = 102.74
+  LET l = length(anArray)
+  DISPLAY l
 
 END MAIN 
