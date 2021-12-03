@@ -170,6 +170,7 @@ unlabelledStatement: simpleStatement | structuredStatement;
 simpleStatement:
 	assignmentStatement
 	| callStatement
+	| sqlStatement410
 	| sqlStatement
 	| otherI4GLStatement
 	| menuInsideStatement
@@ -187,7 +188,7 @@ runStatement:
 	)?;
 
 //Exploded for an easier visitor variable: identifier (DOT identifier)* variableIndex?;
-variable: notIndexedVariable | indexedVariable;
+variable: DOLLAR? (notIndexedVariable | indexedVariable);
 
 notIndexedVariable: simpleVariable | recordVariable;
 
@@ -621,6 +622,8 @@ screenStatement:
 	| SCROLL fieldList (COMMA fieldList)* (UP | DOWN) (
 		BY numericConstant
 	)?;
+
+sqlStatement410: SQL sqlStatement SEMI? END SQL;
 
 sqlStatement:
 	cursorManipulationStatement

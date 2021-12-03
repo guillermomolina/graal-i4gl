@@ -1377,6 +1377,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitSqlStatement410(final I4GLParser.SqlStatement410Context ctx) {
+        I4GLStatementNode node = (I4GLStatementNode) visit(ctx.sqlStatement());
+        setSourceFromContext(node, ctx);
+        return node;
+    }
+
+    @Override
     public Node visitSqlStatement(final I4GLParser.SqlStatementContext ctx) {
         I4GLStatementNode node = (I4GLStatementNode) super.visitSqlStatement(ctx);
         if (node == null) {

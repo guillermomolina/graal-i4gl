@@ -15,6 +15,7 @@
 		// Not working Apache Language Server
 		//"oracle-labs-graalvm.graalvm",
 		//"guillermomolina.graalvm-i4gl",
+		"redhat.fabric8-analytics",
 		"vscjava.vscode-java-pack",
 		"cristianrengifo.informix4gl", 
 		"dotjoshjohnson.xml",

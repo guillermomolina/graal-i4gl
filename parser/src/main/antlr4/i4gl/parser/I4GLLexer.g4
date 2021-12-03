@@ -619,6 +619,8 @@ ATSYMBOL: '@';
 
 DOUBLEVERTBAR: '||';
 
+DOLLAR: '$';
+
 IDENT: ('a' .. 'z' | 'A' .. 'Z' | '_') (
 		'a' .. 'z'
 		| 'A' .. 'Z'

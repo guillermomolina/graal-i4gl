@@ -11,6 +11,7 @@ Version 0.2.0
 - Implement NULL assignment
 - Fix CHAR uninitialized value
 - Implement ASCII expression
+- Implement SQL ... END SQL statement
 
 Version 0.1.0
 
