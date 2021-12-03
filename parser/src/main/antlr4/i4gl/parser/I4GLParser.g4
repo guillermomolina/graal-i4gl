@@ -367,12 +367,12 @@ continueStatements: CONTINUE exitTypes;
 
 otherStorageStatement:
 	ALLOCATE ARRAY identifier arrayIndexer
-	| LOCATE variableList IN (MEMORY | FILE (variable | string)?)
+	| LOCATE variableOrComponentList IN (MEMORY | FILE (variable | string)?)
 	| DEALLOCATE ARRAY identifier
 	| RESIZE ARRAY identifier arrayIndexer
-	| FREE variableList // name clash, marked as SQL
-	| INITIALIZE variableList (TO NULL | LIKE expressionList)
-	| VALIDATE variableList LIKE expression (COMMA expression)*;
+	| FREE variableOrComponentList // name clash, marked as SQL
+	| INITIALIZE variableOrComponentList (TO NULL | LIKE expressionList)
+	| VALIDATE variableOrComponentList LIKE expression (COMMA expression)*;
 
 printExpressionItem:
 	COLUMN expression

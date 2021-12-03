@@ -12,6 +12,7 @@ Version 0.2.0
 - Fix CHAR uninitialized value
 - Implement ASCII expression
 - Implement SQL ... END SQL statement
+- Add complex record as variable in parser
 
 Version 0.1.0
 
