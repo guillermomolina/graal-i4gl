@@ -10,6 +10,7 @@ Version 0.2.0
 - Add length builtin
 - Implement NULL assignment
 - Fix CHAR uninitialized value
+- Implement ASCII expression
 
 Version 0.1.0
 

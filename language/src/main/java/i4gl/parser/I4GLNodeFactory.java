@@ -39,10 +39,8 @@ import i4gl.nodes.control.I4GLDebuggerNode;
 import i4gl.nodes.control.I4GLForNode;
 import i4gl.nodes.control.I4GLIfNode;
 import i4gl.nodes.control.I4GLWhileNode;
-import i4gl.nodes.expression.I4GLClippedNodeGen;
 import i4gl.nodes.expression.I4GLConcatenationNodeGen;
 import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.nodes.expression.I4GLUsingNodeGen;
 import i4gl.nodes.literals.I4GLBigIntLiteralNodeGen;
 import i4gl.nodes.literals.I4GLIntLiteralNodeGen;
 import i4gl.nodes.literals.I4GLNullLiteralNode;
@@ -58,6 +56,9 @@ import i4gl.nodes.logic.I4GLLikeNodeGen;
 import i4gl.nodes.logic.I4GLMatchesNodeGen;
 import i4gl.nodes.logic.I4GLNotNodeGen;
 import i4gl.nodes.logic.I4GLOrNodeGen;
+import i4gl.nodes.operators.I4GLAsciiNodeGen;
+import i4gl.nodes.operators.I4GLClippedNodeGen;
+import i4gl.nodes.operators.I4GLUsingNodeGen;
 import i4gl.nodes.root.I4GLMainRootNode;
 import i4gl.nodes.root.I4GLRootNode;
 import i4gl.nodes.sql.I4GLCursorNode;
@@ -346,7 +347,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                     var parameterGroup = parameterList.parameterGroup();
                     parameterIdentifiers = new ArrayList<>(parameterGroup.identifier().size());
                     for (final I4GLParser.IdentifierContext identifierCtx : parameterGroup.identifier()) {
-                       parameterIdentifiers.add(identifierCtx.getText());
+                        parameterIdentifiers.add(identifierCtx.getText());
                     }
                 }
             }
@@ -1146,6 +1147,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitAsciiConstant(final I4GLParser.AsciiConstantContext ctx) {
+        if (ctx.expression() != null) {
+            I4GLExpressionNode expressionNode = (I4GLExpressionNode) visit(ctx.expression());
+            I4GLExpressionNode node = I4GLAsciiNodeGen.create(expressionNode);
+            setSourceFromContext(node, ctx);
+            node.addExpressionTag();
+            return node;
+        }
         final String asciiCodeText = ctx.UNSIGNED_INTEGER().getText();
         I4GLExpressionNode node;
         try {

@@ -267,7 +267,7 @@ constant:
 	| numericConstant
 	| string;
 
-asciiConstant: ASCII UNSIGNED_INTEGER;
+asciiConstant: ASCII (UNSIGNED_INTEGER | expression);
 
 booleanConstant: TRUE | FALSE;
 
