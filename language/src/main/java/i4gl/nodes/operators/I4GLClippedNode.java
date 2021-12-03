@@ -1,8 +1,9 @@
-package i4gl.nodes.expression;
+package i4gl.nodes.operators;
 
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import i4gl.nodes.expression.I4GLUnaryNode;
 import i4gl.runtime.values.I4GLChar;
 
 @NodeInfo(shortName = "CLIPPED")
