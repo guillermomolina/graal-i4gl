@@ -15,6 +15,7 @@ import i4gl.runtime.values.I4GLArray;
 import i4gl.runtime.values.I4GLBigIntArray;
 import i4gl.runtime.values.I4GLFloatArray;
 import i4gl.runtime.values.I4GLIntArray;
+import i4gl.runtime.values.I4GLRecordArray;
 import i4gl.runtime.values.I4GLSmallFloatArray;
 import i4gl.runtime.values.I4GLSmallIntArray;
 
@@ -60,6 +61,8 @@ public class I4GLArrayType extends I4GLType {
             return new I4GLSmallFloatArray(size);
         } else if (valuesType == I4GLFloatType.SINGLETON) {
             return new I4GLFloatArray(size);
+        } else if (valuesType instanceof I4GLRecordType) {
+            return new I4GLRecordArray((I4GLRecordType)valuesType, size);
         } else {
             throw new NotImplementedException();
             /*data = new Object[size];

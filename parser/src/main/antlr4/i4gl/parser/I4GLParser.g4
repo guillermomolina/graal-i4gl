@@ -196,7 +196,7 @@ simpleVariable: identifier;
 
 recordVariable: simpleVariable (DOT identifier)+;
 
-indexedVariable: notIndexedVariable variableIndex;
+indexedVariable: notIndexedVariable variableIndex (DOT identifier)*;
 
 variableIndex: LBRACK expressionList RBRACK;
 
