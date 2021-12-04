@@ -80,14 +80,6 @@
       <artifactId>parser</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-    <!-- Only need graal-sdk if using jdk 1.8
-    <dependency>
-      <groupId>org.graalvm.sdk</groupId>
-      <artifactId>graal-sdk</artifactId>
-      <version>${graalvm.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>

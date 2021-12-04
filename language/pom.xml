@@ -48,30 +48,14 @@
     <version>0.2.0-SNAPSHOT</version>
   </parent>
   <artifactId>language</artifactId>
-  <profiles>
-    <profile>
-      <id>jdk11-graalvm</id>
-      <activation>
-        <jdk>[11,</jdk>
-      </activation>
-      <properties>
-        <jar.dir>${project.build.directory}/jars</jar.dir>
-        <test.argLine>
+  <properties>
+    <jar.dir>${project.build.directory}/jars</jar.dir>
+    <test.argLine>
+          --upgrade-module-path='${jar.dir}/truffle-api.jar'
           --add-opens org.graalvm.sdk/org.graalvm.polyglot=ALL-UNNAMED 
           --add-exports java.base/jdk.internal.module=ALL-UNNAMED
-        </test.argLine>
-      </properties>
-    </profile>
-    <profile>
-      <id>jdk8-graalvm</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <properties>
-        <test.argLine>-XX:-UseJVMCIClassLoader</test.argLine>
-      </properties>
-    </profile>
-  </profiles>
+    </test.argLine>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -178,14 +162,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- Only need graal-sdk if using jdk 1.8
-    <dependency>
-      <groupId>org.graalvm.sdk</groupId>
-      <artifactId>graal-sdk</artifactId>
-      <version>${graalvm.version}</version>
-      <scope>provided</scope>
-    </dependency >
-    -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
