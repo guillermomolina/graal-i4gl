@@ -196,7 +196,8 @@ simpleVariable: identifier;
 
 recordVariable: simpleVariable (DOT identifier)+;
 
-indexedVariable: notIndexedVariable variableIndex (DOT identifier)*;
+indexedVariable:
+	notIndexedVariable variableIndex (DOT identifier)*;
 
 variableIndex: LBRACK expressionList RBRACK;
 
@@ -367,12 +368,23 @@ continueStatements: CONTINUE exitTypes;
 
 otherStorageStatement:
 	ALLOCATE ARRAY identifier arrayIndexer
-	| LOCATE variableOrComponentList IN (MEMORY | FILE (variable | string)?)
+	| LOCATE variableOrComponentList IN (
+		MEMORY
+		| FILE (variable | string)?
+	)
 	| DEALLOCATE ARRAY identifier
 	| RESIZE ARRAY identifier arrayIndexer
 	| FREE variableOrComponentList // name clash, marked as SQL
-	| INITIALIZE variableOrComponentList (TO NULL | LIKE expressionList)
-	| VALIDATE variableOrComponentList LIKE expression (COMMA expression)*;
+	| initializeStatement
+	| VALIDATE variableOrComponentList LIKE expression (
+		COMMA expression
+	)*;
+
+initializeStatement:
+	INITIALIZE variableOrComponentList (
+		TO NULL
+		| LIKE expressionList
+	);
 
 printExpressionItem:
 	COLUMN expression
