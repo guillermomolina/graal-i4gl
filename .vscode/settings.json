@@ -18,9 +18,11 @@
     "java.home": "/usr/java/default",
     "java.test.config": {
         "vmargs": [
+            "--add-opens", "org.graalvm.sdk/org.graalvm.polyglot=ALL-UNNAMED", 
+            "--add-exports", "java.base/jdk.internal.module=ALL-UNNAMED",
             "-ea",
             "-Dgraalvm.locatorDisabled=true",
-            "-Dsquirrel.home=/opt/squirrel-sql"
+            "-Dsquirrel.home=/opt/squirrel-sql",
         ]
     },
     "python.pythonPath": "/bin/python",
