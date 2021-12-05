@@ -16,6 +16,7 @@ Version 0.2.0
 - Implement array of records
 - Remove jdk8 support (as per graalvm removal)
 - Implement INITIALIZE statement
+- Add basic I4GLExpressionNode.getType() support
 
 Version 0.1.0
 
