@@ -13,7 +13,6 @@ import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.values.I4GLDecimal;
 import i4gl.runtime.values.I4GLNull;
 import i4gl.runtime.values.I4GLVarchar;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
@@ -182,22 +181,22 @@ public class SquirrelDataSet implements IDataSet {
 
    public static Object toI4GLObject(final ColumnDisplayDefinition cDefinition, final Object sqlValue) {
       if (sqlValue == null) {
-          return I4GLNull.SINGLETON;
+         return I4GLNull.SINGLETON;
       }
       switch (cDefinition.getSqlType()) {
-          case Types.VARCHAR:
-              return new I4GLVarchar(cDefinition.getPrecision(), (String) sqlValue);
-          case Types.DECIMAL:
-              return new I4GLDecimal((BigDecimal) sqlValue);
-          case Types.INTEGER:
-          case Types.BIGINT:
-          case Types.REAL:
-          case Types.FLOAT:
-              return sqlValue;
-          default:
-              throw new NotImplementedException();
+         case Types.VARCHAR:
+            return new I4GLVarchar(cDefinition.getPrecision(), (String) sqlValue);
+         case Types.DECIMAL:
+            return new I4GLDecimal((BigDecimal) sqlValue);
+         case Types.INTEGER:
+         case Types.BIGINT:
+         case Types.REAL:
+         case Types.FLOAT:
+            return sqlValue;
+         default:
+            throw new NotImplementedException();
       }
-  }
+   }
 
    private Object[] createRow(int[] columnIndices, ColumnDisplayDefinition[] colDefs,
          BlockMode blockMode) throws SQLException {
@@ -307,7 +306,8 @@ public class SquirrelDataSet implements IDataSet {
    // SS: Modified to auto-compute column widths if <computeWidths> is true
    private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md, String fullTableName,
          int[] columnIndices, boolean computeWidths) throws SQLException {
-      // ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
+      // ColumnDisplayDefinition should also have the Type (String, Date,
+      // Double,Integer,Boolean)
       int[] colWidths = null;
 
       // SS: update dynamic column widths
@@ -519,7 +519,7 @@ public class SquirrelDataSet implements IDataSet {
       if (_dataSetDefinition == null) {
          return null;
       }
-      
+
       List<String> columnNames = new ArrayList<>(getColumnCount());
       for (ColumnDisplayDefinition colDef : _dataSetDefinition.getColumnDefinitions()) {
          String columnName = "UNKNOWN";
