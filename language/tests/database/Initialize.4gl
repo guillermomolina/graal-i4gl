@@ -1,7 +1,7 @@
 -- CREATE TABLE test (
 --     testId INTEGER UNIQUE PRIMARY KEY,
 --     testVarchar NVARCHAR(50) DEFAULT ('default text') NOT NULL,
---     testInteger INTEGER DEFAULT(12) NOT NULL
+--     testInteger INTEGER DEFAULT 12 NOT NULL
 -- );
 
 
