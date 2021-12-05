@@ -28,7 +28,7 @@ RUN export SQUIRRELSQL_VERSION=4.1.0 && \
 ADD files/chinook.tar.xz /database
 COPY files/SQLDrivers.xml /home/$USERNAME/.squirrel-sql/SQLDrivers.xml
 COPY files/SQLAliases23.xml /home/$USERNAME/.squirrel-sql/SQLAliases23.xml
-RUN chown -R $USERNAME:$USERNAME /home/$USERNAME
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME /database
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
