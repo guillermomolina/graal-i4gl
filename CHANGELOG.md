@@ -15,6 +15,7 @@ Version 0.2.0
 - Add complex record as variable in parser
 - Implement array of records
 - Remove jdk8 support (as per graalvm removal)
+- Implement INITIALIZE statement
 
 Version 0.1.0
 

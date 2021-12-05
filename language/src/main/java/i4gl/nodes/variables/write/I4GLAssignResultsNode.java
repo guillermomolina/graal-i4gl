@@ -1,5 +1,6 @@
 package i4gl.nodes.variables.write;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import com.oracle.truffle.api.CompilerAsserts;
@@ -10,6 +11,7 @@ import i4gl.nodes.statement.I4GLStatementNode;
 import i4gl.nodes.variables.read.I4GLReadFromResultNode;
 import i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 import i4gl.runtime.exceptions.UnexpectedRuntimeException;
+import i4gl.runtime.values.I4GLNull;
 
 public class I4GLAssignResultsNode extends I4GLStatementNode {
 
@@ -21,8 +23,16 @@ public class I4GLAssignResultsNode extends I4GLStatementNode {
     }
 
     public void setResults(final Object[] results) {
-
         this.results = results;
+    }
+
+    public void setResultsToNull() {
+        results = new Object[readAssignMap.size()];
+        Arrays.fill(results, I4GLNull.SINGLETON);
+    }
+
+    public Map<I4GLReadFromResultNode, I4GLStatementNode> getReadAssignMap() {
+        return readAssignMap;
     }
 
     @ExplodeLoop

@@ -383,7 +383,7 @@ otherStorageStatement:
 initializeStatement:
 	INITIALIZE variableOrComponentList (
 		TO NULL
-		| LIKE expressionList
+		| LIKE columnsList
 	);
 
 printExpressionItem:
@@ -473,6 +473,15 @@ constructStatement:
 	)?;
 
 columnsList: columnsTableId (COMMA columnsTableId)*;
+
+columnsTableId: tableIdentifier DOT (STAR | identifier);
+
+tableIdentifier: tableQualifier? identifier;
+
+tableQualifier:
+	identifier COLON
+	| identifier ATSYMBOL identifier COLON
+	| string;
 
 displayArrayStatement:
 	DISPLAY ARRAY expression TO expression attributeList? displayEvents* (
@@ -751,20 +760,6 @@ wheneverFlow: (CONTINUE | STOP)
 	| (GO TO | GOTO) COLON? identifier;
 
 clientServerStatement: CLOSE_DATABASE;
-
-columnsTableId:
-	STAR
-	| (tableIdentifier variableIndex?) (
-		DOT STAR
-		| DOT columnsTableId
-	)?;
-
-tableQualifier:
-	identifier COLON
-	| identifier ATSYMBOL identifier COLON
-	| string;
-
-tableIdentifier: tableQualifier? identifier;
 
 databaseDeclaration:
 	DATABASE (identifier (ATSYMBOL identifier)?) EXCLUSIVE? SEMI?;

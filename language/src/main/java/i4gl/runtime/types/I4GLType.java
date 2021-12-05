@@ -72,7 +72,7 @@ public abstract class I4GLType implements TruffleObject {
                 LOGGER.warning("Unknown SQL type: " + JDBCType.valueOf(info.getDataType()).getName());
                 throw new NotImplementedException();
         }
-    }
+    } 
 
     /**
      * Checks whether this type is of a certain instance. If used on fast-paths it
