@@ -6,10 +6,11 @@ import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.I4GLTypeSystem;
+import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.statement.I4GLStatementNode;
 import i4gl.runtime.values.I4GLBigIntArray;
+import i4gl.runtime.values.I4GLCharArray;
 import i4gl.runtime.values.I4GLFloatArray;
 import i4gl.runtime.values.I4GLIntArray;
 import i4gl.runtime.values.I4GLSmallFloatArray;
@@ -27,6 +28,11 @@ import i4gl.runtime.values.I4GLSmallIntArray;
 @NodeChild(value = "valueNode", type = I4GLExpressionNode.class)
 @TypeSystemReference(I4GLTypeSystem.class)
 public abstract class I4GLAssignToIndexedNode extends I4GLStatementNode {
+    
+    @Specialization
+    void assignToChar1Array(I4GLCharArray array, int index, char value) {
+        array.setValueAt(index - 1, value);
+    }
     
     @Specialization
     void assignToSmallIntArray(I4GLSmallIntArray array, int index, short value) {

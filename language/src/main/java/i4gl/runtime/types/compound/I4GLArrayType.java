@@ -13,6 +13,7 @@ import i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import i4gl.runtime.types.primitive.I4GLSmallIntType;
 import i4gl.runtime.values.I4GLArray;
 import i4gl.runtime.values.I4GLBigIntArray;
+import i4gl.runtime.values.I4GLCharArray;
 import i4gl.runtime.values.I4GLFloatArray;
 import i4gl.runtime.values.I4GLIntArray;
 import i4gl.runtime.values.I4GLRecordArray;
@@ -20,8 +21,10 @@ import i4gl.runtime.values.I4GLSmallFloatArray;
 import i4gl.runtime.values.I4GLSmallIntArray;
 
 /**
- * Type descriptor for array values. Note that it can be only one dimensional and so multidimensional arrays has to be
- * stored in a chain of these descriptors. It contains additional information about the type of the inner values and
+ * Type descriptor for array values. Note that it can be only one dimensional
+ * and so multidimensional arrays has to be
+ * stored in a chain of these descriptors. It contains additional information
+ * about the type of the inner values and
  * the universe of the indices stored inside an ordinal descriptor.
  */
 public class I4GLArrayType extends I4GLType {
@@ -31,7 +34,8 @@ public class I4GLArrayType extends I4GLType {
 
     /**
      * Default constructor.
-     * @param dimension universe of the indices
+     * 
+     * @param dimension  universe of the indices
      * @param valuesType type descriptor of the inner values
      */
     public I4GLArrayType(int size, I4GLType valuesType) {
@@ -51,7 +55,9 @@ public class I4GLArrayType extends I4GLType {
     }
 
     public Object getDefaultValue() {
-        if (valuesType == I4GLSmallIntType.SINGLETON) {
+        if (valuesType == I4GLChar1Type.SINGLETON) {
+            return new I4GLCharArray(size);
+        } else if (valuesType == I4GLSmallIntType.SINGLETON) {
             return new I4GLSmallIntArray(size);
         } else if (valuesType == I4GLIntType.SINGLETON) {
             return new I4GLIntArray(size);
@@ -62,13 +68,15 @@ public class I4GLArrayType extends I4GLType {
         } else if (valuesType == I4GLFloatType.SINGLETON) {
             return new I4GLFloatArray(size);
         } else if (valuesType instanceof I4GLRecordType) {
-            return new I4GLRecordArray((I4GLRecordType)valuesType, size);
+            return new I4GLRecordArray((I4GLRecordType) valuesType, size);
         } else {
             throw new NotImplementedException();
-            /*data = new Object[size];
-            for (int i = 0; i < data.length; ++i) {
-                data[i] = valuesType.getDefaultValue();
-            }*/
+            /*
+             * data = new Object[size];
+             * for (int i = 0; i < data.length; ++i) {
+             * data[i] = valuesType.getDefaultValue();
+             * }
+             */
         }
     }
 

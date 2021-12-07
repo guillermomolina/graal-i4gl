@@ -20,7 +20,6 @@ import i4gl.runtime.database.SquirrelDataSet;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.types.complex.I4GLCursorType;
-
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
 @ExportLibrary(InteropLibrary.class)
@@ -47,7 +46,6 @@ public final class I4GLCursor implements TruffleObject {
         sqlExecuterTask.run();
         dataSet = sqlExecuterHandlerProxy.getResultSet();
         columnLabels = dataSet.getColumnLabels();
-
     }
 
     public boolean next() {

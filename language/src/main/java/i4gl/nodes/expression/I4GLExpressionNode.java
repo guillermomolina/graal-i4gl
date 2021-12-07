@@ -13,6 +13,7 @@ import i4gl.nodes.I4GLTypeSystem;
 import i4gl.nodes.I4GLTypeSystemGen;
 import i4gl.nodes.statement.I4GLStatementNode;
 import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.compound.I4GLChar1Type;
 import i4gl.runtime.types.primitive.I4GLBigIntType;
 import i4gl.runtime.types.primitive.I4GLFloatType;
 import i4gl.runtime.types.primitive.I4GLIntType;
@@ -78,6 +79,10 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
 	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException {
 		return I4GLTypeSystemGen.expectDouble(executeGeneric(frame));
 	}
+
+    protected boolean isChar() {
+        return getType() == I4GLChar1Type.SINGLETON;
+    }
 
     protected boolean isSmallInt() {
         return getType() == I4GLSmallIntType.SINGLETON;

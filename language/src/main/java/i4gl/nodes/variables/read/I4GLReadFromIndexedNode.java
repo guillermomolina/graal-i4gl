@@ -10,6 +10,7 @@ import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.runtime.types.I4GLType;
 import i4gl.runtime.values.I4GLBigIntArray;
 import i4gl.runtime.values.I4GLChar;
+import i4gl.runtime.values.I4GLCharArray;
 import i4gl.runtime.values.I4GLFloatArray;
 import i4gl.runtime.values.I4GLIntArray;
 import i4gl.runtime.values.I4GLRecord;
@@ -45,6 +46,11 @@ public abstract class I4GLReadFromIndexedNode extends I4GLExpressionNode {
     @Specialization
     String readVarchar(I4GLVarchar varchar, int index) {
         return Character.toString(varchar.getCharAt(index - 1));
+    }
+
+    @Specialization
+    char readCharArray(I4GLCharArray array, int index) {
+        return array.getValueAt(index - 1);
     }
 
     @Specialization

@@ -16,6 +16,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.exceptions.InvalidCastException;
+import i4gl.runtime.types.compound.I4GLChar1Type;
 import i4gl.runtime.types.compound.I4GLRecordType;
 import i4gl.runtime.types.primitive.I4GLBigIntType;
 import i4gl.runtime.types.primitive.I4GLFloatType;
@@ -37,6 +38,20 @@ public class I4GLRecord implements TruffleObject {
     public I4GLRecord(I4GLRecord source) {
         this.recordType = source.recordType;
         this.properties = source.properties;
+    }
+
+    public boolean isChar(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Byte;
+    }
+
+    public char getCharSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (char)value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, I4GLChar1Type.SINGLETON);
+        }
     }
 
     public boolean isSmallInt(String name) {

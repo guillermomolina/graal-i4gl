@@ -17,6 +17,8 @@ Version 0.2.0
 - Remove jdk8 support (as per graalvm removal)
 - Implement INITIALIZE statement
 - Add basic I4GLExpressionNode.getType() support
+- Add sqlcode global variable and the database side effects
+- Implement array of chars
 
 Version 0.1.0
 

@@ -94,8 +94,11 @@ import i4gl.runtime.types.I4GLType;
 import i4gl.runtime.types.complex.I4GLCursorType;
 import i4gl.runtime.types.complex.I4GLDatabaseType;
 import i4gl.runtime.types.compound.I4GLArrayType;
+import i4gl.runtime.types.compound.I4GLChar1Type;
+import i4gl.runtime.types.compound.I4GLCharType;
 import i4gl.runtime.types.compound.I4GLRecordType;
 import i4gl.runtime.types.compound.I4GLTextType;
+import i4gl.runtime.types.primitive.I4GLIntType;
 import i4gl.runtime.values.I4GLDatabase;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -127,7 +130,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         }
         this.moduleName = localModuleName;
         this.allFunctions = new HashMap<>();
-
     }
 
     public I4GLDatabase getDatabase(final ParserRuleContext ctx) {
@@ -277,6 +279,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         globalsFrameDescriptor = pushNewScope(I4GLParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
         if (ctx.databaseDeclaration() != null) {
             visit(ctx.databaseDeclaration());
+            createSqlcaGlobalVariable(ctx);
         }
         if (ctx.globalsDeclaration() != null) {
             visit(ctx.globalsDeclaration());
@@ -292,6 +295,21 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             visit(ctx.functionOrReportDefinitions());
         }
         return null;
+    }
+
+    private void createSqlcaGlobalVariable(final I4GLParser.ModuleContext ctx) {
+        Map<String, I4GLType> variables = new LinkedHashMap<>();
+        variables.put("sqlcode", I4GLIntType.SINGLETON);
+        variables.put("sqlerrm", new I4GLCharType(72));
+        variables.put("sqlerrp", new I4GLCharType(8));
+        variables.put("sqlerrd", new I4GLArrayType(6, I4GLIntType.SINGLETON));
+        variables.put("sqlwarn", new I4GLArrayType(8, I4GLChar1Type.SINGLETON));
+        I4GLRecordType sqlcaType = new I4GLRecordType(variables);
+        try {
+            currentParseScope.registerLocalVariable("sqlca", sqlcaType);
+        } catch (LexicalException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
     }
 
     @Override
@@ -1478,7 +1496,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
             I4GLExpressionNode databaseVariableNode = createReadDatabaseVariableNode();
-            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, assignResultsNode);
+            FrameSlot sqlcaFrameSlot = lookupVariableSlot("sqlca");
+            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, assignResultsNode, sqlcaFrameSlot);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
@@ -1492,21 +1511,21 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         List<TableColumnInfo> columnDefaultList = new ArrayList<>();
         I4GLDatabase database = getDatabase(ctx);
         SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();
-        for(var columnTableId: ctx.columnsTableId()) {
-            if(columnTableId.tableIdentifier().tableQualifier() != null) {
+        for (var columnTableId : ctx.columnsTableId()) {
+            if (columnTableId.tableIdentifier().tableQualifier() != null) {
                 throw new NotImplementedException();
             }
             final String tableName = columnTableId.tableIdentifier().identifier().getText();
             String columnName = null;
-            if( columnTableId.identifier() != null ) {
+            if (columnTableId.identifier() != null) {
                 columnName = columnTableId.identifier().getText();
-            } else if( columnTableId.STAR() == null ) {
+            } else if (columnTableId.STAR() == null) {
                 throw new ParseException(source, ctx, "Invalid column definition");
             }
             try {
                 TableColumnInfo[] tableColumnInfoArray = dmd.getColumnInfo(null, null, tableName);
-                for (TableColumnInfo tableColumnInfo: tableColumnInfoArray) {
-                    if(columnName == null || tableColumnInfo.getColumnName().equals(columnName)) {
+                for (TableColumnInfo tableColumnInfo : tableColumnInfoArray) {
+                    if (columnName == null || tableColumnInfo.getColumnName().equals(columnName)) {
                         columnDefaultList.add(tableColumnInfo);
                     }
                 }
@@ -1523,10 +1542,11 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         I4GLStatementNode node = null;
         if (ctx.LIKE() != null) {
             var columDefaultInfoList = getTableColumnDefaults(ctx.columnsList());
-            if(assignResultsNode.getReadAssignMap().size() != columDefaultInfoList.size()) {
+            if (assignResultsNode.getReadAssignMap().size() != columDefaultInfoList.size()) {
                 throw new ParseException(source, ctx, "Type or number of parameters mismmatch");
             }
-            node = (I4GLStatementNode) new I4GLInitializeNode(assignResultsNode, columDefaultInfoList.toArray(new TableColumnInfo[0]));
+            node = (I4GLStatementNode) new I4GLInitializeNode(assignResultsNode,
+                    columDefaultInfoList.toArray(new TableColumnInfo[0]));
         }
         if (ctx.TO() != null || ctx.NULL() != null) {
             node = (I4GLStatementNode) new I4GLInitializeToNullNode(assignResultsNode);
@@ -1536,6 +1556,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return node;
     }
 
+    
     @Override
     public Node visitDeclareCursorStatement(final I4GLParser.DeclareCursorStatementContext ctx) {
         if (ctx.SCROLL() != null) {

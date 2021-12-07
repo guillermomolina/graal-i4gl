@@ -12,6 +12,7 @@ public class I4GLCharType extends I4GLTextType {
     private final int size;
 
     public I4GLCharType(int size) {
+        assert (size > 1 || (getClass() == I4GLChar1Type.class));
         this.size = size;
     }
 

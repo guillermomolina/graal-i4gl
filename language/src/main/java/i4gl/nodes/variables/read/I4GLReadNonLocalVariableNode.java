@@ -1,9 +1,5 @@
 package i4gl.nodes.variables.read;
 
-import i4gl.exceptions.NotImplementedException;
-import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.I4GLType;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -13,6 +9,11 @@ import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
+
+import i4gl.exceptions.NotImplementedException;
+import i4gl.nodes.expression.I4GLExpressionNode;
+import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.types.I4GLType;
 
 /**
  * This node reads value of specified global variable (by its frame slot).
@@ -32,6 +33,16 @@ public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
     
     protected abstract FrameSlot getSlot();
     
+    @Specialization(guards = "getGlobalFrame().isByte(getSlot())")
+    protected char readChar(final VirtualFrame frame) {
+        return (char)FrameUtil.getByteSafe(getGlobalFrame(), getSlot());
+    }
+ /*   
+    @Specialization(guards = "getGlobalFrame().isShort(getSlot())")
+    protected short readSmallInt(final VirtualFrame frame) {
+        return (short)FrameUtil.getShortSafe(getGlobalFrame(), getSlot());
+    }
+   */
     @Specialization(guards = "getGlobalFrame().isInt(getSlot())")
     protected int readInt(final VirtualFrame frame) {
         return FrameUtil.getIntSafe(getGlobalFrame(), getSlot());
@@ -52,7 +63,7 @@ public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
         return FrameUtil.getDoubleSafe(getGlobalFrame(), getSlot());
     }
 
-    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readFloat" })
+    @Specialization(replaces = { "readChar", /*"readSmallInt",*/ "readInt", "readBigInt", "readSmallFloat", "readFloat" })
     protected Object readObject(final VirtualFrame frame) {
         if (!getGlobalFrame().isObject(getSlot())) {
             /*

@@ -21,8 +21,8 @@ import i4gl.runtime.values.I4GLNull;
  * CHAR - {@link I4GLCharType}, {@link Char1Type} - {@link I4GLChar}
  * VARCHAR - {@link I4GLVarcharType} - {@link I4GLVarchar}
  * RECORD - {@link I4GLRecordType} - {@link I4GLRecord}
- * ARRAY - {@link I4GLArrayType} - {@link I4GLSmallIntArray}, {@link I4GLIntArray}, {@link I4GLBigIntArray}, 
- *                                  {@link I4GLSmallFloatArray}, {@link I4GLFloatArray}
+ * ARRAY - {@link I4GLArrayType} - {@link I4GLCharArray}, {@link I4GLSmallIntArray}, {@link I4GLIntArray}, 
+ *                                 {@link I4GLBigIntArray}, {@link I4GLSmallFloatArray}, {@link I4GLFloatArray}
  * DATABASE - {@link I4GLDatabaseType} - {@link I4GLDatabase}
  * Cursor - {@link I4GLCursorType} - {@link I4GLCursor}
  * 

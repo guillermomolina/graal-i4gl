@@ -8,6 +8,7 @@ import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
 import i4gl.runtime.types.I4GLType;
 import i4gl.runtime.types.compound.I4GLArrayType;
+import i4gl.runtime.types.compound.I4GLChar1Type;
 import i4gl.runtime.types.compound.I4GLCharType;
 import i4gl.runtime.types.compound.I4GLRecordType;
 import i4gl.runtime.types.compound.I4GLTextType;
@@ -18,7 +19,6 @@ import i4gl.runtime.types.primitive.I4GLIntType;
 import i4gl.runtime.types.primitive.I4GLSmallFloatType;
 import i4gl.runtime.types.primitive.I4GLSmallIntType;
 import i4gl.runtime.values.I4GLDatabase;
-
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -38,6 +38,9 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
             int size = 1;
             if (!ctx.numericConstant().isEmpty()) {
                 size = Integer.parseInt(ctx.numericConstant(0).getText());
+            }
+            if(size == 1) {
+                return I4GLChar1Type.SINGLETON;
             }
             return new I4GLCharType(size);
         }
