@@ -8,6 +8,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.primitive.I4GLIntType;
 import i4gl.runtime.values.I4GLRecord;
 
 /**
@@ -15,7 +16,19 @@ import i4gl.runtime.values.I4GLRecord;
  */
 public class I4GLRecordType extends I4GLType {
 
+    public static final I4GLRecordType SQLCA = SqlcaRecordType();
+
     private final Map<String, I4GLType> variables;
+
+    private static I4GLRecordType SqlcaRecordType() {
+        Map<String, I4GLType> variables = new LinkedHashMap<>();
+        variables.put("sqlcode", I4GLIntType.SINGLETON);
+        variables.put("sqlerrm", new I4GLCharType(72));
+        variables.put("sqlerrp", new I4GLCharType(8));
+        variables.put("sqlerrd", new I4GLArrayType(6, I4GLIntType.SINGLETON));
+        variables.put("sqlawarn", new I4GLCharType(8));
+        return new I4GLRecordType(variables);
+    }
 
     /**
      * The default descriptor.

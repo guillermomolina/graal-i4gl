@@ -239,6 +239,11 @@ public class SquirrelDataSet implements IDataSet {
 
    @Override
    public synchronized boolean next(IMessageHandler msgHandler) throws DataSetException {
+      throw new DataSetException("Do not use this method");
+   }
+
+   public synchronized boolean next(SquirrelSqlcaHandler sqlcaHandler) {
+      sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
       if (_cancel) {
          _currentRow = null;
          return false;
@@ -247,21 +252,15 @@ public class SquirrelDataSet implements IDataSet {
          _currentRow = createRow(_dataSetDefinition.getColumnIndices(), _dataSetDefinition.getColumnDefinitions(),
                BlockMode.INDIFFERENT);
       } catch (SQLException e) {
-         return false;
+         sqlcaHandler.setSqlCode(e.getErrorCode());
+         sqlcaHandler.setSqlErrM(e.getMessage());
       }
       if (_currentRow == null) {
          return false;
       }
       ++_iCurrent;
+      sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
       return true;
-   }
-
-   public boolean next() {
-      try {
-         return next(null);
-      } catch (DataSetException e) {
-         return false;
-      }
    }
 
    public Object[] getCurrentRow() {

@@ -1,12 +1,15 @@
 package i4gl.nodes.sql;
 
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.statement.I4GLStatementNode;
 import i4gl.nodes.variables.write.I4GLAssignResultsNode;
+import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.values.I4GLCursor;
+import i4gl.runtime.values.I4GLRecord;
 
 /**
  * Node representing I4GL's foreach loop.
@@ -28,15 +31,18 @@ public class I4GLForEachNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
+        CompilerDirectives.transferToInterpreterAndInvalidate();
+        I4GLRecord sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+
         final I4GLCursor cursor = (I4GLCursor) cursorVariableNode.executeGeneric(frame);
-        cursor.start();
-        while (cursor.next()) {
+        cursor.start(sqlca);
+        while (cursor.next(sqlca)) {
             if (assignResultsNode != null) {
                 assignResultsNode.setResults(cursor.getRow());
                 assignResultsNode.executeVoid(frame);
             }
             body.executeVoid(frame);
-        }
+        }        
         cursor.end();
     }
 }

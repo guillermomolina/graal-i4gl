@@ -38,6 +38,7 @@ public class I4GLParseScope {
     public static final String FUNCTION_TYPE = "FUNCTION";
     public static final String RECORD_TYPE = "RECORD";
     public static final String DATABASE_IDENTIFIER = "!database";
+    public static final String SQLCA_IDENTIFIER = "sqlca";
 
     /**
      * Default constructor.
@@ -88,6 +89,10 @@ public class I4GLParseScope {
 
     public FrameSlot addDatabaseVariable(final String alias) throws LexicalException {
         return registerNewIdentifier(DATABASE_IDENTIFIER, new I4GLDatabaseType(alias));
+    }
+
+    public FrameSlot addSqlcaVariable() throws LexicalException {
+        return registerNewIdentifier(SQLCA_IDENTIFIER, I4GLRecordType.SQLCA);
     }
 
     FrameSlot getLocalSlot(String identifier) {

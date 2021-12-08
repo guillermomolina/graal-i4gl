@@ -73,7 +73,13 @@ public class I4GLChar implements TruffleObject {
 
     public void setCharAt(int index, char value) {
         checkArrayIndex(index);
-        data = this.data.substring(0, index) + value + this.data.substring(index + 1);
+        data = data.substring(0, index) + value + data.substring(index + 1);
+    }
+
+    public void fill(char value) {
+        char[] chars = new char[getSize()];
+        Arrays.fill(chars, value);
+        this.data = new String(chars);
     }
 
     public Object createDeepCopy() {

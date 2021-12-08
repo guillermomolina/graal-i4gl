@@ -48,7 +48,7 @@ public class I4GLRecord implements TruffleObject {
     public char getCharSafe(String name) throws InvalidCastException {
         final Object value = properties.get(name);
         try {
-            return (char)value;
+            return (char) value;
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, I4GLChar1Type.SINGLETON);
         }
@@ -62,7 +62,7 @@ public class I4GLRecord implements TruffleObject {
     public short getSmallIntSafe(String name) throws InvalidCastException {
         final Object value = properties.get(name);
         try {
-            return (short)value;
+            return (short) value;
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, I4GLSmallIntType.SINGLETON);
         }
@@ -76,7 +76,7 @@ public class I4GLRecord implements TruffleObject {
     public int getIntSafe(String name) throws InvalidCastException {
         final Object value = properties.get(name);
         try {
-            return (int)value;
+            return (int) value;
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, I4GLIntType.SINGLETON);
         }
@@ -90,7 +90,7 @@ public class I4GLRecord implements TruffleObject {
     public long getBigIntSafe(String name) throws InvalidCastException {
         final Object value = properties.get(name);
         try {
-            return (long)value;
+            return (long) value;
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, I4GLBigIntType.SINGLETON);
         }
@@ -104,7 +104,7 @@ public class I4GLRecord implements TruffleObject {
     public float getSmallFloatSafe(String name) throws InvalidCastException {
         final Object value = properties.get(name);
         try {
-            return (float)value;
+            return (float) value;
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, I4GLSmallFloatType.SINGLETON);
         }
@@ -118,7 +118,7 @@ public class I4GLRecord implements TruffleObject {
     public double getFloatSafe(String name) throws InvalidCastException {
         final Object value = properties.get(name);
         try {
-            return (double)value;
+            return (double) value;
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, I4GLFloatType.SINGLETON);
         }
@@ -144,6 +144,11 @@ public class I4GLRecord implements TruffleObject {
     @ExportMessage
     Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
         return I4GLLanguage.class;
+    }
+
+    @Override
+    public String toString() {
+        return properties.toString();
     }
 
     @ExportMessage

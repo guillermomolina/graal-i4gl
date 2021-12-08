@@ -16,7 +16,7 @@ import i4gl.runtime.types.primitive.I4GLNullType;
 public final class I4GLNull implements TruffleObject {
 
     /**
-     * The canonical value to represent {@code null} in SL.
+     * The canonical value to represent {@code null} in I4GL.
      */
     public static final I4GLNull SINGLETON = new I4GLNull();
     private static final int IDENTITY_HASH = System.identityHashCode(SINGLETON);

@@ -5,9 +5,11 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.statement.I4GLStatementNode;
+import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.values.I4GLDatabase;
+import i4gl.runtime.values.I4GLRecord;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
 public class I4GLSqlNode extends I4GLStatementNode {
@@ -25,8 +27,9 @@ public class I4GLSqlNode extends I4GLStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
+        I4GLRecord sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
         final I4GLDatabase database = (I4GLDatabase) databaseVariableNode.executeGeneric(frame);
-        database.connect();
+        database.connect(sqlca);
         SquirrelSession session = database.getSession();
         SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);
         SQLExecuterTask sqlExecuterTask = new SQLExecuterTask(session, sql, sqlExecuterHandlerProxy);

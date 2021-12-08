@@ -12,6 +12,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.database.SquirrelSession;
+import i4gl.runtime.database.SquirrelSqlcaHandler;
 import i4gl.runtime.exceptions.DatabaseConnectionException;
 import i4gl.runtime.types.complex.I4GLDatabaseType;
 
@@ -29,9 +30,12 @@ public final class I4GLDatabase implements TruffleObject {
         return session;
     }
 
-    public void connect() {
+    public void connect(I4GLRecord sqlca) {
+        SquirrelSqlcaHandler sqlcaHandler = new SquirrelSqlcaHandler(sqlca);
         if (session == null) {
             session = new SquirrelSession(alias);
+            sqlcaHandler.setSqlAWarn(1);
+            sqlcaHandler.setSqlAWarn(3);
         }
     }
 

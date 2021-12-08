@@ -19,6 +19,7 @@ import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.database.SquirrelDataSet;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
+import i4gl.runtime.database.SquirrelSqlcaHandler;
 import i4gl.runtime.types.complex.I4GLCursorType;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
@@ -36,8 +37,8 @@ public final class I4GLCursor implements TruffleObject {
         this.columnLabels = new ArrayList<>();
     }
 
-    public void start() {
-        database.connect();
+    public void start(I4GLRecord sqlca) {
+        database.connect(sqlca);
 
         SquirrelSession session = database.getSession();
         SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);
@@ -48,12 +49,16 @@ public final class I4GLCursor implements TruffleObject {
         columnLabels = dataSet.getColumnLabels();
     }
 
-    public boolean next() {
-        return dataSet.next();
+    public boolean next(I4GLRecord sqlca) {
+        return dataSet.next(new SquirrelSqlcaHandler(sqlca));
     }
 
     public Object[] getRow() {
         return dataSet.getCurrentRow();
+    }
+
+    public int getRowIndex() {
+        return dataSet.currentRowIndex();
     }
 
     public void end() {

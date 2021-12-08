@@ -94,11 +94,8 @@ import i4gl.runtime.types.I4GLType;
 import i4gl.runtime.types.complex.I4GLCursorType;
 import i4gl.runtime.types.complex.I4GLDatabaseType;
 import i4gl.runtime.types.compound.I4GLArrayType;
-import i4gl.runtime.types.compound.I4GLChar1Type;
-import i4gl.runtime.types.compound.I4GLCharType;
 import i4gl.runtime.types.compound.I4GLRecordType;
 import i4gl.runtime.types.compound.I4GLTextType;
-import i4gl.runtime.types.primitive.I4GLIntType;
 import i4gl.runtime.values.I4GLDatabase;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -138,7 +135,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 I4GLDatabaseType databaseType = (I4GLDatabaseType) lookupVariableType(
                         I4GLParseScope.DATABASE_IDENTIFIER);
                 currentDatabase = (I4GLDatabase) (databaseType.getDefaultValue());
-                currentDatabase.connect();
+                currentDatabase.connect(null);
             } catch (LexicalException e) {
                 throw new ParseException(source, ctx, "No Database declared");
             }
@@ -277,9 +274,9 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
         globalsFrameDescriptor = pushNewScope(I4GLParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
+        createSqlcaGlobalVariable(ctx);
         if (ctx.databaseDeclaration() != null) {
             visit(ctx.databaseDeclaration());
-            createSqlcaGlobalVariable(ctx);
         }
         if (ctx.globalsDeclaration() != null) {
             visit(ctx.globalsDeclaration());
@@ -298,15 +295,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     }
 
     private void createSqlcaGlobalVariable(final I4GLParser.ModuleContext ctx) {
-        Map<String, I4GLType> variables = new LinkedHashMap<>();
-        variables.put("sqlcode", I4GLIntType.SINGLETON);
-        variables.put("sqlerrm", new I4GLCharType(72));
-        variables.put("sqlerrp", new I4GLCharType(8));
-        variables.put("sqlerrd", new I4GLArrayType(6, I4GLIntType.SINGLETON));
-        variables.put("sqlwarn", new I4GLArrayType(8, I4GLChar1Type.SINGLETON));
-        I4GLRecordType sqlcaType = new I4GLRecordType(variables);
         try {
-            currentParseScope.registerLocalVariable("sqlca", sqlcaType);
+            currentParseScope.addSqlcaVariable();
         } catch (LexicalException e) {
             throw new ParseException(source, ctx, e.getMessage());
         }
@@ -1496,8 +1486,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             interval = new Interval(start, end);
             sql += ctx.start.getInputStream().getText(interval);
             I4GLExpressionNode databaseVariableNode = createReadDatabaseVariableNode();
-            FrameSlot sqlcaFrameSlot = lookupVariableSlot("sqlca");
-            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, assignResultsNode, sqlcaFrameSlot);
+            I4GLSelectNode node = new I4GLSelectNode(databaseVariableNode, sql, assignResultsNode);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             return node;
@@ -1556,7 +1545,6 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return node;
     }
 
-    
     @Override
     public Node visitDeclareCursorStatement(final I4GLParser.DeclareCursorStatementContext ctx) {
         if (ctx.SCROLL() != null) {

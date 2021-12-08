@@ -38,6 +38,7 @@ import i4gl.nodes.builtin.icgi.ICGIGetValueBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIMimeTypeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIStartBuiltinNodeFactory;
 import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.I4GLRecord;
 
 public final class I4GLContext {
 
@@ -50,7 +51,8 @@ public final class I4GLContext {
     private final Map<String, VirtualFrame> frameRegistry;
     private final AllocationReporter allocationReporter;
 
-    public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env, List<NodeFactory<? extends I4GLBuiltinNode>> externalBuiltins) {
+    public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env,
+            List<NodeFactory<? extends I4GLBuiltinNode>> externalBuiltins) {
         this.env = env;
         this.language = language;
         this.input = new BufferedReader(new InputStreamReader(env.in()));
@@ -123,6 +125,17 @@ public final class I4GLContext {
     }
 
     @TruffleBoundary
+    public I4GLRecord getSqlcaGlobalVariable() {
+        VirtualFrame frame = frameRegistry.get("GLOBAL");
+        I4GLRecord value = null;
+        if (frame != null) {
+            FrameSlot slot = frame.getFrameDescriptor().findFrameSlot("sqlca");
+            value = (I4GLRecord) frame.getValue(slot);
+        }
+        return value;
+    }
+
+    @TruffleBoundary
     private TruffleObject getModuleVariables(String moduleName) {
         VirtualFrame frame = frameRegistry.get(moduleName);
         final I4GLVariables vars = new I4GLVariables();
@@ -139,7 +152,8 @@ public final class I4GLContext {
     }
 
     /**
-     * Adds all builtin functions to the {@link I4GLFunctionRegistry}. This method lists all
+     * Adds all builtin functions to the {@link I4GLFunctionRegistry}. This method
+     * lists all
      * {@link I4GLBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
