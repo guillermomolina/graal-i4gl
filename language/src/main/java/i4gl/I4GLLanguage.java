@@ -33,7 +33,7 @@ import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.root.I4GLBuiltinRootNode;
 import i4gl.nodes.root.I4GLModuleRootNode;
 import i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
-import i4gl.parser.I4GLFullParser;
+import i4gl.parser.FullParser;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.context.I4GLLanguageView;
 
@@ -171,7 +171,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
             throw new NotImplementedException();
         }
         LOGGER.log(Level.FINE, "Start parsing {0}", source.getPath());
-        final I4GLFullParser parser = new I4GLFullParser(this, source);
+        final FullParser parser = new FullParser(this, source);
         RootNode moduleRootNode = new I4GLModuleRootNode(this, parser.getModuleName(), parser.getAllFunctions(),
                 parser.getGlobalsFrameDescriptor(), parser.getModuleFrameDescriptor());
         LOGGER.log(Level.FINE, "Finish parsing {0}", source.getPath());

@@ -7,12 +7,13 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import i4gl.I4GLLanguage;
-import i4gl.parser.I4GLFullParser;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.source.Source;
+
+import i4gl.I4GLLanguage;
+import i4gl.parser.FullParser;
 
 /**
  * Manages the mapping from function names to {@link I4GLFunction function objects}.
@@ -74,7 +75,7 @@ public final class I4GLFunctionRegistry {
     }
 
     public void register(Source newFunctions) {
-        final I4GLFullParser parser = new I4GLFullParser(language, newFunctions);
+        final FullParser parser = new FullParser(language, newFunctions);
         register(parser.getAllFunctions());
     }
 

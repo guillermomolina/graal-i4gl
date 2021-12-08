@@ -15,17 +15,17 @@ import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.I4GLDatabase;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-public class I4GLTypeFactory extends I4GLParserBaseVisitor<BaseType> {
-    private final I4GLNodeFactory nodeFactory;
+public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
+    private final NodeParserVisitor nodeFactory;
 
-    public I4GLTypeFactory(final I4GLNodeFactory nodeFactory) {
+    public TypeParserVisitor(final NodeParserVisitor nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
 
@@ -110,7 +110,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<BaseType> {
 
     @Override
     public BaseType visitRecordType(final I4GLParser.RecordTypeContext ctx) {
-        I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
+        ParseScope currentParseScope = nodeFactory.pushNewScope(ParseScope.RECORD_TYPE, null);
         for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
             try {
                 final BaseType type = visit(variableDeclarationCtx.type());
@@ -132,7 +132,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<BaseType> {
 
     @Override
     public BaseType visitRecordLikeType(final I4GLParser.RecordLikeTypeContext ctx) {
-        I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
+        ParseScope currentParseScope = nodeFactory.pushNewScope(ParseScope.RECORD_TYPE, null);
         final String tableName = getTableName(ctx.tableIdentifier());
         I4GLDatabase database = nodeFactory.getDatabase(ctx);
         SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();

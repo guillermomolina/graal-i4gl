@@ -2,8 +2,6 @@ package i4gl.parser;
 
 import java.util.Map;
 
-import i4gl.I4GLLanguage;
-import i4gl.parser.exceptions.BailoutErrorListener;
 import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.source.Source;
@@ -11,10 +9,13 @@ import com.oracle.truffle.api.source.Source;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-public class I4GLFullParser {
-    private final I4GLNodeFactory factory;
+import i4gl.I4GLLanguage;
+import i4gl.parser.exceptions.BailoutErrorListener;
 
-    public I4GLFullParser(final I4GLLanguage language, final Source source) {
+public class FullParser {
+    private final NodeParserVisitor factory;
+
+    public FullParser(final I4GLLanguage language, final Source source) {
         I4GLLexer lexer = new I4GLLexer(CharStreams.fromString(source.getCharacters().toString()));
         I4GLParser parser = new I4GLParser(new CommonTokenStream(lexer));
         lexer.removeErrorListeners();
@@ -23,7 +24,7 @@ public class I4GLFullParser {
         lexer.addErrorListener(listener);
         parser.addErrorListener(listener);
         I4GLParser.ModuleContext tree = parser.module();
-        factory = new I4GLNodeFactory(language, source);
+        factory = new NodeParserVisitor(language, source);
         factory.visit(tree);
     }
 

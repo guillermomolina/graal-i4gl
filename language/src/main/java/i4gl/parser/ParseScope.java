@@ -19,7 +19,7 @@ import i4gl.runtime.types.compound.RecordType;
  * This class represents currently parsed lexical scope. Lexical scope
  * of i4gl are scopes of functions.
  */
-public class I4GLParseScope {
+public class ParseScope {
 
     /**
      * Map of all identifiers: e.g.: variable names, function names, types names,
@@ -30,7 +30,7 @@ public class I4GLParseScope {
     private Map<String, BaseType> variables;
     final List<String> arguments;
     private FrameDescriptor frameDescriptor;
-    private final I4GLParseScope outer;
+    private final ParseScope outer;
     private int loopDepth;
 
     public static final String GLOBAL_TYPE = "GLOBAL";
@@ -46,7 +46,7 @@ public class I4GLParseScope {
      * @param outer            instance of outer lexical scope
      * @param name             name of the current lexical scope
      */
-    I4GLParseScope(I4GLParseScope outer, String type, String name) {
+    ParseScope(ParseScope outer, String type, String name) {
         this.variables = new LinkedHashMap<>();
         this.frameDescriptor = new FrameDescriptor();
         this.name = name;
@@ -117,7 +117,7 @@ public class I4GLParseScope {
         return type + "(" + (name == null? "" : name) + ")";
     }
 
-    I4GLParseScope getOuterScope() {
+    ParseScope getOuterScope() {
         return outer;
     }
 
