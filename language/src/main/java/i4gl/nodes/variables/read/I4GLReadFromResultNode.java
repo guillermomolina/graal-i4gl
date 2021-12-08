@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.runtime.exceptions.UnexpectedRuntimeException;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 public class I4GLReadFromResultNode extends I4GLExpressionNode {
     private Object result;
@@ -15,7 +15,7 @@ public class I4GLReadFromResultNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLType getType() {
+    public BaseType getType() {
         throw new NotImplementedException();
     }
 

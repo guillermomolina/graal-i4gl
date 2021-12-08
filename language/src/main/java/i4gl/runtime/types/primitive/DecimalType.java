@@ -6,18 +6,18 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.I4GLDecimal;
 
 /**
  * Type descriptor representing the decimal type.
  * Uses java BigDecimal
  */
-public class I4GLDecimalType extends I4GLType {
+public class DecimalType extends BaseType {
     private final int precision;
     private final int scale;
 
-    public I4GLDecimalType(final int precision, final int scale) {
+    public DecimalType(final int precision, final int scale) {
         this.precision = precision;
         this.scale = scale;
     }
@@ -40,8 +40,8 @@ public class I4GLDecimalType extends I4GLType {
     }
 
     @Override
-    public boolean convertibleTo(final I4GLType type) {
-        return type instanceof I4GLFloatType || type instanceof I4GLSmallFloatType;
+    public boolean convertibleTo(final BaseType type) {
+        return type instanceof FloatType || type instanceof SmallFloatType;
     }
 
     @Override

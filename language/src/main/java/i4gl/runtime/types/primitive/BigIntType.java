@@ -4,19 +4,19 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLCharType;
-import i4gl.runtime.types.compound.I4GLTextType;
-import i4gl.runtime.types.compound.I4GLVarcharType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.types.compound.VarcharType;
 
 /**
  * Type descriptor representing the longint type.
  */
-public class I4GLBigIntType extends I4GLType {
+public class BigIntType extends BaseType {
 
-    public static final I4GLBigIntType SINGLETON = new I4GLBigIntType();
+    public static final BigIntType SINGLETON = new BigIntType();
 
-    private I4GLBigIntType() {
+    private BigIntType() {
     }
 
     @Override
@@ -36,9 +36,9 @@ public class I4GLBigIntType extends I4GLType {
     }
 
     @Override
-    public boolean convertibleTo(final I4GLType type) {
-        return type == I4GLFloatType.SINGLETON || type instanceof I4GLVarcharType
-                || type instanceof I4GLCharType || type == I4GLTextType.SINGLETON;
+    public boolean convertibleTo(final BaseType type) {
+        return type == FloatType.SINGLETON || type instanceof VarcharType
+                || type instanceof CharType || type == TextType.SINGLETON;
     }
 
     @Override

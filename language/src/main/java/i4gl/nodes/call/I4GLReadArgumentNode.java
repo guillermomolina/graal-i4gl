@@ -9,7 +9,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.runtime.exceptions.I4GLRuntimeException;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 /**
  * This node reads value from an record with specified identifier.
@@ -40,7 +40,7 @@ public class I4GLReadArgumentNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLType getType() {
+    public BaseType getType() {
         throw new NotImplementedException();
     }
 }

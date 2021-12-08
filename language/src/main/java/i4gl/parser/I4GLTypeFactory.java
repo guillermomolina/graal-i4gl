@@ -6,23 +6,23 @@ import java.util.List;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLArrayType;
-import i4gl.runtime.types.compound.I4GLChar1Type;
-import i4gl.runtime.types.compound.I4GLCharType;
-import i4gl.runtime.types.compound.I4GLRecordType;
-import i4gl.runtime.types.compound.I4GLTextType;
-import i4gl.runtime.types.compound.I4GLVarcharType;
-import i4gl.runtime.types.primitive.I4GLBigIntType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
-import i4gl.runtime.types.primitive.I4GLIntType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import i4gl.runtime.types.primitive.I4GLSmallIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.ArrayType;
+import i4gl.runtime.types.compound.Char1Type;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.RecordType;
+import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.types.compound.VarcharType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.I4GLDatabase;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
+public class I4GLTypeFactory extends I4GLParserBaseVisitor<BaseType> {
     private final I4GLNodeFactory nodeFactory;
 
     public I4GLTypeFactory(final I4GLNodeFactory nodeFactory) {
@@ -30,44 +30,44 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
     }
 
     @Override
-    public I4GLType visitCharType(final I4GLParser.CharTypeContext ctx) {
+    public BaseType visitCharType(final I4GLParser.CharTypeContext ctx) {
         if (ctx.varchar() != null) {
             final int size = Integer.parseInt(ctx.numericConstant(0).getText());
-            return new I4GLVarcharType(size);
+            return new VarcharType(size);
         } else {
             int size = 1;
             if (!ctx.numericConstant().isEmpty()) {
                 size = Integer.parseInt(ctx.numericConstant(0).getText());
             }
             if(size == 1) {
-                return I4GLChar1Type.SINGLETON;
+                return Char1Type.SINGLETON;
             }
-            return new I4GLCharType(size);
+            return new CharType(size);
         }
     }
 
     @Override
-    public I4GLType visitNumberType(final I4GLParser.NumberTypeContext ctx) {
+    public BaseType visitNumberType(final I4GLParser.NumberTypeContext ctx) {
         if (ctx.SMALLINT() != null) {
-            return I4GLSmallIntType.SINGLETON;
+            return SmallIntType.SINGLETON;
         }
         if (ctx.INTEGER() != null || ctx.INT() != null) {
-            return I4GLIntType.SINGLETON;
+            return IntType.SINGLETON;
         }
         if (ctx.BIGINT() != null) {
-            return I4GLBigIntType.SINGLETON;
+            return BigIntType.SINGLETON;
         }
         if (ctx.SMALLFLOAT() != null || ctx.REAL() != null) {
-            return I4GLSmallFloatType.SINGLETON;
+            return SmallFloatType.SINGLETON;
         }
         if (ctx.FLOAT() != null || ctx.DOUBLE() != null) {
-            return I4GLFloatType.SINGLETON;
+            return FloatType.SINGLETON;
         }
         throw new NotImplementedException();
     }
 
     @Override
-    public I4GLType visitTimeType(final I4GLParser.TimeTypeContext ctx) {
+    public BaseType visitTimeType(final I4GLParser.TimeTypeContext ctx) {
         throw new NotImplementedException();
     }
 
@@ -79,7 +79,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
     }
 
     @Override
-    public I4GLType visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
+    public BaseType visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
         final String tableName = getTableName(ctx.tableIdentifier());
         final String columnName = ctx.identifier().getText();
         I4GLDatabase database = nodeFactory.getDatabase(ctx);
@@ -89,7 +89,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
             for (int i = 0; i < infos.length; i++) {
                 TableColumnInfo info = infos[i];
                 if (info.getColumnName().compareTo(columnName) == 0) {
-                    return I4GLType.fromTableColumInfo(info);
+                    return BaseType.fromTableColumInfo(info);
                 }
             }
         } catch (SQLException e) {
@@ -100,20 +100,20 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
     }
 
     @Override
-    public I4GLType visitLargeType(final I4GLParser.LargeTypeContext ctx) {
+    public BaseType visitLargeType(final I4GLParser.LargeTypeContext ctx) {
         if (ctx.BYTE() != null) {
             throw new NotImplementedException();
         } else /* there is a ctx.TEXT() */ {
-            return I4GLTextType.SINGLETON;
+            return TextType.SINGLETON;
         }
     }
 
     @Override
-    public I4GLType visitRecordType(final I4GLParser.RecordTypeContext ctx) {
+    public BaseType visitRecordType(final I4GLParser.RecordTypeContext ctx) {
         I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
         for (I4GLParser.VariableDeclarationContext variableDeclarationCtx : ctx.variableDeclaration()) {
             try {
-                final I4GLType type = visit(variableDeclarationCtx.type());
+                final BaseType type = visit(variableDeclarationCtx.type());
                 final List<I4GLParser.IdentifierContext> identifierCtxList = variableDeclarationCtx.identifier();
                 for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
                     final String identifier = identifierCtx.getText();
@@ -124,14 +124,14 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
             }
         }
 
-        I4GLRecordType type = currentParseScope.createRecordType();
+        RecordType type = currentParseScope.createRecordType();
 
         nodeFactory.popScope();
         return type;
     }
 
     @Override
-    public I4GLType visitRecordLikeType(final I4GLParser.RecordLikeTypeContext ctx) {
+    public BaseType visitRecordLikeType(final I4GLParser.RecordLikeTypeContext ctx) {
         I4GLParseScope currentParseScope = nodeFactory.pushNewScope(I4GLParseScope.RECORD_TYPE, null);
         final String tableName = getTableName(ctx.tableIdentifier());
         I4GLDatabase database = nodeFactory.getDatabase(ctx);
@@ -140,7 +140,7 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
             TableColumnInfo[] infos = dmd.getColumnInfo(null, null, tableName);
             for (int i = 0; i < infos.length; i++) {
                 TableColumnInfo info = infos[i];
-                final I4GLType type = I4GLType.fromTableColumInfo(info);
+                final BaseType type = BaseType.fromTableColumInfo(info);
                 final String columnName = info.getColumnName();
                 currentParseScope.registerLocalVariable(columnName, type);
             }
@@ -148,29 +148,29 @@ public class I4GLTypeFactory extends I4GLParserBaseVisitor<I4GLType> {
             throw new ParseException(nodeFactory.getSource(), ctx, e.getMessage());
         }
 
-        I4GLRecordType type = currentParseScope.createRecordType();
+        RecordType type = currentParseScope.createRecordType();
 
         nodeFactory.popScope();
         return type;
     }
 
     @Override
-    public I4GLType visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
-        final I4GLType type = visit(ctx.arrayTypeType());
-        I4GLArrayType arrayDescriptor = null;
+    public BaseType visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
+        final BaseType type = visit(ctx.arrayTypeType());
+        ArrayType arrayDescriptor = null;
         for (int i = ctx.arrayIndexer().dimensionSize().size() - 1; i >= 0; i--) {
             int size = Integer.parseInt(ctx.arrayIndexer().dimensionSize(i).getText());
             if (arrayDescriptor == null) {
-                arrayDescriptor = new I4GLArrayType(size, type);
+                arrayDescriptor = new ArrayType(size, type);
             } else {
-                arrayDescriptor = new I4GLArrayType(size, arrayDescriptor);
+                arrayDescriptor = new ArrayType(size, arrayDescriptor);
             }
         }
         return arrayDescriptor;
     }
 
     @Override
-    public I4GLType visitDynArrayType(final I4GLParser.DynArrayTypeContext ctx) {
+    public BaseType visitDynArrayType(final I4GLParser.DynArrayTypeContext ctx) {
         throw new NotImplementedException();
     }
 }

@@ -7,12 +7,12 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.statement.I4GLStatementNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLBigIntType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
-import i4gl.runtime.types.primitive.I4GLIntType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import i4gl.runtime.types.primitive.I4GLSmallIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.I4GLRecord;
 
 /**
@@ -27,15 +27,15 @@ import i4gl.runtime.values.I4GLRecord;
 public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
 
     private final String identifier;
-    private final I4GLType descriptor;
+    private final BaseType descriptor;
 
-    I4GLAssignToRecordFieldNode(String identifier, I4GLType descriptor) {
+    I4GLAssignToRecordFieldNode(String identifier, BaseType descriptor) {
         this.identifier = identifier;
         this.descriptor = descriptor;
     }
 
     protected boolean isSmallInt() {
-        return descriptor == I4GLSmallIntType.SINGLETON;
+        return descriptor == SmallIntType.SINGLETON;
     }
 
     @Specialization(guards = "isSmallInt()")
@@ -44,7 +44,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isInt() {
-        return descriptor == I4GLIntType.SINGLETON;
+        return descriptor == IntType.SINGLETON;
     }
 
     @Specialization(guards = "isInt()")
@@ -53,7 +53,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isBigInt() {
-        return descriptor == I4GLBigIntType.SINGLETON;
+        return descriptor == BigIntType.SINGLETON;
     }
 
     @Specialization(guards = "isBigInt()")
@@ -62,7 +62,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isSmallFloat() {
-        return descriptor == I4GLSmallFloatType.SINGLETON;
+        return descriptor == SmallFloatType.SINGLETON;
     }
 
     @Specialization(guards = "isSmallFloat()")
@@ -71,7 +71,7 @@ public abstract class I4GLAssignToRecordFieldNode extends I4GLStatementNode {
     }
 
     protected boolean isFloat() {
-        return descriptor == I4GLFloatType.SINGLETON;
+        return descriptor == FloatType.SINGLETON;
     }
 
     @Specialization(guards = "isFloat()")

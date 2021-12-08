@@ -10,8 +10,8 @@ import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.IntType;
 
 @ExportLibrary(InteropLibrary.class)
 public class I4GLIntArray extends I4GLArray {
@@ -55,8 +55,8 @@ public class I4GLIntArray extends I4GLArray {
     }
 
     @Override
-    public I4GLType getElementType() {
-        return I4GLIntType.SINGLETON;
+    public BaseType getElementType() {
+        return IntType.SINGLETON;
     }
 
     @ExportMessage

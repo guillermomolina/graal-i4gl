@@ -5,19 +5,19 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.exceptions.I4GLRuntimeException;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 /**
  * Type descriptor for I4GL's returns types. It contains additional information about the variables it contains.
  */
-public class I4GLReturnType extends I4GLType {
-    private final I4GLType[] valueTypes;
+public class ReturnType extends BaseType {
+    private final BaseType[] valueTypes;
 
     /**
      * The default descriptor.
      * @param innerScope lexical scope containing the identifiers of the variables this return contains
      */
-    public I4GLReturnType(I4GLType[] valueTypes) {
+    public ReturnType(BaseType[] valueTypes) {
         this.valueTypes = valueTypes;
     }
 
@@ -45,12 +45,12 @@ public class I4GLReturnType extends I4GLType {
         return valueTypes.length == 0;
     }
 
-    public I4GLType getValueDescriptor(final int index) {
+    public BaseType getValueDescriptor(final int index) {
         return this.valueTypes[index];
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
+    public boolean convertibleTo(BaseType type) {
         return false;
     }
 

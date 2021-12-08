@@ -1,27 +1,23 @@
-package i4gl.runtime.types.complex;
+package i4gl.runtime.types.primitive;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.exceptions.NotImplementedException;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.values.I4GLCursor;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.values.I4GLNull;
 
-/**
- * Specialized type descriptor for text-file values.
- */
-public class I4GLCursorType extends I4GLType {
+public class ObjectType extends BaseType {
 
-    public static final I4GLCursorType SINGLETON = new I4GLCursorType();
+    public static final ObjectType SINGLETON = new ObjectType();
 
-    private I4GLCursorType() {
-    }
+    private ObjectType() {
+    }    
 
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLCursor;
+        return library.hasMembers(value);
     }
 
     @Override
@@ -31,16 +27,16 @@ public class I4GLCursorType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        throw new NotImplementedException();
+        return I4GLNull.SINGLETON;
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
+    public boolean convertibleTo(final BaseType type) {
         return false;
     }
 
     @Override
     public String toString() {
-        return "CURSOR";
+        return "OBJECT";
     }
 }

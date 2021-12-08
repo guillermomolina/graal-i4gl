@@ -7,16 +7,16 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLRecordType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.RecordType;
 
 @ExportLibrary(InteropLibrary.class)
 public class I4GLRecordArray extends I4GLArray {
 
-    private final I4GLRecordType recordType;
+    private final RecordType recordType;
     private final I4GLRecord[] array;
 
-    public I4GLRecordArray(final I4GLRecordType recordType, int size) {
+    public I4GLRecordArray(final RecordType recordType, int size) {
         this.recordType = recordType;
         this.array = new I4GLRecord[size];
         for (int i = 0; i < array.length; ++i) {
@@ -24,7 +24,7 @@ public class I4GLRecordArray extends I4GLArray {
         }
     }
 
-    protected I4GLRecordArray(final I4GLRecordType recordType, I4GLRecord[] array) {
+    protected I4GLRecordArray(final RecordType recordType, I4GLRecord[] array) {
         this.recordType = recordType;
         this.array = array;
     }
@@ -59,7 +59,7 @@ public class I4GLRecordArray extends I4GLArray {
     }
 
     @Override
-    public I4GLType getElementType() {
+    public BaseType getElementType() {
         return recordType;
     }
 }

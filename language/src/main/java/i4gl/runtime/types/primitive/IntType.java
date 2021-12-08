@@ -4,19 +4,19 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLCharType;
-import i4gl.runtime.types.compound.I4GLTextType;
-import i4gl.runtime.types.compound.I4GLVarcharType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.types.compound.VarcharType;
 
 /**
  * Type descriptor representing the integer type.
  */
-public class I4GLIntType extends I4GLType {
+public class IntType extends BaseType {
 
-    public static final I4GLIntType SINGLETON = new I4GLIntType();
+    public static final IntType SINGLETON = new IntType();
 
-    private I4GLIntType() {
+    private IntType() {
     }
 
     @Override
@@ -36,10 +36,10 @@ public class I4GLIntType extends I4GLType {
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
-        return type == I4GLBigIntType.SINGLETON || type == I4GLFloatType.SINGLETON
-                || type instanceof I4GLVarcharType || type instanceof I4GLCharType
-                || type == I4GLTextType.SINGLETON;
+    public boolean convertibleTo(BaseType type) {
+        return type == BigIntType.SINGLETON || type == FloatType.SINGLETON
+                || type instanceof VarcharType || type instanceof CharType
+                || type == TextType.SINGLETON;
     }
 
     @Override 

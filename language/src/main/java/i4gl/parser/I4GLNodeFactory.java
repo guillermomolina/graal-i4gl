@@ -90,12 +90,12 @@ import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
 import i4gl.parser.exceptions.TypeMismatchException;
 import i4gl.parser.exceptions.UnknownIdentifierException;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.complex.I4GLCursorType;
-import i4gl.runtime.types.complex.I4GLDatabaseType;
-import i4gl.runtime.types.compound.I4GLArrayType;
-import i4gl.runtime.types.compound.I4GLRecordType;
-import i4gl.runtime.types.compound.I4GLTextType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.complex.CursorType;
+import i4gl.runtime.types.complex.DatabaseType;
+import i4gl.runtime.types.compound.ArrayType;
+import i4gl.runtime.types.compound.RecordType;
+import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.values.I4GLDatabase;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -132,7 +132,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public I4GLDatabase getDatabase(final ParserRuleContext ctx) {
         if (currentDatabase == null) {
             try {
-                I4GLDatabaseType databaseType = (I4GLDatabaseType) lookupVariableType(
+                DatabaseType databaseType = (DatabaseType) lookupVariableType(
                         I4GLParseScope.DATABASE_IDENTIFIER);
                 currentDatabase = (I4GLDatabase) (databaseType.getDefaultValue());
                 currentDatabase.connect(null);
@@ -208,7 +208,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         return source;
     }
 
-    private I4GLType lookupVariableType(final String identifier) throws LexicalException {
+    private BaseType lookupVariableType(final String identifier) throws LexicalException {
         return doLookup(identifier, I4GLParseScope::getIdentifierType);
     }
 
@@ -391,7 +391,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         if (parameteridentifiers != null) {
             int argumentIndex = 0;
             for (final String parameteridentifier : parameteridentifiers) {
-                final I4GLType type = currentParseScope.getIdentifierType(parameteridentifier);
+                final BaseType type = currentParseScope.getIdentifierType(parameteridentifier);
                 if (type == null) {
                     throw new LexicalException("Function parameter " + parameteridentifier + " must be declared");
                 }
@@ -423,7 +423,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     private I4GLStatementNode createAssignToVariableFromScope(final I4GLParseScope scope, final String identifier,
             final I4GLExpressionNode valueNode) {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
-        final I4GLType type = scope.getIdentifierType(identifier);
+        final BaseType type = scope.getIdentifierType(identifier);
         final boolean isLocal = scope == currentParseScope;
 
         if (isLocal) {
@@ -561,14 +561,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 String identifier = ctx.identifier(index++).getText();
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
-            I4GLType expressionType = variableNode.getType();
-            if (expressionType instanceof I4GLRecordType) {
-                I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
-                Map<String, I4GLType> variables = accessedRecordType.getVariables();
+            BaseType expressionType = variableNode.getType();
+            if (expressionType instanceof RecordType) {
+                RecordType accessedRecordType = (RecordType) expressionType;
+                Map<String, BaseType> variables = accessedRecordType.getVariables();
                 final Map<I4GLReadFromResultNode, I4GLStatementNode> pairs = new LinkedHashMap<>(variables.size());
-                for (Map.Entry<String, I4GLType> variable : variables.entrySet()) {
+                for (Map.Entry<String, BaseType> variable : variables.entrySet()) {
                     final String identifier = variable.getKey();
-                    final I4GLType recordType = variable.getValue();
+                    final BaseType recordType = variable.getValue();
                     final I4GLReadFromResultNode readResultNode = new I4GLReadFromResultNode();
                     final I4GLStatementNode assignResultNode = I4GLAssignToRecordFieldNodeGen.create(identifier,
                             recordType, variableNode, readResultNode);
@@ -904,12 +904,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 String identifier = ctx.identifier(index++).getText();
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
-            I4GLType expressionType = variableNode.getType();
-            if (expressionType instanceof I4GLRecordType) {
-                I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
-                Map<String, I4GLType> variables = accessedRecordType.getVariables();
+            BaseType expressionType = variableNode.getType();
+            if (expressionType instanceof RecordType) {
+                RecordType accessedRecordType = (RecordType) expressionType;
+                Map<String, BaseType> variables = accessedRecordType.getVariables();
                 final List<I4GLExpressionNode> readNodes = new ArrayList<>(variables.size());
-                for (Map.Entry<String, I4GLType> variable : variables.entrySet()) {
+                for (Map.Entry<String, BaseType> variable : variables.entrySet()) {
                     final String identifier = variable.getKey();
                     final I4GLExpressionNode readNode = createReadFromRecordNode(variableNode, identifier);
                     setSourceFromContext(readNode, ctx);
@@ -950,7 +950,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
     public Node visitVariableDeclaration(final I4GLParser.VariableDeclarationContext ctx) {
         try {
             final I4GLTypeFactory typeFactory = new I4GLTypeFactory(this);
-            final I4GLType type = typeFactory.visit(ctx.type());
+            final BaseType type = typeFactory.visit(ctx.type());
             final List<I4GLParser.IdentifierContext> identifierCtxList = ctx.identifier();
             for (final I4GLParser.IdentifierContext identifierCtx : identifierCtxList) {
                 final String identifier = identifierCtx.getText();
@@ -1034,12 +1034,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         final int lastIndex = indexNodes.size() - 1;
         for (int index = 0; index < indexNodes.size(); index++) {
             assert readIndexedNode != null;
-            I4GLType actualType = readIndexedNode.getType();
-            if (!(actualType instanceof I4GLArrayType)) {
+            BaseType actualType = readIndexedNode.getType();
+            if (!(actualType instanceof ArrayType)) {
                 throw new TypeMismatchException(actualType.toString(), ARRAY_STRING);
             }
             I4GLExpressionNode indexNode = indexNodes.get(index);
-            I4GLType returnType = ((I4GLArrayType) actualType).getValuesType();
+            BaseType returnType = ((ArrayType) actualType).getValuesType();
             if (index == lastIndex) {
                 result = I4GLAssignToIndexedNodeGen.create(readIndexedNode, indexNode, valueNode);
             } else {
@@ -1105,13 +1105,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     private I4GLReadFromRecordNode createReadFromRecordNode(final I4GLExpressionNode recordExpression,
             final String identifier) throws LexicalException {
-        I4GLType descriptor = recordExpression.getType();
-        I4GLType returnType = null;
+        BaseType descriptor = recordExpression.getType();
+        BaseType returnType = null;
 
-        if (!(descriptor instanceof I4GLRecordType)) {
+        if (!(descriptor instanceof RecordType)) {
             throw new TypeMismatchException(descriptor.toString(), RECORD_STRING);
         }
-        I4GLRecordType accessedRecordType = (I4GLRecordType) descriptor;
+        RecordType accessedRecordType = (RecordType) descriptor;
         if (!accessedRecordType.containsIdentifier(identifier)) {
             throw new UnknownIdentifierException("The record does not contain this identifier");
         }
@@ -1124,10 +1124,10 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             List<I4GLExpressionNode> indexNodes) throws LexicalException {
         I4GLExpressionNode readIndexedNode = arrayExpression;
         for (I4GLExpressionNode indexNode : indexNodes) {
-            I4GLType actualType = readIndexedNode.getType();
-            if (actualType instanceof I4GLArrayType) {
-                actualType = ((I4GLArrayType) actualType).getValuesType();
-            } else if (!(actualType instanceof I4GLTextType)) {
+            BaseType actualType = readIndexedNode.getType();
+            if (actualType instanceof ArrayType) {
+                actualType = ((ArrayType) actualType).getValuesType();
+            } else if (!(actualType instanceof TextType)) {
                 throw new TypeMismatchException(actualType.toString(), ARRAY_STRING);
             }
             readIndexedNode = I4GLReadFromIndexedNodeGen.create(readIndexedNode, indexNode, actualType);
@@ -1137,7 +1137,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
 
     private I4GLExpressionNode createReadVariableFromScope(final String identifier, final I4GLParseScope scope) {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
-        final I4GLType type = scope.getIdentifierType(identifier);
+        final BaseType type = scope.getIdentifierType(identifier);
         final boolean isLocal = scope == currentParseScope;
 
         if (isLocal) {
@@ -1264,12 +1264,12 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 String identifier = ctx.identifier(index++).getText();
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
-            I4GLType expressionType = variableNode.getType();
+            BaseType expressionType = variableNode.getType();
             I4GLStatementNode node;
-            if (expressionType instanceof I4GLRecordType) {
+            if (expressionType instanceof RecordType) {
                 String identifier = ctx.identifier(index).getText();
-                I4GLRecordType accessedRecordType = (I4GLRecordType) expressionType;
-                I4GLType recordType = accessedRecordType.getVariableType(identifier);
+                RecordType accessedRecordType = (RecordType) expressionType;
+                BaseType recordType = accessedRecordType.getVariableType(identifier);
                 node = I4GLAssignToRecordFieldNodeGen.create(identifier, recordType, variableNode, valueNode);
             } else {
                 throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
@@ -1294,7 +1294,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             final I4GLParser.VariableIndexContext variableIndexCtx, final I4GLExpressionNode valueNode) {
         try {
             final String identifier = ctx.identifier().getText();
-            final I4GLType targetType = lookupVariableType(identifier);
+            final BaseType targetType = lookupVariableType(identifier);
             final FrameSlot targetSlot = lookupVariableSlot(identifier);
             final List<I4GLParser.ExpressionContext> indexList = variableIndexCtx.expressionList().expression();
             List<I4GLExpressionNode> indexNodes = new ArrayList<>(indexList.size());
@@ -1302,13 +1302,13 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 indexNodes.add((I4GLExpressionNode) visit(indexCtx));
             }
             I4GLStatementNode node;
-            if (targetType instanceof I4GLArrayType) {
+            if (targetType instanceof ArrayType) {
                 if (indexNodes.size() > 3) {
                     throw new ParseException(source, ctx, DIMENSIONS_STRING + indexList.size());
                 }
                 I4GLExpressionNode variableNode = createReadVariableNode(identifier);
                 node = createAssignmentToArray(variableNode, indexNodes, valueNode);
-            } else if (targetType instanceof I4GLTextType) {
+            } else if (targetType instanceof TextType) {
                 if (indexNodes.size() != 1) {
                     throw new ParseException(source, ctx, DIMENSIONS_STRING + indexList.size());
                 }
@@ -1344,8 +1344,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 String identifier = ctx.identifier(index++).getText();
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
-            I4GLType recordType = variableNode.getType();
-            if (!(recordType instanceof I4GLRecordType)) {
+            BaseType recordType = variableNode.getType();
+            if (!(recordType instanceof RecordType)) {
                 throw new TypeMismatchException(recordType.toString(), RECORD_STRING);
             }
             String identifier = ctx.identifier(index).getText();
@@ -1363,7 +1363,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
             final I4GLExpressionNode variableNode, final I4GLParser.VariableIndexContext variableIndexCtx,
             final I4GLExpressionNode valueNode) throws LexicalException {
         I4GLStatementNode node;
-        I4GLRecordType accessedRecordType = (I4GLRecordType) variableNode.getType();
+        RecordType accessedRecordType = (RecordType) variableNode.getType();
         if (!accessedRecordType.containsIdentifier(identifier)) {
             throw new UnknownIdentifierException("The record does not contain this identifier");
         }
@@ -1372,14 +1372,14 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
         for (I4GLParser.ExpressionContext indexCtx : indexList) {
             indexNodes.add((I4GLExpressionNode) visit(indexCtx));
         }
-        I4GLType recordType = accessedRecordType.getVariableType(identifier);
-        if (recordType instanceof I4GLArrayType) {
+        BaseType recordType = accessedRecordType.getVariableType(identifier);
+        if (recordType instanceof ArrayType) {
             if (indexList.size() > 3) {
                 throw new LexicalException(DIMENSIONS_STRING + indexList.size());
             }
             I4GLReadFromRecordNode readNode = createReadFromRecordNode(variableNode, identifier);
             node = createAssignmentToArray(readNode, indexNodes, valueNode);
-        } else if (recordType instanceof I4GLTextType) {
+        } else if (recordType instanceof TextType) {
             if (indexList.size() != 1) {
                 throw new LexicalException(DIMENSIONS_STRING + indexList.size());
             }
@@ -1401,8 +1401,8 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 String identifier = ctx.identifier(index++).getText();
                 variableNode = createReadFromRecordNode(variableNode, identifier);
             }
-            I4GLType expressionType = variableNode.getType();
-            if (!(expressionType instanceof I4GLRecordType)) {
+            BaseType expressionType = variableNode.getType();
+            if (!(expressionType instanceof RecordType)) {
                 throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
             }
             String identifier = ctx.identifier(index).getText();
@@ -1561,7 +1561,7 @@ public class I4GLNodeFactory extends I4GLParserBaseVisitor<Node> {
                 throw new NotImplementedException();
             }
             String cursorName = ctx.cursorName().identifier().getText();
-            final FrameSlot cursorSlot = currentParseScope.addVariable(cursorName, I4GLCursorType.SINGLETON);
+            final FrameSlot cursorSlot = currentParseScope.addVariable(cursorName, CursorType.SINGLETON);
             I4GLExpressionNode databaseVariableNode = createReadDatabaseVariableNode();
             I4GLStatementNode node = new I4GLCursorNode(databaseVariableNode, sql, cursorSlot);
             setSourceFromContext(node, ctx);

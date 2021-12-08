@@ -1,6 +1,6 @@
 package i4gl.nodes.utils;
 
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 /**
  * Stores one set of types of arguments of binary operations. This utility class is used for static type checking. We
@@ -10,9 +10,9 @@ import i4gl.runtime.types.I4GLType;
  */
 public class BinaryArgumentPrimitiveTypes {
 
-    private final Tuple<I4GLType, I4GLType> types;
+    private final Tuple<BaseType, BaseType> types;
 
-    public BinaryArgumentPrimitiveTypes(I4GLType leftType, I4GLType rightType) {
+    public BinaryArgumentPrimitiveTypes(BaseType leftType, BaseType rightType) {
         this.types = new Tuple<>(leftType, rightType);
     }
 
@@ -31,11 +31,11 @@ public class BinaryArgumentPrimitiveTypes {
         return types.getFirst().hashCode() * types.getSecond().hashCode();
     }
 
-    public I4GLType getLeftType() {
+    public BaseType getLeftType() {
         return this.types.getFirst();
     }
 
-    public I4GLType getRightType() {
+    public BaseType getRightType() {
         return this.types.getSecond();
     }
 

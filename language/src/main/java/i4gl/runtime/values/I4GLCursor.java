@@ -20,7 +20,7 @@ import i4gl.runtime.database.SquirrelDataSet;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.database.SquirrelSqlcaHandler;
-import i4gl.runtime.types.complex.I4GLCursorType;
+import i4gl.runtime.types.complex.CursorType;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
 @ExportLibrary(InteropLibrary.class)
@@ -93,7 +93,7 @@ public final class I4GLCursor implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLCursorType.SINGLETON;
+        return CursorType.SINGLETON;
     }
 
     @ExportMessage

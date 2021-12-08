@@ -4,8 +4,8 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.builtin.I4GLBuiltinNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.IntType;
 
 @NodeInfo(shortName = "icgi_mimetype")
 public abstract class ICGIMimeTypeBuiltinNode extends I4GLBuiltinNode {
@@ -16,7 +16,7 @@ public abstract class ICGIMimeTypeBuiltinNode extends I4GLBuiltinNode {
     }
 
     @Override
-    public I4GLType getType() {
-        return I4GLIntType.SINGLETON;
+    public BaseType getType() {
+        return IntType.SINGLETON;
     }
 }

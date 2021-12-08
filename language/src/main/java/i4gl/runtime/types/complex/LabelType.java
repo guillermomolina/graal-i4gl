@@ -4,24 +4,24 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.values.I4GLDatabase;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.values.I4GLLabel;
 
 /**
- * Specialized type descriptor for text-file values.
+ * Type descriptor for I4GL's labels. Contains additional information about the identifier of the label.
  */
-public class I4GLDatabaseType extends I4GLType {
+public class LabelType extends BaseType {
 
-    private final String alias;
+    private final String identifier;
 
-    public I4GLDatabaseType(String alias) {
-        this.alias = alias;
+    public LabelType(String identifier) {
+        this.identifier = identifier;
     }
 
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLDatabase;
+        return value instanceof I4GLLabel;
     }
 
     @Override
@@ -31,16 +31,17 @@ public class I4GLDatabaseType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLDatabase(alias);
+        return null;
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
+    public boolean convertibleTo(BaseType type) {
         return false;
     }
 
     @Override
     public String toString() {
-        return "DATABASE(" + alias + ")";
+        return "LABEL " + identifier;
     }
+
 }

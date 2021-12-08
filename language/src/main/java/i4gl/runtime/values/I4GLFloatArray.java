@@ -7,8 +7,8 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.FloatType;
 
 @ExportLibrary(InteropLibrary.class)
 public class I4GLFloatArray extends I4GLArray {
@@ -52,7 +52,7 @@ public class I4GLFloatArray extends I4GLArray {
     }
 
     @Override
-    public I4GLType getElementType() {
-        return I4GLFloatType.SINGLETON;
+    public BaseType getElementType() {
+        return FloatType.SINGLETON;
     }
 }

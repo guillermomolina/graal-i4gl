@@ -6,13 +6,13 @@ import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
+import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.nodes.I4GLTypeSystem;
 import i4gl.nodes.statement.I4GLStatementNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLCharType;
-import i4gl.runtime.types.compound.I4GLTextType;
-import i4gl.runtime.types.compound.I4GLVarcharType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.values.I4GLChar;
 import i4gl.runtime.values.I4GLRecord;
 import i4gl.runtime.values.I4GLVarchar;
@@ -32,15 +32,15 @@ import i4gl.runtime.values.I4GLVarchar;
 public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
 
     private final String identifier;
-    private final I4GLType descriptor;
+    private final BaseType descriptor;
 
-    I4GLAssignToRecordTextNode(String identifier, I4GLType descriptor) {
+    I4GLAssignToRecordTextNode(String identifier, BaseType descriptor) {
         this.identifier = identifier;
         this.descriptor = descriptor;
     }
 
     protected boolean isChar() {
-        return descriptor instanceof I4GLCharType;
+        return descriptor instanceof CharType;
     }
 
     @Specialization(guards = "isChar()")
@@ -56,7 +56,7 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     protected boolean isVarchar() {
-        return descriptor instanceof I4GLVarcharType;
+        return descriptor instanceof VarcharType;
     }
 
     @Specialization(guards = "isVarchar()")
@@ -72,7 +72,7 @@ public abstract class I4GLAssignToRecordTextNode extends I4GLStatementNode {
     }
 
     protected boolean isText() {
-        return descriptor instanceof I4GLTextType;
+        return descriptor instanceof TextType;
     }
 
     @Specialization(guards = "isText()")

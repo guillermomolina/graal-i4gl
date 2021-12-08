@@ -6,7 +6,7 @@ import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import i4gl.nodes.I4GLTypeSystem;
+import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.statement.I4GLStatementNode;
 import i4gl.runtime.values.I4GLBigIntArray;

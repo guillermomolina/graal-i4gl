@@ -3,7 +3,7 @@ package i4gl.nodes.expression;
 import com.oracle.truffle.api.dsl.NodeChild;
 
 import i4gl.exceptions.NotImplementedException;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 /**
  * Base node for each binary expression node. It also contains functions for
@@ -24,9 +24,9 @@ public abstract class I4GLBinaryExpressionNode extends I4GLExpressionNode {
     protected abstract I4GLExpressionNode getRightNode();
 
     @Override
-    public I4GLType getType() {
-        I4GLType leftNodeType = getLeftNode().getType();
-        I4GLType rightNodeType = getRightNode().getType();
+    public BaseType getType() {
+        BaseType leftNodeType = getLeftNode().getType();
+        BaseType rightNodeType = getRightNode().getType();
         if (leftNodeType == rightNodeType) {
             return leftNodeType;
         }

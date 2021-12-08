@@ -14,7 +14,7 @@ import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.database.SquirrelSqlcaHandler;
 import i4gl.runtime.exceptions.DatabaseConnectionException;
-import i4gl.runtime.types.complex.I4GLDatabaseType;
+import i4gl.runtime.types.complex.DatabaseType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLDatabase implements TruffleObject {
@@ -79,6 +79,6 @@ public final class I4GLDatabase implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return new I4GLDatabaseType(alias);
+        return new DatabaseType(alias);
     }
 }

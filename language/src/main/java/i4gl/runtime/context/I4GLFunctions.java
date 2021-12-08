@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.types.primitive.I4GLObjectType;
+import i4gl.runtime.types.primitive.ObjectType;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -62,7 +62,7 @@ final class I4GLFunctions implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLObjectType.SINGLETON;
+        return ObjectType.SINGLETON;
     }
 
     @ExportMessage

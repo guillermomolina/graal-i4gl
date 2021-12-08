@@ -9,16 +9,16 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
-import i4gl.nodes.I4GLTypeSystem;
-import i4gl.nodes.I4GLTypeSystemGen;
+import i4gl.I4GLTypeSystem;
+import i4gl.I4GLTypeSystemGen;
 import i4gl.nodes.statement.I4GLStatementNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLChar1Type;
-import i4gl.runtime.types.primitive.I4GLBigIntType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
-import i4gl.runtime.types.primitive.I4GLIntType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import i4gl.runtime.types.primitive.I4GLSmallIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.Char1Type;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.primitive.IntType;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -35,7 +35,7 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
     /**
      * Returns type of the expression. This method is mainly used for compile time type checking.
      */
-    public abstract I4GLType getType();
+    public abstract BaseType getType();
 
 	public abstract Object executeGeneric(VirtualFrame frame);
 
@@ -81,26 +81,26 @@ public abstract class I4GLExpressionNode extends I4GLStatementNode {
 	}
 
     protected boolean isChar() {
-        return getType() == I4GLChar1Type.SINGLETON;
+        return getType() == Char1Type.SINGLETON;
     }
 
     protected boolean isSmallInt() {
-        return getType() == I4GLSmallIntType.SINGLETON;
+        return getType() == SmallIntType.SINGLETON;
     }
 
     protected boolean isInt() {
-        return getType() == I4GLIntType.SINGLETON;
+        return getType() == IntType.SINGLETON;
     }
 
     protected boolean isBigInt() {
-        return getType() == I4GLBigIntType.SINGLETON;
+        return getType() == BigIntType.SINGLETON;
     }
 
     protected boolean isSmallFloat() {
-        return getType() == I4GLSmallFloatType.SINGLETON;
+        return getType() == SmallFloatType.SINGLETON;
     }
 
     protected boolean isFloat() {
-        return getType() == I4GLFloatType.SINGLETON;
+        return getType() == FloatType.SINGLETON;
     }
 }

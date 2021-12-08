@@ -3,8 +3,8 @@ package i4gl.nodes.literals;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.SmallFloatType;
 
 /**
  * Node representing float literal.
@@ -26,8 +26,8 @@ public abstract class I4GLSmallFloatLiteralNode extends I4GLExpressionNode {
 	}
 
     @Override
-    public I4GLType getType() {
-        return I4GLSmallFloatType.SINGLETON;
+    public BaseType getType() {
+        return SmallFloatType.SINGLETON;
     }
 
 }

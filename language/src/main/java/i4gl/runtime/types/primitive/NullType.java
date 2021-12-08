@@ -1,27 +1,23 @@
-package i4gl.runtime.types.complex;
+package i4gl.runtime.types.primitive;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.values.I4GLLabel;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.values.I4GLNull;
 
-/**
- * Type descriptor for I4GL's labels. Contains additional information about the identifier of the label.
- */
-public class I4GLLabelType extends I4GLType {
+public class NullType extends BaseType {
 
-    private final String identifier;
+    public static final NullType SINGLETON = new NullType();
 
-    public I4GLLabelType(String identifier) {
-        this.identifier = identifier;
-    }
+    private NullType() {
+    }    
 
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLLabel;
+        return library.isNull(value);
     }
 
     @Override
@@ -31,17 +27,16 @@ public class I4GLLabelType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        return null;
+        return I4GLNull.SINGLETON;
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
+    public boolean convertibleTo(final BaseType type) {
         return false;
     }
 
     @Override
     public String toString() {
-        return "LABEL " + identifier;
+        return "NULL";
     }
-
 }

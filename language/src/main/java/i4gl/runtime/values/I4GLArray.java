@@ -14,15 +14,15 @@ import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLArrayType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.ArrayType;
 
 @ExportLibrary(InteropLibrary.class)
 public abstract class I4GLArray implements TruffleObject {
 
     public abstract int getSize();
 
-    public abstract I4GLType getElementType();
+    public abstract BaseType getElementType();
 
     protected abstract Object getArray();
 
@@ -43,7 +43,7 @@ public abstract class I4GLArray implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return new I4GLArrayType(getSize(), getElementType());
+        return new ArrayType(getSize(), getElementType());
     }
 
     @ExportMessage

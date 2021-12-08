@@ -5,7 +5,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import i4gl.nodes.I4GLTypeSystem;
+import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.runtime.context.I4GLContext;
 

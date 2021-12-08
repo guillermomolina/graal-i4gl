@@ -5,11 +5,11 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.values.I4GLChar;
 
-public class I4GLChar1Type extends I4GLCharType {
+public class Char1Type extends CharType {
 
-    public static final I4GLChar1Type SINGLETON = new I4GLChar1Type();
+    public static final Char1Type SINGLETON = new Char1Type();
 
-    private I4GLChar1Type() {
+    private Char1Type() {
         super(1);
     }
 

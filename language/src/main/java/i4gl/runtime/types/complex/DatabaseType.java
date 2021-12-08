@@ -1,23 +1,27 @@
-package i4gl.runtime.types.primitive;
+package i4gl.runtime.types.complex;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.values.I4GLDatabase;
 
-public class I4GLObjectType extends I4GLType {
+/**
+ * Specialized type descriptor for text-file values.
+ */
+public class DatabaseType extends BaseType {
 
-    public static final I4GLObjectType SINGLETON = new I4GLObjectType();
+    private final String alias;
 
-    private I4GLObjectType() {
-    }    
+    public DatabaseType(String alias) {
+        this.alias = alias;
+    }
 
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return library.hasMembers(value);
+        return value instanceof I4GLDatabase;
     }
 
     @Override
@@ -27,16 +31,16 @@ public class I4GLObjectType extends I4GLType {
 
     @Override
     public Object getDefaultValue() {
-        return I4GLNull.SINGLETON;
+        return new I4GLDatabase(alias);
     }
 
     @Override
-    public boolean convertibleTo(final I4GLType type) {
+    public boolean convertibleTo(BaseType type) {
         return false;
     }
 
     @Override
     public String toString() {
-        return "OBJECT";
+        return "DATABASE(" + alias + ")";
     }
 }

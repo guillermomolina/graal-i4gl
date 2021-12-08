@@ -3,8 +3,8 @@ package i4gl.nodes.literals;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.compound.I4GLTextType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.TextType;
 
 /**
  * Node representing string literal.
@@ -26,8 +26,8 @@ public final class I4GLTextLiteralNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLType getType() {
-        return I4GLTextType.SINGLETON;
+    public BaseType getType() {
+        return TextType.SINGLETON;
     }
 
 }

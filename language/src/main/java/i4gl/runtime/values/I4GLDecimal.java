@@ -13,7 +13,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.primitive.I4GLDecimalType;
+import i4gl.runtime.types.primitive.DecimalType;
 
 
 @ExportLibrary(InteropLibrary.class)
@@ -175,7 +175,7 @@ public final class I4GLDecimal implements TruffleObject, Comparable<I4GLDecimal>
 
     @ExportMessage
     Object getMetaObject() {
-        return new I4GLDecimalType(value.precision(), value.scale());
+        return new DecimalType(value.precision(), value.scale());
     }
 
     @ExportMessage

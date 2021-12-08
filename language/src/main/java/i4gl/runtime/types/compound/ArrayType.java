@@ -5,12 +5,12 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.NotImplementedException;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLBigIntType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
-import i4gl.runtime.types.primitive.I4GLIntType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import i4gl.runtime.types.primitive.I4GLSmallIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.I4GLArray;
 import i4gl.runtime.values.I4GLBigIntArray;
 import i4gl.runtime.values.I4GLCharArray;
@@ -27,10 +27,10 @@ import i4gl.runtime.values.I4GLSmallIntArray;
  * about the type of the inner values and
  * the universe of the indices stored inside an ordinal descriptor.
  */
-public class I4GLArrayType extends I4GLType {
+public class ArrayType extends BaseType {
 
     protected final int size;
-    private final I4GLType valuesType;
+    private final BaseType valuesType;
 
     /**
      * Default constructor.
@@ -38,7 +38,7 @@ public class I4GLArrayType extends I4GLType {
      * @param dimension  universe of the indices
      * @param valuesType type descriptor of the inner values
      */
-    public I4GLArrayType(int size, I4GLType valuesType) {
+    public ArrayType(int size, BaseType valuesType) {
         this.size = size;
         this.valuesType = valuesType;
     }
@@ -55,20 +55,20 @@ public class I4GLArrayType extends I4GLType {
     }
 
     public Object getDefaultValue() {
-        if (valuesType == I4GLChar1Type.SINGLETON) {
+        if (valuesType == Char1Type.SINGLETON) {
             return new I4GLCharArray(size);
-        } else if (valuesType == I4GLSmallIntType.SINGLETON) {
+        } else if (valuesType == SmallIntType.SINGLETON) {
             return new I4GLSmallIntArray(size);
-        } else if (valuesType == I4GLIntType.SINGLETON) {
+        } else if (valuesType == IntType.SINGLETON) {
             return new I4GLIntArray(size);
-        } else if (valuesType == I4GLBigIntType.SINGLETON) {
+        } else if (valuesType == BigIntType.SINGLETON) {
             return new I4GLBigIntArray(size);
-        } else if (valuesType == I4GLSmallFloatType.SINGLETON) {
+        } else if (valuesType == SmallFloatType.SINGLETON) {
             return new I4GLSmallFloatArray(size);
-        } else if (valuesType == I4GLFloatType.SINGLETON) {
+        } else if (valuesType == FloatType.SINGLETON) {
             return new I4GLFloatArray(size);
-        } else if (valuesType instanceof I4GLRecordType) {
-            return new I4GLRecordArray((I4GLRecordType) valuesType, size);
+        } else if (valuesType instanceof RecordType) {
+            return new I4GLRecordArray((RecordType) valuesType, size);
         } else {
             throw new NotImplementedException();
             /*
@@ -84,12 +84,12 @@ public class I4GLArrayType extends I4GLType {
         return size;
     }
 
-    public I4GLType getValuesType() {
+    public BaseType getValuesType() {
         return this.valuesType;
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
+    public boolean convertibleTo(BaseType type) {
         return false;
     }
 

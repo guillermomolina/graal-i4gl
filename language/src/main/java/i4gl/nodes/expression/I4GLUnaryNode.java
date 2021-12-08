@@ -2,7 +2,7 @@ package i4gl.nodes.expression;
 
 import com.oracle.truffle.api.dsl.NodeChild;
 
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 /**
  * Base class for each unary node. It has one child node which is the operation's argument.
@@ -17,7 +17,7 @@ public abstract class I4GLUnaryNode extends I4GLExpressionNode {
      * @return resulting type of the operation
      */
     @Override
-    public I4GLType getType() {
+    public BaseType getType() {
         return this.getArgument().getType();
     }
 

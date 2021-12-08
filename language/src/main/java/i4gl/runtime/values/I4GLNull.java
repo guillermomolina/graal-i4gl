@@ -10,7 +10,7 @@ import com.oracle.truffle.api.utilities.TriState;
 
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.primitive.I4GLNullType;
+import i4gl.runtime.types.primitive.NullType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class I4GLNull implements TruffleObject {
@@ -64,7 +64,7 @@ public final class I4GLNull implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLNullType.SINGLETON;
+        return NullType.SINGLETON;
     }
 
     @ExportMessage

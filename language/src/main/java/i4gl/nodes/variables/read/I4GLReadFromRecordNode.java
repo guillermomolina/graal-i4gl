@@ -7,7 +7,7 @@ import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
 import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.I4GLRecord;
 
 /**
@@ -18,10 +18,10 @@ import i4gl.runtime.values.I4GLRecord;
  */
 @NodeChild(value = "record", type = I4GLExpressionNode.class)
 @NodeField(name = "identifier", type = String.class)
-@NodeField(name = "returnType", type = I4GLType.class)
+@NodeField(name = "returnType", type = BaseType.class)
 public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
 
-    protected abstract I4GLType getReturnType();
+    protected abstract BaseType getReturnType();
 
     protected abstract String getIdentifier();
 
@@ -56,7 +56,7 @@ public abstract class I4GLReadFromRecordNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLType getType() {
+    public BaseType getType() {
         return this.getReturnType();
     }
 

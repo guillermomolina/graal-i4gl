@@ -18,14 +18,14 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.compound.I4GLCharType;
-import i4gl.runtime.types.compound.I4GLVarcharType;
-import i4gl.runtime.types.primitive.I4GLBigIntType;
-import i4gl.runtime.types.primitive.I4GLDecimalType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
-import i4gl.runtime.types.primitive.I4GLIntType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import i4gl.runtime.types.primitive.I4GLSmallIntType;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.VarcharType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.DecimalType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.primitive.IntType;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -46,28 +46,28 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
  * {@link I4GLLanguage#getLanguageView}.
  */
 @ExportLibrary(InteropLibrary.class)
-public abstract class I4GLType implements TruffleObject {
+public abstract class BaseType implements TruffleObject {
 
-    private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(I4GLType.class);
+    private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(BaseType.class);
 
-    public static I4GLType fromTableColumInfo(final TableColumnInfo info) {
+    public static BaseType fromTableColumInfo(final TableColumnInfo info) {
         switch (info.getDataType()) {
             case Types.CHAR:
-                return new I4GLCharType(info.getColumnSize());
+                return new CharType(info.getColumnSize());
             case Types.VARCHAR:
-                return new I4GLVarcharType(info.getColumnSize());
+                return new VarcharType(info.getColumnSize());
             case Types.SMALLINT:
-                return I4GLSmallIntType.SINGLETON;
+                return SmallIntType.SINGLETON;
             case Types.INTEGER:
-                return I4GLIntType.SINGLETON;
+                return IntType.SINGLETON;
             case Types.BIGINT:
-                return I4GLBigIntType.SINGLETON;
+                return BigIntType.SINGLETON;
             case Types.REAL:
-                return I4GLSmallFloatType.SINGLETON;
+                return SmallFloatType.SINGLETON;
             case Types.FLOAT:
-                return I4GLFloatType.SINGLETON;
+                return FloatType.SINGLETON;
             case Types.DECIMAL:
-                return new I4GLDecimalType(info.getColumnSize(), info.getDecimalDigits());
+                return new DecimalType(info.getColumnSize(), info.getDecimalDigits());
             default:
                 LOGGER.warning("Unknown SQL type: " + JDBCType.valueOf(info.getDataType()).getName());
                 throw new NotImplementedException();
@@ -76,7 +76,7 @@ public abstract class I4GLType implements TruffleObject {
 
     /**
      * Checks whether this type is of a certain instance. If used on fast-paths it
-     * is required to cast {@link I4GLType} to a constant.
+     * is required to cast {@link BaseType} to a constant.
      */
     public abstract boolean isInstance(Object value, InteropLibrary interop);
 
@@ -95,7 +95,7 @@ public abstract class I4GLType implements TruffleObject {
     /**
      * Checks whether this type is convertible to the selected type.
      */
-    public abstract boolean convertibleTo(I4GLType type);
+    public abstract boolean convertibleTo(BaseType type);
 
     @ExportMessage
     boolean hasLanguage() {
@@ -153,14 +153,14 @@ public abstract class I4GLType implements TruffleObject {
          * benchmarks.
          */
         @Specialization(guards = "type == cachedType", limit = "3")
-        static boolean doCached(I4GLType type, Object value, @Cached("type") I4GLType cachedType,
+        static boolean doCached(BaseType type, Object value, @Cached("type") BaseType cachedType,
                 @CachedLibrary("value") InteropLibrary library) {
             return cachedType.isInstance(value, library);
         }
 
         @TruffleBoundary
         @Specialization(replaces = "doCached")
-        static boolean doGeneric(I4GLType type, Object value) {
+        static boolean doGeneric(BaseType type, Object value) {
             return type.isInstance(value, InteropLibrary.getFactory().getUncached());
         }
     }

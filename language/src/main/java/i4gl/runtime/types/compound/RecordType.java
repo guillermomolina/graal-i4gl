@@ -7,38 +7,38 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.I4GLRecord;
 
 /**
  * Type descriptor for I4GL's records types. It contains additional information about the variables it contains.
  */
-public class I4GLRecordType extends I4GLType {
+public class RecordType extends BaseType {
 
-    public static final I4GLRecordType SQLCA = SqlcaRecordType();
+    public static final RecordType SQLCA = SqlcaRecordType();
 
-    private final Map<String, I4GLType> variables;
+    private final Map<String, BaseType> variables;
 
-    private static I4GLRecordType SqlcaRecordType() {
-        Map<String, I4GLType> variables = new LinkedHashMap<>();
-        variables.put("sqlcode", I4GLIntType.SINGLETON);
-        variables.put("sqlerrm", new I4GLCharType(72));
-        variables.put("sqlerrp", new I4GLCharType(8));
-        variables.put("sqlerrd", new I4GLArrayType(6, I4GLIntType.SINGLETON));
-        variables.put("sqlawarn", new I4GLCharType(8));
-        return new I4GLRecordType(variables);
+    private static RecordType SqlcaRecordType() {
+        Map<String, BaseType> variables = new LinkedHashMap<>();
+        variables.put("sqlcode", IntType.SINGLETON);
+        variables.put("sqlerrm", new CharType(72));
+        variables.put("sqlerrp", new CharType(8));
+        variables.put("sqlerrd", new ArrayType(6, IntType.SINGLETON));
+        variables.put("sqlawarn", new CharType(8));
+        return new RecordType(variables);
     }
 
     /**
      * The default descriptor.
      * @param innerScope lexical scope containing the identifiers of the variables this record contains
      */
-    public I4GLRecordType(final Map<String, I4GLType> variables) {
+    public RecordType(final Map<String, BaseType> variables) {
         this.variables = variables;
     }
 
-    public Map<String, I4GLType> getVariables() {
+    public Map<String, BaseType> getVariables() {
         return variables;
     }
 
@@ -56,7 +56,7 @@ public class I4GLRecordType extends I4GLType {
     @Override
     public Object getDefaultValue() {
         Map<String, Object> values = new LinkedHashMap<>();
-        for (Map.Entry<String, I4GLType> entry : variables.entrySet()) {
+        for (Map.Entry<String, BaseType> entry : variables.entrySet()) {
             values.put(entry.getKey(), entry.getValue().getDefaultValue());
         }
         return new I4GLRecord(this, values);
@@ -66,12 +66,12 @@ public class I4GLRecordType extends I4GLType {
         return variables.containsKey(identifier);
     }
 
-    public I4GLType getVariableType(String identifier) {
+    public BaseType getVariableType(String identifier) {
         return variables.get(identifier);
     }
 
     @Override
-    public boolean convertibleTo(I4GLType type) {
+    public boolean convertibleTo(BaseType type) {
         return false;
     }
 
@@ -84,7 +84,7 @@ public class I4GLRecordType extends I4GLType {
         StringBuilder builder = new StringBuilder();
         builder.append("RECORD ");
         int i = 0;
-        for (Map.Entry<String, I4GLType> entry : variables.entrySet()) {
+        for (Map.Entry<String, BaseType> entry : variables.entrySet()) {
             if (i++!=0) {
                 builder.append(", ");
             }

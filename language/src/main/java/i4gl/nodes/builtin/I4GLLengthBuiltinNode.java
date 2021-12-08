@@ -4,8 +4,8 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.exceptions.NotImplementedException;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.I4GLBigIntArray;
 import i4gl.runtime.values.I4GLChar;
 import i4gl.runtime.values.I4GLCharArray;
@@ -77,7 +77,7 @@ public abstract class I4GLLengthBuiltinNode extends I4GLBuiltinNode {
     }
 
     @Override
-    public I4GLType getType() {
-        return I4GLIntType.SINGLETON;
+    public BaseType getType() {
+        return IntType.SINGLETON;
     }
 }

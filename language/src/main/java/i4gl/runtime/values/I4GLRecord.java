@@ -16,21 +16,21 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.exceptions.InvalidCastException;
-import i4gl.runtime.types.compound.I4GLChar1Type;
-import i4gl.runtime.types.compound.I4GLRecordType;
-import i4gl.runtime.types.primitive.I4GLBigIntType;
-import i4gl.runtime.types.primitive.I4GLFloatType;
-import i4gl.runtime.types.primitive.I4GLIntType;
-import i4gl.runtime.types.primitive.I4GLSmallFloatType;
-import i4gl.runtime.types.primitive.I4GLSmallIntType;
+import i4gl.runtime.types.compound.Char1Type;
+import i4gl.runtime.types.compound.RecordType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.primitive.IntType;
 
 @ExportLibrary(InteropLibrary.class)
 public class I4GLRecord implements TruffleObject {
 
-    private final I4GLRecordType recordType;
+    private final RecordType recordType;
     private final Map<String, Object> properties;
 
-    public I4GLRecord(final I4GLRecordType recordType, Map<String, Object> properties) {
+    public I4GLRecord(final RecordType recordType, Map<String, Object> properties) {
         this.recordType = recordType;
         this.properties = properties;
     }
@@ -50,7 +50,7 @@ public class I4GLRecord implements TruffleObject {
         try {
             return (char) value;
         } catch (ClassCastException ex) {
-            throw new InvalidCastException(value, I4GLChar1Type.SINGLETON);
+            throw new InvalidCastException(value, Char1Type.SINGLETON);
         }
     }
 
@@ -64,7 +64,7 @@ public class I4GLRecord implements TruffleObject {
         try {
             return (short) value;
         } catch (ClassCastException ex) {
-            throw new InvalidCastException(value, I4GLSmallIntType.SINGLETON);
+            throw new InvalidCastException(value, SmallIntType.SINGLETON);
         }
     }
 
@@ -78,7 +78,7 @@ public class I4GLRecord implements TruffleObject {
         try {
             return (int) value;
         } catch (ClassCastException ex) {
-            throw new InvalidCastException(value, I4GLIntType.SINGLETON);
+            throw new InvalidCastException(value, IntType.SINGLETON);
         }
     }
 
@@ -92,7 +92,7 @@ public class I4GLRecord implements TruffleObject {
         try {
             return (long) value;
         } catch (ClassCastException ex) {
-            throw new InvalidCastException(value, I4GLBigIntType.SINGLETON);
+            throw new InvalidCastException(value, BigIntType.SINGLETON);
         }
     }
 
@@ -106,7 +106,7 @@ public class I4GLRecord implements TruffleObject {
         try {
             return (float) value;
         } catch (ClassCastException ex) {
-            throw new InvalidCastException(value, I4GLSmallFloatType.SINGLETON);
+            throw new InvalidCastException(value, SmallFloatType.SINGLETON);
         }
     }
 
@@ -120,7 +120,7 @@ public class I4GLRecord implements TruffleObject {
         try {
             return (double) value;
         } catch (ClassCastException ex) {
-            throw new InvalidCastException(value, I4GLFloatType.SINGLETON);
+            throw new InvalidCastException(value, FloatType.SINGLETON);
         }
     }
 

@@ -1,4 +1,4 @@
-package i4gl.nodes;
+package i4gl;
 
 import com.oracle.truffle.api.dsl.ImplicitCast;
 import com.oracle.truffle.api.dsl.TypeCast;

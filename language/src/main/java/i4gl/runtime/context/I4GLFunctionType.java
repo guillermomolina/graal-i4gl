@@ -4,10 +4,10 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.I4GLNull;
 
-final class I4GLFunctionType extends I4GLType {
+final class I4GLFunctionType extends BaseType {
 
     public static final I4GLFunctionType SINGLETON = new I4GLFunctionType();
 
@@ -31,7 +31,7 @@ final class I4GLFunctionType extends I4GLType {
     }
 
     @Override
-    public boolean convertibleTo(final I4GLType type) {
+    public boolean convertibleTo(final BaseType type) {
         return false;
     }
 

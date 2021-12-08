@@ -7,7 +7,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import i4gl.interop.MainFunctionObject;
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.nodes.root.I4GLMainRootNode;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class I4GLMainFunctionBodyNode extends I4GLExpressionNode {
@@ -24,7 +24,7 @@ public abstract class I4GLMainFunctionBodyNode extends I4GLExpressionNode {
     }
 
     @Override
-    public I4GLType getType() {
+    public BaseType getType() {
         return null;
     }
 

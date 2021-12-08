@@ -12,8 +12,8 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.compound.I4GLChar1Type;
-import i4gl.runtime.types.compound.I4GLCharType;
+import i4gl.runtime.types.compound.Char1Type;
+import i4gl.runtime.types.compound.CharType;
 
 /**
  * Representation of variables of NChar type. It is a slight wrapper to Java's
@@ -130,9 +130,9 @@ public class I4GLChar implements TruffleObject {
     @ExportMessage
     Object getMetaObject() {
         if (getSize() == 1) {
-            return I4GLChar1Type.SINGLETON;
+            return Char1Type.SINGLETON;
         }
-        return new I4GLCharType(getSize());
+        return new CharType(getSize());
     }
 
     @ExportMessage

@@ -10,10 +10,10 @@ import com.oracle.truffle.api.frame.FrameSlot;
 
 import i4gl.parser.exceptions.DuplicitIdentifierException;
 import i4gl.parser.exceptions.LexicalException;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.complex.I4GLDatabaseType;
-import i4gl.runtime.types.complex.I4GLLabelType;
-import i4gl.runtime.types.compound.I4GLRecordType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.complex.DatabaseType;
+import i4gl.runtime.types.complex.LabelType;
+import i4gl.runtime.types.compound.RecordType;
 
 /**
  * This class represents currently parsed lexical scope. Lexical scope
@@ -27,7 +27,7 @@ public class I4GLParseScope {
      */
     private String name;
     private String type;
-    private Map<String, I4GLType> variables;
+    private Map<String, BaseType> variables;
     final List<String> arguments;
     private FrameDescriptor frameDescriptor;
     private final I4GLParseScope outer;
@@ -63,11 +63,11 @@ public class I4GLParseScope {
         return frameDescriptor;
     }
 
-    public I4GLType getIdentifierType(String identifier) {
+    public BaseType getIdentifierType(String identifier) {
         return variables.get(identifier);
     }
 
-    public Map<String, I4GLType> getVariables() {
+    public Map<String, BaseType> getVariables() {
         return variables;
     }
 
@@ -76,30 +76,30 @@ public class I4GLParseScope {
     }
 
     public boolean isLabel(String identifier) {
-        return variables.get(identifier) instanceof I4GLLabelType;
+        return variables.get(identifier) instanceof LabelType;
     }
 
     public FrameSlot addLabel(String identifier) throws LexicalException {
-        return registerNewIdentifier(identifier, new I4GLLabelType(identifier));
+        return registerNewIdentifier(identifier, new LabelType(identifier));
     }
 
-    public FrameSlot addVariable(String identifier, I4GLType type) throws LexicalException {
+    public FrameSlot addVariable(String identifier, BaseType type) throws LexicalException {
         return registerNewIdentifier(identifier, type);
     }
 
     public FrameSlot addDatabaseVariable(final String alias) throws LexicalException {
-        return registerNewIdentifier(DATABASE_IDENTIFIER, new I4GLDatabaseType(alias));
+        return registerNewIdentifier(DATABASE_IDENTIFIER, new DatabaseType(alias));
     }
 
     public FrameSlot addSqlcaVariable() throws LexicalException {
-        return registerNewIdentifier(SQLCA_IDENTIFIER, I4GLRecordType.SQLCA);
+        return registerNewIdentifier(SQLCA_IDENTIFIER, RecordType.SQLCA);
     }
 
     FrameSlot getLocalSlot(String identifier) {
         return getFrameSlot(identifier);
     }
 
-    FrameSlot registerNewIdentifier(String identifier, I4GLType type) throws LexicalException {
+    FrameSlot registerNewIdentifier(String identifier, BaseType type) throws LexicalException {
         if (variables.containsKey(identifier)){
             throw new DuplicitIdentifierException(identifier);
         } else {
@@ -137,7 +137,7 @@ public class I4GLParseScope {
         return containsLocalIdentifier(identifier);
     }
 
-    FrameSlot registerLocalVariable(String identifier, I4GLType type) throws LexicalException {
+    FrameSlot registerLocalVariable(String identifier, BaseType type) throws LexicalException {
         return addVariable(identifier, type);
     }
 
@@ -145,8 +145,8 @@ public class I4GLParseScope {
         arguments.add(identifier);
     }
 
-    I4GLRecordType createRecordType() {
-        return new I4GLRecordType(variables);
+    RecordType createRecordType() {
+        return new RecordType(variables);
     }
 
     /**

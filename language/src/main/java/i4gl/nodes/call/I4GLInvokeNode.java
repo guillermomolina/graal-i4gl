@@ -1,11 +1,5 @@
 package i4gl.nodes.call;
 
-import i4gl.exceptions.NotImplementedException;
-import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.context.I4GLFunction;
-import i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
-import i4gl.runtime.types.I4GLType;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
@@ -16,6 +10,13 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
+
+import i4gl.exceptions.NotImplementedException;
+import i4gl.nodes.expression.I4GLExpressionNode;
+import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.I4GLFunction;
+import i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
+import i4gl.runtime.types.BaseType;
 
 @NodeInfo(shortName = "INVOKE")
 public final class I4GLInvokeNode extends I4GLExpressionNode {
@@ -32,7 +33,7 @@ public final class I4GLInvokeNode extends I4GLExpressionNode {
 	}
 
     @Override
-    public I4GLType getType() {
+    public BaseType getType() {
         throw new NotImplementedException();
     }
 

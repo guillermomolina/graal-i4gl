@@ -5,8 +5,8 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.expression.I4GLBinaryExpressionNode;
-import i4gl.runtime.types.I4GLType;
-import i4gl.runtime.types.primitive.I4GLIntType;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.IntType;
 
 /**
  * Node representing less than or equal operation.
@@ -45,8 +45,8 @@ public abstract class I4GLLessThanOrEqualNode extends I4GLBinaryExpressionNode {
 	}
 
     @Override
-    public I4GLType getType() {
-        return I4GLIntType.SINGLETON;
+    public BaseType getType() {
+        return IntType.SINGLETON;
     }
 
 }

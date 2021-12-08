@@ -13,7 +13,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.expression.I4GLExpressionNode;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.types.I4GLType;
+import i4gl.runtime.types.BaseType;
 
 /**
  * This node reads value of specified global variable (by its frame slot).
@@ -24,7 +24,7 @@ import i4gl.runtime.types.I4GLType;
 
 @NodeField(name = "frameName", type = String.class)
 @NodeField(name = "slot", type = FrameSlot.class)
-@NodeField(name = "type", type = I4GLType.class)
+@NodeField(name = "type", type = BaseType.class)
 public abstract class I4GLReadNonLocalVariableNode extends I4GLExpressionNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;

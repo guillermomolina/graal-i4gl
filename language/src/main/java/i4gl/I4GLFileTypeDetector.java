@@ -44,7 +44,7 @@ import com.oracle.truffle.api.TruffleFile;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public final class I4GLFileDetector implements TruffleFile.FileTypeDetector {
+public final class I4GLFileTypeDetector implements TruffleFile.FileTypeDetector {
 
     @Override
     public String findMimeType(TruffleFile file) throws IOException {

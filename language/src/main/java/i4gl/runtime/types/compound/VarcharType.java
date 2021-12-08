@@ -3,32 +3,32 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.values.I4GLChar;
+import i4gl.runtime.values.I4GLVarchar;
 
 /**
  * Type descriptor representing the string type.
  */
-public class I4GLCharType extends I4GLTextType {
+public class VarcharType extends TextType {
     private final int size;
 
-    public I4GLCharType(int size) {
-        assert (size > 1 || (getClass() == I4GLChar1Type.class));
+    public VarcharType(int size) {
         this.size = size;
     }
 
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLChar;
+        return value instanceof I4GLVarchar;
     }
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLChar(size);
+        return new I4GLVarchar(size);
     }
 
     @Override
     public String toString() {
-        return "CHAR(" + size + ")";
+        return "VARCHAR(" + size + ")";
     }
+
 }

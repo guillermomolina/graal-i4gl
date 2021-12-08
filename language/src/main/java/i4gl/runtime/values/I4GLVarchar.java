@@ -11,7 +11,7 @@ import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.exceptions.IndexOutOfBoundsException;
-import i4gl.runtime.types.compound.I4GLVarcharType;
+import i4gl.runtime.types.compound.VarcharType;
 
 /**
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
@@ -112,7 +112,7 @@ public class I4GLVarchar implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return new I4GLVarcharType(size);
+        return new VarcharType(size);
     }
 
     @ExportMessage
