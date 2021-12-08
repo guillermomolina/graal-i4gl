@@ -30,7 +30,7 @@ import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import i4gl.I4GLLanguage;
-import i4gl.nodes.builtin.I4GLBuiltinNode;
+import i4gl.nodes.builtin.BuiltinNode;
 import i4gl.test.I4GLModuleTestRunner.TestCase;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -258,9 +258,9 @@ public class I4GLModuleTestRunner extends ParentRunner<TestCase> {
         return outFile.toString();
     }
 
-    private static final List<NodeFactory<? extends I4GLBuiltinNode>> builtins = new ArrayList<>();
+    private static final List<NodeFactory<? extends BuiltinNode>> builtins = new ArrayList<>();
 
-    public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
+    public static void installBuiltin(NodeFactory<? extends BuiltinNode> builtin) {
         builtins.add(builtin);
     }
 
@@ -271,7 +271,7 @@ public class I4GLModuleTestRunner extends ParentRunner<TestCase> {
         Context context = null;
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            for (NodeFactory<? extends I4GLBuiltinNode> builtin : builtins) {
+            for (NodeFactory<? extends BuiltinNode> builtin : builtins) {
                 I4GLLanguage.installBuiltin(builtin);
             }
 

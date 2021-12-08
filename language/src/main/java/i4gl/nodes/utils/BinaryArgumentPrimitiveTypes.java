@@ -6,7 +6,7 @@ import i4gl.runtime.types.BaseType;
  * Stores one set of types of arguments of binary operations. This utility class is used for static type checking. We
  * store allowed combinations of types of arguments into a table in each binary node and during the parsing the given
  * values are matched against this table.
- * {@link i4gl.nodes.expression.I4GLBinaryExpressionNode}
+ * {@link i4gl.nodes.expression.BinaryExpressionNode}
  */
 public class BinaryArgumentPrimitiveTypes {
 

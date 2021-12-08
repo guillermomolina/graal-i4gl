@@ -4,7 +4,7 @@ import com.oracle.truffle.api.nodes.ControlFlowException;
 
 /**
  * Exception thrown when I4GL's halt function is executed ({@HaltBuiltinNode}).
- * The exception is caught in main block's root node {@link i4gl.nodes.root.I4GLRootNode}.
+ * The exception is caught in main block's root node {@link i4gl.nodes.root.BaseRootNode}.
  */
 public class HaltException extends ControlFlowException {
 

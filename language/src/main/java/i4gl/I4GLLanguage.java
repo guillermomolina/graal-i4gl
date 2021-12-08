@@ -27,12 +27,12 @@ import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 
 import i4gl.exceptions.NotImplementedException;
-import i4gl.nodes.builtin.I4GLBuiltinNode;
-import i4gl.nodes.call.I4GLReadArgumentNode;
-import i4gl.nodes.expression.I4GLExpressionNode;
-import i4gl.nodes.root.I4GLBuiltinRootNode;
-import i4gl.nodes.root.I4GLModuleRootNode;
-import i4gl.nodes.root.I4GLUndefinedFunctionRootNode;
+import i4gl.nodes.builtin.BuiltinNode;
+import i4gl.nodes.call.ReadArgumentNode;
+import i4gl.nodes.expression.ExpressionNode;
+import i4gl.nodes.root.BuiltinRootNode;
+import i4gl.nodes.root.ModuleRootNode;
+import i4gl.nodes.root.UndefinedFunctionRootNode;
 import i4gl.parser.FullParser;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.context.I4GLLanguageView;
@@ -56,7 +56,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     private static final Source BUILTIN_SOURCE = Source.newBuilder(I4GLLanguage.ID, "", "I4GL builtin").build();
 
     private final Assumption singleContext = Truffle.getRuntime().createAssumption("Single I4GL context.");
-    private final Map<NodeFactory<? extends I4GLBuiltinNode>, RootCallTarget> builtinTargets = new ConcurrentHashMap<>();
+    private final Map<NodeFactory<? extends BuiltinNode>, RootCallTarget> builtinTargets = new ConcurrentHashMap<>();
     private final Map<String, RootCallTarget> undefinedFunctions = new ConcurrentHashMap<>();
 
     public I4GLLanguage() {
@@ -78,7 +78,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     public RootCallTarget getOrCreateUndefinedFunction(String name) {
         RootCallTarget target = undefinedFunctions.get(name);
         if (target == null) {
-            target = Truffle.getRuntime().createCallTarget(new I4GLUndefinedFunctionRootNode(this, name));
+            target = Truffle.getRuntime().createCallTarget(new UndefinedFunctionRootNode(this, name));
             RootCallTarget other = undefinedFunctions.putIfAbsent(name, target);
             if (other != null) {
                 target = other;
@@ -87,7 +87,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         return target;
     }
 
-    public RootCallTarget lookupBuiltin(NodeFactory<? extends I4GLBuiltinNode> factory) {
+    public RootCallTarget lookupBuiltin(NodeFactory<? extends BuiltinNode> factory) {
         RootCallTarget target = builtinTargets.get(factory);
         if (target != null) {
             return target;
@@ -103,7 +103,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
          */
 
         int argumentCount = factory.getExecutionSignature().size();
-        I4GLExpressionNode[] argumentNodes = new I4GLExpressionNode[argumentCount];
+        ExpressionNode[] argumentNodes = new ExpressionNode[argumentCount];
         /*
          * Builtin functions are like normal functions, i.e., the arguments are passed
          * in as an
@@ -112,10 +112,10 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
          * from this array.
          */
         for (int i = 0; i < argumentCount; i++) {
-            argumentNodes[i] = new I4GLReadArgumentNode(i);
+            argumentNodes[i] = new ReadArgumentNode(i);
         }
         /* Instantiate the builtin node. This node performs the actual functionality. */
-        I4GLBuiltinNode builtinBodyNode = factory.createNode((Object) argumentNodes);
+        BuiltinNode builtinBodyNode = factory.createNode((Object) argumentNodes);
         builtinBodyNode.addRootTag();
         /*
          * The name of the builtin function is specified via an annotation on the node
@@ -128,7 +128,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
          * Wrap the builtin in a RootNode. Truffle requires all AST to start with a
          * RootNode.
          */
-        I4GLBuiltinRootNode rootNode = new I4GLBuiltinRootNode(this, new FrameDescriptor(), builtinBodyNode,
+        BuiltinRootNode rootNode = new BuiltinRootNode(this, new FrameDescriptor(), builtinBodyNode,
                 BUILTIN_SOURCE.createUnavailableSection(), name);
 
         /*
@@ -172,7 +172,7 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         }
         LOGGER.log(Level.FINE, "Start parsing {0}", source.getPath());
         final FullParser parser = new FullParser(this, source);
-        RootNode moduleRootNode = new I4GLModuleRootNode(this, parser.getModuleName(), parser.getAllFunctions(),
+        RootNode moduleRootNode = new ModuleRootNode(this, parser.getModuleName(), parser.getAllFunctions(),
                 parser.getGlobalsFrameDescriptor(), parser.getModuleFrameDescriptor());
         LOGGER.log(Level.FINE, "Finish parsing {0}", source.getPath());
         return Truffle.getRuntime().createCallTarget(moduleRootNode);
@@ -208,10 +208,10 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
         return REFERENCE.get(node);
     }
 
-    private static final List<NodeFactory<? extends I4GLBuiltinNode>> EXTERNAL_BUILTINS = Collections
+    private static final List<NodeFactory<? extends BuiltinNode>> EXTERNAL_BUILTINS = Collections
             .synchronizedList(new ArrayList<>());
 
-    public static void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> builtin) {
+    public static void installBuiltin(NodeFactory<? extends BuiltinNode> builtin) {
         EXTERNAL_BUILTINS.add(builtin);
     }
 

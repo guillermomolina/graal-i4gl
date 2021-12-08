@@ -28,8 +28,8 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
 
 import i4gl.I4GLLanguage;
-import i4gl.nodes.builtin.I4GLBuiltinNode;
-import i4gl.nodes.builtin.I4GLLengthBuiltinNodeFactory;
+import i4gl.nodes.builtin.BuiltinNode;
+import i4gl.nodes.builtin.LengthBuiltinNodeFactory;
 import i4gl.nodes.builtin.fgl.FGLGetEnvBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIDecodeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIEncodeBuiltinNodeFactory;
@@ -52,7 +52,7 @@ public final class I4GLContext {
     private final AllocationReporter allocationReporter;
 
     public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env,
-            List<NodeFactory<? extends I4GLBuiltinNode>> externalBuiltins) {
+            List<NodeFactory<? extends BuiltinNode>> externalBuiltins) {
         this.env = env;
         this.language = language;
         this.input = new BufferedReader(new InputStreamReader(env.in()));
@@ -61,12 +61,12 @@ public final class I4GLContext {
         this.frameRegistry = new HashMap<>();
         this.allocationReporter = env.lookup(AllocationReporter.class);
         installBuiltins();
-        for (NodeFactory<? extends I4GLBuiltinNode> builtin : externalBuiltins) {
+        for (NodeFactory<? extends BuiltinNode> builtin : externalBuiltins) {
             installBuiltin(builtin);
         }
     }
 
-    public void installBuiltin(NodeFactory<? extends I4GLBuiltinNode> factory) {
+    public void installBuiltin(NodeFactory<? extends BuiltinNode> factory) {
         /* Register the builtin function in our function registry. */
         RootCallTarget target = language.lookupBuiltin(factory);
         String rootName = target.getRootNode().getName();
@@ -154,10 +154,10 @@ public final class I4GLContext {
     /**
      * Adds all builtin functions to the {@link I4GLFunctionRegistry}. This method
      * lists all
-     * {@link I4GLBuiltinNode builtin implementation classes}.
+     * {@link BuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
-        installBuiltin(I4GLLengthBuiltinNodeFactory.getInstance());
+        installBuiltin(LengthBuiltinNodeFactory.getInstance());
         installBuiltin(ICGIDecodeBuiltinNodeFactory.getInstance());
         installBuiltin(FGLGetEnvBuiltinNodeFactory.getInstance());
         installBuiltin(ICGIEncodeBuiltinNodeFactory.getInstance());
