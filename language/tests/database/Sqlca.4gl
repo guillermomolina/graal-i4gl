@@ -1,17 +1,20 @@
 # https://www.ibm.com/docs/en/informix-servers/14.10?topic=structure-fields-sqlca
 
-DATABASE oartdb
+DATABASE test
+
 MAIN
-    DEFINE rol RECORD LIKE rol.*
-    CALL print_sqlca() 
-    DECLARE aCursor CURSOR FOR 
-        SELECT * FROM rol LIMIT 10
+    DEFINE theTotal BIGINT
+    DEFINE id INT
+    DEFINE lastName VARCHAR(20)
     CALL print_sqlca()
-    FOREACH aCursor INTO rol.*
-        DISPLAY rol
-        CALL print_sqlca()
-    END FOREACH
+    SELECT COUNT(*) INTO theTotal
+        FROM customers
     CALL print_sqlca()
+    DISPLAY theTotal
+    SELECT CustomerId,LastName INTO id,lastName
+        FROM customers LIMIT 1
+    CALL print_sqlca()
+    DISPLAY "|",id,"|",lastName,"|"
 END MAIN
 
 FUNCTION print_sqlca()
