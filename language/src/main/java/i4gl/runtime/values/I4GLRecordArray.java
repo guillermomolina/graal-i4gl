@@ -44,6 +44,10 @@ public class I4GLRecordArray extends I4GLArray {
         array[index] = value;
     }
 
+    public void fill(I4GLRecord value) {
+        Arrays.fill(array, value);
+    }
+
     @Override
     protected Object getArray() {
         return array;

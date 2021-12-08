@@ -39,6 +39,10 @@ public class I4GLIntArray extends I4GLArray {
     public void setValueAt(int index, int value) {
         array[index] = value;
     } 
+
+    public void fill(int value) {
+        Arrays.fill(array, value);
+    }
     
     @Override
     protected Object getArray() {

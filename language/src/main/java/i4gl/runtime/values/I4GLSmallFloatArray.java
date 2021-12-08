@@ -36,6 +36,10 @@ public class I4GLSmallFloatArray extends I4GLArray {
     public void setValueAt(int index, float value) {
         array[index] = value;
     }
+
+    public void fill(float value) {
+        Arrays.fill(array, value);
+    }
     
     @Override
     protected Object getArray() {

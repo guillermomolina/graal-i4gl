@@ -39,6 +39,10 @@ public class I4GLCharArray extends I4GLArray {
     public void setValueAt(int index, char value) {
         array[index] = value;
     } 
+
+    public void fill(char value) {
+        Arrays.fill(array, value);
+    }
     
     @Override
     protected Object getArray() {

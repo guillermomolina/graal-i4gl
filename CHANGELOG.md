@@ -19,6 +19,7 @@ Version 0.2.0
 - Add basic I4GLExpressionNode.getType() support
 - Add sqlcode global variable and the database side effects
 - Implement array of chars
+- Add fill() to array values
 
 Version 0.1.0
 

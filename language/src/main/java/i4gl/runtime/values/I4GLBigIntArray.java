@@ -36,6 +36,10 @@ public class I4GLBigIntArray extends I4GLArray {
     public void setValueAt(int index, long value) {
         array[index] = value;
     }
+
+    public void fill(long value) {
+        Arrays.fill(array, value);
+    }
     
     @Override
     protected Object getArray() {

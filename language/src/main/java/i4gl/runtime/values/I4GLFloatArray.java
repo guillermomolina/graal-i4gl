@@ -36,6 +36,10 @@ public class I4GLFloatArray extends I4GLArray {
     public void setValueAt(int index, double value) {
         array[index] = value;
     }
+
+    public void fill(double value) {
+        Arrays.fill(array, value);
+    }
     
     @Override
     protected Object getArray() {
