@@ -61,7 +61,7 @@ type:
 
 indirectType: LIKE tableIdentifier DOT identifier;
 
-typeIdentifier: charType | numberType | timeType;
+typeIdentifier: charType | numberType | dateType;
 
 largeType: TEXT | BYTE;
 
@@ -88,7 +88,7 @@ character: CHAR | NCHAR | CHARACTER;
 
 varchar: VARCHAR | NVARCHAR;
 
-timeType:
+dateType:
 	DATE
 	| DATETIME datetimeQualifier
 	| INTERVAL intervalQualifier;

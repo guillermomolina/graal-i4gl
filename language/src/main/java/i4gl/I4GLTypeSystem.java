@@ -5,7 +5,7 @@ import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 /**
  * I4GL Type System
@@ -19,7 +19,7 @@ import i4gl.runtime.values.I4GLNull;
  * DOUBLE PRECISION, FLOAT - {@link I4GLFloatType} - double
  * TEXT - {@link I4GLTextType} - String
  * CHAR - {@link I4GLCharType}, {@link Char1Type} - {@link I4GLChar}
- * VARCHAR - {@link I4GLVarcharType} - {@link I4GLVarchar}
+ * VARCHAR - {@link VarcharType} - {@link Varchar}
  * RECORD - {@link I4GLRecordType} - {@link I4GLRecord}
  * ARRAY - {@link I4GLArrayType} - {@link I4GLCharArray}, {@link I4GLSmallIntArray}, {@link I4GLIntArray}, 
  *                                 {@link I4GLBigIntArray}, {@link I4GLSmallFloatArray}, {@link I4GLFloatArray}
@@ -44,26 +44,26 @@ public class I4GLTypeSystem {
     /**
      * Example of a manually specified type check that replaces the automatically
      * generated type check that the Truffle DSL would generate. For
-     * {@link I4GLNull}, we do not need an {@code instanceof} check, because we know
-     * that there is only a {@link I4GLNull#SINGLETON singleton} instance.
+     * {@link Null}, we do not need an {@code instanceof} check, because we know
+     * that there is only a {@link Null#SINGLETON singleton} instance.
      */
-    @TypeCheck(I4GLNull.class)
+    @TypeCheck(Null.class)
     public static boolean isNullValue(Object value) {
-        return value == I4GLNull.SINGLETON;
+        return value == Null.SINGLETON;
     }
 
     /**
      * Example of a manually specified type cast that replaces the automatically
      * generated type cast that the Truffle DSL would generate. For
-     * {@link I4GLNull}, we do not need an actual cast, because we know that there
-     * is only a {@link I4GLNull#SINGLETON singleton} instance.
+     * {@link Null}, we do not need an actual cast, because we know that there
+     * is only a {@link Null#SINGLETON singleton} instance.
      */
-    @TypeCast(I4GLNull.class)
-    public static I4GLNull asNullValue(Object value) {
+    @TypeCast(Null.class)
+    public static Null asNullValue(Object value) {
         if (!isNullValue(value)) {
             throw new AssertionError();
         }
-        return I4GLNull.SINGLETON;
+        return Null.SINGLETON;
     }
 
     @ImplicitCast

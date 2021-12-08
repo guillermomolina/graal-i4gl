@@ -17,27 +17,27 @@ import i4gl.runtime.types.compound.VarcharType;
  * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
  */
 @ExportLibrary(InteropLibrary.class)
-public class I4GLVarchar implements TruffleObject {
+public class Varchar implements TruffleObject {
 
     private String data;
     private final int size;
 
-    public I4GLVarchar(int size) {
+    public Varchar(int size) {
         this.size = size;
         this.data = "";
     }
 
-    private I4GLVarchar(I4GLVarchar source) {
+    private Varchar(Varchar source) {
         this.size = source.size;
         this.data = source.data;
     }
 
-    public I4GLVarchar(String value) {
+    public Varchar(String value) {
         this.size = value.length();
         this.data = value;
     }
 
-    public I4GLVarchar(int size, String value) {
+    public Varchar(int size, String value) {
         this.size = size;
         this.data = value;
     }
@@ -71,7 +71,7 @@ public class I4GLVarchar implements TruffleObject {
     }
 
     public Object createDeepCopy() {
-        return new I4GLVarchar(this);
+        return new Varchar(this);
     }
 
     private void checkArrayIndex(int index) {
@@ -80,7 +80,7 @@ public class I4GLVarchar implements TruffleObject {
         }
     }
 
-    public static I4GLVarchar concat(I4GLVarchar left, I4GLVarchar right) {
+    public static Varchar concat(Varchar left, Varchar right) {
         throw new NotImplementedException();
     }
 

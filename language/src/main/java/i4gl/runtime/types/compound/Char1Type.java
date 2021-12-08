@@ -3,7 +3,7 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.values.I4GLChar;
+import i4gl.runtime.values.Char;
 
 public class Char1Type extends CharType {
 
@@ -16,8 +16,8 @@ public class Char1Type extends CharType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        if(value instanceof I4GLChar) {
-            I4GLChar charValue = (I4GLChar)value;
+        if(value instanceof Char) {
+            Char charValue = (Char)value;
             return charValue.getSize() == 1;
         }
         return false;

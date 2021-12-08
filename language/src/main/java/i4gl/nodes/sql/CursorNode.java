@@ -5,8 +5,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.values.I4GLCursor;
-import i4gl.runtime.values.I4GLDatabase;
+import i4gl.runtime.values.Cursor;
+import i4gl.runtime.values.Database;
 
 public class CursorNode extends StatementNode {
     @Child
@@ -26,7 +26,7 @@ public class CursorNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        final I4GLDatabase database = (I4GLDatabase) databaseVariableNode.executeGeneric(frame);
-        frame.setObject(slot, new I4GLCursor(database, sql));
+        final Database database = (Database) databaseVariableNode.executeGeneric(frame);
+        frame.setObject(slot, new Cursor(database, sql));
     }
 }

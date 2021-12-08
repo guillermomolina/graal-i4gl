@@ -17,12 +17,12 @@ import i4gl.runtime.exceptions.DatabaseConnectionException;
 import i4gl.runtime.types.complex.DatabaseType;
 
 @ExportLibrary(InteropLibrary.class)
-public final class I4GLDatabase implements TruffleObject {
+public final class Database implements TruffleObject {
 
     private final String alias;
     private SquirrelSession session;
 
-    public I4GLDatabase(final String alias) {
+    public Database(final String alias) {
         this.alias = alias;
     }
 
@@ -30,7 +30,7 @@ public final class I4GLDatabase implements TruffleObject {
         return session;
     }
 
-    public void connect(I4GLRecord sqlca) {
+    public void connect(Record sqlca) {
         SquirrelSqlcaHandler sqlcaHandler = new SquirrelSqlcaHandler(sqlca);
         if (session == null) {
             session = new SquirrelSession(alias);

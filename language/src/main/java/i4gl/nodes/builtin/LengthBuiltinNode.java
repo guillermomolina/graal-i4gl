@@ -6,15 +6,15 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.values.I4GLBigIntArray;
-import i4gl.runtime.values.I4GLChar;
-import i4gl.runtime.values.I4GLCharArray;
-import i4gl.runtime.values.I4GLFloatArray;
-import i4gl.runtime.values.I4GLIntArray;
-import i4gl.runtime.values.I4GLNull;
-import i4gl.runtime.values.I4GLSmallFloatArray;
-import i4gl.runtime.values.I4GLSmallIntArray;
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.BigIntArray;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.CharArray;
+import i4gl.runtime.values.FloatArray;
+import i4gl.runtime.values.IntArray;
+import i4gl.runtime.values.Null;
+import i4gl.runtime.values.SmallFloatArray;
+import i4gl.runtime.values.SmallIntArray;
+import i4gl.runtime.values.Varchar;
 
 @NodeInfo(shortName = "length")
 public abstract class LengthBuiltinNode extends BuiltinNode {
@@ -25,49 +25,49 @@ public abstract class LengthBuiltinNode extends BuiltinNode {
     }
 
     @Specialization
-    int lenth(I4GLChar charValue) {
+    int lenth(Char charValue) {
         return charValue.getLength();
     }
 
     @Specialization
-    int lenth(I4GLVarchar varchar) {
+    int lenth(Varchar varchar) {
         return varchar.getSize();
     }
 
     // Array length not actually supported by i4gl
 
     @Specialization
-    int length(I4GLCharArray array) {
+    int length(CharArray array) {
         return array.getSize();
     }
 
     @Specialization
-    int length(I4GLSmallIntArray array) {
+    int length(SmallIntArray array) {
         return array.getSize();
     }
 
     @Specialization
-    int length(I4GLIntArray array) {
+    int length(IntArray array) {
         return array.getSize();
     }
 
     @Specialization
-    int length(I4GLBigIntArray array) {
+    int length(BigIntArray array) {
         return array.getSize();
     }
 
     @Specialization
-    int length(I4GLSmallFloatArray array) {
+    int length(SmallFloatArray array) {
         return array.getSize();
     }
 
     @Specialization
-    int length(I4GLFloatArray array) {
+    int length(FloatArray array) {
         return array.getSize();
     }
 
     @Specialization
-    int length(I4GLNull string) {
+    int length(Null string) {
         return 0;
     }
 

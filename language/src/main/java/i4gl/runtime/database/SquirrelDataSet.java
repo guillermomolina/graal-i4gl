@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import i4gl.exceptions.NotImplementedException;
-import i4gl.runtime.values.I4GLDecimal;
-import i4gl.runtime.values.I4GLNull;
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.Decimal;
+import i4gl.runtime.values.Null;
+import i4gl.runtime.values.Varchar;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
@@ -181,13 +181,13 @@ public class SquirrelDataSet implements IDataSet {
 
    public static Object toI4GLObject(final ColumnDisplayDefinition cDefinition, final Object sqlValue) {
       if (sqlValue == null) {
-         return I4GLNull.SINGLETON;
+         return Null.SINGLETON;
       }
       switch (cDefinition.getSqlType()) {
          case Types.VARCHAR:
-            return new I4GLVarchar(cDefinition.getPrecision(), (String) sqlValue);
+            return new Varchar(cDefinition.getPrecision(), (String) sqlValue);
          case Types.DECIMAL:
-            return new I4GLDecimal((BigDecimal) sqlValue);
+            return new Decimal((BigDecimal) sqlValue);
          case Types.INTEGER:
          case Types.BIGINT:
          case Types.REAL:

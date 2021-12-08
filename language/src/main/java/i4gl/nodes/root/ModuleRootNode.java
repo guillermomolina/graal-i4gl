@@ -13,7 +13,7 @@ import com.oracle.truffle.api.nodes.RootNode;
 
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 public final class ModuleRootNode extends RootNode {
     private final String moduleName;
@@ -71,6 +71,6 @@ public final class ModuleRootNode extends RootNode {
             registered = true;
         }
 
-        return I4GLNull.SINGLETON;
+        return Null.SINGLETON;
     }
 }

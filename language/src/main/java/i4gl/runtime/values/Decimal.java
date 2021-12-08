@@ -17,14 +17,14 @@ import i4gl.runtime.types.primitive.DecimalType;
 
 
 @ExportLibrary(InteropLibrary.class)
-public final class I4GLDecimal implements TruffleObject, Comparable<I4GLDecimal> {
+public final class Decimal implements TruffleObject, Comparable<Decimal> {
     private final BigDecimal value;
 
-    public I4GLDecimal(BigDecimal value) {
+    public Decimal(BigDecimal value) {
         this.value = value;
     }
 
-    public I4GLDecimal(long value) {
+    public Decimal(long value) {
         this.value = BigDecimal.valueOf(value);
     }
 
@@ -33,7 +33,7 @@ public final class I4GLDecimal implements TruffleObject, Comparable<I4GLDecimal>
     }
 
     @TruffleBoundary
-    public int compareTo(I4GLDecimal o) {
+    public int compareTo(Decimal o) {
         return value.compareTo(o.getValue());
     }
 
@@ -46,8 +46,8 @@ public final class I4GLDecimal implements TruffleObject, Comparable<I4GLDecimal>
     @Override
     @TruffleBoundary
     public boolean equals(Object obj) {
-        if (obj instanceof I4GLDecimal) {
-            return value.equals(((I4GLDecimal) obj).getValue());
+        if (obj instanceof Decimal) {
+            return value.equals(((Decimal) obj).getValue());
         }
         return false;
     }

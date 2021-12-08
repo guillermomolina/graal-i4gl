@@ -11,7 +11,7 @@ import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.read.ReadFromResultNode;
 import i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 import i4gl.runtime.exceptions.UnexpectedRuntimeException;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 public class AssignResultsNode extends StatementNode {
 
@@ -28,7 +28,7 @@ public class AssignResultsNode extends StatementNode {
 
     public void setResultsToNull() {
         results = new Object[readAssignMap.size()];
-        Arrays.fill(results, I4GLNull.SINGLETON);
+        Arrays.fill(results, Null.SINGLETON);
     }
 
     public Map<ReadFromResultNode, StatementNode> getReadAssignMap() {

@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.NullType;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 /**
  * Node representing null literal.
@@ -14,7 +14,7 @@ import i4gl.runtime.values.I4GLNull;
 public class NullLiteralNode extends ExpressionNode {
     @Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return I4GLNull.SINGLETON;
+		return Null.SINGLETON;
 	}
 
     @Override

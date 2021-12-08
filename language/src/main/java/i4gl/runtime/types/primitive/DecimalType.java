@@ -7,7 +7,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLDecimal;
+import i4gl.runtime.values.Decimal;
 
 /**
  * Type descriptor representing the decimal type.
@@ -25,7 +25,7 @@ public class DecimalType extends BaseType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLDecimal;
+        return value instanceof Decimal;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DecimalType extends BaseType {
     @Override
     public Object getDefaultValue() {
         BigDecimal value = BigDecimal.ZERO.setScale(scale);
-        return new I4GLDecimal(value);
+        return new Decimal(value);
     }
 
     @Override

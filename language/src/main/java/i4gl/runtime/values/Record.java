@@ -20,22 +20,22 @@ import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLRecord implements TruffleObject {
+public class Record implements TruffleObject {
 
     private final RecordType recordType;
     private final Map<String, Object> properties;
 
-    public I4GLRecord(final RecordType recordType, Map<String, Object> properties) {
+    public Record(final RecordType recordType, Map<String, Object> properties) {
         this.recordType = recordType;
         this.properties = properties;
     }
 
-    public I4GLRecord(I4GLRecord source) {
+    public Record(Record source) {
         this.recordType = source.recordType;
         this.properties = source.properties;
     }
@@ -133,7 +133,7 @@ public class I4GLRecord implements TruffleObject {
     }
 
     public Object createDeepCopy() {
-        return new I4GLRecord(this);
+        return new Record(this);
     }
 
     @ExportMessage
@@ -158,7 +158,7 @@ public class I4GLRecord implements TruffleObject {
     }
 
     public static boolean isInstance(TruffleObject obj) {
-        return obj instanceof I4GLRecord;
+        return obj instanceof Record;
     }
 
     @ExportMessage

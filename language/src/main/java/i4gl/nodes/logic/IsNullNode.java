@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 /**
  * Node representing logical not operation.
@@ -23,7 +23,7 @@ public abstract class IsNullNode extends UnaryNode {
 
 	@Specialization
 	int isNull(Object child) {
-		return child == I4GLNull.SINGLETON ? 1 : 0;
+		return child == Null.SINGLETON ? 1 : 0;
 	}
 
     @Override

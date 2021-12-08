@@ -8,17 +8,24 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.compound.RecordType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLBigIntArray extends I4GLArray {
-    private final long[] array;
+public class RecordArray extends Array {
 
-    public I4GLBigIntArray(int size) {
-        this.array = new long[size];
+    private final RecordType recordType;
+    private final Record[] array;
+
+    public RecordArray(final RecordType recordType, int size) {
+        this.recordType = recordType;
+        this.array = new Record[size];
+        for (int i = 0; i < array.length; ++i) {
+            array[i] = (Record)recordType.getDefaultValue();
+        }
     }
 
-    protected I4GLBigIntArray(long[] array) {
+    protected RecordArray(final RecordType recordType, Record[] array) {
+        this.recordType = recordType;
         this.array = array;
     }
 
@@ -29,18 +36,18 @@ public class I4GLBigIntArray extends I4GLArray {
         return Arrays.toString(array);
     }
 
-    public long getValueAt(int index) {
+    public Record getValueAt(int index) {
         return array[index];
-    } 
+    }
 
-    public void setValueAt(int index, long value) {
+    public void setValueAt(int index, Record value) {
         array[index] = value;
     }
 
-    public void fill(long value) {
+    public void fill(Record value) {
         Arrays.fill(array, value);
     }
-    
+
     @Override
     protected Object getArray() {
         return array;
@@ -53,6 +60,6 @@ public class I4GLBigIntArray extends I4GLArray {
 
     @Override
     public BaseType getElementType() {
-        return BigIntType.SINGLETON;
+        return recordType;
     }
 }

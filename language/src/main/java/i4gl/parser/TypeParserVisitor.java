@@ -18,7 +18,7 @@ import i4gl.runtime.types.primitive.FloatType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.values.I4GLDatabase;
+import i4gl.runtime.values.Database;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -67,7 +67,7 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
     }
 
     @Override
-    public BaseType visitTimeType(final I4GLParser.TimeTypeContext ctx) {
+    public BaseType visitDateType(final I4GLParser.DateTypeContext ctx) {
         throw new NotImplementedException();
     }
 
@@ -82,7 +82,7 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
     public BaseType visitIndirectType(final I4GLParser.IndirectTypeContext ctx) {
         final String tableName = getTableName(ctx.tableIdentifier());
         final String columnName = ctx.identifier().getText();
-        I4GLDatabase database = nodeFactory.getDatabase(ctx);
+        Database database = nodeFactory.getDatabase(ctx);
         SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();
         try {
             TableColumnInfo[] infos = dmd.getColumnInfo(null, null, tableName);
@@ -134,7 +134,7 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
     public BaseType visitRecordLikeType(final I4GLParser.RecordLikeTypeContext ctx) {
         ParseScope currentParseScope = nodeFactory.pushNewScope(ParseScope.RECORD_TYPE, null);
         final String tableName = getTableName(ctx.tableIdentifier());
-        I4GLDatabase database = nodeFactory.getDatabase(ctx);
+        Database database = nodeFactory.getDatabase(ctx);
         SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();
         try {
             TableColumnInfo[] infos = dmd.getColumnInfo(null, null, tableName);

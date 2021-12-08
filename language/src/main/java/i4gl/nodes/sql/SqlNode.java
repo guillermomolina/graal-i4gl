@@ -8,8 +8,8 @@ import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
-import i4gl.runtime.values.I4GLDatabase;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Database;
+import i4gl.runtime.values.Record;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
 public class SqlNode extends StatementNode {
@@ -27,8 +27,8 @@ public class SqlNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        I4GLRecord sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
-        final I4GLDatabase database = (I4GLDatabase) databaseVariableNode.executeGeneric(frame);
+        Record sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+        final Database database = (Database) databaseVariableNode.executeGeneric(frame);
         database.connect(sqlca);
         SquirrelSession session = database.getSession();
         SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);

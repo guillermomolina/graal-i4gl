@@ -10,7 +10,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 public class InitializeNode extends StatementNode {
@@ -31,7 +31,7 @@ public class InitializeNode extends StatementNode {
         for (var tableColumnInfo : tableColumnInfoArray) {
             String defaultValue = tableColumnInfo.getDefaultValue();
             if (defaultValue == null) {
-                defaults.add(I4GLNull.SINGLETON);
+                defaults.add(Null.SINGLETON);
             } else {
                 switch (tableColumnInfo.getDataType()) {
                     case Types.CHAR:

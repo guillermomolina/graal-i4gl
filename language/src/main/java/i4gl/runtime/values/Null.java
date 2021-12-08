@@ -13,19 +13,19 @@ import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.types.primitive.NullType;
 
 @ExportLibrary(InteropLibrary.class)
-public final class I4GLNull implements TruffleObject {
+public final class Null implements TruffleObject {
 
     /**
      * The canonical value to represent {@code null} in I4GL.
      */
-    public static final I4GLNull SINGLETON = new I4GLNull();
+    public static final Null SINGLETON = new Null();
     private static final int IDENTITY_HASH = System.identityHashCode(SINGLETON);
 
     /**
      * Disallow instantiation from outside to ensure that the {@link #SINGLETON} is the only
      * instance.
      */
-    private I4GLNull() {
+    private Null() {
     }
 
     @Override
@@ -50,7 +50,7 @@ public final class I4GLNull implements TruffleObject {
     }
 
     /**
-     * {@link I4GLNull} values are interpreted as null values by other languages.
+     * {@link Null} values are interpreted as null values by other languages.
      */
     @ExportMessage
     boolean isNull() {
@@ -68,15 +68,15 @@ public final class I4GLNull implements TruffleObject {
     }
 
     @ExportMessage
-    static TriState isIdenticalOrUndefined(I4GLNull receiver, Object other) {
+    static TriState isIdenticalOrUndefined(Null receiver, Object other) {
         /*
          * NullValue values are identical to other NullValue values.
          */
-        return TriState.valueOf(I4GLNull.SINGLETON == other);
+        return TriState.valueOf(Null.SINGLETON == other);
     }
 
     @ExportMessage
-    static int identityHashCode(I4GLNull receiver) {
+    static int identityHashCode(Null receiver) {
         /*
          * We do not use 0, as we want consistency with System.identityHashCode(receiver).
          */

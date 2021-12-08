@@ -8,14 +8,18 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.BigIntType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLFloatArray extends I4GLArray {
-    private final double[] array;
+public class BigIntArray extends Array {
+    private final long[] array;
 
-    public I4GLFloatArray(int size) {
-        this.array = new double[size];
+    public BigIntArray(int size) {
+        this.array = new long[size];
+    }
+
+    protected BigIntArray(long[] array) {
+        this.array = array;
     }
 
     @Override
@@ -25,19 +29,15 @@ public class I4GLFloatArray extends I4GLArray {
         return Arrays.toString(array);
     }
 
-    protected I4GLFloatArray(double[] array) {
-        this.array = array;
-    }
-
-    public double getValueAt(int index) {
+    public long getValueAt(int index) {
         return array[index];
     } 
 
-    public void setValueAt(int index, double value) {
+    public void setValueAt(int index, long value) {
         array[index] = value;
     }
 
-    public void fill(double value) {
+    public void fill(long value) {
         Arrays.fill(array, value);
     }
     
@@ -53,6 +53,6 @@ public class I4GLFloatArray extends I4GLArray {
 
     @Override
     public BaseType getElementType() {
-        return FloatType.SINGLETON;
+        return BigIntType.SINGLETON;
     }
 }

@@ -11,14 +11,14 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.SmallIntType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLSmallIntArray extends I4GLArray {
+public class SmallIntArray extends Array {
     private final short[] array;
 
-    public I4GLSmallIntArray(int size) {
+    public SmallIntArray(int size) {
         this.array = new short[size];
     }
 
-    protected I4GLSmallIntArray(short[] array) {
+    protected SmallIntArray(short[] array) {
         this.array = array;
     }
 

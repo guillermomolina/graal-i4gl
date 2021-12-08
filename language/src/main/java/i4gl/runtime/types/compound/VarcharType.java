@@ -3,7 +3,7 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.Varchar;
 
 /**
  * Type descriptor representing the string type.
@@ -18,12 +18,12 @@ public class VarcharType extends TextType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLVarchar;
+        return value instanceof Varchar;
     }
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLVarchar(size);
+        return new Varchar(size);
     }
 
     @Override

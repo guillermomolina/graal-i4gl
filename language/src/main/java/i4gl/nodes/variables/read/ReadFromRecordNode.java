@@ -8,7 +8,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Record;
 
 /**
  * This node reads value from an record with specified identifier.
@@ -26,32 +26,32 @@ public abstract class ReadFromRecordNode extends ExpressionNode {
     protected abstract String getIdentifier();
 
     @Specialization(guards = "record.isSmallInt(getIdentifier())")
-    short readSmallInt(I4GLRecord record) {
+    short readSmallInt(Record record) {
         return record.getSmallIntSafe(getIdentifier());
     }
 
     @Specialization(guards = "record.isInt(getIdentifier())")
-    int readInt(I4GLRecord record) {
+    int readInt(Record record) {
         return record.getIntSafe(getIdentifier());
     }
 
     @Specialization(guards = "record.isBigInt(getIdentifier())")
-    long readBigInt(I4GLRecord record) {
+    long readBigInt(Record record) {
         return record.getBigIntSafe(getIdentifier());
     }
 
     @Specialization(guards = "record.isSmallFloat(getIdentifier())")
-    float readSmallFloat(I4GLRecord record) {
+    float readSmallFloat(Record record) {
         return (float)record.getSmallFloatSafe(getIdentifier());
     }
 
     @Specialization(guards = "record.isFloat(getIdentifier())")
-    double readFloat(I4GLRecord record) {
+    double readFloat(Record record) {
         return (double)record.getFloatSafe(getIdentifier());
     }
 
     @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readFloat" })
-    Object readGeneric(I4GLRecord record) {
+    Object readGeneric(Record record) {
         return record.get(getIdentifier());
     }
 

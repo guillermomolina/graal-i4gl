@@ -8,25 +8,14 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.compound.RecordType;
+import i4gl.runtime.types.primitive.FloatType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLRecordArray extends I4GLArray {
+public class FloatArray extends Array {
+    private final double[] array;
 
-    private final RecordType recordType;
-    private final I4GLRecord[] array;
-
-    public I4GLRecordArray(final RecordType recordType, int size) {
-        this.recordType = recordType;
-        this.array = new I4GLRecord[size];
-        for (int i = 0; i < array.length; ++i) {
-            array[i] = (I4GLRecord)recordType.getDefaultValue();
-        }
-    }
-
-    protected I4GLRecordArray(final RecordType recordType, I4GLRecord[] array) {
-        this.recordType = recordType;
-        this.array = array;
+    public FloatArray(int size) {
+        this.array = new double[size];
     }
 
     @Override
@@ -36,18 +25,22 @@ public class I4GLRecordArray extends I4GLArray {
         return Arrays.toString(array);
     }
 
-    public I4GLRecord getValueAt(int index) {
-        return array[index];
+    protected FloatArray(double[] array) {
+        this.array = array;
     }
 
-    public void setValueAt(int index, I4GLRecord value) {
+    public double getValueAt(int index) {
+        return array[index];
+    } 
+
+    public void setValueAt(int index, double value) {
         array[index] = value;
     }
 
-    public void fill(I4GLRecord value) {
+    public void fill(double value) {
         Arrays.fill(array, value);
     }
-
+    
     @Override
     protected Object getArray() {
         return array;
@@ -60,6 +53,6 @@ public class I4GLRecordArray extends I4GLArray {
 
     @Override
     public BaseType getElementType() {
-        return recordType;
+        return FloatType.SINGLETON;
     }
 }

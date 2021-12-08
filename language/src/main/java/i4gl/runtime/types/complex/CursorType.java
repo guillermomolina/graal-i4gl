@@ -6,7 +6,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLCursor;
+import i4gl.runtime.values.Cursor;
 
 /**
  * Specialized type descriptor for text-file values.
@@ -21,7 +21,7 @@ public class CursorType extends BaseType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLCursor;
+        return value instanceof Cursor;
     }
 
     @Override

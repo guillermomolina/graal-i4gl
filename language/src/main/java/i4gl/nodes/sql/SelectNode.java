@@ -8,9 +8,9 @@ import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.exceptions.DatabaseException;
-import i4gl.runtime.values.I4GLCursor;
-import i4gl.runtime.values.I4GLDatabase;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Cursor;
+import i4gl.runtime.values.Database;
+import i4gl.runtime.values.Record;
 
 public class SelectNode extends StatementNode {
     private final String sql;
@@ -30,9 +30,9 @@ public class SelectNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        I4GLRecord sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
-        final I4GLDatabase database = (I4GLDatabase) databaseVariableNode.executeGeneric(frame);
-        final I4GLCursor cursor = new I4GLCursor(database, sql);
+        Record sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+        final Database database = (Database) databaseVariableNode.executeGeneric(frame);
+        final Cursor cursor = new Cursor(database, sql);
         cursor.start(sqlca);
 
         if (cursor.next(sqlca) && assignResultsNode != null) {

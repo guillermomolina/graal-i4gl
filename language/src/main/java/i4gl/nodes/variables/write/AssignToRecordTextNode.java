@@ -13,9 +13,9 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
-import i4gl.runtime.values.I4GLChar;
-import i4gl.runtime.values.I4GLRecord;
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Record;
+import i4gl.runtime.values.Varchar;
 
 /**
  * Node representing assignment to a record. Compared to
@@ -44,14 +44,14 @@ public abstract class AssignToRecordTextNode extends StatementNode {
     }
 
     @Specialization(guards = "isChar()")
-    void assignChar(I4GLRecord record, int index, String value) {
+    void assignChar(Record record, int index, String value) {
         Object targetObject = record.get(identifier);
-        if (!(targetObject instanceof I4GLChar)) {
+        if (!(targetObject instanceof Char)) {
             targetObject = descriptor.getDefaultValue();
             record.put(identifier, targetObject);
         }
 
-        final I4GLChar target = (I4GLChar) targetObject;
+        final Char target = (Char) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
 
@@ -60,14 +60,14 @@ public abstract class AssignToRecordTextNode extends StatementNode {
     }
 
     @Specialization(guards = "isVarchar()")
-    void assignVarchar(I4GLRecord record, int index, String value) {
+    void assignVarchar(Record record, int index, String value) {
         Object targetObject = record.get(identifier);
-        if (!(targetObject instanceof I4GLVarchar)) {
+        if (!(targetObject instanceof Varchar)) {
             targetObject = descriptor.getDefaultValue();
             record.put(identifier, targetObject);
         }
 
-        final I4GLVarchar target = (I4GLVarchar) targetObject;
+        final Varchar target = (Varchar) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
 
@@ -76,7 +76,7 @@ public abstract class AssignToRecordTextNode extends StatementNode {
     }
 
     @Specialization(guards = "isText()")
-    void assignText(I4GLRecord record, int index, String value) {
+    void assignText(Record record, int index, String value) {
         Object targetObject = record.get(identifier);
         if (!(targetObject instanceof String)) {
             targetObject = "";

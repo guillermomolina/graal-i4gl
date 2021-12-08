@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 public class NullType extends BaseType {
 
@@ -27,7 +27,7 @@ public class NullType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        return I4GLNull.SINGLETON;
+        return Null.SINGLETON;
     }
 
     @Override

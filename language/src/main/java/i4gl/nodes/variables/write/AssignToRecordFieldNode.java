@@ -13,7 +13,7 @@ import i4gl.runtime.types.primitive.FloatType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Record;
 
 /**
  * Node representing assignment to a record. Compared to {@link AssignToLocalVariableNode} it assigns the value to the record's
@@ -39,7 +39,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     @Specialization(guards = "isSmallInt()")
-    void assignSmallInt(I4GLRecord record, short value) {
+    void assignSmallInt(Record record, short value) {
         record.put(identifier, value);
     }
 
@@ -48,7 +48,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     @Specialization(guards = "isInt()")
-    void assignInt(I4GLRecord record, int value) {
+    void assignInt(Record record, int value) {
         record.put(identifier, value);
     }
 
@@ -57,7 +57,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     @Specialization(guards = "isBigInt()")
-    void assignBigInt(I4GLRecord record, long value) {
+    void assignBigInt(Record record, long value) {
         record.put(identifier, value);
     }
 
@@ -66,7 +66,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     @Specialization(guards = "isSmallFloat()")
-    void assignSmallFloat(I4GLRecord record, float value) {
+    void assignSmallFloat(Record record, float value) {
         record.put(identifier, value);
     }
 
@@ -75,12 +75,12 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     @Specialization(guards = "isFloat()")
-    void assignDouble(I4GLRecord record, double value) {
+    void assignDouble(Record record, double value) {
         record.put(identifier, value);
     }
 
     @Specialization
-    void assignGeneric(I4GLRecord record, Object value) {
+    void assignGeneric(Record record, Object value) {
         record.put(identifier, value);
     }
 

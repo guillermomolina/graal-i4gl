@@ -96,7 +96,7 @@ import i4gl.runtime.types.complex.DatabaseType;
 import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
-import i4gl.runtime.values.I4GLDatabase;
+import i4gl.runtime.values.Database;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -108,7 +108,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(NodeParserVisitor.class);
 
     /* State while parsing a source unit. */
-    private I4GLDatabase currentDatabase;
+    private Database currentDatabase;
     private final Source source;
     private final I4GLLanguage language;
     private ParseScope currentParseScope;
@@ -129,12 +129,12 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         this.allFunctions = new HashMap<>();
     }
 
-    public I4GLDatabase getDatabase(final ParserRuleContext ctx) {
+    public Database getDatabase(final ParserRuleContext ctx) {
         if (currentDatabase == null) {
             try {
                 DatabaseType databaseType = (DatabaseType) lookupVariableType(
                         ParseScope.DATABASE_IDENTIFIER);
-                currentDatabase = (I4GLDatabase) (databaseType.getDefaultValue());
+                currentDatabase = (Database) (databaseType.getDefaultValue());
                 currentDatabase.connect(null);
             } catch (LexicalException e) {
                 throw new ParseException(source, ctx, "No Database declared");
@@ -1498,7 +1498,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     private List<TableColumnInfo> getTableColumnDefaults(final I4GLParser.ColumnsListContext ctx) {
         // TODO: Should this be done at runtime ?
         List<TableColumnInfo> columnDefaultList = new ArrayList<>();
-        I4GLDatabase database = getDatabase(ctx);
+        Database database = getDatabase(ctx);
         SQLDatabaseMetaData dmd = database.getSession().getSQLConnection().getSQLMetaData();
         for (var columnTableId : ctx.columnsTableId()) {
             if (columnTableId.tableIdentifier().tableQualifier() != null) {

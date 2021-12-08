@@ -22,12 +22,12 @@ import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.values.I4GLChar;
-import i4gl.runtime.values.I4GLRecord;
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Record;
+import i4gl.runtime.values.Varchar;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -102,7 +102,7 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isChar()")
     void assignChar(final VirtualFrame frame, final String string) {
-        I4GLChar value = (I4GLChar) getType().getDefaultValue();
+        Char value = (Char) getType().getDefaultValue();
         value.assignString(string);
         getGlobalFrame().setObject(getSlot(), value);
     }
@@ -113,13 +113,13 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final VirtualFrame frame, final String string) {
-        I4GLVarchar value = (I4GLVarchar) getType().getDefaultValue();
+        Varchar value = (Varchar) getType().getDefaultValue();
         value.assignString(string);
         getGlobalFrame().setObject(getSlot(), value);
     }
 
     @Specialization
-    void assignRecord(final VirtualFrame frame, final I4GLRecord record) {
+    void assignRecord(final VirtualFrame frame, final Record record) {
         getGlobalFrame().setObject(getSlot(), record.createDeepCopy());
     }
 

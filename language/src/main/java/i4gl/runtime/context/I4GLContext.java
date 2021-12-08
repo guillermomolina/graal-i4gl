@@ -37,8 +37,8 @@ import i4gl.nodes.builtin.icgi.ICGIFreeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIGetValueBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIMimeTypeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIStartBuiltinNodeFactory;
-import i4gl.runtime.values.I4GLNull;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Null;
+import i4gl.runtime.values.Record;
 
 public final class I4GLContext {
 
@@ -125,12 +125,12 @@ public final class I4GLContext {
     }
 
     @TruffleBoundary
-    public I4GLRecord getSqlcaGlobalVariable() {
+    public Record getSqlcaGlobalVariable() {
         VirtualFrame frame = frameRegistry.get("GLOBAL");
-        I4GLRecord value = null;
+        Record value = null;
         if (frame != null) {
             FrameSlot slot = frame.getFrameDescriptor().findFrameSlot("sqlca");
-            value = (I4GLRecord) frame.getValue(slot);
+            value = (Record) frame.getValue(slot);
         }
         return value;
     }
@@ -143,7 +143,7 @@ public final class I4GLContext {
             for (FrameSlot slot : frame.getFrameDescriptor().getSlots()) {
                 Object value = frame.getValue(slot);
                 if (value == null) {
-                    value = I4GLNull.SINGLETON;
+                    value = Null.SINGLETON;
                 }
                 vars.variables.put((String) slot.getIdentifier(), value);
             }

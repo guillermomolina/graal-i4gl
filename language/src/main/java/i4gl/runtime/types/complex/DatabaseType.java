@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLDatabase;
+import i4gl.runtime.values.Database;
 
 /**
  * Specialized type descriptor for text-file values.
@@ -21,7 +21,7 @@ public class DatabaseType extends BaseType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLDatabase;
+        return value instanceof Database;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DatabaseType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLDatabase(alias);
+        return new Database(alias);
     }
 
     @Override

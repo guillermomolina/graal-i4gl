@@ -20,25 +20,25 @@ import i4gl.runtime.types.compound.CharType;
  * {@link String}.
  */
 @ExportLibrary(InteropLibrary.class)
-public class I4GLChar implements TruffleObject {
+public class Char implements TruffleObject {
     private String data;
 
-    public I4GLChar(int size) {
+    public Char(int size) {
         char[] chars = new char[size];
         char value = 0;
         Arrays.fill(chars, value);
         this.data = new String(chars);
     }
 
-    private I4GLChar(I4GLChar source) {
+    private Char(Char source) {
         this.data = source.data;
     }
 
-    public I4GLChar(String value) {
+    public Char(String value) {
         this.data = value;
     }
 
-    public I4GLChar(Character value) {
+    public Char(Character value) {
         this.data = value.toString();
     }
 
@@ -83,12 +83,12 @@ public class I4GLChar implements TruffleObject {
     }
 
     public Object createDeepCopy() {
-        return new I4GLChar(this);
+        return new Char(this);
     }
 
     public Object clipped() {
         String clipped = data.substring(0, getLength());
-        return new I4GLChar(clipped);
+        return new Char(clipped);
     }
 
     private void checkArrayIndex(int index) {
@@ -97,7 +97,7 @@ public class I4GLChar implements TruffleObject {
         }
     }
 
-    public static I4GLChar concat(I4GLChar left, I4GLChar right) {
+    public static Char concat(Char left, Char right) {
         throw new NotImplementedException();
     }
 

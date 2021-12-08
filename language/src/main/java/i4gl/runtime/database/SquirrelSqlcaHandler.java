@@ -1,23 +1,23 @@
 package i4gl.runtime.database;
 
-import i4gl.runtime.values.I4GLChar;
-import i4gl.runtime.values.I4GLIntArray;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.IntArray;
+import i4gl.runtime.values.Record;
 
 public class SquirrelSqlcaHandler {
-    private I4GLRecord sqlca;
-    private I4GLChar sqlerrm;
-    private I4GLChar sqlerrp;
-    private I4GLIntArray sqlerrd;
-    private I4GLChar sqlawarn;
+    private Record sqlca;
+    private Char sqlerrm;
+    private Char sqlerrp;
+    private IntArray sqlerrd;
+    private Char sqlawarn;
 
-    public SquirrelSqlcaHandler(I4GLRecord sqlca) {
+    public SquirrelSqlcaHandler(Record sqlca) {
         this.sqlca = sqlca;
         if(sqlca != null) {
-            this.sqlerrm = (I4GLChar) sqlca.get("sqlerrm");
-            this.sqlerrp = (I4GLChar) sqlca.get("sqlerrp");
-            this.sqlerrd = (I4GLIntArray) sqlca.get("sqlerrd");
-            this.sqlawarn = (I4GLChar) sqlca.get("sqlawarn");
+            this.sqlerrm = (Char) sqlca.get("sqlerrm");
+            this.sqlerrp = (Char) sqlca.get("sqlerrp");
+            this.sqlerrd = (IntArray) sqlca.get("sqlerrd");
+            this.sqlawarn = (Char) sqlca.get("sqlawarn");
             reset();
         }
     }
@@ -46,7 +46,7 @@ public class SquirrelSqlcaHandler {
 
     public void setSqlErrM(String message) {
         if(sqlca != null) {
-            sqlca.put("sqlerrm", new I4GLChar(message));   
+            sqlca.put("sqlerrm", new Char(message));   
         }
     }
 

@@ -24,20 +24,20 @@ import i4gl.runtime.types.complex.CursorType;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
 @ExportLibrary(InteropLibrary.class)
-public final class I4GLCursor implements TruffleObject {
+public final class Cursor implements TruffleObject {
 
     private final String sql;
-    private I4GLDatabase database;
+    private Database database;
     private SquirrelDataSet dataSet;
     private List<String> columnLabels;
 
-    public I4GLCursor(final I4GLDatabase database, final String sql) {
+    public Cursor(final Database database, final String sql) {
         this.database = database;
         this.sql = sql;
         this.columnLabels = new ArrayList<>();
     }
 
-    public void start(I4GLRecord sqlca) {
+    public void start(Record sqlca) {
         database.connect(sqlca);
 
         SquirrelSession session = database.getSession();
@@ -49,7 +49,7 @@ public final class I4GLCursor implements TruffleObject {
         columnLabels = dataSet.getColumnLabels();
     }
 
-    public boolean next(I4GLRecord sqlca) {
+    public boolean next(Record sqlca) {
         return dataSet.next(new SquirrelSqlcaHandler(sqlca));
     }
 

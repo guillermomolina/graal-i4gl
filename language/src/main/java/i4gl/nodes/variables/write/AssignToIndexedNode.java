@@ -9,12 +9,12 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.values.I4GLBigIntArray;
-import i4gl.runtime.values.I4GLCharArray;
-import i4gl.runtime.values.I4GLFloatArray;
-import i4gl.runtime.values.I4GLIntArray;
-import i4gl.runtime.values.I4GLSmallFloatArray;
-import i4gl.runtime.values.I4GLSmallIntArray;
+import i4gl.runtime.values.BigIntArray;
+import i4gl.runtime.values.CharArray;
+import i4gl.runtime.values.FloatArray;
+import i4gl.runtime.values.IntArray;
+import i4gl.runtime.values.SmallFloatArray;
+import i4gl.runtime.values.SmallIntArray;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -30,32 +30,32 @@ import i4gl.runtime.values.I4GLSmallIntArray;
 public abstract class AssignToIndexedNode extends StatementNode {
     
     @Specialization
-    void assignToChar1Array(I4GLCharArray array, int index, char value) {
+    void assignToChar1Array(CharArray array, int index, char value) {
         array.setValueAt(index - 1, value);
     }
     
     @Specialization
-    void assignToSmallIntArray(I4GLSmallIntArray array, int index, short value) {
+    void assignToSmallIntArray(SmallIntArray array, int index, short value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToIntArray(I4GLIntArray array, int index, int value) {
+    void assignToIntArray(IntArray array, int index, int value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToBigIntArray(I4GLBigIntArray array, int index, long value) {
+    void assignToBigIntArray(BigIntArray array, int index, long value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToSmallFloatArray(I4GLSmallFloatArray array, int index, float value) {
+    void assignToSmallFloatArray(SmallFloatArray array, int index, float value) {
         array.setValueAt(index - 1, value);
     }
 
     @Specialization
-    void assignToDoubleArray(I4GLFloatArray array, int index, double value) {
+    void assignToDoubleArray(FloatArray array, int index, double value) {
         array.setValueAt(index - 1, value);
     }
 

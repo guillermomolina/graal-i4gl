@@ -1,6 +1,5 @@
 package i4gl.runtime.values;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import com.oracle.truffle.api.CompilerDirectives;
@@ -14,14 +13,14 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.Char1Type;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLCharArray extends I4GLArray {
+public class CharArray extends Array {
     private final char[] array;
 
-    public I4GLCharArray(int size) {
+    public CharArray(int size) {
         this.array = new char[size];
     }
 
-    protected I4GLCharArray(char[] array) {
+    protected CharArray(char[] array) {
         this.array = array;
     }
 
@@ -63,7 +62,7 @@ public class I4GLCharArray extends I4GLArray {
     @Override
     public Object readArrayElement(long index) throws InvalidArrayIndexException {
         try{
-            return Array.get(array, (int)index);
+            return java.lang.reflect.Array.get(array, (int)index);
         } catch(ArrayIndexOutOfBoundsException e) {
             CompilerDirectives.transferToInterpreter();
             throw InvalidArrayIndexException.create(index);

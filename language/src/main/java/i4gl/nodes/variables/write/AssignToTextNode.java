@@ -17,8 +17,8 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
-import i4gl.runtime.values.I4GLChar;
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Varchar;
 
 /**
  * Node representing assignment to a variable of primitive type.
@@ -48,12 +48,12 @@ public abstract class AssignToTextNode extends StatementNode {
     void assignChar(VirtualFrame frame, final int index, final String value) {
 
         Object targetObject = frame.getValue(getSlot());
-        if (!(targetObject instanceof I4GLChar)) {
+        if (!(targetObject instanceof Char)) {
             targetObject = getType().getDefaultValue();
             frame.setObject(getSlot(), targetObject);
         }
 
-        final I4GLChar target = (I4GLChar) targetObject;
+        final Char target = (Char) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
    
@@ -65,12 +65,12 @@ public abstract class AssignToTextNode extends StatementNode {
     void assignVarchar(VirtualFrame frame, final int index, final String value) {
 
         Object targetObject = frame.getValue(getSlot());
-        if (!(targetObject instanceof I4GLVarchar)) {
+        if (!(targetObject instanceof Varchar)) {
             targetObject = getType().getDefaultValue();
             frame.setObject(getSlot(), targetObject);
         }
 
-        final I4GLVarchar target = (I4GLVarchar) targetObject;
+        final Varchar target = (Varchar) targetObject;
         target.setCharAt(index - 1, value.charAt(0));
     }
 

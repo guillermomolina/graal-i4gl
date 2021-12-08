@@ -13,7 +13,7 @@ import i4gl.I4GLTypeSystem;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.exceptions.ReturnException;
-import i4gl.runtime.values.I4GLNull;
+import i4gl.runtime.values.Null;
 
 /**
  * This node represents the root node of AST of any function or main program.
@@ -71,7 +71,7 @@ public class BaseRootNode extends RootNode {
         // without an explicit return.         
         nullTaken.enter();
         // Return the default null value. 
-        return I4GLNull.SINGLETON;
+        return Null.SINGLETON;
     }
 
     @Override

@@ -8,8 +8,8 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.values.I4GLCursor;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Cursor;
+import i4gl.runtime.values.Record;
 
 /**
  * Node representing I4GL's foreach loop.
@@ -32,9 +32,9 @@ public class ForEachNode extends StatementNode {
     @Override
     public void executeVoid(VirtualFrame frame) {
         CompilerDirectives.transferToInterpreterAndInvalidate();
-        I4GLRecord sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+        Record sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
 
-        final I4GLCursor cursor = (I4GLCursor) cursorVariableNode.executeGeneric(frame);
+        final Cursor cursor = (Cursor) cursorVariableNode.executeGeneric(frame);
         cursor.start(sqlca);
         while (cursor.next(sqlca)) {
             if (assignResultsNode != null) {

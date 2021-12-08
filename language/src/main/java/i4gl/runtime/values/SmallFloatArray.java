@@ -11,14 +11,14 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 
 @ExportLibrary(InteropLibrary.class)
-public class I4GLSmallFloatArray extends I4GLArray {
+public class SmallFloatArray extends Array {
     private final float[] array;
 
-    public I4GLSmallFloatArray(int size) {
+    public SmallFloatArray(int size) {
         this.array = new float[size];
     }
 
-    protected I4GLSmallFloatArray(float[] array) {
+    protected SmallFloatArray(float[] array) {
         this.array = array;
     }
 

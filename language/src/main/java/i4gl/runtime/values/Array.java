@@ -1,7 +1,5 @@
 package i4gl.runtime.values;
 
-import java.lang.reflect.Array;
-
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -18,7 +16,7 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.ArrayType;
 
 @ExportLibrary(InteropLibrary.class)
-public abstract class I4GLArray implements TruffleObject {
+public abstract class Array implements TruffleObject {
 
     public abstract int getSize();
 
@@ -78,7 +76,7 @@ public abstract class I4GLArray implements TruffleObject {
     @ExportMessage
     public Object readArrayElement(long index) throws InvalidArrayIndexException {
         try{
-            return Array.get(getArray(), (int)index);
+            return java.lang.reflect.Array.get(getArray(), (int)index);
         } catch(ArrayIndexOutOfBoundsException e) {
             CompilerDirectives.transferToInterpreter();
             throw InvalidArrayIndexException.create(index);

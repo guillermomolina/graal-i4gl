@@ -8,17 +8,17 @@ import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.values.I4GLArray;
-import i4gl.runtime.values.I4GLBigIntArray;
-import i4gl.runtime.values.I4GLCharArray;
-import i4gl.runtime.values.I4GLFloatArray;
-import i4gl.runtime.values.I4GLIntArray;
-import i4gl.runtime.values.I4GLRecordArray;
-import i4gl.runtime.values.I4GLSmallFloatArray;
-import i4gl.runtime.values.I4GLSmallIntArray;
+import i4gl.runtime.values.Array;
+import i4gl.runtime.values.BigIntArray;
+import i4gl.runtime.values.CharArray;
+import i4gl.runtime.values.FloatArray;
+import i4gl.runtime.values.IntArray;
+import i4gl.runtime.values.RecordArray;
+import i4gl.runtime.values.SmallFloatArray;
+import i4gl.runtime.values.SmallIntArray;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional
@@ -46,7 +46,7 @@ public class ArrayType extends BaseType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLArray;
+        return value instanceof Array;
     }
 
     @Override
@@ -56,19 +56,19 @@ public class ArrayType extends BaseType {
 
     public Object getDefaultValue() {
         if (valuesType == Char1Type.SINGLETON) {
-            return new I4GLCharArray(size);
+            return new CharArray(size);
         } else if (valuesType == SmallIntType.SINGLETON) {
-            return new I4GLSmallIntArray(size);
+            return new SmallIntArray(size);
         } else if (valuesType == IntType.SINGLETON) {
-            return new I4GLIntArray(size);
+            return new IntArray(size);
         } else if (valuesType == BigIntType.SINGLETON) {
-            return new I4GLBigIntArray(size);
+            return new BigIntArray(size);
         } else if (valuesType == SmallFloatType.SINGLETON) {
-            return new I4GLSmallFloatArray(size);
+            return new SmallFloatArray(size);
         } else if (valuesType == FloatType.SINGLETON) {
-            return new I4GLFloatArray(size);
+            return new FloatArray(size);
         } else if (valuesType instanceof RecordType) {
-            return new I4GLRecordArray((RecordType) valuesType, size);
+            return new RecordArray((RecordType) valuesType, size);
         } else {
             throw new NotImplementedException();
             /*

@@ -3,7 +3,7 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.values.I4GLChar;
+import i4gl.runtime.values.Char;
 
 /**
  * Type descriptor representing the string type.
@@ -19,12 +19,12 @@ public class CharType extends TextType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLChar;
+        return value instanceof Char;
     }
 
     @Override
     public Object getDefaultValue() {
-        return new I4GLChar(size);
+        return new Char(size);
     }
 
     @Override

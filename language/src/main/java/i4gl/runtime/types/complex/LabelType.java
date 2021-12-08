@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLLabel;
+import i4gl.runtime.values.Label;
 
 /**
  * Type descriptor for I4GL's labels. Contains additional information about the identifier of the label.
@@ -21,7 +21,7 @@ public class LabelType extends BaseType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLLabel;
+        return value instanceof Label;
     }
 
     @Override

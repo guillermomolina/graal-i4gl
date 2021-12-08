@@ -8,16 +8,16 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.I4GLBigIntArray;
-import i4gl.runtime.values.I4GLChar;
-import i4gl.runtime.values.I4GLCharArray;
-import i4gl.runtime.values.I4GLFloatArray;
-import i4gl.runtime.values.I4GLIntArray;
-import i4gl.runtime.values.I4GLRecord;
-import i4gl.runtime.values.I4GLRecordArray;
-import i4gl.runtime.values.I4GLSmallFloatArray;
-import i4gl.runtime.values.I4GLSmallIntArray;
-import i4gl.runtime.values.I4GLVarchar;
+import i4gl.runtime.values.BigIntArray;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.CharArray;
+import i4gl.runtime.values.FloatArray;
+import i4gl.runtime.values.IntArray;
+import i4gl.runtime.values.Record;
+import i4gl.runtime.values.RecordArray;
+import i4gl.runtime.values.SmallFloatArray;
+import i4gl.runtime.values.SmallIntArray;
+import i4gl.runtime.values.Varchar;
 
 /**
  * This nodes read value from an array at specified index.
@@ -39,47 +39,47 @@ public abstract class ReadFromIndexedNode extends ExpressionNode {
     }
 
     @Specialization
-    String readChar(I4GLChar charValue, int index) {
+    String readChar(Char charValue, int index) {
         return Character.toString(charValue.getCharAt(index - 1));
     }
 
     @Specialization
-    String readVarchar(I4GLVarchar varchar, int index) {
+    String readVarchar(Varchar varchar, int index) {
         return Character.toString(varchar.getCharAt(index - 1));
     }
 
     @Specialization
-    char readCharArray(I4GLCharArray array, int index) {
+    char readCharArray(CharArray array, int index) {
         return array.getValueAt(index - 1);
     }
 
     @Specialization
-    short readSmallIntArray(I4GLSmallIntArray array, int index) {
+    short readSmallIntArray(SmallIntArray array, int index) {
         return array.getValueAt(index - 1);
     }
 
     @Specialization
-    int readIntArray(I4GLIntArray array, int index) {
+    int readIntArray(IntArray array, int index) {
         return array.getValueAt(index - 1);
     }
 
     @Specialization
-    long readBigIntArray(I4GLBigIntArray array, int index) {
+    long readBigIntArray(BigIntArray array, int index) {
         return array.getValueAt(index - 1);
     }
 
     @Specialization
-    float readSmallFloatArray(I4GLSmallFloatArray array, int index) {
+    float readSmallFloatArray(SmallFloatArray array, int index) {
         return array.getValueAt(index - 1);
     }
 
     @Specialization
-    double readFloatArray(I4GLFloatArray array, int index) {
+    double readFloatArray(FloatArray array, int index) {
         return array.getValueAt(index - 1);
     }
 
     @Specialization
-    I4GLRecord readRecordArray(I4GLRecordArray array, int index) {
+    Record readRecordArray(RecordArray array, int index) {
         return array.getValueAt(index - 1);
     }
 

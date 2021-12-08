@@ -9,7 +9,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.values.I4GLRecord;
+import i4gl.runtime.values.Record;
 
 /**
  * Type descriptor for I4GL's records types. It contains additional information about the variables it contains.
@@ -45,7 +45,7 @@ public class RecordType extends BaseType {
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return value instanceof I4GLRecord;
+        return value instanceof Record;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RecordType extends BaseType {
         for (Map.Entry<String, BaseType> entry : variables.entrySet()) {
             values.put(entry.getKey(), entry.getValue().getDefaultValue());
         }
-        return new I4GLRecord(this, values);
+        return new Record(this, values);
     }
 
     public boolean containsIdentifier(String identifier) {
