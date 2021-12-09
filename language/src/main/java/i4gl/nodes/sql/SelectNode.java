@@ -6,7 +6,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.exceptions.DatabaseException;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Database;
@@ -30,7 +30,7 @@ public class SelectNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Record sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+        Record sqlca = Context.get(this).getSqlcaGlobalVariable();
         final Database database = (Database) databaseVariableNode.executeGeneric(frame);
         final Cursor cursor = new Cursor(database, sql);
         cursor.start(sqlca);

@@ -12,7 +12,7 @@ import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Null;
 
 public final class ModuleRootNode extends RootNode {
@@ -62,7 +62,7 @@ public final class ModuleRootNode extends RootNode {
         if (!registered) {
             /* Function registration is a slow-path operation that must not be compiled. */
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            I4GLContext context = I4GLContext.get(this);
+            Context context = Context.get(this);
             final VirtualFrame globalsFrame = Truffle.getRuntime().createVirtualFrame(new Object[0], globalsFrameDescriptor);
             context.addModuleFrame("GLOBAL", globalsFrame);
             final VirtualFrame moduleFrame = Truffle.getRuntime().createVirtualFrame(new Object[0], moduleFrameDescriptor);

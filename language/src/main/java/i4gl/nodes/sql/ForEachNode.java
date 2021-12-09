@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Record;
 
@@ -32,7 +32,7 @@ public class ForEachNode extends StatementNode {
     @Override
     public void executeVoid(VirtualFrame frame) {
         CompilerDirectives.transferToInterpreterAndInvalidate();
-        Record sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+        Record sqlca = Context.get(this).getSqlcaGlobalVariable();
 
         final Cursor cursor = (Cursor) cursorVariableNode.executeGeneric(frame);
         cursor.start(sqlca);

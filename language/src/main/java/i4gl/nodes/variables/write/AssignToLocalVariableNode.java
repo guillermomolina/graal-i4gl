@@ -16,6 +16,7 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -23,6 +24,8 @@ import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
 import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Date;
+import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Record;
 import i4gl.runtime.values.Varchar;
 
@@ -109,6 +112,29 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
         frame.setObject(getSlot(), value);
     }
 
+    protected boolean isDate() {
+        return getType() == DateType.SINGLETON;
+    }
+
+    @Specialization(guards = "isDate()")
+    void writeDate(final VirtualFrame frame, final int value) {
+        frame.setObject(getSlot(), new Date(value));
+    }
+
+    @Specialization(guards = "isDate()")
+    void writeDate(final VirtualFrame frame, final String value) {
+        frame.setObject(getSlot(), new Date(value));
+    }
+
+    protected boolean isDateAndValueIsNull(final Object value) {
+        return isDate() && value == Null.SINGLETON;
+    }
+
+    @Specialization(guards = "isDateAndValueIsNull(value) ")
+    void writeDate(final VirtualFrame frame, final Object value) {
+        frame.setObject(getSlot(), new Date());
+    }
+
     @Specialization
     void assignRecord(final VirtualFrame frame, final Record record) {
         frame.setObject(getSlot(), record.createDeepCopy());
@@ -139,19 +165,16 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
         frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
 
-    /**
-     * This is used for multidimensional arrays
-     */
     @Specialization
     void assignArray(final VirtualFrame frame, final Object[] array) {
         frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
-
+/*
     @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignSmallIntArray", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
     void assign(final VirtualFrame frame, final Object value) {
-        frame.setObject(getSlot(), value);
+        throw new I4GLRuntimeException("Can not assign an Object to a " + getType());
     }
-
+*/
     @Override
     public boolean hasTag(final Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);

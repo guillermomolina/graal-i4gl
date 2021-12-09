@@ -1,6 +1,8 @@
 package i4gl.runtime.values;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -10,7 +12,7 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.compound.DateType;
 
@@ -22,12 +24,29 @@ public final class Date implements TruffleObject, Comparable<Date> {
 
     private final java.sql.Date value;
 
+    public Date() {
+        this.value = null;
+    }
+
     public Date(java.sql.Date value) {
         this.value = value;
     }
 
-    public Date(long milliseconds) {
-        this.value = new java.sql.Date(milliseconds);
+    public Date(int days) {
+        // days = count of days since December 31, 1899
+        var cal = new GregorianCalendar(1899, 11, 31);
+        cal.add(GregorianCalendar.DAY_OF_MONTH, days);
+        this.value = new java.sql.Date(cal.getTimeInMillis());        
+    }
+
+    public Date(String date) {
+        java.sql.Date value;
+        try {
+            value = new java.sql.Date(DATE_FORMATER.parse(date).getTime());
+        } catch (ParseException e) {
+            value = null;
+        }
+        this.value = value;
     }
 
     public java.sql.Date getValue() {
@@ -82,6 +101,9 @@ public final class Date implements TruffleObject, Comparable<Date> {
     @Override
     @TruffleBoundary
     public String toString() {
+        if(value == null) {
+            return " ".repeat(10);
+        }
         return DATE_FORMATER.format(value);
     }
 
@@ -105,7 +127,7 @@ public final class Date implements TruffleObject, Comparable<Date> {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+    Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
     }
 

@@ -34,8 +34,8 @@ import i4gl.nodes.root.BuiltinRootNode;
 import i4gl.nodes.root.ModuleRootNode;
 import i4gl.nodes.root.UndefinedFunctionRootNode;
 import i4gl.parser.FullParser;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.context.I4GLLanguageView;
+import i4gl.runtime.context.Context;
+import i4gl.runtime.context.LanguageView;
 
 /**
  * Representation of our I4GL guest language for Truffle VM. Thanks to the
@@ -46,7 +46,7 @@ import i4gl.runtime.context.I4GLLanguageView;
 @ProvidedTags({ StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class,
         StandardTags.RootBodyTag.class, StandardTags.ExpressionTag.class, DebuggerTags.AlwaysHalt.class,
         StandardTags.ReadVariableTag.class, StandardTags.WriteVariableTag.class })
-public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
+public final class I4GLLanguage extends TruffleLanguage<Context> {
     public static volatile int counter;
 
     public static final String ID = "i4gl";
@@ -64,13 +64,13 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     }
 
     @Override
-    protected I4GLContext createContext(Env environment) {
+    protected Context createContext(Env environment) {
         LOGGER.fine("Creating new I4GLContext");
-        return new I4GLContext(this, environment, new ArrayList<>(EXTERNAL_BUILTINS));
+        return new Context(this, environment, new ArrayList<>(EXTERNAL_BUILTINS));
     }
 
     @Override
-    protected boolean patchContext(I4GLContext context, Env newEnv) {
+    protected boolean patchContext(Context context, Env newEnv) {
         context.patchContext(newEnv);
         return true;
     }
@@ -188,17 +188,17 @@ public final class I4GLLanguage extends TruffleLanguage<I4GLContext> {
     }
 
     @Override
-    protected Object getLanguageView(I4GLContext context, Object value) {
-        return I4GLLanguageView.create(value);
+    protected Object getLanguageView(Context context, Object value) {
+        return LanguageView.create(value);
     }
 
     @Override
-    protected boolean isVisible(I4GLContext context, Object value) {
+    protected boolean isVisible(Context context, Object value) {
         return !InteropLibrary.getFactory().getUncached(value).isNull(value);
     }
 
     @Override
-    protected Object getScope(I4GLContext context) {
+    protected Object getScope(Context context) {
         return context.getFunctionRegistry().getFunctionsObject();
     }
 

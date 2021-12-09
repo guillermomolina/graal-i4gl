@@ -4,6 +4,7 @@ Version 0.3.0
 - Major refactor, Take out I4GL from most classes names
 - Implement date type
 - Add parse time type checking (not records yet)
+- Refactor type system
 
 
 Version 0.2.0

@@ -5,7 +5,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.values.Database;
@@ -27,7 +27,7 @@ public class SqlNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Record sqlca = I4GLContext.get(this).getSqlcaGlobalVariable();
+        Record sqlca = Context.get(this).getSqlcaGlobalVariable();
         final Database database = (Database) databaseVariableNode.executeGeneric(frame);
         database.connect(sqlca);
         SquirrelSession session = database.getSession();

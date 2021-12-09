@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 
 @TypeSystemReference(I4GLTypeSystem.class)
 @NodeInfo(shortName = "DISPLAY", description = "The node implementing the DISPLAY statement")
@@ -16,12 +16,12 @@ public abstract class DisplayNode extends StatementNode {
 
     @Specialization
     public void display(String argument) {
-        I4GLContext.get(this).getOutput().println(argument);
+        Context.get(this).getOutput().println(argument);
     }
 
     @Specialization
     public void display(Object argument) {
-        I4GLContext.get(this).getOutput().println(argument.toString());
+        Context.get(this).getOutput().println(argument.toString());
     }
 /*
     @Specialization

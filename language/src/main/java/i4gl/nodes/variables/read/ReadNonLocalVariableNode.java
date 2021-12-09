@@ -12,7 +12,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.types.BaseType;
 
 /**
@@ -95,7 +95,7 @@ public abstract class ReadNonLocalVariableNode extends ExpressionNode {
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            globalFrame = I4GLContext.get(this).getModuleFrame(getFrameName());
+            globalFrame = Context.get(this).getModuleFrame(getFrameName());
         }
         return globalFrame;
     }

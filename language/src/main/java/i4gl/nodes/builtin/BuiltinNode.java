@@ -9,16 +9,16 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.context.I4GLFunctionRegistry;
+import i4gl.runtime.context.Context;
+import i4gl.runtime.context.FunctionRegistry;
 import i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Base class for all builtin functions. It contains the Truffle DSL annotation
  * {@link NodeChild} that defines the function arguments.<br>
- * The builtin functions are registered in {@link I4GLContext#installBuiltins}.
+ * The builtin functions are registered in {@link Context#installBuiltins}.
  * Every builtin node subclass is instantiated there, wrapped into a function,
- * and added to the {@link I4GLFunctionRegistry}. This ensures that builtin
+ * and added to the {@link FunctionRegistry}. This ensures that builtin
  * functions can be called like user-defined functions; there is no special
  * function lookup or call node for builtin functions.
  */

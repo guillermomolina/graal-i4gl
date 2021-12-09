@@ -15,7 +15,7 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.database.SquirrelDataSet;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
@@ -82,7 +82,7 @@ public final class Cursor implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+    Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
     }
 

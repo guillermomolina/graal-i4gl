@@ -9,7 +9,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
-import i4gl.runtime.context.I4GLFunction;
+import i4gl.runtime.context.Function;
 
 @NodeInfo(shortName = "CALL")
 public final class CallNode extends StatementNode {
@@ -18,7 +18,7 @@ public final class CallNode extends StatementNode {
     @Child
     private InvokeNode invokeNode;
     @CompilationFinal
-    private I4GLFunction cachedFunction;
+    private Function cachedFunction;
     @Child
     private InteropLibrary library;
 

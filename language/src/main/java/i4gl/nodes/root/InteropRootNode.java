@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 
 /**
  *
@@ -53,7 +53,7 @@ public final class InteropRootNode extends RootNode {
         // Conversion of arguments to types understood by I4GL.
         Object[] arguments = frame.getArguments();
         for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = I4GLContext.fromForeignValue(arguments[i]);
+            arguments[i] = Context.fromForeignValue(arguments[i]);
         }
         return mainCallNode.call(arguments);
     }

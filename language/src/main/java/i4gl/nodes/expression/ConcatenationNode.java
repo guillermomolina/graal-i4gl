@@ -11,10 +11,11 @@ public abstract class ConcatenationNode extends BinaryExpressionNode {
     }
 
     @Specialization
-    protected String concat(String left, Object right) {
+    protected String concat(Object left, Object right) {
+        String value = left.toString();
         if (right == null) {
-            return left;
+            return value;
         }
-        return left + right.toString();
+        return value + right.toString();
     }
 }

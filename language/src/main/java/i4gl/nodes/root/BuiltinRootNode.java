@@ -8,7 +8,7 @@ import com.oracle.truffle.api.source.SourceSection;
 
 import i4gl.I4GLLanguage;
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 
 @NodeInfo(language = "I4GL", description = "The root of all I4GL builtin execution trees")
 public class BuiltinRootNode extends RootNode {
@@ -36,7 +36,7 @@ public class BuiltinRootNode extends RootNode {
 
     @Override
     public Object execute(VirtualFrame frame) {
-        assert I4GLContext.get(this) != null;
+        assert Context.get(this) != null;
         return bodyNode.executeGeneric(frame);
     }
 

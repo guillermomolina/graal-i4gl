@@ -9,7 +9,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.utilities.TriState;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.types.primitive.NullType;
 
 @ExportLibrary(InteropLibrary.class)
@@ -45,7 +45,7 @@ public final class Null implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+    Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
     }
 

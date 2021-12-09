@@ -12,8 +12,8 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.context.I4GLContext;
-import i4gl.runtime.context.I4GLFunction;
+import i4gl.runtime.context.Context;
+import i4gl.runtime.context.Function;
 import i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
 import i4gl.runtime.types.BaseType;
 
@@ -22,7 +22,7 @@ public final class InvokeNode extends ExpressionNode {
 
     private final String functionIdentifier;
     @Children private final ExpressionNode[] argumentNodes;
-    @CompilationFinal private I4GLFunction cachedFunction;
+    @CompilationFinal private Function cachedFunction;
     @Child private InteropLibrary library;
 
 	public InvokeNode(String identifier, ExpressionNode[] argumentNodes) {
@@ -36,8 +36,8 @@ public final class InvokeNode extends ExpressionNode {
         return null;
     }
 
-    private I4GLFunction getFunction() {
-        return I4GLContext.get(this).getFunctionRegistry().lookup(functionIdentifier, true);
+    private Function getFunction() {
+        return Context.get(this).getFunctionRegistry().lookup(functionIdentifier, true);
     }
 
     @Override

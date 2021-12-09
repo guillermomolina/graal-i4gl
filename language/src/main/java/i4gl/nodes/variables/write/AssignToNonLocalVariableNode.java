@@ -16,7 +16,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.context.I4GLContext;
+import i4gl.runtime.context.Context;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.VarcharType;
@@ -155,16 +155,16 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
     void assignArray(final VirtualFrame frame, final Object[] array) {
         getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
     }
-
+/*
     @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignSmallIntArray", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
     void assign(final VirtualFrame frame, final Object value) {
         getGlobalFrame().setObject(getSlot(), value);
     }
-
+*/
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
-            globalFrame = I4GLContext.get(this).getModuleFrame(getFrameName());
+            globalFrame = Context.get(this).getModuleFrame(getFrameName());
         }
         return globalFrame;
     }
