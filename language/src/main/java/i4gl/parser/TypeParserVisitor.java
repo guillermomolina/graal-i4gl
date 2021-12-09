@@ -10,6 +10,7 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
@@ -68,7 +69,7 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
 
     @Override
     public BaseType visitDateType(final I4GLParser.DateTypeContext ctx) {
-        throw new NotImplementedException();
+        return DateType.SINGLETON;
     }
 
     private String getTableName(final I4GLParser.TableIdentifierContext ctx) {

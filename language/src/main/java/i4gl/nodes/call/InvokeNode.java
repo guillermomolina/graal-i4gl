@@ -11,7 +11,6 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.context.I4GLFunction;
@@ -34,7 +33,7 @@ public final class InvokeNode extends ExpressionNode {
 
     @Override
     public BaseType getType() {
-        throw new NotImplementedException();
+        return null;
     }
 
     private I4GLFunction getFunction() {

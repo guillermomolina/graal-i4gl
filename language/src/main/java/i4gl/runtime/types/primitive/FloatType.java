@@ -6,6 +6,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
 
@@ -38,8 +39,8 @@ public class FloatType extends BaseType {
 
     @Override
     public boolean convertibleTo(final BaseType type) {
-        return type instanceof VarcharType || type instanceof CharType
-                || type == TextType.SINGLETON;
+        return type == SmallFloatType.SINGLETON || type instanceof VarcharType || type instanceof CharType
+                || type == TextType.SINGLETON || type == DateType.SINGLETON;
     }
 
     @Override

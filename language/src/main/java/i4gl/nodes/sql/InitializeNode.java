@@ -55,6 +55,8 @@ public class InitializeNode extends StatementNode {
                     case Types.FLOAT:
                         defaults.add(Double.valueOf(defaultValue));
                         break;
+                    case Types.DATE:
+                        throw new NotImplementedException();
                     default:
                         throw new NotImplementedException();
                 }

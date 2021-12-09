@@ -72,19 +72,19 @@ import i4gl.nodes.statement.BlockNode;
 import i4gl.nodes.statement.DisplayNode;
 import i4gl.nodes.statement.DisplayNodeGen;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.read.ReadFromRecordNode;
-import i4gl.nodes.variables.read.ReadFromResultNode;
 import i4gl.nodes.variables.read.ReadFromIndexedNodeGen;
+import i4gl.nodes.variables.read.ReadFromRecordNode;
 import i4gl.nodes.variables.read.ReadFromRecordNodeGen;
+import i4gl.nodes.variables.read.ReadFromResultNode;
 import i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadNonLocalVariableNodeGen;
+import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.nodes.variables.write.AssignToIndexedNodeGen;
 import i4gl.nodes.variables.write.AssignToLocalVariableNodeGen;
 import i4gl.nodes.variables.write.AssignToNonLocalVariableNodeGen;
 import i4gl.nodes.variables.write.AssignToRecordFieldNodeGen;
 import i4gl.nodes.variables.write.AssignToRecordTextNodeGen;
 import i4gl.nodes.variables.write.AssignToTextNodeGen;
-import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.parser.I4GLParser.NotIndexedVariableContext;
 import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
@@ -271,6 +271,16 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         return new Interval(a, b);
     }
 
+    private boolean checkTypesAreCompatible(BaseType targetType, BaseType sourceType) {
+        // sourceType may be unknown at parse time, so it isn't checked
+        if (sourceType != null) {
+            if ((targetType != sourceType) && !sourceType.convertibleTo(targetType)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
         globalsFrameDescriptor = pushNewScope(ParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
@@ -421,15 +431,19 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     }
 
     private StatementNode createAssignToVariableFromScope(final ParseScope scope, final String identifier,
-            final ExpressionNode valueNode) {
+            final ExpressionNode valueNode) throws TypeMismatchException {
         final FrameSlot variableSlot = scope.getLocalSlot(identifier);
-        final BaseType type = scope.getIdentifierType(identifier);
+        final BaseType targetType = scope.getIdentifierType(identifier);
         final boolean isLocal = scope == currentParseScope;
 
-        if (isLocal) {
-            return AssignToLocalVariableNodeGen.create(valueNode, variableSlot, type);
+        if (!checkTypesAreCompatible(targetType, valueNode.getType())) {
+            throw new TypeMismatchException(targetType.toString(), valueNode.getType().toString());
         }
-        return AssignToNonLocalVariableNodeGen.create(valueNode, variableSlot, type, scope.getName());
+
+        if (isLocal) {
+            return AssignToLocalVariableNodeGen.create(valueNode, variableSlot, targetType);
+        }
+        return AssignToNonLocalVariableNodeGen.create(valueNode, variableSlot, targetType, scope.getName());
     }
 
     @Override
@@ -1041,6 +1055,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             ExpressionNode indexNode = indexNodes.get(index);
             BaseType returnType = ((ArrayType) actualType).getValuesType();
             if (index == lastIndex) {
+                if (!checkTypesAreCompatible(returnType, valueNode.getType())) {
+                    throw new TypeMismatchException(returnType.toString(), valueNode.getType().toString());
+                }
                 result = AssignToIndexedNodeGen.create(readIndexedNode, indexNode, valueNode);
             } else {
                 readIndexedNode = ReadFromIndexedNodeGen.create(readIndexedNode, indexNode, returnType);

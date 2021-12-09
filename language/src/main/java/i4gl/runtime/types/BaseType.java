@@ -19,13 +19,14 @@ import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.I4GLContext;
 import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.DecimalType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -68,11 +69,13 @@ public abstract class BaseType implements TruffleObject {
                 return FloatType.SINGLETON;
             case Types.DECIMAL:
                 return new DecimalType(info.getColumnSize(), info.getDecimalDigits());
+            case Types.DATE:
+                return DateType.SINGLETON;
             default:
                 LOGGER.warning("Unknown SQL type: " + JDBCType.valueOf(info.getDataType()).getName());
                 throw new NotImplementedException();
         }
-    } 
+    }
 
     /**
      * Checks whether this type is of a certain instance. If used on fast-paths it

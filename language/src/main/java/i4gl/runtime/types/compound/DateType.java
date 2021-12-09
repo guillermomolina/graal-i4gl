@@ -5,20 +5,16 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.BigIntType;
-import i4gl.runtime.types.primitive.FloatType;
-import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.types.primitive.SmallFloatType;
-import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.values.Date;
 
 /**
  * Type descriptor representing the string type.
  */
-public class TextType extends BaseType {
+public class DateType extends BaseType {
 
-    public static final TextType SINGLETON = new TextType();
+    public static final DateType SINGLETON = new DateType();
 
-    protected TextType() {
+    protected DateType() {
     }
 
     @Override
@@ -29,7 +25,7 @@ public class TextType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        return "";
+        return new Date(0);
     }
 
     @Override
@@ -39,13 +35,11 @@ public class TextType extends BaseType {
 
     @Override
     public boolean convertibleTo(BaseType type) {
-        return type instanceof TextType || type == SmallIntType.SINGLETON || type == IntType.SINGLETON
-                || type == BigIntType.SINGLETON || type == SmallFloatType.SINGLETON
-                || type == FloatType.SINGLETON || type == DateType.SINGLETON;
+        return false;
     }
 
     @Override
     public String toString() {
-        return "TEXT";
+        return "DATE";
     }
 }

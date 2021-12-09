@@ -6,6 +6,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
 
@@ -37,12 +38,12 @@ public class IntType extends BaseType {
 
     @Override
     public boolean convertibleTo(BaseType type) {
-        return type == BigIntType.SINGLETON || type == FloatType.SINGLETON
-                || type instanceof VarcharType || type instanceof CharType
-                || type == TextType.SINGLETON;
+        return type == SmallIntType.SINGLETON || type == BigIntType.SINGLETON || type == FloatType.SINGLETON
+                || type == SmallFloatType.SINGLETON || type instanceof VarcharType || type instanceof CharType
+                || type == TextType.SINGLETON || type == DateType.SINGLETON;
     }
 
-    @Override 
+    @Override
     public String toString() {
         return "INT";
     }

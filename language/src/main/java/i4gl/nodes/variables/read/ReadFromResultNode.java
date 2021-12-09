@@ -16,7 +16,10 @@ public class ReadFromResultNode extends ExpressionNode {
 
     @Override
     public BaseType getType() {
-        throw new NotImplementedException();
+        if(result != null) {
+            throw new NotImplementedException();
+        }
+        return null;
     }
 
     @Override

@@ -32,7 +32,7 @@ public class NullType extends BaseType {
 
     @Override
     public boolean convertibleTo(final BaseType type) {
-        return false;
+        return true;
     }
 
     @Override
