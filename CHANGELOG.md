@@ -2,6 +2,7 @@ Version 0.3.0
 
 - Fix test Sqlca
 - Major refactor, Take out I4GL from most classes names
+- Implement date type
 
 
 Version 0.2.0
