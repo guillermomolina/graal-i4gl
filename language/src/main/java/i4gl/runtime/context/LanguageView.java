@@ -17,12 +17,12 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
 
 @ExportLibrary(value = InteropLibrary.class, delegateTo = "delegate")
-public final class I4GLLanguageView implements TruffleObject {
+public final class LanguageView implements TruffleObject {
 
     final Object delegate;
     /*
@@ -35,7 +35,7 @@ public final class I4GLLanguageView implements TruffleObject {
         SmallIntType.SINGLETON, IntType.SINGLETON, BigIntType.SINGLETON, SmallFloatType.SINGLETON, FloatType.SINGLETON,
             TextType.SINGLETON };
 
-    I4GLLanguageView(Object delegate) {
+    LanguageView(Object delegate) {
         this.delegate = delegate;
     }
 
@@ -50,7 +50,7 @@ public final class I4GLLanguageView implements TruffleObject {
      * of i4gl of it.
      */
     @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+    Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -157,7 +157,7 @@ public final class I4GLLanguageView implements TruffleObject {
         if (!isPrimitiveOrFromOtherLanguage(value)) {
             throw new AssertionError();
         }
-        return new I4GLLanguageView(value);
+        return new LanguageView(value);
     }
 
     /*

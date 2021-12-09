@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
-
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
@@ -40,24 +38,24 @@ import i4gl.nodes.builtin.icgi.ICGIStartBuiltinNodeFactory;
 import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Record;
 
-public final class I4GLContext {
+public final class Context {
 
     @CompilationFinal
     private Env env;
     private final I4GLLanguage language;
     private final BufferedReader input;
     private final PrintWriter output;
-    private final I4GLFunctionRegistry functionRegistry;
+    private final FunctionRegistry functionRegistry;
     private final Map<String, VirtualFrame> frameRegistry;
     private final AllocationReporter allocationReporter;
 
-    public I4GLContext(I4GLLanguage language, TruffleLanguage.Env env,
+    public Context(I4GLLanguage language, TruffleLanguage.Env env,
             List<NodeFactory<? extends BuiltinNode>> externalBuiltins) {
         this.env = env;
         this.language = language;
         this.input = new BufferedReader(new InputStreamReader(env.in()));
         this.output = new PrintWriter(env.out(), true);
-        this.functionRegistry = new I4GLFunctionRegistry(language);
+        this.functionRegistry = new FunctionRegistry(language);
         this.frameRegistry = new HashMap<>();
         this.allocationReporter = env.lookup(AllocationReporter.class);
         installBuiltins();
@@ -74,7 +72,7 @@ public final class I4GLContext {
     }
 
     /**
-     * Patches the {@link I4GLContext} to use a new {@link Env}. The method is
+     * Patches the {@link Context} to use a new {@link Env}. The method is
      * called during the native image execution as a consequence of
      * {@link Context#create(java.lang.String...)}.
      *
@@ -112,7 +110,7 @@ public final class I4GLContext {
     /**
      * Returns the registry of all functions that are currently defined.
      */
-    public I4GLFunctionRegistry getFunctionRegistry() {
+    public FunctionRegistry getFunctionRegistry() {
         return functionRegistry;
     }
 
@@ -138,7 +136,7 @@ public final class I4GLContext {
     @TruffleBoundary
     private TruffleObject getModuleVariables(String moduleName) {
         VirtualFrame frame = frameRegistry.get(moduleName);
-        final I4GLVariables vars = new I4GLVariables();
+        final Variables vars = new Variables();
         if (frame != null) {
             for (FrameSlot slot : frame.getFrameDescriptor().getSlots()) {
                 Object value = frame.getValue(slot);
@@ -152,7 +150,7 @@ public final class I4GLContext {
     }
 
     /**
-     * Adds all builtin functions to the {@link I4GLFunctionRegistry}. This method
+     * Adds all builtin functions to the {@link FunctionRegistry}. This method
      * lists all
      * {@link BuiltinNode builtin implementation classes}.
      */
@@ -199,7 +197,7 @@ public final class I4GLContext {
             return fromForeignNumber(a);
         } else if (a instanceof TruffleObject) {
             return a;
-        } else if (a instanceof I4GLContext) {
+        } else if (a instanceof Context) {
             return a;
         }
         throw shouldNotReachHere("Value is not a truffle value.");
@@ -228,9 +226,9 @@ public final class I4GLContext {
         return (TruffleObject) env.getPolyglotBindings();
     }
 
-    private static final ContextReference<I4GLContext> REFERENCE = ContextReference.create(I4GLLanguage.class);
+    private static final ContextReference<Context> REFERENCE = ContextReference.create(I4GLLanguage.class);
 
-    public static I4GLContext get(Node node) {
+    public static Context get(Node node) {
         return REFERENCE.get(node);
     }
 

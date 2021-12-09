@@ -16,41 +16,41 @@ import i4gl.I4GLLanguage;
 import i4gl.parser.FullParser;
 
 /**
- * Manages the mapping from function names to {@link I4GLFunction function objects}.
+ * Manages the mapping from function names to {@link Function function objects}.
  */
-public final class I4GLFunctionRegistry {
+public final class FunctionRegistry {
 
     private final I4GLLanguage language;
-    private final I4GLFunctions functionsObject = new I4GLFunctions();
+    private final Functions functionsObject = new Functions();
     private final Map<Map<String, RootCallTarget>, Void> registeredFunctions = new IdentityHashMap<>();
 
-    public I4GLFunctionRegistry(I4GLLanguage language) {
+    public FunctionRegistry(I4GLLanguage language) {
         this.language = language;
     }
 
     /**
-     * Returns the canonical {@link I4GLFunction} object for the given name. If it does not exist yet,
+     * Returns the canonical {@link Function} object for the given name. If it does not exist yet,
      * it is created.
      */
     @TruffleBoundary
-    public I4GLFunction lookup(String name, boolean createIfNotPresent) {
-        I4GLFunction result = functionsObject.functions.get(name);
+    public Function lookup(String name, boolean createIfNotPresent) {
+        Function result = functionsObject.functions.get(name);
         if (result == null && createIfNotPresent) {
-            result = new I4GLFunction(language, name);
+            result = new Function(language, name);
             functionsObject.functions.put(name, result);
         }
         return result;
     }
 
     /**
-     * Associates the {@link I4GLFunction} with the given name with the given implementation root
+     * Associates the {@link Function} with the given name with the given implementation root
      * node. If the function did not exist before, it defines the function. If the function existed
      * before, it redefines the function and the old implementation is discarded.
      */
-    I4GLFunction register(String name, RootCallTarget callTarget) {
-        I4GLFunction result = functionsObject.functions.get(name);
+    Function register(String name, RootCallTarget callTarget) {
+        Function result = functionsObject.functions.get(name);
         if (result == null) {
-            result = new I4GLFunction(callTarget);
+            result = new Function(callTarget);
             functionsObject.functions.put(name, result);
         } else {
             result.setCallTarget(callTarget);
@@ -79,17 +79,17 @@ public final class I4GLFunctionRegistry {
         register(parser.getAllFunctions());
     }
 
-    public I4GLFunction getFunction(String name) {
+    public Function getFunction(String name) {
         return functionsObject.functions.get(name);
     }
 
     /**
      * Returns the sorted list of all functions, for printing purposes only.
      */
-    public List<I4GLFunction> getFunctions() {
-        List<I4GLFunction> result = new ArrayList<>(functionsObject.functions.values());
-        Collections.sort(result, new Comparator<I4GLFunction>() {
-            public int compare(I4GLFunction f1, I4GLFunction f2) {
+    public List<Function> getFunctions() {
+        List<Function> result = new ArrayList<>(functionsObject.functions.values());
+        Collections.sort(result, new Comparator<Function>() {
+            public int compare(Function f1, Function f2) {
                 return f1.toString().compareTo(f2.toString());
             }
         });

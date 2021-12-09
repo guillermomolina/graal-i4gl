@@ -2,7 +2,6 @@ package i4gl.runtime.context;
 
 import java.util.logging.Level;
 
-import i4gl.I4GLLanguage;
 import com.oracle.truffle.api.Assumption;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
@@ -23,12 +22,14 @@ import com.oracle.truffle.api.source.SourceSection;
 import com.oracle.truffle.api.utilities.CyclicAssumption;
 import com.oracle.truffle.api.utilities.TriState;
 
+import i4gl.I4GLLanguage;
+
 @ExportLibrary(InteropLibrary.class)
-public final class I4GLFunction implements TruffleObject {
+public final class Function implements TruffleObject {
 
     public static final int INLINE_CACHE_SIZE = 2;
 
-    private static final TruffleLogger LOG = TruffleLogger.getLogger(I4GLLanguage.ID, I4GLFunction.class);
+    private static final TruffleLogger LOG = TruffleLogger.getLogger(I4GLLanguage.ID, Function.class);
 
     /** The name of the function. */
     private final String name;
@@ -43,11 +44,11 @@ public final class I4GLFunction implements TruffleObject {
      */
     private final CyclicAssumption callTargetStable;
 
-    protected I4GLFunction(I4GLLanguage language, String name) {
+    protected Function(I4GLLanguage language, String name) {
         this(language.getOrCreateUndefinedFunction(name));
     }
 
-    protected I4GLFunction(RootCallTarget callTarget) {
+    protected Function(RootCallTarget callTarget) {
         this.name = callTarget.getRootNode().getName();
         this.callTargetStable = new CyclicAssumption(name);
         setCallTarget(callTarget);
@@ -98,7 +99,7 @@ public final class I4GLFunction implements TruffleObject {
     }
 
     /**
-     * {@link I4GLFunction} instances are always visible as executable to other languages.
+     * {@link Function} instances are always visible as executable to other languages.
      */
     @ExportMessage
     @TruffleBoundary
@@ -112,7 +113,7 @@ public final class I4GLFunction implements TruffleObject {
     }
 
     /**
-     * {@link I4GLFunction} instances are always visible as executable to other languages.
+     * {@link Function} instances are always visible as executable to other languages.
      */
     @ExportMessage
     boolean isExecutable() {
@@ -126,13 +127,13 @@ public final class I4GLFunction implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return I4GLFunctionType.SINGLETON;
+        return FunctionType.SINGLETON;
     }
 
     @ExportMessage
     static final class IsIdenticalOrUndefined {
         @Specialization
-        static TriState doI4GLFunction(I4GLFunction receiver, I4GLFunction other) {
+        static TriState doI4GLFunction(Function receiver, Function other) {
             /*
              * I4GLFunctions are potentially identical to other I4GLFunctions.
              */
@@ -140,14 +141,14 @@ public final class I4GLFunction implements TruffleObject {
         }
 
         @Fallback
-        static TriState doOther(I4GLFunction receiver, Object other) {
+        static TriState doOther(Function receiver, Object other) {
             return TriState.UNDEFINED;
         }
     }
 
     @ExportMessage
     @TruffleBoundary
-    static int identityHashCode(I4GLFunction receiver) {
+    static int identityHashCode(Function receiver) {
         return System.identityHashCode(receiver);
     }
 
@@ -215,7 +216,7 @@ public final class I4GLFunction implements TruffleObject {
         @Specialization(limit = "INLINE_CACHE_SIZE", //
                         guards = "function.getCallTarget() == cachedTarget", //
                         assumptions = "callTargetStable")
-        protected static Object doDirect(I4GLFunction function, Object[] arguments,
+        protected static Object doDirect(Function function, Object[] arguments,
                         @Cached("function.getCallTargetStable()") Assumption callTargetStable,
                         @Cached("function.getCallTarget()") RootCallTarget cachedTarget,
                         @Cached("create(cachedTarget)") DirectCallNode callNode) {
@@ -231,7 +232,7 @@ public final class I4GLFunction implements TruffleObject {
          * further, e.g., no method inlining is performed.
          */
         @Specialization(replaces = "doDirect")
-        protected static Object doIndirect(I4GLFunction function, Object[] arguments,
+        protected static Object doIndirect(Function function, Object[] arguments,
                         @Cached IndirectCallNode callNode) {
             /*
              * I4GL has a quite simple call lookup: just ask the function for the current call target,

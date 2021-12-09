@@ -13,14 +13,13 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
-import i4gl.runtime.types.primitive.ObjectType;
 
 @ExportLibrary(InteropLibrary.class)
-final class I4GLVariables implements TruffleObject {
+final class Functions implements TruffleObject {
 
-    final Map<String, Object> variables = new HashMap<>();
+    final Map<String, Function> functions = new HashMap<>();
 
-    I4GLVariables() {
+    Functions() {
     }
 
     @ExportMessage
@@ -29,7 +28,7 @@ final class I4GLVariables implements TruffleObject {
     }
 
     @ExportMessage
-    Class<? extends TruffleLanguage<I4GLContext>> getLanguage() {
+    Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
     }
 
@@ -41,19 +40,19 @@ final class I4GLVariables implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object readMember(String member) {
-        return variables.get(member);
+        return functions.get(member);
     }
 
     @ExportMessage
     @TruffleBoundary
     boolean isMemberReadable(String member) {
-        return variables.containsKey(member);
+        return functions.containsKey(member);
     }
 
     @ExportMessage
     @TruffleBoundary
     Object getMembers(boolean includeInternal) {
-        return new VariableNamesObject(variables.keySet().toArray());
+        return new FunctionNamesObject(functions.keySet().toArray());
     }
 
     @ExportMessage
@@ -67,21 +66,26 @@ final class I4GLVariables implements TruffleObject {
     }
 
     @ExportMessage
+    boolean isScope() {
+        return true;
+    }
+
+    @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-        return variables.toString();
+        return functions.toString();
     }
 
     public static boolean isInstance(TruffleObject obj) {
-        return obj instanceof I4GLVariables;
+        return obj instanceof Functions;
     }
 
     @ExportLibrary(InteropLibrary.class)
-    static final class VariableNamesObject implements TruffleObject {
+    static final class FunctionNamesObject implements TruffleObject {
 
         private final Object[] names;
 
-        VariableNamesObject(Object[] names) {
+        FunctionNamesObject(Object[] names) {
             this.names = names;
         }
 

@@ -7,17 +7,17 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Null;
 
-final class I4GLFunctionType extends BaseType {
+public class ObjectType extends BaseType {
 
-    public static final I4GLFunctionType SINGLETON = new I4GLFunctionType();
+    public static final ObjectType SINGLETON = new ObjectType();
 
-    I4GLFunctionType() {
+    private ObjectType() {
     }    
 
     @Override
     public boolean isInstance(Object value, InteropLibrary library) {
         CompilerAsserts.partialEvaluationConstant(this);
-        return library.isExecutable(value);
+        return library.hasMembers(value);
     }
 
     @Override
@@ -37,6 +37,6 @@ final class I4GLFunctionType extends BaseType {
 
     @Override
     public String toString() {
-        return "FUNCTION";
+        return "OBJECT";
     }
 }
