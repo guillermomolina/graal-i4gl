@@ -10,6 +10,8 @@ import com.oracle.truffle.api.utilities.TriState;
 
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.Context;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.primitive.NullType;
 
 @ExportLibrary(InteropLibrary.class)
@@ -21,12 +23,17 @@ public final class Null implements TruffleObject {
     public static final Null SINGLETON = new Null();
     private static final int IDENTITY_HASH = System.identityHashCode(SINGLETON);
 
-    /**
-     * Disallow instantiation from outside to ensure that the {@link #SINGLETON} is the only
-     * instance.
-     */
+    public static final Null DATE = new Null(DateType.SINGLETON);
+
+    public final BaseType type;
+
     private Null() {
-    }
+        this.type = null;
+    }    
+
+    private Null(final BaseType type) {
+        this.type = type;
+    }    
 
     @Override
     public String toString() {
@@ -64,6 +71,9 @@ public final class Null implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
+        if(type != null) {
+            return null;
+        }
         return NullType.SINGLETON;
     }
 

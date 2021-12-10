@@ -5,18 +5,13 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 
 import i4gl.nodes.expression.ExpressionNode;
+import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.BigIntArray;
+import i4gl.runtime.values.Array;
 import i4gl.runtime.values.Char;
-import i4gl.runtime.values.CharArray;
-import i4gl.runtime.values.FloatArray;
-import i4gl.runtime.values.IntArray;
-import i4gl.runtime.values.Record;
-import i4gl.runtime.values.RecordArray;
-import i4gl.runtime.values.SmallFloatArray;
-import i4gl.runtime.values.SmallIntArray;
 import i4gl.runtime.values.Varchar;
 
 /**
@@ -49,43 +44,12 @@ public abstract class ReadFromIndexedNode extends ExpressionNode {
     }
 
     @Specialization
-    char readCharArray(CharArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    short readSmallIntArray(SmallIntArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    int readIntArray(IntArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    long readBigIntArray(BigIntArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    float readSmallFloatArray(SmallFloatArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    double readFloatArray(FloatArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    Record readRecordArray(RecordArray array, int index) {
-        return array.getValueAt(index - 1);
-    }
-
-    @Specialization
-    Object readGeneric(Object[] array, int index) {
-        return array[index - 1];
+    Object readArray(Array array, int index) {
+        try {
+            return array.getValueAt(index - 1);
+        } catch (InvalidArrayIndexException e) {
+            throw new I4GLRuntimeException(e.getMessage());
+        }
     }
 
     @Override

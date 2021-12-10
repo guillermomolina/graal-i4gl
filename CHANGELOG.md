@@ -3,9 +3,12 @@ Version 0.3.0
 - Fix test Sqlca
 - Major refactor, Take out I4GL from most classes names
 - Implement date type
-- Add parse time type checking (not records yet)
+- Add parse time type checking
 - Refactor type system
 - Implement MDY operator
+- Reimplement NULL values as per type basis
+- Implement DECIMAL type declaration
+- Reimplement ARRAY with only one class allowing nulls
 
 
 Version 0.2.0
@@ -30,6 +33,7 @@ Version 0.2.0
 - Add sqlcode global variable and the database side effects
 - Implement array of chars
 - Add fill() to array values
+
 
 Version 0.1.0
 

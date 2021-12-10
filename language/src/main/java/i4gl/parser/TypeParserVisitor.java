@@ -15,6 +15,7 @@ import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.DecimalType;
 import i4gl.runtime.types.primitive.FloatType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
@@ -48,6 +49,24 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
     }
 
     @Override
+    public BaseType visitDecimalType(final I4GLParser.DecimalTypeContext ctx) {
+        int precision = Integer.parseInt(ctx.numericConstant(0).getText());
+        int scale = 0;
+        if (ctx.numericConstant().size() == 2) {
+            scale = Integer.parseInt(ctx.numericConstant(1).getText());
+        }
+        return new DecimalType(precision, scale);
+    }
+
+    @Override
+    public BaseType visitFloatType(final I4GLParser.FloatTypeContext ctx) {
+        if (ctx.numericConstant() != null) {
+            throw new NotImplementedException();
+        }
+        return FloatType.SINGLETON;
+    }
+
+    @Override
     public BaseType visitNumberType(final I4GLParser.NumberTypeContext ctx) {
         if (ctx.SMALLINT() != null) {
             return SmallIntType.SINGLETON;
@@ -61,8 +80,11 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
         if (ctx.SMALLFLOAT() != null || ctx.REAL() != null) {
             return SmallFloatType.SINGLETON;
         }
-        if (ctx.FLOAT() != null || ctx.DOUBLE() != null) {
-            return FloatType.SINGLETON;
+        if (ctx.floatType() != null) {
+            return visit(ctx.floatType());
+        }
+        if (ctx.decimalType() != null) {
+            return visit(ctx.decimalType());
         }
         throw new NotImplementedException();
     }
@@ -157,17 +179,17 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
 
     @Override
     public BaseType visitArrayType(final I4GLParser.ArrayTypeContext ctx) {
-        final BaseType type = visit(ctx.arrayTypeType());
-        ArrayType arrayDescriptor = null;
+        final BaseType elementsType = visit(ctx.arrayElementstype());
+        ArrayType arrayType = null;
         for (int i = ctx.arrayIndexer().dimensionSize().size() - 1; i >= 0; i--) {
             int size = Integer.parseInt(ctx.arrayIndexer().dimensionSize(i).getText());
-            if (arrayDescriptor == null) {
-                arrayDescriptor = new ArrayType(size, type);
+            if (arrayType == null) {
+                arrayType = new ArrayType(size, elementsType);
             } else {
-                arrayDescriptor = new ArrayType(size, arrayDescriptor);
+                arrayType = new ArrayType(size, arrayType);
             }
         }
-        return arrayDescriptor;
+        return arrayType;
     }
 
     @Override

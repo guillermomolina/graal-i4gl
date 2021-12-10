@@ -27,7 +27,7 @@ public class DateType extends BaseType {
     public Object getDefaultValue() {
         return Date.valueOf(0);
     }
-
+    
     @Override
     public FrameSlotKind getSlotKind() {
         return FrameSlotKind.Object;

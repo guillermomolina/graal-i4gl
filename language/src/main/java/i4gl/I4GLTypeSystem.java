@@ -8,27 +8,26 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 import i4gl.runtime.values.Null;
 
 /**
- * I4GL Type System
+ *  Type System
  * 
  * <I4GL type> - <type class> - <value class>
- * NULL - {@link I4GLNullType} - {@link I4GLNull}
- * SMALLINT - {@link I4GLSmallIntType} - short
- * INT, INTEGER - {@link I4GLIntType} - int
- * BIGINT - {@link I4GLBigIntType} - long
- * REAL, SMALLFLOAT - {@link I4GLSmallFloatType} - float
- * DOUBLE PRECISION, FLOAT - {@link I4GLFloatType} - double
- * TEXT - {@link I4GLTextType} - String
- * CHAR - {@link I4GLCharType}, {@link Char1Type} - {@link I4GLChar}
+ * NULL - {@link NullType} - {@link Null}
+ * SMALLINT - {@link SmallIntType} - short
+ * INT, INTEGER - {@link IntType} - int
+ * BIGINT - {@link BigIntType} - long
+ * REAL, SMALLFLOAT - {@link SmallFloatType} - float
+ * DOUBLE PRECISION, FLOAT - {@link FloatType} - double
+ * TEXT - {@link TextType} - String
+ * CHAR - {@link CharType}, {@link Char1Type} - {@link Char}
  * VARCHAR - {@link VarcharType} - {@link Varchar}
- * RECORD - {@link I4GLRecordType} - {@link I4GLRecord}
- * ARRAY - {@link I4GLArrayType} - {@link I4GLCharArray}, {@link I4GLSmallIntArray}, {@link I4GLIntArray}, 
- *                                 {@link I4GLBigIntArray}, {@link I4GLSmallFloatArray}, {@link I4GLFloatArray}
- * DATABASE - {@link I4GLDatabaseType} - {@link I4GLDatabase}
- * Cursor - {@link I4GLCursorType} - {@link I4GLCursor}
+ * RECORD - {@link RecordType} - {@link Record}
+ * ARRAY - {@link ArrayType} - {@link Array}
+ * DATABASE - {@link DatabaseType} - {@link Database}
+ * Cursor - {@link CursorType} - {@link Cursor}
  * 
  * Pseudo types:
- *  - {@link I4GLLabelType} - {@link I4GLLabel}
- *  - {@link I4GLReturnType} - Object[]
+ *  - {@link LabelType} - {@link Label}
+ *  - {@link ReturnType} - Object[]
  */
 
 /**

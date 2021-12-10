@@ -9,6 +9,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oracle.truffle.api.interop.InvalidArrayIndexException;
+
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.values.Date;
 import i4gl.runtime.values.Decimal;
@@ -246,7 +248,10 @@ public class SquirrelDataSet implements IDataSet {
    }
 
    public synchronized boolean next(SquirrelSqlcaHandler sqlcaHandler) {
-      sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
+      try {
+         sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
+      } catch (InvalidArrayIndexException e1) {
+      }
       if (_cancel) {
          _currentRow = null;
          return false;
@@ -262,7 +267,10 @@ public class SquirrelDataSet implements IDataSet {
          return false;
       }
       ++_iCurrent;
-      sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
+      try {
+         sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
+      } catch (InvalidArrayIndexException e) {
+      }
       return true;
    }
 

@@ -5,16 +5,13 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 
 import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.values.BigIntArray;
-import i4gl.runtime.values.CharArray;
-import i4gl.runtime.values.FloatArray;
-import i4gl.runtime.values.IntArray;
-import i4gl.runtime.values.SmallFloatArray;
-import i4gl.runtime.values.SmallIntArray;
+import i4gl.runtime.exceptions.I4GLRuntimeException;
+import i4gl.runtime.values.Array;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -30,38 +27,16 @@ import i4gl.runtime.values.SmallIntArray;
 public abstract class AssignToIndexedNode extends StatementNode {
     
     @Specialization
-    void assignToChar1Array(CharArray array, int index, char value) {
-        array.setValueAt(index - 1, value);
-    }
-    
-    @Specialization
-    void assignToSmallIntArray(SmallIntArray array, int index, short value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToIntArray(IntArray array, int index, int value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToBigIntArray(BigIntArray array, int index, long value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToSmallFloatArray(SmallFloatArray array, int index, float value) {
-        array.setValueAt(index - 1, value);
-    }
-
-    @Specialization
-    void assignToDoubleArray(FloatArray array, int index, double value) {
-        array.setValueAt(index - 1, value);
+    void assignArray(Array array, int index, Object value) {
+        try {
+            array.setValueAt(index - 1, value);
+        } catch (InvalidArrayIndexException e) {
+            throw new I4GLRuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public boolean hasTag(Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);
     }
-
 }

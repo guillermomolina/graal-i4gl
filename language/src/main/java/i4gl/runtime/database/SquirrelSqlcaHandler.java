@@ -1,14 +1,16 @@
 package i4gl.runtime.database;
 
+import com.oracle.truffle.api.interop.InvalidArrayIndexException;
+
+import i4gl.runtime.values.Array;
 import i4gl.runtime.values.Char;
-import i4gl.runtime.values.IntArray;
 import i4gl.runtime.values.Record;
 
 public class SquirrelSqlcaHandler {
     private Record sqlca;
     private Char sqlerrm;
     private Char sqlerrp;
-    private IntArray sqlerrd;
+    private Array sqlerrd;
     private Char sqlawarn;
 
     public SquirrelSqlcaHandler(Record sqlca) {
@@ -16,7 +18,7 @@ public class SquirrelSqlcaHandler {
         if(sqlca != null) {
             this.sqlerrm = (Char) sqlca.get("sqlerrm");
             this.sqlerrp = (Char) sqlca.get("sqlerrp");
-            this.sqlerrd = (IntArray) sqlca.get("sqlerrd");
+            this.sqlerrd = (Array) sqlca.get("sqlerrd");
             this.sqlawarn = (Char) sqlca.get("sqlawarn");
             reset();
         }
@@ -38,7 +40,7 @@ public class SquirrelSqlcaHandler {
         }
     }
 
-    public void setSqlErrD(int index, int data) {
+    public void setSqlErrD(int index, int data) throws InvalidArrayIndexException {
         if(sqlerrd != null) {
             sqlerrd.setValueAt(index, data);    
         }

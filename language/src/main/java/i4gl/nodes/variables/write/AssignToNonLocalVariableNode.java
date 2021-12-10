@@ -1,7 +1,5 @@
 package i4gl.nodes.variables.write;
 
-import java.util.Arrays;
-
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeChild;
@@ -25,7 +23,9 @@ import i4gl.runtime.types.primitive.FloatType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.values.Array;
 import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Record;
 import i4gl.runtime.values.Varchar;
 
@@ -124,39 +124,16 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
     }
 
     @Specialization
-    void assignIntArray(final VirtualFrame frame, final int[] array) {
-        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
+    void assignIntArray(final VirtualFrame frame, final Array array) {
+        getGlobalFrame().setObject(getSlot(), array.createDeepCopy());
     }
 
     @Specialization
-    void assignSmallIntArray(final VirtualFrame frame, final short[] array) {
-        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    @Specialization
-    void assignBigIntArray(final VirtualFrame frame, final long[] array) {
-        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    @Specialization
-    void assignSmallFloatArray(final VirtualFrame frame, final float[] array) {
-        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    @Specialization
-    void assignDoubleArray(final VirtualFrame frame, final double[] array) {
-        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    /**
-     * This is used for multidimensional arrays
-     */
-    @Specialization
-    void assignArray(final VirtualFrame frame, final Object[] array) {
-        getGlobalFrame().setObject(getSlot(), Arrays.copyOf(array, array.length));
+    void assignIntArray(final VirtualFrame frame, final Null value) {
+        getGlobalFrame().setObject(getSlot(), value);
     }
 /*
-    @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignSmallIntArray", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
+    @Specialization
     void assign(final VirtualFrame frame, final Object value) {
         getGlobalFrame().setObject(getSlot(), value);
     }

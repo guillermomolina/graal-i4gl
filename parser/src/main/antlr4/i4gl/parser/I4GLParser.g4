@@ -75,14 +75,26 @@ numberType: (
 		| REAL
 		| SMALLFLOAT
 	)
-	| (DECIMAL | DEC | NUMERIC | MONEY) (
-		LPAREN numericConstant (COMMA numericConstant)? RPAREN
-	)?
-	| (FLOAT | DOUBLE PRECISION) (LPAREN numericConstant RPAREN)?;
+	| moneyType
+	| decimalType
+	| floatType;
 
 charType:
 	varchar LPAREN numericConstant (COMMA numericConstant)? RPAREN
 	| character (LPAREN numericConstant RPAREN)?;
+
+decimalType: (DECIMAL | DEC | NUMERIC) (
+		LPAREN numericConstant (COMMA numericConstant)? RPAREN
+	)?;
+
+moneyType:
+	MONEY (
+		LPAREN numericConstant (COMMA numericConstant)? RPAREN
+	)?;
+
+floatType: (FLOAT | DOUBLE PRECISION) (
+		LPAREN numericConstant RPAREN
+	)?;
 
 character: CHAR | NCHAR | CHARACTER;
 
@@ -146,14 +158,14 @@ arrayIndexer:
 
 dimensionSize: UNSIGNED_INTEGER;
 
-arrayType: ARRAY arrayIndexer OF arrayTypeType;
+arrayType: ARRAY arrayIndexer OF arrayElementstype;
 
-arrayTypeType: recordType | typeIdentifier | largeType;
+arrayElementstype: recordType | typeIdentifier | largeType;
 
 dynArrayType:
-	DYNAMIC ARRAY WITH numericConstant DIMENSIONS OF dynArrayTypeType;
+	DYNAMIC ARRAY WITH numericConstant DIMENSIONS OF dynArrayElementstype;
 
-dynArrayTypeType: recordType | typeIdentifier;
+dynArrayElementstype: recordType | typeIdentifier;
 
 string: STRING_LITERAL;
 
@@ -274,7 +286,8 @@ asciiConstant: ASCII (UNSIGNED_INTEGER | expression);
 
 booleanConstant: TRUE | FALSE;
 
-dateConstant: MDY LPAREN expression COMMA expression COMMA expression RPAREN;
+dateConstant:
+	MDY LPAREN expression COMMA expression COMMA expression RPAREN;
 
 numericConstant: integer | real;
 

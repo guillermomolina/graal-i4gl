@@ -4,21 +4,8 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.BigIntType;
-import i4gl.runtime.types.primitive.FloatType;
-import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.types.primitive.SmallFloatType;
-import i4gl.runtime.types.primitive.SmallIntType;
 import i4gl.runtime.values.Array;
-import i4gl.runtime.values.BigIntArray;
-import i4gl.runtime.values.CharArray;
-import i4gl.runtime.values.FloatArray;
-import i4gl.runtime.values.IntArray;
-import i4gl.runtime.values.RecordArray;
-import i4gl.runtime.values.SmallFloatArray;
-import i4gl.runtime.values.SmallIntArray;
 
 /**
  * Type descriptor for array values. Note that it can be only one dimensional
@@ -30,17 +17,17 @@ import i4gl.runtime.values.SmallIntArray;
 public class ArrayType extends BaseType {
 
     protected final int size;
-    private final BaseType valuesType;
+    private final BaseType elementsType;
 
     /**
      * Default constructor.
      * 
-     * @param dimension  universe of the indices
-     * @param valuesType type descriptor of the inner values
+     * @param dimension    universe of the indices
+     * @param elementsType type descriptor of the inner values
      */
-    public ArrayType(int size, BaseType valuesType) {
+    public ArrayType(int size, BaseType elementsType) {
         this.size = size;
-        this.valuesType = valuesType;
+        this.elementsType = elementsType;
     }
 
     @Override
@@ -55,37 +42,15 @@ public class ArrayType extends BaseType {
     }
 
     public Object getDefaultValue() {
-        if (valuesType == Char1Type.SINGLETON) {
-            return new CharArray(size);
-        } else if (valuesType == SmallIntType.SINGLETON) {
-            return new SmallIntArray(size);
-        } else if (valuesType == IntType.SINGLETON) {
-            return new IntArray(size);
-        } else if (valuesType == BigIntType.SINGLETON) {
-            return new BigIntArray(size);
-        } else if (valuesType == SmallFloatType.SINGLETON) {
-            return new SmallFloatArray(size);
-        } else if (valuesType == FloatType.SINGLETON) {
-            return new FloatArray(size);
-        } else if (valuesType instanceof RecordType) {
-            return new RecordArray((RecordType) valuesType, size);
-        } else {
-            throw new NotImplementedException();
-            /*
-             * data = new Object[size];
-             * for (int i = 0; i < data.length; ++i) {
-             * data[i] = valuesType.getDefaultValue();
-             * }
-             */
-        }
+        return new Array(this);
     }
 
     public int getSize() {
         return size;
     }
 
-    public BaseType getValuesType() {
-        return this.valuesType;
+    public BaseType getElementsType() {
+        return this.elementsType;
     }
 
     @Override
@@ -95,7 +60,7 @@ public class ArrayType extends BaseType {
 
     @Override
     public String toString() {
-        return "ARRAY[" + size + "] OF " + valuesType;
+        return "ARRAY[" + size + "] OF " + elementsType;
     }
 
 }

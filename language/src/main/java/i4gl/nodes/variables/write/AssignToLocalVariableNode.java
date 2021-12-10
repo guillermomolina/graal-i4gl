@@ -1,7 +1,5 @@
 package i4gl.nodes.variables.write;
 
-import java.util.Arrays;
-
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -23,8 +21,10 @@ import i4gl.runtime.types.primitive.FloatType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.values.Array;
 import i4gl.runtime.values.Char;
 import i4gl.runtime.values.Date;
+import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Record;
 import i4gl.runtime.values.Varchar;
 
@@ -43,7 +43,7 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
     public abstract FrameSlot getSlot();
 
     protected abstract BaseType getType();
-    
+
     protected boolean isSmallInt() {
         return getType() == SmallIntType.SINGLETON;
     }
@@ -61,7 +61,7 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
     void writeInt(final VirtualFrame frame, final int value) {
         frame.setInt(getSlot(), value);
     }
-    
+
     protected boolean isBigInt() {
         return getType() == BigIntType.SINGLETON;
     }
@@ -116,17 +116,17 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
     }
 
     @Specialization(guards = "isDate()")
-    void writeDate(final VirtualFrame frame, final int value) {
+    void assignDate(final VirtualFrame frame, final int value) {
         frame.setObject(getSlot(), Date.valueOf(value));
     }
 
     @Specialization(guards = "isDate()")
-    void writeDate(final VirtualFrame frame, final String value) {
+    void assignDate(final VirtualFrame frame, final String value) {
         frame.setObject(getSlot(), Date.valueOf(value));
     }
 
     @Specialization(guards = "isDate()")
-    void writeDate(final VirtualFrame frame, final Date value) {
+    void assignDate(final VirtualFrame frame, final Date value) {
         frame.setObject(getSlot(), value);
     }
 
@@ -136,40 +136,21 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
     }
 
     @Specialization
-    void assignSmallIntArray(final VirtualFrame frame, final short[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+    void assignArray(final VirtualFrame frame, final Array array) {
+        frame.setObject(getSlot(), array.createDeepCopy());
     }
 
     @Specialization
-    void assignIntArray(final VirtualFrame frame, final int[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
+    void assign(final VirtualFrame frame, final Null value) {
+        frame.setObject(getSlot(), value);
     }
 
-    @Specialization
-    void assignBigIntArray(final VirtualFrame frame, final long[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    @Specialization
-    void assignSmallFloatArray(final VirtualFrame frame, final float[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    @Specialization
-    void assignDoubleArray(final VirtualFrame frame, final double[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-
-    @Specialization
-    void assignArray(final VirtualFrame frame, final Object[] array) {
-        frame.setObject(getSlot(), Arrays.copyOf(array, array.length));
-    }
-/*
-    @Specialization(replaces = {"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeDouble", "assignChar", "assignVarchar", "assignRecord", "assignSmallIntArray", "assignIntArray", "assignBigIntArray", "assignSmallFloatArray", "assignDoubleArray", "assignArray"})
-    void assign(final VirtualFrame frame, final Object value) {
-        throw new I4GLRuntimeException("Can not assign an Object to a " + getType());
-    }
-*/
+    /*
+     * @Specialization
+     * void assign(final VirtualFrame frame, final Object value) {
+     * throw new I4GLRuntimeException("Can not assign an Object to a " + getType());
+     * }
+     */
     @Override
     public boolean hasTag(final Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);

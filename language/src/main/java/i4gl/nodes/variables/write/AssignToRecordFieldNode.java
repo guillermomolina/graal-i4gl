@@ -27,15 +27,15 @@ import i4gl.runtime.values.Record;
 public abstract class AssignToRecordFieldNode extends StatementNode {
 
     private final String identifier;
-    private final BaseType descriptor;
+    private final BaseType fieldType;
 
-    AssignToRecordFieldNode(String identifier, BaseType descriptor) {
+    AssignToRecordFieldNode(String identifier, BaseType fieldType) {
         this.identifier = identifier;
-        this.descriptor = descriptor;
+        this.fieldType = fieldType;
     }
 
     protected boolean isSmallInt() {
-        return descriptor == SmallIntType.SINGLETON;
+        return fieldType == SmallIntType.SINGLETON;
     }
 
     @Specialization(guards = "isSmallInt()")
@@ -44,7 +44,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     protected boolean isInt() {
-        return descriptor == IntType.SINGLETON;
+        return fieldType == IntType.SINGLETON;
     }
 
     @Specialization(guards = "isInt()")
@@ -53,7 +53,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     protected boolean isBigInt() {
-        return descriptor == BigIntType.SINGLETON;
+        return fieldType == BigIntType.SINGLETON;
     }
 
     @Specialization(guards = "isBigInt()")
@@ -62,7 +62,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     protected boolean isSmallFloat() {
-        return descriptor == SmallFloatType.SINGLETON;
+        return fieldType == SmallFloatType.SINGLETON;
     }
 
     @Specialization(guards = "isSmallFloat()")
@@ -71,7 +71,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     }
 
     protected boolean isFloat() {
-        return descriptor == FloatType.SINGLETON;
+        return fieldType == FloatType.SINGLETON;
     }
 
     @Specialization(guards = "isFloat()")

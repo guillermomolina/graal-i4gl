@@ -1,12 +1,13 @@
 package i4gl.runtime.values;
 
+import java.util.Arrays;
+
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.interop.TruffleObject;
-import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
@@ -16,13 +17,37 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.ArrayType;
 
 @ExportLibrary(InteropLibrary.class)
-public abstract class Array implements TruffleObject {
+public class Array implements TruffleObject {
 
-    public abstract int getSize();
+    private final ArrayType arrayType;
+    private final Object[] array;
 
-    public abstract BaseType getElementType();
+    public Array(final ArrayType arrayType) {
+        this.arrayType = arrayType;
+        this.array = new Object[arrayType.getSize()];
+        for (int i = 0; i < array.length; ++i) {
+            array[i] = getElementType().getDefaultValue();
+        }
+    }
 
-    protected abstract Object getArray();
+    public Array(final Array array) {
+        this.arrayType = array.arrayType;
+        this.array = Arrays.copyOf(array.array, array.getSize());
+    }
+
+    protected Array(ArrayType arrayType, Object[] array) {
+        this.arrayType = arrayType;
+        this.array = array;
+    }
+
+    public BaseType getElementType() {
+        return arrayType.getElementsType();
+    }
+
+
+    public Object createDeepCopy() {
+        return new Array(this);
+    }
 
     @ExportMessage
     boolean hasLanguage() {
@@ -50,46 +75,67 @@ public abstract class Array implements TruffleObject {
     }
 
     @ExportMessage
-    long getArraySize() {
-        return getSize();
-    }
-
-    @ExportMessage
-    @TruffleBoundary
-    abstract Object toDisplayString(boolean allowSideEffects);
-
-    @ExportMessage
-    boolean isArrayElementReadable(long index) {
-        return index >= 0 && index < getArraySize();
-    }
-
-    @ExportMessage
-    final boolean isArrayElementModifiable(long index) {
-        return false;
-    }
-
-    @ExportMessage
     final boolean isArrayElementInsertable(long index) {
         return false;
     }
 
+    @ExportMessage(name = "isArrayElementReadable")
+    @ExportMessage(name = "isArrayElementModifiable")
+    boolean inBounds(long index) {
+        return 0 <= index && index < array.length;
+    }
+
+    @ExportMessage
+    long getArraySize() {
+        return getSize();
+    }
+
+    public int getSize() {
+        return array.length;
+    }
+
+    public void fill(Object value) {
+        Arrays.fill(array, value);
+    }
+
+    @ExportMessage
+    @TruffleBoundary
+    Object toDisplayString(boolean allowSideEffects) {
+        return Arrays.toString(array);
+    }
+
     @ExportMessage
     public Object readArrayElement(long index) throws InvalidArrayIndexException {
-        try{
-            return java.lang.reflect.Array.get(getArray(), (int)index);
-        } catch(ArrayIndexOutOfBoundsException e) {
+        try {
+            return getValueAt((int) index);
+        } catch (ArrayIndexOutOfBoundsException e) {
             CompilerDirectives.transferToInterpreter();
             throw InvalidArrayIndexException.create(index);
         }
     }
 
-    @TruffleBoundary
-    private static UnsupportedMessageException unsupported() {
-        return UnsupportedMessageException.create();
+    public Object getValueAt(int index) throws InvalidArrayIndexException {
+        if (!inBounds(index)) {
+            throw InvalidArrayIndexException.create(index);
+        }
+        return array[(int) index];
     }
 
     @ExportMessage
-    final void writeArrayElement(long index, Object arg2) throws UnsupportedMessageException {
-        throw unsupported();
+    public void writeArrayElement(long index, Object value) throws InvalidArrayIndexException {
+        try {
+            setValueAt((int) index, value);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            CompilerDirectives.transferToInterpreter();
+            throw InvalidArrayIndexException.create(index);
+        }
     }
+
+    public void setValueAt(int index, Object value) throws InvalidArrayIndexException {
+        if (!inBounds(index)) {
+            throw InvalidArrayIndexException.create(index);
+        }
+        array[index] = value;
+    }
+
 }

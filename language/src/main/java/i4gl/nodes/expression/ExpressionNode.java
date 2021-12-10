@@ -14,11 +14,14 @@ import i4gl.I4GLTypeSystemGen;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.Char1Type;
+import i4gl.runtime.types.compound.DateType;
+import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.DecimalType;
 import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
-import i4gl.runtime.types.primitive.IntType;
 
 /**
  * This is a base node class for each node that represents an expression (returns a value after its execution). Not all
@@ -102,5 +105,17 @@ public abstract class ExpressionNode extends StatementNode {
 
     protected boolean isFloat() {
         return getType() == FloatType.SINGLETON;
+    }
+
+    protected boolean isDate() {
+        return getType() == DateType.SINGLETON;
+    }
+
+    protected boolean isDecimal() {
+        return getType() instanceof DecimalType;
+    }
+
+    protected boolean isRecord() {
+        return getType() instanceof RecordType;
     }
 }

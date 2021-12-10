@@ -1,25 +1,26 @@
 package i4gl.nodes.literals;
 
+import com.oracle.truffle.api.dsl.Fallback;
+import com.oracle.truffle.api.dsl.NodeField;
+import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.NullType;
 import i4gl.runtime.values.Null;
 
-/**
- * Node representing null literal.
- *
- */
-public class NullLiteralNode extends ExpressionNode {
-    @Override
-	public Object executeGeneric(VirtualFrame frame) {
-		return Null.SINGLETON;
+
+@NodeField(name = "type", type = BaseType.class)
+public abstract class NullLiteralNode extends ExpressionNode {
+
+    @Specialization(guards = "isDate()")
+	public Object nullDate(VirtualFrame frame) {
+		return Null.DATE;
 	}
 
-    @Override
-    public BaseType getType() {
-        return NullType.SINGLETON;
-    }
+    @Fallback
+ 	public Object nullOther(VirtualFrame frame) {
+ 		return Null.SINGLETON;
+	}
 
 }
