@@ -62,7 +62,7 @@ final class Functions implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return ObjectType.SINGLETON;
+        return FunctionType.SINGLETON;
     }
 
     @ExportMessage

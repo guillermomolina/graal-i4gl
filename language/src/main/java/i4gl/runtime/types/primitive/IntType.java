@@ -47,4 +47,9 @@ public class IntType extends BaseType {
     public String toString() {
         return "INT";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(11);
+    }
 }

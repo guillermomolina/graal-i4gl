@@ -42,4 +42,9 @@ public class DateType extends BaseType {
     public String toString() {
         return "DATE";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(Date.DATE_FORMATER.toPattern().length());
+    }
 }

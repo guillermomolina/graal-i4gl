@@ -9,16 +9,16 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 
 @ExportLibrary(InteropLibrary.class)
-final class FunctionType implements TruffleObject {
+final class VariableType implements TruffleObject {
 
-    public static final FunctionType SINGLETON = new FunctionType();
+    public static final VariableType SINGLETON = new VariableType();
 
-    FunctionType() {
+    VariableType() {
     }    
 
     @Override
     public String toString() {
-        return "FUNCTION";
+        return "VARIABLE";
     }
 
     @ExportMessage

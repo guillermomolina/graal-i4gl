@@ -31,4 +31,9 @@ public class CharType extends TextType {
     public String toString() {
         return "CHAR(" + size + ")";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(size);
+    }
 }

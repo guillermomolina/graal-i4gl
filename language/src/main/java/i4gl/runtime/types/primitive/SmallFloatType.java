@@ -47,4 +47,8 @@ public class SmallFloatType extends BaseType {
         return "SMALLFLOAT";
     }
 
+    @Override
+    public String getNullString() {
+        return " ".repeat(14);
+    }
 }

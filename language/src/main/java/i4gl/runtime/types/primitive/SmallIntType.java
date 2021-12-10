@@ -47,4 +47,9 @@ public class SmallIntType extends BaseType {
     public String toString() {
         return "SMALLINT";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(6);
+    }
 }

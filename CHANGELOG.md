@@ -6,7 +6,6 @@ Version 0.3.0
 - Add parse time type checking
 - Refactor type system
 - Implement MDY operator
-- Reimplement NULL values as per type basis
 - Implement DECIMAL type declaration
 - Reimplement ARRAY with only one class allowing nulls
 

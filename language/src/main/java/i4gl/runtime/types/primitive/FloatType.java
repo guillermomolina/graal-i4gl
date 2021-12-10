@@ -47,4 +47,9 @@ public class FloatType extends BaseType {
     public String toString() {
         return "FLOAT";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(14);
+    }
 }

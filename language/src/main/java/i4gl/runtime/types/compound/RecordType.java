@@ -7,6 +7,7 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
+import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.Record;
@@ -94,5 +95,10 @@ public class RecordType extends BaseType {
         }
         builder.append(" END RECORD");
         return builder.toString();
+    }
+
+    @Override
+    public String getNullString() {
+        throw new I4GLRuntimeException("Should not be here");
     }
 }

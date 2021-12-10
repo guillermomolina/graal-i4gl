@@ -4,6 +4,7 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
+import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -47,5 +48,10 @@ public class TextType extends BaseType {
     @Override
     public String toString() {
         return "TEXT";
+    }
+
+    @Override
+    public String getNullString() {
+        throw new I4GLRuntimeException("Should not be here");
     }
 }

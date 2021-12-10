@@ -44,7 +44,7 @@ import i4gl.nodes.expression.ConcatenationNodeGen;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.literals.BigIntLiteralNodeGen;
 import i4gl.nodes.literals.IntLiteralNodeGen;
-import i4gl.nodes.literals.NullLiteralNodeGen;
+import i4gl.nodes.literals.NullLiteralNode;
 import i4gl.nodes.literals.SmallFloatLiteralNode;
 import i4gl.nodes.literals.SmallFloatLiteralNodeGen;
 import i4gl.nodes.literals.TextLiteralNode;
@@ -1031,7 +1031,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         } else if (ctx.function() != null) {
             node = (ExpressionNode) visit(ctx.function());
         } else if (ctx.NULL() != null) {
-            node = NullLiteralNodeGen.create(targetType);
+            node = new NullLiteralNode();
             setSourceFromContext(node, ctx);
             node.addExpressionTag();
         } else {

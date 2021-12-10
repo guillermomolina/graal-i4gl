@@ -95,6 +95,10 @@ public abstract class BaseType implements TruffleObject {
      */
     public abstract Object getDefaultValue();
 
+
+    public abstract String getNullString();
+
+
     /**
      * Checks whether this type is convertible to the selected type.
      */

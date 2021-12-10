@@ -1,5 +1,7 @@
 package i4gl.nodes.variables.write;
 
+import java.text.ParseException;
+
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -122,7 +124,11 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isDate()")
     void assignDate(final VirtualFrame frame, final String value) {
-        frame.setObject(getSlot(), Date.valueOf(value));
+        try {
+            frame.setObject(getSlot(), Date.valueOf(value));
+        } catch (ParseException e) {
+            frame.setObject(getSlot(), Null.SINGLETON);
+        }
     }
 
     @Specialization(guards = "isDate()")

@@ -48,4 +48,9 @@ public class DecimalType extends BaseType {
     public String toString() {
         return "DECIMAL(" + precision + "," + scale + ")";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(scale + 1);
+    }
 }

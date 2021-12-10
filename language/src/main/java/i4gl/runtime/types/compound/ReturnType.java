@@ -65,4 +65,9 @@ public class ReturnType extends BaseType {
         }
         return builder.toString();
     }
+
+    @Override
+    public String getNullString() {
+        throw new I4GLRuntimeException("Should not be here");
+    }
 }

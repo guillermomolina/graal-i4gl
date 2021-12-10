@@ -31,4 +31,9 @@ public class VarcharType extends TextType {
         return "VARCHAR(" + size + ")";
     }
 
+    @Override
+    public String getNullString() {
+        return "";
+    }
+
 }

@@ -18,17 +18,12 @@ import i4gl.runtime.types.compound.DateType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class Date implements TruffleObject, Comparable<Date> {
-    // private final String DBDATE = "MDY4/";
-    public static final Date NULL = new Date();
 
-    private final static String DBDATE = "DMY4/";
-    private final static SimpleDateFormat DATE_FORMATER = DbdateToSimpleDateFormat(DBDATE);
+    // private final String DBDATE = "MDY4/";
+    public final static String DBDATE = "DMY4/";
+    public final static SimpleDateFormat DATE_FORMATER = DbdateToSimpleDateFormat(DBDATE);
 
     private final java.sql.Date value;
-
-    private Date() {
-        this.value = null;
-    }
 
     public Date(java.sql.Date value) {
         this.value = value;
@@ -46,12 +41,8 @@ public final class Date implements TruffleObject, Comparable<Date> {
         return new Date(new java.sql.Date(cal.getTimeInMillis()));
     }
 
-    public static Date valueOf(String date) {
-        try {
-            return new Date(new java.sql.Date(DATE_FORMATER.parse(date).getTime()));
-        } catch (ParseException e) {
-            return NULL;
-        }
+    public static Date valueOf(String date) throws ParseException {
+        return new Date(new java.sql.Date(DATE_FORMATER.parse(date).getTime()));
     }
 
     public java.sql.Date getValue() {
@@ -134,11 +125,6 @@ public final class Date implements TruffleObject, Comparable<Date> {
     @ExportMessage
     Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
-    }
-
-    @ExportMessage
-    boolean isNull() {
-        return this == NULL;
     }
 
     @ExportMessage

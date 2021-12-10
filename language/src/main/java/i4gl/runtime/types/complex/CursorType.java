@@ -5,6 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.NotImplementedException;
+import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Cursor;
 
@@ -42,5 +43,10 @@ public class CursorType extends BaseType {
     @Override
     public String toString() {
         return "CURSOR";
+    }
+
+    @Override
+    public String getNullString() {
+        throw new I4GLRuntimeException("Should not be here");
     }
 }

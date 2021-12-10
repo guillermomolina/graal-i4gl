@@ -46,4 +46,9 @@ public class BigIntType extends BaseType {
     public String toString() {
         return "BIGINT";
     }
+
+    @Override
+    public String getNullString() {
+        return " ".repeat(20);
+    }
 }

@@ -18,10 +18,10 @@ import i4gl.runtime.values.Record;
  */
 @NodeChild(value = "record", type = ExpressionNode.class)
 @NodeField(name = "identifier", type = String.class)
-@NodeField(name = "returnType", type = BaseType.class)
+@NodeField(name = "fieldType", type = BaseType.class)
 public abstract class ReadFromRecordNode extends ExpressionNode {
 
-    protected abstract BaseType getReturnType();
+    protected abstract BaseType getFieldType();
 
     protected abstract String getIdentifier();
 
@@ -57,7 +57,7 @@ public abstract class ReadFromRecordNode extends ExpressionNode {
 
     @Override
     public BaseType getType() {
-        return this.getReturnType();
+        return this.getFieldType();
     }
 
     @Override

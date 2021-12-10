@@ -62,7 +62,7 @@ final class Variables implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return ObjectType.SINGLETON;
+        return VariableType.SINGLETON;
     }
 
     @ExportMessage
