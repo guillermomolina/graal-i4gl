@@ -19,12 +19,14 @@ import i4gl.runtime.types.compound.DateType;
 @ExportLibrary(InteropLibrary.class)
 public final class Date implements TruffleObject, Comparable<Date> {
     // private final String DBDATE = "MDY4/";
+    public static final Date NULL = new Date();
+
     private final static String DBDATE = "DMY4/";
     private final static SimpleDateFormat DATE_FORMATER = DbdateToSimpleDateFormat(DBDATE);
 
     private final java.sql.Date value;
 
-    public Date() {
+    private Date() {
         this.value = null;
     }
 
@@ -32,21 +34,24 @@ public final class Date implements TruffleObject, Comparable<Date> {
         this.value = value;
     }
 
-    public Date(int days) {
+    public static Date valueOf(int days) {
         // days = count of days since December 31, 1899
         var cal = new GregorianCalendar(1899, 11, 31);
         cal.add(GregorianCalendar.DAY_OF_MONTH, days);
-        this.value = new java.sql.Date(cal.getTimeInMillis());        
+        return new Date(new java.sql.Date(cal.getTimeInMillis()));
     }
 
-    public Date(String date) {
-        java.sql.Date value;
+    public static Date valueOf(int year, int month, int day) {
+        var cal = new GregorianCalendar(year, month - 1, day);
+        return new Date(new java.sql.Date(cal.getTimeInMillis()));
+    }
+
+    public static Date valueOf(String date) {
         try {
-            value = new java.sql.Date(DATE_FORMATER.parse(date).getTime());
+            return new Date(new java.sql.Date(DATE_FORMATER.parse(date).getTime()));
         } catch (ParseException e) {
-            value = null;
+            return NULL;
         }
-        this.value = value;
     }
 
     public java.sql.Date getValue() {
@@ -92,7 +97,7 @@ public final class Date implements TruffleObject, Comparable<Date> {
         }
         String separator = "/";
         if (dbdate.length() > 4) {
-            separator = dbdate.substring(4,5);
+            separator = dbdate.substring(4, 5);
         }
         String pattern = String.join(separator, elements);
         return new SimpleDateFormat(pattern);
@@ -101,7 +106,7 @@ public final class Date implements TruffleObject, Comparable<Date> {
     @Override
     @TruffleBoundary
     public String toString() {
-        if(value == null) {
+        if (value == null) {
             return " ".repeat(10);
         }
         return DATE_FORMATER.format(value);
@@ -129,6 +134,11 @@ public final class Date implements TruffleObject, Comparable<Date> {
     @ExportMessage
     Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
+    }
+
+    @ExportMessage
+    boolean isNull() {
+        return this == NULL;
     }
 
     @ExportMessage

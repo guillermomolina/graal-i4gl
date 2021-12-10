@@ -266,12 +266,15 @@ function:
 constant:
 	asciiConstant
 	| booleanConstant
+	| dateConstant
 	| numericConstant
 	| string;
 
 asciiConstant: ASCII (UNSIGNED_INTEGER | expression);
 
 booleanConstant: TRUE | FALSE;
+
+dateConstant: MDY LPAREN expression COMMA expression COMMA expression RPAREN;
 
 numericConstant: integer | real;
 

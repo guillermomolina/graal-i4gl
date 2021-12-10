@@ -5,6 +5,7 @@ Version 0.3.0
 - Implement date type
 - Add parse time type checking (not records yet)
 - Refactor type system
+- Implement MDY operator
 
 
 Version 0.2.0
@@ -14,7 +15,7 @@ Version 0.2.0
 - Implement initial icgi library support
 - Add fgl_getenv builtin
 - Implement visitFactorTypes in Node Factory
-- Implement using operator
+- Implement USING operator
 - Fix function definition parameters
 - Add length builtin
 - Implement NULL assignment

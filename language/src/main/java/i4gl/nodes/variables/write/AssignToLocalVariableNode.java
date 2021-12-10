@@ -25,7 +25,6 @@ import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
 import i4gl.runtime.values.Char;
 import i4gl.runtime.values.Date;
-import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Record;
 import i4gl.runtime.values.Varchar;
 
@@ -118,21 +117,17 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isDate()")
     void writeDate(final VirtualFrame frame, final int value) {
-        frame.setObject(getSlot(), new Date(value));
+        frame.setObject(getSlot(), Date.valueOf(value));
     }
 
     @Specialization(guards = "isDate()")
     void writeDate(final VirtualFrame frame, final String value) {
-        frame.setObject(getSlot(), new Date(value));
+        frame.setObject(getSlot(), Date.valueOf(value));
     }
 
-    protected boolean isDateAndValueIsNull(final Object value) {
-        return isDate() && value == Null.SINGLETON;
-    }
-
-    @Specialization(guards = "isDateAndValueIsNull(value) ")
-    void writeDate(final VirtualFrame frame, final Object value) {
-        frame.setObject(getSlot(), new Date());
+    @Specialization(guards = "isDate()")
+    void writeDate(final VirtualFrame frame, final Date value) {
+        frame.setObject(getSlot(), value);
     }
 
     @Specialization

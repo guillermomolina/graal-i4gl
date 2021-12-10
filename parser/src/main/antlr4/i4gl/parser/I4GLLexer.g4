@@ -333,6 +333,8 @@ MAGENTA: M A G E N T A;
 
 MATCHES: M A T C H E S;
 
+MDY: M D Y;
+
 MENU: M E N U;
 
 MESSAGE: M E S S A G E;

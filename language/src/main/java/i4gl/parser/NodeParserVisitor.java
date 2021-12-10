@@ -59,6 +59,7 @@ import i4gl.nodes.logic.NotNodeGen;
 import i4gl.nodes.logic.OrNodeGen;
 import i4gl.nodes.operators.AsciiNodeGen;
 import i4gl.nodes.operators.ClippedNodeGen;
+import i4gl.nodes.operators.MdyNodeGen;
 import i4gl.nodes.operators.UsingNodeGen;
 import i4gl.nodes.root.BaseRootNode;
 import i4gl.nodes.root.MainRootNode;
@@ -1219,6 +1220,17 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             return IntLiteralNodeGen.create(1);
         }
         throw new ParseException(source, ctx, "Invalid boolean constant");
+    }
+
+    @Override
+    public Node visitDateConstant(final I4GLParser.DateConstantContext ctx) {
+        ExpressionNode monthExpressionNode = (ExpressionNode) visit(ctx.expression(0));
+        ExpressionNode dayExpressionNode = (ExpressionNode) visit(ctx.expression(1));
+        ExpressionNode yearExpressionNode = (ExpressionNode) visit(ctx.expression(2));
+        ExpressionNode node = MdyNodeGen.create(monthExpressionNode, dayExpressionNode, yearExpressionNode);
+        setSourceFromContext(node, ctx);
+        node.addExpressionTag();
+        return node;
     }
 
     @Override

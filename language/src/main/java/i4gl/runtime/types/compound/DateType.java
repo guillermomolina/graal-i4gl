@@ -25,7 +25,7 @@ public class DateType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        return new Date(0);
+        return Date.valueOf(0);
     }
 
     @Override
