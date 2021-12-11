@@ -12,6 +12,12 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 public abstract class UsingNode extends BinaryExpressionNode {
 
 	@Specialization(rewriteOn = ArithmeticException.class)
+	protected String using(short value, String format) {
+		return NumberFormatter.Format(format, value);
+	}
+
+	@Specialization
+	@TruffleBoundary
 	protected String using(int value, String format) {
 		return NumberFormatter.Format(format, value);
 	}

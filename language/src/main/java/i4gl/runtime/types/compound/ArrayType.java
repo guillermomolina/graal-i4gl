@@ -4,7 +4,7 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.exceptions.I4GLRuntimeException;
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Array;
 

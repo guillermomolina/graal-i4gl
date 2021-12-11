@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception is thrown when the user tries to read from a file but he has already reached its end.

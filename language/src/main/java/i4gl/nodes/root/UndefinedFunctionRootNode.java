@@ -4,8 +4,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.UndefinedNameException;
 import i4gl.runtime.context.Function;
-import i4gl.runtime.exceptions.UndefinedNameException;
 
 /**
  * The initial {@link RootNode} of {@link Function functions} when they are created, i.e., when

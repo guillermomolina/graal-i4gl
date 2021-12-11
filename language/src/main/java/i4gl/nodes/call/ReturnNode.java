@@ -43,9 +43,9 @@ package i4gl.nodes.call;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import i4gl.exceptions.ReturnException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.exceptions.ReturnException;
 
 @NodeInfo(shortName = "RETURN", description = "The node implementing a return statement")
 public final class ReturnNode extends StatementNode {

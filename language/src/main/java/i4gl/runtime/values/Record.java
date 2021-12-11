@@ -14,8 +14,8 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.InvalidCastException;
 import i4gl.runtime.context.Context;
-import i4gl.runtime.exceptions.InvalidCastException;
 import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.primitive.BigIntType;

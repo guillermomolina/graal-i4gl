@@ -8,9 +8,8 @@ import java.util.logging.Level;
 import com.oracle.truffle.api.TruffleLogger;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.DatabaseException;
 import i4gl.exceptions.NotImplementedException;
-import i4gl.runtime.exceptions.DatabaseException;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;

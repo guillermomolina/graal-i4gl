@@ -7,10 +7,10 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 
+import i4gl.exceptions.IncorrectNumberOfReturnValuesException;
+import i4gl.exceptions.UnexpectedRuntimeException;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.read.ReadFromResultNode;
-import i4gl.runtime.exceptions.IncorrectNumberOfReturnValuesException;
-import i4gl.runtime.exceptions.UnexpectedRuntimeException;
 import i4gl.runtime.values.Null;
 
 public class AssignResultsNode extends StatementNode {

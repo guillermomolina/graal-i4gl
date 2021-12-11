@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * A generic runtime exception with arbitrary message.

@@ -3,11 +3,11 @@ package i4gl.nodes.sql;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
+import i4gl.exceptions.DatabaseException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.runtime.context.Context;
-import i4gl.runtime.exceptions.DatabaseException;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Database;
 import i4gl.runtime.values.Record;

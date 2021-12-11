@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception thrown during parsing phase when a method call with wrong number of arguments occurs.

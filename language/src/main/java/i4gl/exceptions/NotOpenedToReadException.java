@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception thrown when a user tries to read from a file that is not opened for reading.

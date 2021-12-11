@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 public class JDBCDriverClassNotFoundException  extends I4GLRuntimeException {
     private static final long serialVersionUID = -323645849149800269L;

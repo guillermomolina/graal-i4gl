@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 import com.oracle.truffle.api.nodes.ControlFlowException;
 

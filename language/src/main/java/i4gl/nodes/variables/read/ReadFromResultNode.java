@@ -3,8 +3,8 @@ package i4gl.nodes.variables.read;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import i4gl.exceptions.NotImplementedException;
+import i4gl.exceptions.UnexpectedRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.exceptions.UnexpectedRuntimeException;
 import i4gl.runtime.types.BaseType;
 
 public class ReadFromResultNode extends ExpressionNode {

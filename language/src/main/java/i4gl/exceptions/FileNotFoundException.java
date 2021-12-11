@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception thrown when a file with specified path can not be found.

@@ -2,7 +2,7 @@ package i4gl.nodes.statement;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import i4gl.runtime.exceptions.GotoException;
+import i4gl.exceptions.GotoException;
 
 /**
  * Node representing a labeled statement. In addition to

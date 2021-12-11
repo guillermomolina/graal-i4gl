@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 public class DatabaseConnectionException extends I4GLRuntimeException {
     private static final long serialVersionUID = -1098339846624051557L;

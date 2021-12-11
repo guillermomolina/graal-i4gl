@@ -9,7 +9,7 @@ import java.util.Map;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import i4gl.runtime.exceptions.GotoException;
+import i4gl.exceptions.GotoException;
 
 /**
  * Block node implementation with extended support of goto statements.

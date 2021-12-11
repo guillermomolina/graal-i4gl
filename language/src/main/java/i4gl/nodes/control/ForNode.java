@@ -4,12 +4,12 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.logic.LessThanNodeGen;
 import i4gl.nodes.logic.LessThanOrEqualNodeGen;
 import i4gl.nodes.logic.NotNodeGen;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Node representing for cycle.

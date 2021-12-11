@@ -10,9 +10,9 @@ import com.oracle.truffle.api.source.SourceSection;
 
 import i4gl.I4GLLanguage;
 import i4gl.I4GLTypeSystem;
+import i4gl.exceptions.ReturnException;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.Context;
-import i4gl.runtime.exceptions.ReturnException;
 import i4gl.runtime.values.Null;
 
 /**

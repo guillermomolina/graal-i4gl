@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception thrown when user tries to do I/O operation on a file variable but it has not assigned a path to a file.

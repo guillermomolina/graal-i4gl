@@ -10,10 +10,10 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.DatabaseConnectionException;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.database.SquirrelSqlcaHandler;
-import i4gl.runtime.exceptions.DatabaseConnectionException;
 import i4gl.runtime.types.complex.DatabaseType;
 
 @ExportLibrary(InteropLibrary.class)

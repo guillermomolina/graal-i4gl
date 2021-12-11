@@ -2,8 +2,8 @@ package i4gl.nodes.control;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+import i4gl.exceptions.GotoException;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.exceptions.GotoException;
 
 /**
  * Node representing goto statement. To see how the goto statements are implemented please see the programming documentation.

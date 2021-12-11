@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Generic runtime exception that is thrown when something unexpected has happened. In a hundred percent correct

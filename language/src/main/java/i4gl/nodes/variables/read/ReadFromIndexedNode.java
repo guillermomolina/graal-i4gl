@@ -7,8 +7,8 @@ import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Array;
 import i4gl.runtime.values.Char;

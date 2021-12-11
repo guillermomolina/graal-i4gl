@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception thrown when a user provides invalid argument for the logarithm function ({@link i4gl.nodes.builtin.arithmetic.LnBuiltinNode}).

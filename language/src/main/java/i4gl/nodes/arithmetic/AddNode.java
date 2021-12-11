@@ -5,8 +5,8 @@ import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.expression.BinaryExpressionNode;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Node representing plus operation. For numeric arguments it is addition and for set arguments it represents union.

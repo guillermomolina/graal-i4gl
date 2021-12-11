@@ -5,8 +5,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.SourceSection;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.HaltException;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.exceptions.HaltException;
 
 public class MainRootNode extends BaseRootNode {
     public MainRootNode(I4GLLanguage language, FrameDescriptor frameDescriptor, StatementNode bodyNode,

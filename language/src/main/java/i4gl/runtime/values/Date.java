@@ -12,8 +12,8 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.runtime.context.Context;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.compound.DateType;
 
 @ExportLibrary(InteropLibrary.class)

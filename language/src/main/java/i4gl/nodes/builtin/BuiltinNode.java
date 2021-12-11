@@ -8,10 +8,10 @@ import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.context.FunctionRegistry;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 
 /**
  * Base class for all builtin functions. It contains the Truffle DSL annotation

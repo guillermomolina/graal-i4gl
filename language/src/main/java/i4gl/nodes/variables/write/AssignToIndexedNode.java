@@ -8,9 +8,9 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 
 import i4gl.I4GLTypeSystem;
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.values.Array;
 
 /**

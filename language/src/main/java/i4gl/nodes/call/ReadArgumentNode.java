@@ -6,9 +6,9 @@ import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.variables.read.ReadFromRecordNodeGen;
-import i4gl.runtime.exceptions.I4GLRuntimeException;
 import i4gl.runtime.types.BaseType;
 
 /**

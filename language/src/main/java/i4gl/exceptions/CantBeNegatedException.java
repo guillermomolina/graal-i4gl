@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 /**
  * Exception thrown during parsing phase when negation of a value that can not be negated occurs in I4GL source.

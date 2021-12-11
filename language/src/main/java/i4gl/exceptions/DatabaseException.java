@@ -1,4 +1,4 @@
-package i4gl.runtime.exceptions;
+package i4gl.exceptions;
 
 public class DatabaseException extends I4GLRuntimeException {
 

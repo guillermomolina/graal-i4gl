@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import i4gl.exceptions.NotImplementedException;
-
 import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.client.gui.db.encryption.AliasPasswordHandler;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
