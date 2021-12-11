@@ -1,7 +1,5 @@
 package i4gl.nodes.control;
 
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
@@ -18,7 +16,6 @@ import i4gl.runtime.exceptions.I4GLRuntimeException;
  */
 @NodeInfo(shortName = "FOR")
 public class ForNode extends StatementNode {
-    private final FrameSlot controlSlot;
     @Child
     private StatementNode assignment;
     @Child
@@ -32,33 +29,14 @@ public class ForNode extends StatementNode {
     @Child
     private StatementNode step;
 
-    public ForNode(final StatementNode assignment, final FrameSlot controlSlot,
-            final ExpressionNode initialValue, final ExpressionNode finalValue,
-            final StatementNode step, final ExpressionNode readControlVariable,
-            final StatementNode body) {
+    public ForNode(final StatementNode assignment, final ExpressionNode initialValue, final ExpressionNode finalValue,
+            final StatementNode step, final ExpressionNode readControlVariable, final StatementNode body) {
         this.assignment = assignment;
-        this.controlSlot = controlSlot;
         this.initialValue = initialValue;
         this.finalValue = finalValue;
         this.step = step;
         this.body = body;
         this.readControlVariable = readControlVariable;
-    }
-
-    private boolean isDescending(final VirtualFrame frame) throws UnexpectedResultException {
-        final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(controlSlot);
-        switch (kind) {
-            case Int:
-                return this.finalValue.executeInt(frame) < this.initialValue.executeInt(frame);
-            case Long:
-                return this.finalValue.executeBigInt(frame) < this.initialValue.executeBigInt(frame);
-            case Float:
-                return this.finalValue.executeSmallFloat(frame) < this.initialValue.executeSmallFloat(frame);
-            case Double:
-                return this.finalValue.executeDouble(frame) < this.initialValue.executeDouble(frame);
-            default:
-                throw new I4GLRuntimeException("Unsupported control variable type");
-        }
     }
 
     private void execute(final VirtualFrame frame, final ExpressionNode hasEndedNode)
@@ -74,15 +52,16 @@ public class ForNode extends StatementNode {
     @Override
     public void executeVoid(final VirtualFrame frame) {
         try {
-            ExpressionNode hasEndedNode;
-            if (isDescending(frame)) {
+            final ExpressionNode isDescending = LessThanNodeGen.create(finalValue, initialValue);
+            final ExpressionNode hasEndedNode;
+            if (isDescending.executeInt(frame) != 0) {
                 hasEndedNode = NotNodeGen.create(LessThanNodeGen.create(readControlVariable, finalValue));
             } else {
                 hasEndedNode = LessThanOrEqualNodeGen.create(readControlVariable, finalValue);
             }
             this.execute(frame, hasEndedNode);
         } catch (final UnexpectedResultException e) {
-            throw new I4GLRuntimeException("Something went wrong.");
+            throw new I4GLRuntimeException(e.getMessage());
         }
     }
 

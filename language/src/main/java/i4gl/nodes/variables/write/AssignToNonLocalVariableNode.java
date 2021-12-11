@@ -134,7 +134,9 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final VirtualFrame frame, final String string) {
-        getGlobalFrame().setObject(getSlot(), new Varchar(string));
+        Varchar value = (Varchar) getType().getDefaultValue();
+        value.assignString(string);
+        getGlobalFrame().setObject(getSlot(), value);
     }
 
     @Specialization(guards = "isVarchar()")

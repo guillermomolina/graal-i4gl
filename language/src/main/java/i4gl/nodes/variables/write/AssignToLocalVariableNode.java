@@ -124,7 +124,9 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final VirtualFrame frame, final String string) {
-        frame.setObject(getSlot(), new Varchar(string));
+        Varchar value = (Varchar) getType().getDefaultValue();
+        value.assignString(string);
+        frame.setObject(getSlot(), value);
     }
 
     @Specialization(guards = "isVarchar()")

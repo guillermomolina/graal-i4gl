@@ -8,6 +8,7 @@ Version 0.3.0
 - Implement MDY operator
 - Implement DECIMAL type declaration
 - Reimplement ARRAY with only one class allowing nulls
+- Use a generated Node as ForNode isDescending test
 
 
 Version 0.2.0

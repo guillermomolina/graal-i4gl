@@ -67,6 +67,10 @@ public abstract class ExpressionNode extends StatementNode {
         hasExpressionTag = true;
     }
 
+	public short executeSmallInt(VirtualFrame frame) throws UnexpectedResultException {
+	    return I4GLTypeSystemGen.expectShort(executeGeneric(frame));
+    }
+
 	public int executeInt(VirtualFrame frame) throws UnexpectedResultException {
 	    return I4GLTypeSystemGen.expectInteger(executeGeneric(frame));
     }

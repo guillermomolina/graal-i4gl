@@ -560,7 +560,6 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
 
             StatementNode loopBody = ctx.codeBlock() == null ? new BlockNode(null)
                     : (StatementNode) visit(ctx.codeBlock());
-            FrameSlot controlSlot = doLookup(iteratingIdentifier, ParseScope::getLocalSlot);
             if (startValue.getType() != finalValue.getType()
                     && !startValue.getType().convertibleTo(finalValue.getType())) {
                 throw new ParseException(source, ctx, "Type mismatch in beginning and last value of for loop.");
@@ -569,8 +568,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             ExpressionNode readControlVariableNode = createReadVariableNode(iteratingIdentifier);
             StatementNode stepNode = createAssignToVariableNode(iteratingIdentifier,
                     AddNodeGen.create(readControlVariableNode, stepValue));
-            ForNode node = new ForNode(initialAssignment, controlSlot, startValue, finalValue, stepNode,
-                    readControlVariableNode, loopBody);
+            ForNode node = new ForNode(initialAssignment, startValue, finalValue, stepNode, readControlVariableNode,
+                    loopBody);
             setSourceFromContext(node, ctx);
             node.addStatementTag();
             currentParseScope.decreaseLoopDepth();
