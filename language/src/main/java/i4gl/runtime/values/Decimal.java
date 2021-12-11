@@ -24,12 +24,20 @@ public final class Decimal implements TruffleObject, Comparable<Decimal> {
         this.value = value;
     }
 
+    public Decimal(Decimal decimal) {
+        this.value = decimal.value;
+    }
+
     public Decimal(long value) {
         this.value = BigDecimal.valueOf(value);
     }
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public Object createDeepCopy() {
+        return new Decimal(this);
     }
 
     @TruffleBoundary

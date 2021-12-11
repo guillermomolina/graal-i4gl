@@ -30,7 +30,7 @@ public abstract class ReadNonLocalVariableNode extends ExpressionNode {
     protected VirtualFrame globalFrame;
 
     protected abstract FrameSlot getSlot();
-    public abstract BaseType getReturnType();
+    public abstract BaseType getType();
     protected abstract String getFrameName();    
     
     @Specialization(guards = "getGlobalFrame().isByte(getSlot())")
@@ -86,7 +86,7 @@ public abstract class ReadNonLocalVariableNode extends ExpressionNode {
         Object result = FrameUtil.getObjectSafe(getGlobalFrame(), getSlot());
         if(result == null) {
             CompilerDirectives.transferToInterpreter();
-            result = getReturnType().getDefaultValue();
+            result = getType().getDefaultValue();
             getGlobalFrame().setObject(getSlot(), result);
         }
         return result;

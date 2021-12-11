@@ -16,7 +16,7 @@ public class NullLiteralNode extends ExpressionNode {
 	}
 
 	@Override
-	public BaseType getType() {
+	public BaseType getReturnType() {
 		return NullType.SINGLETON;
 	}
 }

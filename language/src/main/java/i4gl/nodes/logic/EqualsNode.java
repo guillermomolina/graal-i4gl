@@ -41,7 +41,7 @@ public abstract class EqualsNode extends BinaryExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 

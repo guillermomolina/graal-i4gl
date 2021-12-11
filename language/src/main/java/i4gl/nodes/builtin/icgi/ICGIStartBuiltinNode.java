@@ -16,7 +16,7 @@ public abstract class ICGIStartBuiltinNode extends BuiltinNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 }

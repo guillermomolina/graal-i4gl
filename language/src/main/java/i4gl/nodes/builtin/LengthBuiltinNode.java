@@ -41,7 +41,7 @@ public abstract class LengthBuiltinNode extends BuiltinNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 }

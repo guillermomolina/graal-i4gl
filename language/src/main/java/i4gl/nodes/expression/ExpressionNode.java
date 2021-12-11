@@ -1,6 +1,5 @@
 package i4gl.nodes.expression;
 
-import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.ProbeNode;
@@ -9,7 +8,6 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
-import i4gl.I4GLTypeSystem;
 import i4gl.I4GLTypeSystemGen;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
@@ -28,7 +26,6 @@ import i4gl.runtime.types.primitive.SmallIntType;
  * the specialized execute{Type} methods are implemented because we do not really need them since we are using Truffle's
  * specializations.
  */
-@TypeSystemReference(I4GLTypeSystem.class)
 @NodeInfo(description = "Abstract class for all nodes that return value")
 @GenerateWrapper
 public abstract class ExpressionNode extends StatementNode {
@@ -38,7 +35,7 @@ public abstract class ExpressionNode extends StatementNode {
     /**
      * Returns type of the expression. This method is mainly used for compile time type checking.
      */
-    public abstract BaseType getType();
+    public abstract BaseType getReturnType();
 
 	public abstract Object executeGeneric(VirtualFrame frame);
 
@@ -87,39 +84,39 @@ public abstract class ExpressionNode extends StatementNode {
 		return I4GLTypeSystemGen.expectDouble(executeGeneric(frame));
 	}
 
-    protected boolean isChar() {
-        return getType() == Char1Type.SINGLETON;
+    protected boolean returnsChar() {
+        return getReturnType() == Char1Type.SINGLETON;
     }
 
-    protected boolean isSmallInt() {
-        return getType() == SmallIntType.SINGLETON;
+    protected boolean returnsSmallInt() {
+        return getReturnType() == SmallIntType.SINGLETON;
     }
 
-    protected boolean isInt() {
-        return getType() == IntType.SINGLETON;
+    protected boolean returnsInt() {
+        return getReturnType() == IntType.SINGLETON;
     }
 
-    protected boolean isBigInt() {
-        return getType() == BigIntType.SINGLETON;
+    protected boolean returnsBigInt() {
+        return getReturnType() == BigIntType.SINGLETON;
     }
 
-    protected boolean isSmallFloat() {
-        return getType() == SmallFloatType.SINGLETON;
+    protected boolean returnsSmallFloat() {
+        return getReturnType() == SmallFloatType.SINGLETON;
     }
 
-    protected boolean isFloat() {
-        return getType() == FloatType.SINGLETON;
+    protected boolean returnsFloat() {
+        return getReturnType() == FloatType.SINGLETON;
     }
 
-    protected boolean isDate() {
-        return getType() == DateType.SINGLETON;
+    protected boolean returnsDate() {
+        return getReturnType() == DateType.SINGLETON;
     }
 
-    protected boolean isDecimal() {
-        return getType() instanceof DecimalType;
+    protected boolean returnsDecimal() {
+        return getReturnType() instanceof DecimalType;
     }
 
-    protected boolean isRecord() {
-        return getType() instanceof RecordType;
+    protected boolean returnsRecord() {
+        return getReturnType() instanceof RecordType;
     }
 }

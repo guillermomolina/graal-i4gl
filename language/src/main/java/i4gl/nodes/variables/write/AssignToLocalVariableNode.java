@@ -5,13 +5,11 @@ import java.text.ParseException;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
@@ -42,7 +40,6 @@ import i4gl.runtime.values.Varchar;
 @NodeField(name = "slot", type = FrameSlot.class)
 @NodeField(name = "type", type = BaseType.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-@TypeSystemReference(I4GLTypeSystem.class)
 public abstract class AssignToLocalVariableNode extends StatementNode {
 
     public abstract FrameSlot getSlot();
@@ -54,6 +51,11 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
 
     @Specialization(guards = "isSmallInt()")
     void writeSmallInt(final VirtualFrame frame, final short value) {
+        frame.setObject(getSlot(), value);
+    }
+
+    @Specialization(guards = "isSmallInt()")
+    void writeSmallInt(final VirtualFrame frame, final int value) {
         frame.setObject(getSlot(), value);
     }
 

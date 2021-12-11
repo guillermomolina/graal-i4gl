@@ -9,7 +9,6 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
 
@@ -25,63 +24,53 @@ public abstract class ReadLocalVariableNode extends ExpressionNode {
 
     protected abstract FrameSlot getSlot();
 
-    @Specialization(guards = "frame.isByte(getSlot())")
+    @Specialization(guards = "isChar()")
     protected char readChar(final VirtualFrame frame) {
         return (char)FrameUtil.getByteSafe(frame, getSlot());
     }
-/*
-    @Specialization(guards = "frame.isShort(getSlot())")
-    protected short readSmallInt(final VirtualFrame frame) {
-        return FrameUtil.getShortSafe(frame, getSlot());
+
+    protected boolean isShort(VirtualFrame frame) {
+        Object result = frame.getValue(getSlot());
+        return returnsSmallInt() && result instanceof Short;
     }
-*/
-    @Specialization(guards = "frame.isInt(getSlot())")
+
+    @Specialization(guards = "isShort(frame)")
+    protected short readSmallInt(final VirtualFrame frame) {
+        Short value = (Short)FrameUtil.getObjectSafe(frame, getSlot());
+        return value.shortValue();
+    }
+
+    @Specialization(guards = "isInt()")
     protected int readInt(final VirtualFrame frame) {
         return FrameUtil.getIntSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "frame.isLong(getSlot())")
+    @Specialization(guards = "isBigInt()")
     protected long readBigInt(final VirtualFrame frame) {
         return FrameUtil.getLongSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "frame.isFloat(getSlot())")
+    @Specialization(guards = "isSmallFloat()")
     protected float readSmallFloat(final VirtualFrame frame) {
         return FrameUtil.getFloatSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "frame.isDouble(getSlot())")
+    @Specialization(guards = "isFloat()")
     protected double readFloat(final VirtualFrame frame) {
         return FrameUtil.getDoubleSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = { "readChar", /*"readSmallInt",*/ "readInt", "readBigInt", "readSmallFloat", "readFloat" })
+    @Specialization(replaces = { "readChar", "readInt", "readBigInt", "readSmallFloat", "readFloat" })
     protected Object readObject(final VirtualFrame frame) {
-        if (!frame.isObject(getSlot())) {
-            /*
-             * The FrameSlotKind has been set to Object, so from now on all writes to the
-             * local variable will be Object writes. However, now we are in a frame that
-             * still has an old non-Object value. This is a slow-path operation: we read the
-             * non-Object value, and write it immediately as an Object value so that we do
-             * not hit this path again multiple times for the same variable of the same
-             * frame.
-             */
+        Object result = frame.getValue(getSlot());
+        if(result == null) {
             CompilerDirectives.transferToInterpreter();
-            final Object result = frame.getValue(getSlot());
-            if(result == null) {
-                throw new NotImplementedException();
-            }
+            result = getReturnType().getDefaultValue();
             frame.setObject(getSlot(), result);
             return result;
         }
 
-        Object result = FrameUtil.getObjectSafe(frame, getSlot());
-        if(result == null) {
-            CompilerDirectives.transferToInterpreter();
-            result = getType().getDefaultValue();
-            frame.setObject(getSlot(), result);
-        }
-        return result;
+        return FrameUtil.getObjectSafe(frame, getSlot());
     }
 
     @Override

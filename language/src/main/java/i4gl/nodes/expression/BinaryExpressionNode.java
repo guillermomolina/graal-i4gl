@@ -24,9 +24,9 @@ public abstract class BinaryExpressionNode extends ExpressionNode {
     protected abstract ExpressionNode getRightNode();
 
     @Override
-    public BaseType getType() {
-        BaseType leftNodeType = getLeftNode().getType();
-        BaseType rightNodeType = getRightNode().getType();
+    public BaseType getReturnType() {
+        BaseType leftNodeType = getLeftNode().getReturnType();
+        BaseType rightNodeType = getRightNode().getReturnType();
         if (leftNodeType == rightNodeType) {
             return leftNodeType;
         }

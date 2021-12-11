@@ -26,7 +26,7 @@ public abstract class SmallIntLiteralNode extends ExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return SmallIntType.SINGLETON;
     }
 

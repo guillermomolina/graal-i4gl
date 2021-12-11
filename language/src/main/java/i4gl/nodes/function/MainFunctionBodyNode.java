@@ -24,7 +24,7 @@ public abstract class MainFunctionBodyNode extends ExpressionNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return null;
     }
 

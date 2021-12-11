@@ -37,7 +37,7 @@ public abstract class MdyNode extends ExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return DateType.SINGLETON;
     }
 }

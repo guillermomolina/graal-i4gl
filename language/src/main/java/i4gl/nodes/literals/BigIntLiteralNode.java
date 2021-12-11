@@ -26,7 +26,7 @@ public abstract class BigIntLiteralNode extends ExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return BigIntType.SINGLETON;
     }
 

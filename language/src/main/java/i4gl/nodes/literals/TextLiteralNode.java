@@ -26,7 +26,7 @@ public final class TextLiteralNode extends ExpressionNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return TextType.SINGLETON;
     }
 

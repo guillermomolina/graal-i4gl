@@ -36,7 +36,7 @@ public abstract class NotNode extends UnaryNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 }

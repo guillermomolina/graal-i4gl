@@ -26,7 +26,7 @@ public abstract class DoubleLiteralNode extends ExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return FloatType.SINGLETON;
     }
 

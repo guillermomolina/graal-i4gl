@@ -27,7 +27,7 @@ public abstract class IsNullNode extends UnaryNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 }

@@ -1,6 +1,7 @@
 package i4gl.nodes.statement;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.InstrumentableNode;
@@ -13,9 +14,12 @@ import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
+import i4gl.I4GLTypeSystem;
+
 /**
  * This class is an abstract class for each node that represent a statement.
  */
+@TypeSystemReference(I4GLTypeSystem.class)
 @NodeInfo(language = "i4gl", description = "The abstract base node for all I4GL statements")
 @GenerateWrapper
 public abstract class StatementNode extends Node implements InstrumentableNode {

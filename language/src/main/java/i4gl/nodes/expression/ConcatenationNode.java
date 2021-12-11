@@ -16,12 +16,12 @@ public abstract class ConcatenationNode extends BinaryExpressionNode {
     protected String concat(final Object left, final Object right) {
         String value;
         if(left == Null.SINGLETON) {
-            value = getLeftNode().getType().getNullString();
+            value = getLeftNode().getReturnType().getNullString();
         } else {
             value = left.toString();
         }
         if (right == Null.SINGLETON) {
-            value += getRightNode().getType().getNullString();
+            value += getRightNode().getReturnType().getNullString();
         } else {
             value += right.toString();
         }

@@ -12,6 +12,7 @@ Version 0.3.0
 - Move all exceptions to package i4gl.exceptions
 - NumberFormatter throws exception on overflow
 - NumberFormatter uses long as integer value
+- Refactor is<Type> to returns<Type> one ExpressionNode
 
 
 Version 0.2.0

@@ -27,7 +27,7 @@ public abstract class MatchesNode extends BinaryExpressionNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 }

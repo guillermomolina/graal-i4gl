@@ -16,7 +16,7 @@ public abstract class ICGIMimeTypeBuiltinNode extends BuiltinNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 }

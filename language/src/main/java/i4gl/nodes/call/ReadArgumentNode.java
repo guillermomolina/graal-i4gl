@@ -40,7 +40,7 @@ public class ReadArgumentNode extends ExpressionNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return null;
     }
 }

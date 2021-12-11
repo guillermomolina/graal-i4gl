@@ -26,7 +26,7 @@ import i4gl.runtime.values.Varchar;
 @NodeField(name = "returnType", type = BaseType.class)
 public abstract class ReadFromIndexedNode extends ExpressionNode {
 
-    protected abstract BaseType getReturnType();
+    public abstract BaseType getReturnType();
 
     @Specialization
     String readText(String string, int index) {
@@ -50,11 +50,6 @@ public abstract class ReadFromIndexedNode extends ExpressionNode {
         } catch (InvalidArrayIndexException e) {
             throw new I4GLRuntimeException(e.getMessage());
         }
-    }
-
-    @Override
-    public BaseType getType() {
-        return this.getReturnType();
     }
 
     @Override

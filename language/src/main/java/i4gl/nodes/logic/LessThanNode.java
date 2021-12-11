@@ -41,7 +41,7 @@ public abstract class LessThanNode extends BinaryExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return IntType.SINGLETON;
     }
 

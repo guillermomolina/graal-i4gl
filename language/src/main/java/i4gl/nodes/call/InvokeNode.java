@@ -32,7 +32,7 @@ public final class InvokeNode extends ExpressionNode {
 	}
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return null;
     }
 

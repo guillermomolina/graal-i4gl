@@ -17,8 +17,8 @@ public abstract class UnaryNode extends ExpressionNode {
      * @return resulting type of the operation
      */
     @Override
-    public BaseType getType() {
-        return this.getArgument().getType();
+    public BaseType getReturnType() {
+        return this.getArgument().getReturnType();
     }
 
 }

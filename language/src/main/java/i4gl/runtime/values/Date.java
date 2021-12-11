@@ -29,6 +29,14 @@ public final class Date implements TruffleObject, Comparable<Date> {
         this.value = value;
     }
 
+    public Date(Date date) {
+        this.value = date.value;
+    }
+
+    public Object createDeepCopy() {
+        return new Date(this);
+    }
+
     public static Date valueOf(int days) {
         // days = count of days since December 31, 1899
         var cal = new GregorianCalendar(1899, 11, 31);

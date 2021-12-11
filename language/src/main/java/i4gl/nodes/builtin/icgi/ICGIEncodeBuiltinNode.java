@@ -16,7 +16,7 @@ public abstract class ICGIEncodeBuiltinNode extends BuiltinNode {
     }
 
     @Override
-    public BaseType getType() {
+    public BaseType getReturnType() {
         return TextType.SINGLETON;
     }
 

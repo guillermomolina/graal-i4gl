@@ -4,13 +4,11 @@ import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
-import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
@@ -30,7 +28,6 @@ import i4gl.runtime.values.Varchar;
 @NodeField(name = "type", type = BaseType.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-@TypeSystemReference(I4GLTypeSystem.class)
 public abstract class AssignToTextNode extends StatementNode {
 
     protected abstract FrameSlot getSlot();
