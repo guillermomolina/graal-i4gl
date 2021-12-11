@@ -15,9 +15,9 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.Context;
 
+@NodeChild(value = "valueNode", type = ExpressionNode.class)
 @NodeField(name = "slot", type = FrameSlot.class)
 @NodeField(name = "frameName", type = String.class)
-@NodeChild(value = "valueNode", type = ExpressionNode.class)
 public abstract class WriteNonLocalVariable extends StatementNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;

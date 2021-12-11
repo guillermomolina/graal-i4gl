@@ -82,11 +82,11 @@ import i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadNonLocalVariableNodeGen;
 import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.nodes.variables.write.AssignToIndexedNodeGen;
-import i4gl.nodes.variables.write.AssignToRecordFieldNodeGen;
 import i4gl.nodes.variables.write.AssignToRecordTextNodeGen;
 import i4gl.nodes.variables.write.AssignToTextNodeGen;
 import i4gl.nodes.variables.write.WriteLocalVariableNodeGen;
 import i4gl.nodes.variables.write.WriteNonLocalVariableNodeGen;
+import i4gl.nodes.variables.write.WriteRecordFieldNodeGen;
 import i4gl.parser.I4GLParser.NotIndexedVariableContext;
 import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
@@ -607,8 +607,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                     final String identifier = variable.getKey();
                     final BaseType fieldType = variable.getValue();
                     final ReadFromResultNode readResultNode = new ReadFromResultNode();
-                    final StatementNode assignResultNode = AssignToRecordFieldNodeGen.create(variableNode,
-                            readResultNode, identifier, fieldType);
+                    final StatementNode assignResultNode = WriteRecordFieldNodeGen.create(variableNode, readResultNode, identifier);
                     assignResultNode.addStatementTag();
                     setSourceFromContext(assignResultNode, ctx);
                     pairs.put(readResultNode, assignResultNode);
@@ -1335,7 +1334,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                 RecordType accessedRecordType = (RecordType) expressionType;
                 BaseType fieldType = accessedRecordType.getVariableType(identifier);
                 final ExpressionNode valueNode = createAssignmentValue(fieldType, valueCtx);
-                node = AssignToRecordFieldNodeGen.create(variableNode, valueNode, identifier, fieldType);
+                node = WriteRecordFieldNodeGen.create(variableNode, valueNode, identifier);
             } else {
                 throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
             }
@@ -1418,7 +1417,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             BaseType fieldType = variableNode.getReturnType();
             ExpressionNode valueNode = createAssignmentValue(fieldType, valueCtx);
             String identifier = variableCtx.identifier(index).getText();
-            StatementNode node = AssignToRecordFieldNodeGen.create(variableNode, valueNode, identifier, fieldType);
+            StatementNode node = WriteRecordFieldNodeGen.create(variableNode, valueNode, identifier);
             node.addStatementTag();
             setSourceFromContext(node, variableCtx);
             return node;

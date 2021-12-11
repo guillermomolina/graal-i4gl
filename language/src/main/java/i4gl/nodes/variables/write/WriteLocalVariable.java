@@ -12,8 +12,8 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 
-@NodeField(name = "slot", type = FrameSlot.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
+@NodeField(name = "slot", type = FrameSlot.class)
 public abstract class WriteLocalVariable extends StatementNode {
 
     protected abstract FrameSlot getSlot();
