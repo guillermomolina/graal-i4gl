@@ -47,6 +47,7 @@ import i4gl.nodes.literals.IntLiteralNodeGen;
 import i4gl.nodes.literals.NullLiteralNode;
 import i4gl.nodes.literals.SmallFloatLiteralNode;
 import i4gl.nodes.literals.SmallFloatLiteralNodeGen;
+import i4gl.nodes.literals.SmallIntLiteralNodeGen;
 import i4gl.nodes.literals.TextLiteralNode;
 import i4gl.nodes.logic.AndNodeGen;
 import i4gl.nodes.logic.EqualsNodeGen;
@@ -1090,8 +1091,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             ExpressionNode indexNode = indexNodes.get(index);
             BaseType targetType = ((ArrayType) actualType).getElementsType();
             if (index == lastIndex) {
-               final ExpressionNode valueNode = createAssignmentValue(targetType, valueCtx);
-               result = AssignToIndexedNodeGen.create(readIndexedNode, indexNode, valueNode);
+                final ExpressionNode valueNode = createAssignmentValue(targetType, valueCtx);
+                result = AssignToIndexedNodeGen.create(readIndexedNode, indexNode, valueNode);
             } else {
                 readIndexedNode = ReadFromIndexedNodeGen.create(readIndexedNode, indexNode, targetType);
             }
@@ -1270,9 +1271,13 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         final String literal = ctx.getText();
         ExpressionNode node;
         try {
-            node = IntLiteralNodeGen.create(Integer.parseInt(literal));
-        } catch (final NumberFormatException e) {
-            node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
+            node = SmallIntLiteralNodeGen.create(Short.parseShort(literal));
+        } catch (final NumberFormatException e1) {
+            try {
+                node = IntLiteralNodeGen.create(Integer.parseInt(literal));
+            } catch (final NumberFormatException e2) {
+                node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
+            }
         }
         setSourceFromContext(node, ctx);
         node.addExpressionTag();

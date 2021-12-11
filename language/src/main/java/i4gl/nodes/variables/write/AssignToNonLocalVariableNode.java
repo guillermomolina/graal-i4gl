@@ -1,5 +1,7 @@
 package i4gl.nodes.variables.write;
 
+import java.text.ParseException;
+
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.NodeChild;
@@ -16,7 +18,11 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
+import i4gl.runtime.types.compound.RecordType;
+import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -25,6 +31,7 @@ import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.types.primitive.SmallIntType;
 import i4gl.runtime.values.Array;
 import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Date;
 import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Record;
 import i4gl.runtime.values.Varchar;
@@ -96,6 +103,15 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
         getGlobalFrame().setDouble(getSlot(), value);
     }
 
+    protected boolean isText() {
+        return getType() == TextType.SINGLETON;
+    }
+
+    @Specialization(guards = "isText()")
+    void assignText(final VirtualFrame frame, final String string) {
+        getGlobalFrame().setObject(getSlot(), string);
+    }
+
     protected boolean isChar() {
         return getType() instanceof CharType;
     }
@@ -107,37 +123,72 @@ public abstract class AssignToNonLocalVariableNode extends StatementNode {
         getGlobalFrame().setObject(getSlot(), value);
     }
 
+    @Specialization(guards = "isChar()")
+    void assignChar(final VirtualFrame frame, final Char value) {
+        getGlobalFrame().setObject(getSlot(), value.createDeepCopy());
+    }
+
     protected boolean isVarchar() {
         return getType() instanceof VarcharType;
     }
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final VirtualFrame frame, final String string) {
-        Varchar value = (Varchar) getType().getDefaultValue();
-        value.assignString(string);
+        getGlobalFrame().setObject(getSlot(), new Varchar(string));
+    }
+
+    @Specialization(guards = "isVarchar()")
+    void assignVarchar(final VirtualFrame frame, final Varchar value) {
+        getGlobalFrame().setObject(getSlot(), value.createDeepCopy());
+    }
+
+    protected boolean isDate() {
+        return getType() == DateType.SINGLETON;
+    }
+
+    @Specialization(guards = "isDate()")
+    void assignDate(final VirtualFrame frame, final int value) {
+        getGlobalFrame().setObject(getSlot(), Date.valueOf(value));
+    }
+
+    @Specialization(guards = "isDate()")
+    void assignDate(final VirtualFrame frame, final String value) {
+        try {
+            getGlobalFrame().setObject(getSlot(), Date.valueOf(value));
+        } catch (ParseException e) {
+            getGlobalFrame().setObject(getSlot(), Null.SINGLETON);
+        }
+    }
+
+    @Specialization(guards = "isDate()")
+    void assignDate(final VirtualFrame frame, final Date value) {
         getGlobalFrame().setObject(getSlot(), value);
     }
 
-    @Specialization
+
+    protected boolean isRecord() {
+        return getType() instanceof RecordType;
+    }
+
+    @Specialization(guards = "isRecord()")
     void assignRecord(final VirtualFrame frame, final Record record) {
         getGlobalFrame().setObject(getSlot(), record.createDeepCopy());
     }
 
-    @Specialization
-    void assignIntArray(final VirtualFrame frame, final Array array) {
+    protected boolean isArray() {
+        return getType() instanceof ArrayType;
+    }
+
+    @Specialization(guards = "isArray()")
+    void assignArray(final VirtualFrame frame, final Array array) {
         getGlobalFrame().setObject(getSlot(), array.createDeepCopy());
     }
 
     @Specialization
-    void assignIntArray(final VirtualFrame frame, final Null value) {
+    void assign(final VirtualFrame frame, final Null value) {
         getGlobalFrame().setObject(getSlot(), value);
     }
-/*
-    @Specialization
-    void assign(final VirtualFrame frame, final Object value) {
-        getGlobalFrame().setObject(getSlot(), value);
-    }
-*/
+
     protected VirtualFrame getGlobalFrame() {
         if(globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();

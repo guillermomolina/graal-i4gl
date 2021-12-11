@@ -15,8 +15,11 @@ import i4gl.I4GLTypeSystem;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.DateType;
+import i4gl.runtime.types.compound.RecordType;
+import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.compound.VarcharType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -91,6 +94,15 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
         frame.setDouble(getSlot(), value);
     }
 
+    protected boolean isText() {
+        return getType() == TextType.SINGLETON;
+    }
+
+    @Specialization(guards = "isText()")
+    void assignText(final VirtualFrame frame, final String string) {
+        frame.setObject(getSlot(), string);
+    }
+
     protected boolean isChar() {
         return getType() instanceof CharType;
     }
@@ -102,15 +114,23 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
         frame.setObject(getSlot(), value);
     }
 
+    @Specialization(guards = "isChar()")
+    void assignChar(final VirtualFrame frame, final Char value) {
+        frame.setObject(getSlot(), value.createDeepCopy());
+    }
+
     protected boolean isVarchar() {
         return getType() instanceof VarcharType;
     }
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final VirtualFrame frame, final String string) {
-        Varchar value = (Varchar) getType().getDefaultValue();
-        value.assignString(string);
-        frame.setObject(getSlot(), value);
+        frame.setObject(getSlot(), new Varchar(string));
+    }
+
+    @Specialization(guards = "isVarchar()")
+    void assignVarchar(final VirtualFrame frame, final Varchar value) {
+        frame.setObject(getSlot(), value.createDeepCopy());
     }
 
     protected boolean isDate() {
@@ -136,12 +156,20 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
         frame.setObject(getSlot(), value);
     }
 
-    @Specialization
+    protected boolean isRecord() {
+        return getType() instanceof RecordType;
+    }
+
+    @Specialization(guards = "isRecord()")
     void assignRecord(final VirtualFrame frame, final Record record) {
         frame.setObject(getSlot(), record.createDeepCopy());
     }
 
-    @Specialization
+    protected boolean isArray() {
+        return getType() instanceof ArrayType;
+    }
+
+    @Specialization(guards = "isArray()")
     void assignArray(final VirtualFrame frame, final Array array) {
         frame.setObject(getSlot(), array.createDeepCopy());
     }
@@ -151,12 +179,6 @@ public abstract class AssignToLocalVariableNode extends StatementNode {
         frame.setObject(getSlot(), value);
     }
 
-    /*
-     * @Specialization
-     * void assign(final VirtualFrame frame, final Object value) {
-     * throw new I4GLRuntimeException("Can not assign an Object to a " + getType());
-     * }
-     */
     @Override
     public boolean hasTag(final Class<? extends Tag> tag) {
         return tag == WriteVariableTag.class || super.hasTag(tag);
