@@ -46,7 +46,6 @@ import i4gl.runtime.values.Varchar;
 public abstract class AssignToLocalVariableNode extends StatementNode {
 
     public abstract FrameSlot getSlot();
-
     protected abstract BaseType getType();
 
     protected boolean isSmallInt() {
