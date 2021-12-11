@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import i4gl.common.NumberFormatter;
+import i4gl.exceptions.NumberFormatterOverflowException;
 
 public class I4GLNumberFormatterTest {
 
@@ -228,8 +229,13 @@ public class I4GLNumberFormatterTest {
         check("($$$,$$$.&&)", 123.45, "$123.45");
     }
 
-    void check(String format, int data, String expected) {
-        String output = NumberFormatter.Format(format, data);
+    void check(String format, long data, String expected) {
+        String output;
+        try {
+            output = NumberFormatter.Format(format, data);
+        } catch (NumberFormatterOverflowException e) {
+            output = null;
+        }
         assertEquals(expected, output);
     }
 

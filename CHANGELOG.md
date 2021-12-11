@@ -9,6 +9,9 @@ Version 0.3.0
 - Implement DECIMAL type declaration
 - Reimplement ARRAY with only one class allowing nulls
 - Use a generated Node as ForNode isDescending test
+- Move all exceptions to package i4gl.exceptions
+- NumberFormatter throws exception on overflow
+- NumberFormatter uses long as integer value
 
 
 Version 0.2.0

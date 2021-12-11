@@ -2,11 +2,13 @@ package i4gl.common;
 
 import java.text.DecimalFormat;
 
+import i4gl.exceptions.NumberFormatterOverflowException;
+
 public class NumberFormatter {
-    public static String Format(String format, int data) {
+    public static String Format(String format, long data) throws NumberFormatterOverflowException {
         int formatLength = format.length();
         Boolean isNegativeData = data < 0;
-        int unsignedData = isNegativeData ? -data : data;
+        long unsignedData = isNegativeData ? -data : data;
         String modifiedFormat = "";
         Boolean isMoney = false;
         Boolean isNegativeFormat = false;
@@ -65,7 +67,7 @@ public class NumberFormatter {
         String output = df.format(unsignedData);
         if (data == 0) {
             if(format.endsWith("<")) {
-                return null;
+                throw new NumberFormatterOverflowException(format, data);
             }
             if (!modifiedFormat.endsWith("0")) {
                 output = "";
