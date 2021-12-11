@@ -54,6 +54,10 @@ public class Record implements TruffleObject {
         }
     }
 
+    public void putChar(String name, char value) {
+        properties.put(name, value);
+    }
+
     public boolean isSmallInt(String name) {
         final Object value = properties.get(name);
         return value instanceof Short;
@@ -66,6 +70,10 @@ public class Record implements TruffleObject {
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, SmallIntType.SINGLETON);
         }
+    }
+
+    public void putSmallInt(String name, short value) {
+        properties.put(name, value);
     }
 
     public boolean isInt(String name) {
@@ -82,6 +90,10 @@ public class Record implements TruffleObject {
         }
     }
 
+    public void putInt(String name, int value) {
+        properties.put(name, value);
+    }
+
     public boolean isBigInt(String name) {
         final Object value = properties.get(name);
         return value instanceof Long;
@@ -94,6 +106,10 @@ public class Record implements TruffleObject {
         } catch (ClassCastException ex) {
             throw new InvalidCastException(value, BigIntType.SINGLETON);
         }
+    }
+
+    public void putBigInt(String name, long value) {
+        properties.put(name, value);
     }
 
     public boolean isSmallFloat(String name) {
@@ -110,6 +126,10 @@ public class Record implements TruffleObject {
         }
     }
 
+    public void putSmallFloat(String name, float value) {
+        properties.put(name, value);
+    }
+
     public boolean isFloat(String name) {
         final Object value = properties.get(name);
         return value instanceof Double;
@@ -124,11 +144,15 @@ public class Record implements TruffleObject {
         }
     }
 
-    public Object get(String name) {
+    public void putFloat(String name, double value) {
+        properties.put(name, value);
+    }
+
+    public Object getObject(String name) {
         return properties.get(name);
     }
 
-    public void put(String name, Object value) {
+    public void putObject(String name, Object value) {
         properties.put(name, value);
     }
 

@@ -28,11 +28,11 @@ import com.oracle.truffle.api.source.Source;
 
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.builtin.BuiltinNode;
-import i4gl.nodes.call.ReadArgumentNode;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.root.BuiltinRootNode;
 import i4gl.nodes.root.ModuleRootNode;
 import i4gl.nodes.root.UndefinedFunctionRootNode;
+import i4gl.nodes.variables.read.ReadArgumentNode;
 import i4gl.parser.FullParser;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.context.LanguageView;

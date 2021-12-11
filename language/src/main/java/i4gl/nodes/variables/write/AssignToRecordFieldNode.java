@@ -34,12 +34,12 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
 
     @Specialization(guards = "isSmallInt()")
     void assignSmallInt(final Record record, final short value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     @Specialization(guards = "isSmallInt()")
     void assignSmallInt(final Record record, final int value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     protected boolean isInt() {
@@ -49,7 +49,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     @Specialization(guards = "isInt()")
     @TruffleBoundary
     void assignInt(final Record record, final int value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     protected boolean isBigInt() {
@@ -59,7 +59,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     @Specialization(guards = "isBigInt()")
     @TruffleBoundary
     void assignBigInt(final Record record, final long value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     protected boolean isSmallFloat() {
@@ -68,7 +68,7 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
 
     @Specialization(guards = "isSmallFloat()")
     void assignSmallFloat(final Record record, final float value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     protected boolean isFloat() {
@@ -78,12 +78,12 @@ public abstract class AssignToRecordFieldNode extends StatementNode {
     @Specialization(guards = "isFloat()")
     @TruffleBoundary
     void assignDouble(final Record record, final double value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     @Specialization
     void assignGeneric(final Record record, final Null value) {
-        record.put(getIdentifier(), value);
+        record.putObject(getIdentifier(), value);
     }
 
     @Override

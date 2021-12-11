@@ -33,10 +33,10 @@ public abstract class AssignToRecordTextNode extends StatementNode {
 
     @Specialization(guards = "isChar()")
     void assignChar(final Record record, final int index, final String value) {
-        Object targetObject = record.get(getIdentifier());
+        Object targetObject = record.getObject(getIdentifier());
         if (!(targetObject instanceof Char)) {
             targetObject = getFieldType().getDefaultValue();
-            record.put(getIdentifier(), targetObject);
+            record.putObject(getIdentifier(), targetObject);
         }
 
         final Char target = (Char) targetObject;
@@ -49,10 +49,10 @@ public abstract class AssignToRecordTextNode extends StatementNode {
 
     @Specialization(guards = "isVarchar()")
     void assignVarchar(final Record record, final int index, final String value) {
-        Object targetObject = record.get(getIdentifier());
+        Object targetObject = record.getObject(getIdentifier());
         if (!(targetObject instanceof Varchar)) {
             targetObject = getFieldType().getDefaultValue();
-            record.put(getIdentifier(), targetObject);
+            record.putObject(getIdentifier(), targetObject);
         }
 
         final Varchar target = (Varchar) targetObject;
@@ -65,13 +65,13 @@ public abstract class AssignToRecordTextNode extends StatementNode {
 
     @Specialization(guards = "isText()")
     void assignText(final Record record, final int index, final String value) {
-        Object targetObject = record.get(getIdentifier());
+        Object targetObject = record.getObject(getIdentifier());
         if (!(targetObject instanceof String)) {
             targetObject = "";
         }
         StringBuilder builder = new StringBuilder((String) targetObject);
         builder.setCharAt(index, value.charAt(0));
-        record.put(getIdentifier(), targetObject);
+        record.putObject(getIdentifier(), targetObject);
     }
 
     @Override

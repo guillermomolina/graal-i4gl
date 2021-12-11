@@ -33,7 +33,6 @@ import i4gl.nodes.arithmetic.MultiplyNodeGen;
 import i4gl.nodes.arithmetic.SubtractNodeGen;
 import i4gl.nodes.call.CallNode;
 import i4gl.nodes.call.InvokeNode;
-import i4gl.nodes.call.ReadArgumentNode;
 import i4gl.nodes.call.ReturnNode;
 import i4gl.nodes.control.CaseNode;
 import i4gl.nodes.control.DebuggerNode;
@@ -74,6 +73,7 @@ import i4gl.nodes.statement.BlockNode;
 import i4gl.nodes.statement.DisplayNode;
 import i4gl.nodes.statement.DisplayNodeGen;
 import i4gl.nodes.statement.StatementNode;
+import i4gl.nodes.variables.read.ReadArgumentNode;
 import i4gl.nodes.variables.read.ReadFromIndexedNodeGen;
 import i4gl.nodes.variables.read.ReadFromRecordNode;
 import i4gl.nodes.variables.read.ReadFromRecordNodeGen;
@@ -82,11 +82,11 @@ import i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadNonLocalVariableNodeGen;
 import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.nodes.variables.write.AssignToIndexedNodeGen;
-import i4gl.nodes.variables.write.AssignToNonLocalVariableNodeGen;
 import i4gl.nodes.variables.write.AssignToRecordFieldNodeGen;
 import i4gl.nodes.variables.write.AssignToRecordTextNodeGen;
 import i4gl.nodes.variables.write.AssignToTextNodeGen;
 import i4gl.nodes.variables.write.WriteLocalVariableNodeGen;
+import i4gl.nodes.variables.write.WriteNonLocalVariableNodeGen;
 import i4gl.parser.I4GLParser.NotIndexedVariableContext;
 import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
@@ -442,11 +442,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         final ExpressionNode valueNode = createAssignmentValue(targetType, valueCtx);
 
         if (isLocal) {
-            // return AssignToLocalVariableNodeGen.create(valueNode, variableSlot,
-            // targetType);
             return WriteLocalVariableNodeGen.create(valueNode, variableSlot);
         }
-        return AssignToNonLocalVariableNodeGen.create(valueNode, variableSlot, targetType, scope.getName());
+        return WriteNonLocalVariableNodeGen.create(valueNode, variableSlot, scope.getName());
     }
 
     private StatementNode createAssignToVariableNode(final String identifier, final ExpressionNode valueNode)
@@ -467,11 +465,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
 
         if (isLocal) {
-            // return AssignToLocalVariableNodeGen.create(valueNode, variableSlot,
-            // targetType);
             return WriteLocalVariableNodeGen.create(valueNode, variableSlot);
         }
-        return AssignToNonLocalVariableNodeGen.create(valueNode, variableSlot, targetType, scope.getName());
+        return WriteNonLocalVariableNodeGen.create(valueNode, variableSlot, scope.getName());
     }
 
     @Override

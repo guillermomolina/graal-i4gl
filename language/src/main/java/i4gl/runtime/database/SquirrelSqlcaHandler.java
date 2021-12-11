@@ -16,17 +16,17 @@ public class SquirrelSqlcaHandler {
     public SquirrelSqlcaHandler(Record sqlca) {
         this.sqlca = sqlca;
         if(sqlca != null) {
-            this.sqlerrm = (Char) sqlca.get("sqlerrm");
-            this.sqlerrp = (Char) sqlca.get("sqlerrp");
-            this.sqlerrd = (Array) sqlca.get("sqlerrd");
-            this.sqlawarn = (Char) sqlca.get("sqlawarn");
+            this.sqlerrm = (Char) sqlca.getObject("sqlerrm");
+            this.sqlerrp = (Char) sqlca.getObject("sqlerrp");
+            this.sqlerrd = (Array) sqlca.getObject("sqlerrd");
+            this.sqlawarn = (Char) sqlca.getObject("sqlawarn");
             reset();
         }
     }
 
     private void reset() {
         if(sqlca != null) {
-            sqlca.put("sqlcode", 0);
+            sqlca.putObject("sqlcode", 0);
             sqlerrm.fill(' ');
             sqlerrp.fill(' ');
             sqlerrd.fill(0);
@@ -36,7 +36,7 @@ public class SquirrelSqlcaHandler {
 
     public void setSqlCode(int errorCode) {
         if(sqlca != null) {
-            sqlca.put("sqlcode", 0);   
+            sqlca.putObject("sqlcode", 0);   
         }
     }
 
@@ -48,7 +48,7 @@ public class SquirrelSqlcaHandler {
 
     public void setSqlErrM(String message) {
         if(sqlca != null) {
-            sqlca.put("sqlerrm", new Char(message));   
+            sqlca.putObject("sqlerrm", new Char(message));   
         }
     }
 

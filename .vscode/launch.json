@@ -3,13 +3,13 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) Let1.4gl",
+            "name": "Debug (Launch) GlovalVariable.4gl",
             "request": "launch",
             "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Let1.4gl",
+                "${workspaceFolder}/language/tests/simple/GlovalVariable.4gl",
             ],
             "vmArgs": [
                 "-ea",
