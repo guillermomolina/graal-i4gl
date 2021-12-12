@@ -7,7 +7,7 @@ import i4gl.exceptions.UnexpectedRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
 
-public class ReadFromResultNode extends ExpressionNode {
+public class ReadResultsNode extends ExpressionNode {
     private Object result;
 
     public void setResult(final Object result) {

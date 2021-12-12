@@ -14,10 +14,12 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.Context;
+import i4gl.runtime.types.BaseType;
 
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-@NodeField(name = "slot", type = FrameSlot.class)
 @NodeField(name = "frameName", type = String.class)
+@NodeField(name = "slot", type = FrameSlot.class)
+@NodeField(name = "type", type = BaseType.class)
 public abstract class WriteNonLocalVariable extends StatementNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;
@@ -25,6 +27,9 @@ public abstract class WriteNonLocalVariable extends StatementNode {
     protected abstract String getFrameName();
 
     protected abstract FrameSlot getSlot();
+
+    // TODO: Check correct type at runtime
+    protected abstract BaseType getType();
 
     protected VirtualFrame getFrame() {
         if (globalFrame == null) {

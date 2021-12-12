@@ -17,6 +17,7 @@ import i4gl.runtime.types.BaseType;
 public abstract class ReadLocalVariableNode extends ExpressionNode {
     protected abstract FrameSlot getSlot();
 
+    // TODO: Check correct type at runtime
     protected abstract BaseType getType();
 
     public BaseType getReturnType() {

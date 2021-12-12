@@ -23,10 +23,16 @@ import i4gl.runtime.values.Varchar;
 
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
-@NodeField(name = "returnType", type = BaseType.class)
+@NodeField(name = "elementType", type = BaseType.class)
 public abstract class ReadArrayElementNode extends ExpressionNode {
 
-    public abstract BaseType getReturnType();
+    // TODO: Check correct type at runtime
+    protected abstract BaseType getElementType();
+
+    @Override
+    public BaseType getReturnType() {
+        return getElementType();
+    }
 
     @Specialization
     char readChar1(char[] array, int index) {

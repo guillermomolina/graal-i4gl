@@ -14,18 +14,19 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.types.BaseType;
 
+@NodeField(name = "frameName", type = String.class)
 @NodeField(name = "slot", type = FrameSlot.class)
 @NodeField(name = "type", type = BaseType.class)
-@NodeField(name = "frameName", type = String.class)
 public abstract class ReadNonLocalVariableNode extends ExpressionNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;
 
+    protected abstract String getFrameName();
+
     protected abstract FrameSlot getSlot();
 
+    // TODO: Check correct type at runtime
     protected abstract BaseType getType();
-
-    protected abstract String getFrameName();
 
     public BaseType getReturnType() {
         return getType();

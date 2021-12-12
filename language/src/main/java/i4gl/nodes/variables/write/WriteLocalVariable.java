@@ -11,12 +11,17 @@ import com.oracle.truffle.api.instrumentation.Tag;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
+import i4gl.runtime.types.BaseType;
 
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
 @NodeField(name = "slot", type = FrameSlot.class)
+@NodeField(name = "type", type = BaseType.class)
 public abstract class WriteLocalVariable extends StatementNode {
 
     protected abstract FrameSlot getSlot();
+
+    // TODO: Check correct type at runtime
+    protected abstract BaseType getType();
 
     protected boolean isIntOrIllegalSlot(VirtualFrame frame) {
         final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(getSlot());

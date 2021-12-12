@@ -10,15 +10,15 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import i4gl.exceptions.IncorrectNumberOfReturnValuesException;
 import i4gl.exceptions.UnexpectedRuntimeException;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.read.ReadFromResultNode;
+import i4gl.nodes.variables.read.ReadResultsNode;
 import i4gl.runtime.values.Null;
 
 public class AssignResultsNode extends StatementNode {
 
-    private final Map<ReadFromResultNode, StatementNode> readAssignMap;
+    private final Map<ReadResultsNode, StatementNode> readAssignMap;
     private Object[] results;
 
-    public AssignResultsNode(final Map<ReadFromResultNode, StatementNode> readAssignMap) {
+    public AssignResultsNode(final Map<ReadResultsNode, StatementNode> readAssignMap) {
         this.readAssignMap = readAssignMap;
     }
 
@@ -31,7 +31,7 @@ public class AssignResultsNode extends StatementNode {
         Arrays.fill(results, Null.SINGLETON);
     }
 
-    public Map<ReadFromResultNode, StatementNode> getReadAssignMap() {
+    public Map<ReadResultsNode, StatementNode> getReadAssignMap() {
         return readAssignMap;
     }
 
@@ -40,7 +40,7 @@ public class AssignResultsNode extends StatementNode {
         CompilerAsserts.compilationConstant(readAssignMap.size());
 
         int index = 0;
-        for (Map.Entry<ReadFromResultNode, StatementNode> readAssign:readAssignMap.entrySet()) {
+        for (Map.Entry<ReadResultsNode, StatementNode> readAssign:readAssignMap.entrySet()) {
             readAssign.getKey().setResult(results[index++]);
             readAssign.getValue().executeVoid(frame);
         }

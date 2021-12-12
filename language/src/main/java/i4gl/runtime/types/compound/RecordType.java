@@ -17,6 +17,7 @@ import i4gl.runtime.values.Record;
  */
 public class RecordType extends BaseType {
 
+    public static final String STRING = "RECORD";
     public static final RecordType SQLCA = SqlcaRecordType();
 
     private final Map<String, BaseType> variables;
@@ -78,7 +79,7 @@ public class RecordType extends BaseType {
 
     @Override
     public String toString() {
-        return "RECORD";
+        return STRING;
     }
 
     public String toString2() {

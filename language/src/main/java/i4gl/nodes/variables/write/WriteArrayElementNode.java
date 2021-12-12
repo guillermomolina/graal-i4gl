@@ -1,6 +1,7 @@
 package i4gl.nodes.variables.write;
 
 import com.oracle.truffle.api.dsl.NodeChild;
+import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
@@ -10,6 +11,7 @@ import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
+import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Array;
 
 /**
@@ -22,7 +24,11 @@ import i4gl.runtime.values.Array;
 @NodeChild(value = "arrayNode", type = ExpressionNode.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
+@NodeField(name = "elementType", type = BaseType.class)
 public abstract class WriteArrayElementNode extends StatementNode {
+
+    // TODO: Check correct type at runtime
+    protected abstract BaseType getElementType();
 
     @Specialization
     void writeChar1(char[] array, int index, char value) {

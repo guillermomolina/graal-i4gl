@@ -16,13 +16,14 @@ import i4gl.runtime.values.Record;
 @NodeField(name = "fieldType", type = BaseType.class)
 public abstract class ReadRecordFieldNode extends ExpressionNode {
 
-    protected abstract BaseType getFieldType();
-
     protected abstract String getIdentifier();
+
+    // TODO: Check correct type at runtime
+    protected abstract BaseType getFieldType();
 
     @Override
     public BaseType getReturnType() {
-        return this.getFieldType();
+        return getFieldType();
     }
 
     @Specialization(guards = "record.isChar(getIdentifier())")
