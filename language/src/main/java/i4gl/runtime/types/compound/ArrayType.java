@@ -59,7 +59,7 @@ public class ArrayType extends BaseType {
         } else if (elementsType == SmallFloatType.SINGLETON) {
             return new float[size];
         } else if (elementsType == FloatType.SINGLETON) {
-            return new char[size];
+            return new double[size];
         } else {
             return new Array(this);
         }        

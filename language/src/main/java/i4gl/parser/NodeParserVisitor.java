@@ -75,10 +75,10 @@ import i4gl.nodes.statement.DisplayNodeGen;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.read.ReadArgumentNode;
 import i4gl.nodes.variables.read.ReadArrayElementNodeGen;
-import i4gl.nodes.variables.read.ReadFromRecordNodeGen;
 import i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadNonLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadRecordFieldNode;
+import i4gl.nodes.variables.read.ReadRecordFieldNodeGen;
 import i4gl.nodes.variables.read.ReadResultsNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.nodes.variables.write.AssignToRecordTextNodeGen;
@@ -1135,7 +1135,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
 
         returnType = accessedRecordType.getVariableType(identifier);
-        return ReadFromRecordNodeGen.create(recordExpression, identifier, returnType);
+        return ReadRecordFieldNodeGen.create(recordExpression, identifier, returnType);
     }
 
     private ExpressionNode createReadArrayElementNode(ExpressionNode arrayExpression,

@@ -3,6 +3,7 @@ package i4gl.runtime.context;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.TruffleObject;
+import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
@@ -14,7 +15,7 @@ final class FunctionType implements TruffleObject {
     public static final FunctionType SINGLETON = new FunctionType();
 
     FunctionType() {
-    }    
+    }
 
     @Override
     public String toString() {
@@ -37,7 +38,12 @@ final class FunctionType implements TruffleObject {
      */
     @ExportMessage
     boolean isMetaObject() {
-        return true;
+        return false;
+    }
+
+    @ExportMessage
+    boolean isMetaInstance(Object instance) throws UnsupportedMessageException {
+        return false;
     }
 
     /*

@@ -61,12 +61,12 @@ public abstract class WriteArrayElementNode extends StatementNode {
     }
 
     @Specialization(replaces = { "writeChar1", "writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeFloat" })
-    void writeObject(Object[] array, int index, Object value) {
+    void writeObject(final Object[] array, int index, final Object value) {
         array[index - 1] = value;
     }
 
     @Specialization
-    void assignArray(Array array, int index, Object value) {
+    void assignArray(final Array array, int index, final Object value) {
         try {
             array.setValueAt(index - 1, value);
         } catch (InvalidArrayIndexException e) {
@@ -75,7 +75,7 @@ public abstract class WriteArrayElementNode extends StatementNode {
     }
 
     @Specialization
-    void assignArray(Object array, int index, Object value) {
+    void assignArray(final Object array, int index, final Object value) {
         throw new ShouldNotReachHereException();
     }
 
