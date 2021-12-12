@@ -5,6 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.I4GLRuntimeException;
+import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
 
 /**
@@ -68,6 +69,6 @@ public class ReturnType extends BaseType {
 
     @Override
     public String getNullString() {
-        throw new I4GLRuntimeException("Should not be here");
+        throw new ShouldNotReachHereException();
     }
 }

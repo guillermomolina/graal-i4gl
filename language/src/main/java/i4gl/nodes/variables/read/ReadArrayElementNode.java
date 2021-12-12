@@ -24,9 +24,44 @@ import i4gl.runtime.values.Varchar;
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
 @NodeField(name = "returnType", type = BaseType.class)
-public abstract class ReadFromIndexedNode extends ExpressionNode {
+public abstract class ReadArrayElementNode extends ExpressionNode {
 
     public abstract BaseType getReturnType();
+
+    @Specialization
+    char readChar1(char[] array, int index) {
+        return array[index - 1];
+    }
+
+    @Specialization
+    short readSmallInt(short[] array, int index) {
+        return array[index - 1];
+    }
+
+    @Specialization
+    int readInt(int[] array, int index) {
+        return array[index - 1];
+    }
+
+    @Specialization
+    long readBigInt(long[] array, int index) {
+        return array[index - 1];
+    }
+
+    @Specialization
+    float readSmallFloat(float[] array, int index) {
+        return array[index - 1];
+    }
+
+    @Specialization
+    double readFloat(double[] array, int index) {
+        return array[index - 1];
+    }
+
+    @Specialization(replaces = { "readChar1", "readSmallInt", "readInt", "readBigInt", "readSmallFloat", "readFloat" })
+    Object readObject(Object[] array, int index) {
+        return array[index - 1];
+    }
 
     @Specialization
     String readText(String string, int index) {

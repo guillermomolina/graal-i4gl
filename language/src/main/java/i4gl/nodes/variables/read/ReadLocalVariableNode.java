@@ -15,56 +15,51 @@ import i4gl.runtime.types.BaseType;
 @NodeField(name = "slot", type = FrameSlot.class)
 @NodeField(name = "type", type = BaseType.class)
 public abstract class ReadLocalVariableNode extends ExpressionNode {
-
     protected abstract FrameSlot getSlot();
+
     protected abstract BaseType getType();
 
     public BaseType getReturnType() {
         return getType();
     }
 
-    @Specialization(guards = "returnsChar()")
-    protected char readChar(final VirtualFrame frame) {
-        return (char)FrameUtil.getByteSafe(frame, getSlot());
-    }
-
-    protected boolean returnsSmallIntAndIsShortSlot(VirtualFrame frame) {
+    protected boolean isShort(final VirtualFrame frame) {
         Object result = frame.getValue(getSlot());
-        return returnsSmallInt() && result instanceof Short;
+        return result instanceof Short;
     }
 
-    @Specialization(guards = "returnsSmallIntAndIsShortSlot(frame)")
+    @Specialization(guards = "isShort(frame)")
     protected short readSmallInt(final VirtualFrame frame) {
-        Short value = (Short)FrameUtil.getObjectSafe(frame, getSlot());
+        Short value = (Short) FrameUtil.getObjectSafe(frame, getSlot());
         return value.shortValue();
     }
 
-    @Specialization(guards = "returnsInt()")
+    @Specialization(guards = "frame.isInt(getSlot())")
     protected int readInt(final VirtualFrame frame) {
         return FrameUtil.getIntSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "returnsBigInt()")
+    @Specialization(guards = "frame.isLong(getSlot())")
     protected long readBigInt(final VirtualFrame frame) {
         return FrameUtil.getLongSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "returnsSmallFloat()")
+    @Specialization(guards = "frame.isFloat(getSlot())")
     protected float readSmallFloat(final VirtualFrame frame) {
         return FrameUtil.getFloatSafe(frame, getSlot());
     }
 
-    @Specialization(guards = "returnsFloat()")
+    @Specialization(guards = "frame.isDouble(getSlot())")
     protected double readFloat(final VirtualFrame frame) {
         return FrameUtil.getDoubleSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = { "readChar", "readInt", "readBigInt", "readSmallFloat", "readFloat" })
+    @Specialization(replaces = { "readInt", "readBigInt", "readSmallFloat", "readFloat" })
     protected Object readObject(final VirtualFrame frame) {
         Object result = frame.getValue(getSlot());
-        if(result == null) {
+        if (result == null) {
             CompilerDirectives.transferToInterpreter();
-            result = getReturnType().getDefaultValue();
+            result = getType().getDefaultValue();
             frame.setObject(getSlot(), result);
             return result;
         }
@@ -76,5 +71,4 @@ public abstract class ReadLocalVariableNode extends ExpressionNode {
     public boolean hasTag(final Class<? extends Tag> tag) {
         return tag == ReadVariableTag.class || super.hasTag(tag);
     }
-
 }

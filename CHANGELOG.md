@@ -14,6 +14,7 @@ Version 0.3.0
 - NumberFormatter uses long as integer value
 - Refactor is<Type> to returns<Type> one ExpressionNode
 - Add put<Type> to Record
+- Add exception ShouldNotReachHereException
 
 
 Version 0.2.0

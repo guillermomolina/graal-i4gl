@@ -4,8 +4,13 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.exceptions.I4GLRuntimeException;
+import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
 import i4gl.runtime.values.Array;
 
 /**
@@ -43,7 +48,21 @@ public class ArrayType extends BaseType {
     }
 
     public Object getDefaultValue() {
-        return new Array(this);
+        if (elementsType == Char1Type.SINGLETON) {
+            return new char[size];
+        } else if (elementsType == SmallIntType.SINGLETON) {
+            return new short[size];
+        } else if (elementsType == IntType.SINGLETON) {
+            return new int[size];
+        } else if (elementsType == BigIntType.SINGLETON) {
+            return new long[size];
+        } else if (elementsType == SmallFloatType.SINGLETON) {
+            return new float[size];
+        } else if (elementsType == FloatType.SINGLETON) {
+            return new char[size];
+        } else {
+            return new Array(this);
+        }        
     }
 
     public int getSize() {
@@ -66,6 +85,6 @@ public class ArrayType extends BaseType {
 
     @Override
     public String getNullString() {
-        throw new I4GLRuntimeException("Should not be here");
+        throw new ShouldNotReachHereException();
     }
 }

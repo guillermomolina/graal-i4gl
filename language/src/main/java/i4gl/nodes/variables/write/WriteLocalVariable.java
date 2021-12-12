@@ -18,17 +18,6 @@ public abstract class WriteLocalVariable extends StatementNode {
 
     protected abstract FrameSlot getSlot();
 
-    protected boolean isByteOrIllegalSlot(VirtualFrame frame) {
-        final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(getSlot());
-        return kind == FrameSlotKind.Byte || kind == FrameSlotKind.Illegal;
-    }
-
-    @Specialization(guards = "isByteOrIllegalSlot(frame)")
-    protected void writeByte(VirtualFrame frame, byte value) {
-        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Byte);
-        frame.setByte(getSlot(), value);
-    }
-
     protected boolean isIntOrIllegalSlot(VirtualFrame frame) {
         final FrameSlotKind kind = frame.getFrameDescriptor().getFrameSlotKind(getSlot());
         return kind == FrameSlotKind.Int || kind == FrameSlotKind.Illegal;
@@ -73,7 +62,7 @@ public abstract class WriteLocalVariable extends StatementNode {
         frame.setDouble(getSlot(), value);
     }
 
-    @Specialization(replaces = { "writeByte", "writeInt", "writeLong", "writeFloat", "writeDouble" })
+    @Specialization(replaces = { "writeInt", "writeLong", "writeFloat", "writeDouble" })
     protected void write(VirtualFrame frame, Object value) {
         frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
         frame.setObject(getSlot(), value);

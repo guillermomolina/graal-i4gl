@@ -7,7 +7,7 @@ import com.oracle.truffle.api.instrumentation.Tag;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 
 import i4gl.exceptions.I4GLRuntimeException;
-import i4gl.exceptions.NotImplementedException;
+import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.values.Array;
@@ -22,8 +22,43 @@ import i4gl.runtime.values.Array;
 @NodeChild(value = "arrayNode", type = ExpressionNode.class)
 @NodeChild(value = "indexNode", type = ExpressionNode.class)
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
-public abstract class AssignToIndexedNode extends StatementNode {
-    
+public abstract class WriteArrayElementNode extends StatementNode {
+
+    @Specialization
+    void writeChar1(char[] array, int index, char value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization
+    void writeSmallInt(short[] array, int index, short value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization
+    void writeInt(int[] array, int index, int value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization
+    void writeBigInt(long[] array, int index, long value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization
+    void writeSmallFloat(float[] array, int index, float value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization
+    void writeFloat(double[] array, int index, double value) {
+        array[index - 1] = value;
+    }
+
+    @Specialization(replaces = { "writeChar1", "writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeFloat" })
+    void writeObject(Object[] array, int index, Object value) {
+        array[index - 1] = value;
+    }
+
     @Specialization
     void assignArray(Array array, int index, Object value) {
         try {
@@ -32,10 +67,10 @@ public abstract class AssignToIndexedNode extends StatementNode {
             throw new I4GLRuntimeException(e.getMessage());
         }
     }
-    
+
     @Specialization
     void assignArray(Object array, int index, Object value) {
-        throw new NotImplementedException("Should not be here");
+        throw new ShouldNotReachHereException();
     }
 
     @Override

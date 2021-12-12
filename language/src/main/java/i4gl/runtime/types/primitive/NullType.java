@@ -4,7 +4,7 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.exceptions.I4GLRuntimeException;
+import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Null;
 
@@ -43,6 +43,6 @@ public class NullType extends BaseType {
 
     @Override
     public String getNullString() {
-        throw new I4GLRuntimeException("Should not be here");
+        throw new ShouldNotReachHereException();
     }
 }

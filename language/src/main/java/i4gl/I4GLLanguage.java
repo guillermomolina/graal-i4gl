@@ -55,6 +55,12 @@ public final class I4GLLanguage extends TruffleLanguage<Context> {
     private static final TruffleLogger LOGGER = TruffleLogger.getLogger(ID, I4GLLanguage.class);
     private static final Source BUILTIN_SOURCE = Source.newBuilder(I4GLLanguage.ID, "", "I4GL builtin").build();
 
+    // private static final StaticProperty ARRAY_PROPERTY = new DefaultStaticProperty("ARRAY");
+    // // This field should be static final, but until we move the static object model we cannot have a
+    // // SubstrateVM feature which will allow us to set the right field offsets at image build time.
+    // @CompilerDirectives.CompilationFinal //
+    // private static StaticShape<StaticObjectFactory> arrayShape;
+
     private final Assumption singleContext = Truffle.getRuntime().createAssumption("Single I4GL context.");
     private final Map<NodeFactory<? extends BuiltinNode>, RootCallTarget> builtinTargets = new ConcurrentHashMap<>();
     private final Map<String, RootCallTarget> undefinedFunctions = new ConcurrentHashMap<>();
@@ -219,4 +225,26 @@ public final class I4GLLanguage extends TruffleLanguage<Context> {
     public static TruffleLogger getLogger(Class<?> clazz) {
         return TruffleLogger.getLogger(ID, clazz);
     }
+
+
+    // public static StaticProperty getArrayProperty() {
+    //     return ARRAY_PROPERTY;
+    // }
+
+    // public StaticShape<StaticObjectFactory> getArrayShape() {
+    //     if (arrayShape == null) {
+    //         return initializeArrayShape();
+    //     }
+    //     return arrayShape;
+    // }
+
+    // @CompilerDirectives.TruffleBoundary
+    // private StaticShape<StaticObjectFactory> initializeArrayShape() {
+    //     synchronized (I4GLLanguage.class) {
+    //         if (arrayShape == null) {
+    //             arrayShape = StaticShape.newBuilder(this).property(ARRAY_PROPERTY, Object.class, true).build(StaticObject.class, StaticObjectFactory.class);
+    //         }
+    //         return arrayShape;
+    //     }
+    // }
 }

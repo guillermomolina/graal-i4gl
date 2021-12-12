@@ -22,26 +22,16 @@ public abstract class WriteNonLocalVariable extends StatementNode {
     @CompilationFinal
     protected VirtualFrame globalFrame;
 
-    protected abstract String getFrameName();    
+    protected abstract String getFrameName();
+
     protected abstract FrameSlot getSlot();
 
     protected VirtualFrame getFrame() {
-        if(globalFrame == null) {
+        if (globalFrame == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             globalFrame = Context.get(this).getModuleFrame(getFrameName());
         }
         return globalFrame;
-    }
-
-    protected boolean isByteOrIllegalSlot(VirtualFrame frame) {
-        final FrameSlotKind kind = getFrame().getFrameDescriptor().getFrameSlotKind(getSlot());
-        return kind == FrameSlotKind.Byte || kind == FrameSlotKind.Illegal;
-    }
-
-    @Specialization(guards = "isByteOrIllegalSlot(frame)")
-    protected void writeByte(VirtualFrame frame, byte value) {
-        getFrame().getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Byte);
-        getFrame().setByte(getSlot(), value);
     }
 
     protected boolean isIntOrIllegalSlot(VirtualFrame frame) {
@@ -88,7 +78,7 @@ public abstract class WriteNonLocalVariable extends StatementNode {
         getFrame().setDouble(getSlot(), value);
     }
 
-    @Specialization(replaces = { "writeByte", "writeInt", "writeLong", "writeFloat", "writeDouble" })
+    @Specialization(replaces = { "writeInt", "writeLong", "writeFloat", "writeDouble" })
     protected void write(VirtualFrame frame, Object value) {
         getFrame().getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
         getFrame().setObject(getSlot(), value);

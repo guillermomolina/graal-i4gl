@@ -6,6 +6,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
+import i4gl.exceptions.UnexpectedRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.values.Record;
@@ -19,7 +20,8 @@ public abstract class WriteRecordFieldNode extends StatementNode {
 
     @Specialization(guards = "record.isChar(getIdentifier())")
     protected void writeChar1(Record record, char value) {
-        record.putChar(getIdentifier(), value);
+        throw new UnexpectedRuntimeException();
+        // record.putChar(getIdentifier(), value);
     }
 
     @Specialization(guards = "record.isSmallInt(getIdentifier())")
@@ -47,7 +49,8 @@ public abstract class WriteRecordFieldNode extends StatementNode {
         record.putFloat(getIdentifier(), value);
     }
 
-    @Specialization(replaces = { "writeChar1", "writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeFloat" })
+    @Specialization(replaces = { "writeChar1", "writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat",
+            "writeFloat" })
     protected void write(Record record, Object value) {
         record.putObject(getIdentifier(), value);
     }

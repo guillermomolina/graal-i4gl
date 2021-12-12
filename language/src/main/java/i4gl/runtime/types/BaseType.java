@@ -18,6 +18,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.Context;
+import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.VarcharType;
@@ -112,6 +113,14 @@ public abstract class BaseType implements TruffleObject {
     @ExportMessage
     Class<? extends TruffleLanguage<Context>> getLanguage() {
         return I4GLLanguage.class;
+    }
+
+    public I4GLLanguage getI4GLLanguage() {
+        return I4GLLanguage.get(null);
+    }
+
+    public final boolean isArray() {
+        return this instanceof ArrayType;
     }
 
     /*

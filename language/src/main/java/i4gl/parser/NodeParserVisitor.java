@@ -74,16 +74,16 @@ import i4gl.nodes.statement.DisplayNode;
 import i4gl.nodes.statement.DisplayNodeGen;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.read.ReadArgumentNode;
-import i4gl.nodes.variables.read.ReadFromIndexedNodeGen;
-import i4gl.nodes.variables.read.ReadFromRecordNode;
+import i4gl.nodes.variables.read.ReadArrayElementNodeGen;
 import i4gl.nodes.variables.read.ReadFromRecordNodeGen;
 import i4gl.nodes.variables.read.ReadFromResultNode;
 import i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadNonLocalVariableNodeGen;
+import i4gl.nodes.variables.read.ReadRecordFieldNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
-import i4gl.nodes.variables.write.AssignToIndexedNodeGen;
 import i4gl.nodes.variables.write.AssignToRecordTextNodeGen;
 import i4gl.nodes.variables.write.AssignToTextNodeGen;
+import i4gl.nodes.variables.write.WriteArrayElementNodeGen;
 import i4gl.nodes.variables.write.WriteLocalVariableNodeGen;
 import i4gl.nodes.variables.write.WriteNonLocalVariableNodeGen;
 import i4gl.nodes.variables.write.WriteRecordFieldNodeGen;
@@ -605,7 +605,6 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                 final Map<ReadFromResultNode, StatementNode> pairs = new LinkedHashMap<>(variables.size());
                 for (Map.Entry<String, BaseType> variable : variables.entrySet()) {
                     final String identifier = variable.getKey();
-                    final BaseType fieldType = variable.getValue();
                     final ReadFromResultNode readResultNode = new ReadFromResultNode();
                     final StatementNode assignResultNode = WriteRecordFieldNodeGen.create(variableNode, readResultNode, identifier);
                     assignResultNode.addStatementTag();
@@ -1089,9 +1088,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             BaseType targetType = ((ArrayType) actualType).getElementsType();
             if (index == lastIndex) {
                 final ExpressionNode valueNode = createAssignmentValue(targetType, valueCtx);
-                result = AssignToIndexedNodeGen.create(readIndexedNode, indexNode, valueNode);
+                result = WriteArrayElementNodeGen.create(readIndexedNode, indexNode, valueNode);
             } else {
-                readIndexedNode = ReadFromIndexedNodeGen.create(readIndexedNode, indexNode, targetType);
+                readIndexedNode = ReadArrayElementNodeGen.create(readIndexedNode, indexNode, targetType);
             }
         }
         assert result != null;
@@ -1151,7 +1150,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private ReadFromRecordNode createReadFromRecordNode(final ExpressionNode recordExpression,
+    private ReadRecordFieldNode createReadFromRecordNode(final ExpressionNode recordExpression,
             final String identifier) throws LexicalException {
         BaseType descriptor = recordExpression.getReturnType();
         BaseType returnType = null;
@@ -1178,7 +1177,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             } else if (!(actualType instanceof TextType)) {
                 throw new TypeMismatchException(actualType.toString(), ARRAY_STRING);
             }
-            readIndexedNode = ReadFromIndexedNodeGen.create(readIndexedNode, indexNode, actualType);
+            readIndexedNode = ReadArrayElementNodeGen.create(readIndexedNode, indexNode, actualType);
         }
         return readIndexedNode;
     }
@@ -1444,7 +1443,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             if (indexList.size() > 3) {
                 throw new LexicalException(DIMENSIONS_STRING + indexList.size());
             }
-            ReadFromRecordNode readNode = createReadFromRecordNode(variableNode, identifier);
+            ReadRecordFieldNode readNode = createReadFromRecordNode(variableNode, identifier);
             node = createAssignmentToArray(readNode, indexNodes, valueCtx);
         } else if (fieldType instanceof TextType) {
             if (indexList.size() != 1) {
