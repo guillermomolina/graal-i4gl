@@ -16,6 +16,7 @@ Version 0.3.0
 - Add exception ShouldNotReachHereException
 - Reimplement Record and RecordType using StaticObjectModel
 - Reimplement TextType, CharType and Char1Type as ArrayType descendants
+- Fix CaseNode now compares with nodes
 
 
 Version 0.2.0

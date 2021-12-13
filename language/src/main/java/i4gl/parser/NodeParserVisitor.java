@@ -661,8 +661,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         int codeBlockIndex = 0;
         ExpressionNode caseExpression = (ExpressionNode) visit(ctx.expression(expressionIndex++));
         final int whenCount = ctx.WHEN().size();
-        List<ExpressionNode> indexNodes = new ArrayList<>(whenCount);
-        List<StatementNode> statementNodes = new ArrayList<>(whenCount);
+        List<ExpressionNode> indexNodes = new ArrayList<>();
+        List<StatementNode> statementNodes = new ArrayList<>();
         for (int whenIndex = 0; whenIndex < whenCount; whenIndex++) {
             indexNodes.add((ExpressionNode) visit(ctx.expression(expressionIndex++)));
             statementNodes.add((StatementNode) visit(ctx.codeBlock(codeBlockIndex++)));
@@ -682,8 +682,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitCaseStatement2(final I4GLParser.CaseStatement2Context ctx) {
         final int whenCount = ctx.WHEN().size();
-        List<ExpressionNode> conditionNodes = new ArrayList<>(whenCount);
-        List<StatementNode> statementNodes = new ArrayList<>(whenCount);
+        List<ExpressionNode> conditionNodes = new ArrayList<>();
+        List<StatementNode> statementNodes = new ArrayList<>();
         int codeBlockIndex = 0;
         for (I4GLParser.IfConditionContext conditionCtx : ctx.ifCondition()) {
             conditionNodes.add((ExpressionNode) visit(conditionCtx));
@@ -1325,7 +1325,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         try {
             final String identifier = variableCtx.identifier().getText();
             final BaseType targetType = lookupVariableType(identifier);
-            final FrameSlot targetSlot = lookupVariableSlot(identifier);
+            //final FrameSlot targetSlot = lookupVariableSlot(identifier);
             final List<I4GLParser.ExpressionContext> indexList = variableIndexCtx.expressionList().expression();
             List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
             for (I4GLParser.ExpressionContext indexCtx : indexList) {

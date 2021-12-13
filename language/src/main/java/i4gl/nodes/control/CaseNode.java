@@ -1,8 +1,11 @@
 package i4gl.nodes.control;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import i4gl.nodes.expression.ExpressionNode;
+import i4gl.nodes.logic.EqualsNode;
+import i4gl.nodes.logic.EqualsNodeGen;
 import i4gl.nodes.statement.StatementNode;
 
 /**
@@ -29,12 +32,14 @@ public class CaseNode extends StatementNode {
 
 	@Override
 	public void executeVoid(VirtualFrame frame) {
-		Object value = caseValue.executeGeneric(frame);
-
 		for (int i = 0; i < caseExpressions.length; i++) {
-			if (caseExpressions[i].executeGeneric(frame).equals(value)) {
-				caseStatements[i].executeVoid(frame);
-				return;
+			EqualsNode isEqualNode = EqualsNodeGen.create(caseValue, caseExpressions[i]);
+			try {
+				if (isEqualNode.executeInt(frame) != 0) {
+					caseStatements[i].executeVoid(frame);
+					return;
+				}
+			} catch(UnexpectedResultException e) {
 			}
 		}
 
