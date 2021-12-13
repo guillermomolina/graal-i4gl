@@ -14,7 +14,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.ArrayType;
+import i4gl.runtime.types.compound.ArrayType;
 
 @ExportLibrary(InteropLibrary.class)
 public class Array implements TruffleObject {

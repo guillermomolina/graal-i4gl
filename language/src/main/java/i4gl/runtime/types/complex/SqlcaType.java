@@ -2,10 +2,10 @@ package i4gl.runtime.types.complex;
 
 import java.util.LinkedHashSet;
 
+import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.RecordField;
 import i4gl.runtime.types.compound.RecordType;
-import i4gl.runtime.types.primitive.ArrayType;
 import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.Sqlca;
 

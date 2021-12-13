@@ -1,4 +1,4 @@
-package i4gl.runtime.types.primitive;
+package i4gl.runtime.types.compound;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -6,27 +6,13 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.values.Array;
 
-/**
- * Type descriptor for array values. Note that it can be only one dimensional
- * and so multidimensional arrays has to be
- * stored in a chain of these descriptors. It contains additional information
- * about the type of the inner values and
- * the universe of the indices stored inside an ordinal descriptor.
- */
 public class ArrayType extends BaseType {
 
     protected final int size;
     private final BaseType elementsType;
 
-    /**
-     * Default constructor.
-     * 
-     * @param dimension    universe of the indices
-     * @param elementsType type descriptor of the inner values
-     */
     public ArrayType(final int size, final BaseType elementsType) {
         this.size = size;
         this.elementsType = elementsType;
@@ -44,7 +30,7 @@ public class ArrayType extends BaseType {
     }
 
     public Object getDefaultValue() {
-        if (elementsType == Char1Type.SINGLETON) {
+/*        if (elementsType == Char1Type.SINGLETON) {
             return new char[size];
         }
         if (elementsType == SmallIntType.SINGLETON) {
@@ -61,7 +47,7 @@ public class ArrayType extends BaseType {
         }
         if (elementsType == FloatType.SINGLETON) {
             return new double[size];
-        }
+        }*/
         return new Array(this);
 
     }
@@ -88,28 +74,4 @@ public class ArrayType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
-/*
-    @Override
-    public Class<?> getPrimitiveClass() {
-        if (elementsType == Char1Type.SINGLETON) {
-            return char[].class;
-        }
-        if (elementsType == SmallIntType.SINGLETON) {
-            return short[].class;
-        }
-        if (elementsType == IntType.SINGLETON) {
-            return int[].class;
-        }
-        if (elementsType == BigIntType.SINGLETON) {
-            return long[].class;
-        }
-        if (elementsType == SmallFloatType.SINGLETON) {
-            return float[].class;
-        }
-        if (elementsType == FloatType.SINGLETON) {
-            return double[].class;
-        }
-        return Object[].class;
-
-    }*/
 }

@@ -3,13 +3,13 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) Case.4gl",
+            "name": "Debug (Launch) Null.4gl",
             "request": "launch",
             "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Case.4gl",
+                "${workspaceFolder}/language/tests/simple/Null.4gl",
             ],
             "vmArgs": [
                 "-ea",

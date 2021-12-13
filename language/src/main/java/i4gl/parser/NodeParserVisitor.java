@@ -93,10 +93,10 @@ import i4gl.parser.exceptions.UnknownIdentifierException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.complex.CursorType;
 import i4gl.runtime.types.complex.DatabaseType;
+import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.RecordField;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
-import i4gl.runtime.types.primitive.ArrayType;
 import i4gl.runtime.values.Database;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -213,9 +213,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         return doLookup(identifier, ParseScope::getIdentifierType);
     }
 
-    private FrameSlot lookupVariableSlot(final String identifier) throws LexicalException {
-        return doLookup(identifier, ParseScope::getLocalSlot);
-    }
+    // private FrameSlot lookupVariableSlot(final String identifier) throws LexicalException {
+    //     return doLookup(identifier, ParseScope::getLocalSlot);
+    // }
 
     private void trace(final String message) {
         if (LOGGER.isLoggable(Level.FINE)) {

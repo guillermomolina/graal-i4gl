@@ -3,7 +3,6 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
-import i4gl.runtime.types.primitive.ArrayType;
 import i4gl.runtime.values.Char;
 
 /**
