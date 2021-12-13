@@ -13,12 +13,12 @@ import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.read.ReadResultsNode;
 import i4gl.runtime.values.Null;
 
-public class AssignResultsNode extends StatementNode {
+public class WriteResultsNode extends StatementNode {
 
     private final Map<ReadResultsNode, StatementNode> readAssignMap;
     private Object[] results;
 
-    public AssignResultsNode(final Map<ReadResultsNode, StatementNode> readAssignMap) {
+    public WriteResultsNode(final Map<ReadResultsNode, StatementNode> readAssignMap) {
         this.readAssignMap = readAssignMap;
     }
 

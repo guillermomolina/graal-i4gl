@@ -9,18 +9,18 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.NotImplementedException;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.write.AssignResultsNode;
+import i4gl.nodes.variables.write.WriteResultsNode;
 import i4gl.runtime.values.Null;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 public class InitializeNode extends StatementNode {
     private TableColumnInfo[] tableColumnInfoArray;
-    private final AssignResultsNode assignResultsNode;
+    private final WriteResultsNode assignResultsNode;
     @Child
     private InteropLibrary interop;
 
     public InitializeNode(
-            final AssignResultsNode assignResultsNode, final TableColumnInfo[] tableColumnInfoArray) {
+            final WriteResultsNode assignResultsNode, final TableColumnInfo[] tableColumnInfoArray) {
         this.tableColumnInfoArray = tableColumnInfoArray;
         this.interop = InteropLibrary.getFactory().createDispatched(3);
         this.assignResultsNode = assignResultsNode;

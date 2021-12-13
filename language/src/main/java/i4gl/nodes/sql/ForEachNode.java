@@ -6,7 +6,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.write.AssignResultsNode;
+import i4gl.nodes.variables.write.WriteResultsNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Record;
@@ -16,13 +16,13 @@ import i4gl.runtime.values.Record;
  */
 @NodeInfo(shortName = "FOREACH", description = "The node implementing a foreach loop on a cursor")
 public class ForEachNode extends StatementNode {
-    private final AssignResultsNode assignResultsNode;
+    private final WriteResultsNode assignResultsNode;
     @Child
     private ExpressionNode cursorVariableNode;
     @Child
     private StatementNode body;
 
-    public ForEachNode(ExpressionNode cursorVariableNode, final AssignResultsNode assignResultsNode,
+    public ForEachNode(ExpressionNode cursorVariableNode, final WriteResultsNode assignResultsNode,
             final StatementNode body) {
         this.cursorVariableNode = cursorVariableNode;
         this.assignResultsNode = assignResultsNode;

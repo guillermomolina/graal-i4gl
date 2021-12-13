@@ -8,13 +8,13 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.write.AssignResultsNode;
+import i4gl.nodes.variables.write.WriteResultsNode;
 import i4gl.runtime.context.Function;
 
 @NodeInfo(shortName = "CALL")
 public final class CallNode extends StatementNode {
 
-    private final AssignResultsNode assignResultsNode;
+    private final WriteResultsNode assignResultsNode;
     @Child
     private InvokeNode invokeNode;
     @CompilationFinal
@@ -22,7 +22,7 @@ public final class CallNode extends StatementNode {
     @Child
     private InteropLibrary library;
 
-    public CallNode(final InvokeNode invokeNode, final AssignResultsNode assignResultsNode) {
+    public CallNode(final InvokeNode invokeNode, final WriteResultsNode assignResultsNode) {
         this.invokeNode = invokeNode;
         this.assignResultsNode = assignResultsNode;
         this.library = InteropLibrary.getFactory().createDispatched(3);

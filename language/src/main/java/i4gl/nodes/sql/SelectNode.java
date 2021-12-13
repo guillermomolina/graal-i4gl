@@ -6,7 +6,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 import i4gl.exceptions.DatabaseException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.write.AssignResultsNode;
+import i4gl.nodes.variables.write.WriteResultsNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Database;
@@ -14,14 +14,14 @@ import i4gl.runtime.values.Record;
 
 public class SelectNode extends StatementNode {
     private final String sql;
-    private final AssignResultsNode assignResultsNode;
+    private final WriteResultsNode assignResultsNode;
     @Child
     private ExpressionNode databaseVariableNode;
     @Child
     private InteropLibrary interop;
 
     public SelectNode(final ExpressionNode databaseVariableNode, final String sql,
-            final AssignResultsNode assignResultsNode) {
+            final WriteResultsNode assignResultsNode) {
         this.databaseVariableNode = databaseVariableNode;
         this.interop = InteropLibrary.getFactory().createDispatched(3);
         this.sql = sql;

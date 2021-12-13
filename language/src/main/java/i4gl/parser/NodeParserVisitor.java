@@ -80,11 +80,11 @@ import i4gl.nodes.variables.read.ReadNonLocalVariableNodeGen;
 import i4gl.nodes.variables.read.ReadRecordFieldNode;
 import i4gl.nodes.variables.read.ReadRecordFieldNodeGen;
 import i4gl.nodes.variables.read.ReadResultsNode;
-import i4gl.nodes.variables.write.AssignResultsNode;
 import i4gl.nodes.variables.write.WriteArrayElementNodeGen;
 import i4gl.nodes.variables.write.WriteLocalVariableNodeGen;
 import i4gl.nodes.variables.write.WriteNonLocalVariableNodeGen;
 import i4gl.nodes.variables.write.WriteRecordFieldNodeGen;
+import i4gl.nodes.variables.write.WriteResultsNode;
 import i4gl.parser.I4GLParser.NotIndexedVariableContext;
 import i4gl.parser.exceptions.LexicalException;
 import i4gl.parser.exceptions.ParseException;
@@ -467,9 +467,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitCallStatement(final I4GLParser.CallStatementContext ctx) {
         final InvokeNode invokeNode = (InvokeNode) visit(ctx.function());
-        AssignResultsNode assignResultsNode = null;
+        WriteResultsNode assignResultsNode = null;
         if (ctx.variableOrComponentList() != null) {
-            assignResultsNode = (AssignResultsNode) visit(ctx.variableOrComponentList());
+            assignResultsNode = (WriteResultsNode) visit(ctx.variableOrComponentList());
         }
         CallNode node = new CallNode(invokeNode, assignResultsNode);
         setSourceFromContext(node, ctx);
@@ -612,7 +612,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                 pairs.put(readResultNode, assignResultNode);
             }
         }
-        AssignResultsNode node = new AssignResultsNode(pairs);
+        WriteResultsNode node = new WriteResultsNode(pairs);
         setSourceFromContext(node, ctx);
         node.addStatementTag();
         return node;
@@ -625,9 +625,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
         try {
             final String cursorName = ctx.cursorName().identifier().getText();
-            AssignResultsNode assignResultsNode = null;
+            WriteResultsNode assignResultsNode = null;
             if (ctx.intoVariableList() != null) {
-                assignResultsNode = (AssignResultsNode) visit(ctx.intoVariableList());
+                assignResultsNode = (WriteResultsNode) visit(ctx.intoVariableList());
             }
             ExpressionNode cursorVariableNode = createReadVariableNode(cursorName);
             StatementNode loopBody = ctx.codeBlock() == null ? new BlockNode(null)
@@ -1495,13 +1495,13 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             Interval interval;
             String sql = "";
 
-            AssignResultsNode assignResultsNode = null;
+            WriteResultsNode assignResultsNode = null;
             if (ctx.intoVariableList() != null) {
                 end = ctx.intoVariableList().start.getStartIndex() - 1;
                 interval = new Interval(start, end);
                 sql = ctx.start.getInputStream().getText(interval);
                 start = ctx.intoVariableList().stop.getStopIndex() + 1;
-                assignResultsNode = (AssignResultsNode) visit(ctx.intoVariableList());
+                assignResultsNode = (WriteResultsNode) visit(ctx.intoVariableList());
             }
 
             end = ctx.stop.getStopIndex();
@@ -1549,7 +1549,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitInitializeStatement(final I4GLParser.InitializeStatementContext ctx) {
-        AssignResultsNode assignResultsNode = (AssignResultsNode) visit(ctx.variableOrComponentList());
+        WriteResultsNode assignResultsNode = (WriteResultsNode) visit(ctx.variableOrComponentList());
         StatementNode node = null;
         if (ctx.LIKE() != null) {
             var columDefaultInfoList = getTableColumnDefaults(ctx.columnsList());

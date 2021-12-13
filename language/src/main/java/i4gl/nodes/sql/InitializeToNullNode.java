@@ -4,14 +4,14 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.nodes.statement.StatementNode;
-import i4gl.nodes.variables.write.AssignResultsNode;
+import i4gl.nodes.variables.write.WriteResultsNode;
 
 public class InitializeToNullNode extends StatementNode {
-    private final AssignResultsNode assignResultsNode;
+    private final WriteResultsNode assignResultsNode;
     @Child
     private InteropLibrary interop;
 
-    public InitializeToNullNode(final AssignResultsNode assignResultsNode) {
+    public InitializeToNullNode(final WriteResultsNode assignResultsNode) {
         this.interop = InteropLibrary.getFactory().createDispatched(3);
         this.assignResultsNode = assignResultsNode;
     }
