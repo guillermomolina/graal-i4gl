@@ -3,17 +3,17 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
+import i4gl.runtime.types.primitive.ArrayType;
 import i4gl.runtime.values.Char;
 
 /**
  * Type descriptor representing the string type.
  */
-public class CharType extends TextType {
-    private final int size;
+public class CharType extends ArrayType {
 
     public CharType(int size) {
+        super(size, Char1Type.SINGLETON);
         assert (size > 1 || (getClass() == Char1Type.class));
-        this.size = size;
     }
 
     @Override

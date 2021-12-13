@@ -68,11 +68,11 @@ public abstract class ReadArrayElementNode extends ExpressionNode {
     Object readObject(Object[] array, int index) {
         return array[index - 1];
     }
-
+/*
     @Specialization
     String readText(String string, int index) {
         return Character.toString((string.charAt(index - 1)));
-    }
+    }*/
 
     @Specialization
     String readChar(Char charValue, int index) {

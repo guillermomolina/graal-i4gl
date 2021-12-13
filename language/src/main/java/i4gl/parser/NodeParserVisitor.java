@@ -81,8 +81,6 @@ import i4gl.nodes.variables.read.ReadRecordFieldNode;
 import i4gl.nodes.variables.read.ReadRecordFieldNodeGen;
 import i4gl.nodes.variables.read.ReadResultsNode;
 import i4gl.nodes.variables.write.AssignResultsNode;
-import i4gl.nodes.variables.write.AssignToRecordTextNodeGen;
-import i4gl.nodes.variables.write.AssignToTextNodeGen;
 import i4gl.nodes.variables.write.WriteArrayElementNodeGen;
 import i4gl.nodes.variables.write.WriteLocalVariableNodeGen;
 import i4gl.nodes.variables.write.WriteNonLocalVariableNodeGen;
@@ -1051,12 +1049,12 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         final int lastIndex = indexNodes.size() - 1;
         for (int index = 0; index < indexNodes.size(); index++) {
             assert readIndexedNode != null;
-            BaseType actualType = readIndexedNode.getReturnType();
-            if (!(actualType instanceof ArrayType)) {
-                throw new TypeMismatchException(actualType.toString(), ARRAY_STRING);
-            }
+            BaseType arrayType = readIndexedNode.getReturnType();
+            /*if (!(actualType instanceof ArrayType)) {
+                throw new TypeMismatchException(arrayType.toString(), ARRAY_STRING);
+            }*/
             ExpressionNode indexNode = indexNodes.get(index);
-            BaseType elementType = ((ArrayType) actualType).getElementsType();
+            BaseType elementType = ((ArrayType) arrayType).getElementsType();
             if (index == lastIndex) {
                 result = WriteArrayElementNodeGen.create(readIndexedNode, indexNode, valueNode, elementType);
             } else {
@@ -1333,23 +1331,20 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             for (I4GLParser.ExpressionContext indexCtx : indexList) {
                 indexNodes.add((ExpressionNode) visit(indexCtx));
             }
-            StatementNode node;
             if (targetType instanceof ArrayType) {
                 if (indexNodes.size() > 3) {
                     throw new ParseException(source, variableCtx, DIMENSIONS_STRING + indexList.size());
                 }
-                ExpressionNode variableNode = createReadVariableNode(identifier);
-                node = createAssignmentToArray(variableNode, indexNodes, valueNode);
             } else if (targetType instanceof TextType) {
                 if (indexNodes.size() != 1) {
                     throw new ParseException(source, variableCtx, DIMENSIONS_STRING + indexList.size());
                 }
-                node = AssignToTextNodeGen.create(indexNodes.get(0), valueNode, targetSlot, targetType);
             } else {
                 throw new ParseException(source, variableCtx,
                         "Variable " + identifier + " must be indexed (string or array) to use []");
             }
-            assert node != null;
+            ExpressionNode variableNode = createReadVariableNode(identifier);
+            StatementNode node = createAssignmentToArray(variableNode, indexNodes, valueNode);
             setSourceFromContext(node, variableCtx);
             node.addStatementTag();
             return node;
@@ -1395,7 +1390,6 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     private StatementNode createAssignIndexedRecordVariable(final String identifier,
             final ExpressionNode variableNode, final I4GLParser.VariableIndexContext variableIndexCtx,
             final ExpressionNode valueNode) throws LexicalException {
-        StatementNode node;
         RecordType recordType = (RecordType) variableNode.getReturnType();
         if (!recordType.containsIdentifier(identifier)) {
             throw new UnknownIdentifierException("The record does not contain this identifier");
@@ -1410,18 +1404,15 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             if (indexList.size() > 3) {
                 throw new LexicalException(DIMENSIONS_STRING + indexList.size());
             }
-            ReadRecordFieldNode readNode = createRecordFieldNode(variableNode, identifier);
-            node = createAssignmentToArray(readNode, indexNodes, valueNode);
         } else if (fieldType instanceof TextType) {
             if (indexList.size() != 1) {
                 throw new LexicalException(DIMENSIONS_STRING + indexList.size());
             }
-           node = AssignToRecordTextNodeGen.create(variableNode, indexNodes.get(0), valueNode, identifier, fieldType);
         } else {
             throw new LexicalException("Variable must be indexed (string or array) to assign to []");
         }
-        assert node != null;
-        return node;
+        ReadRecordFieldNode readNode = createRecordFieldNode(variableNode, identifier);
+        return createAssignmentToArray(readNode, indexNodes, valueNode);
     }
 
     private StatementNode createAssignmentToIndexedRecordVariable(final I4GLParser.RecordVariableContext variableCtx,

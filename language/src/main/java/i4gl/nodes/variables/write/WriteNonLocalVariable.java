@@ -15,6 +15,10 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.VarcharType;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Varchar;
 
 @NodeChild(value = "valueNode", type = ExpressionNode.class)
 @NodeField(name = "frameName", type = String.class)
@@ -83,7 +87,31 @@ public abstract class WriteNonLocalVariable extends StatementNode {
         getFrame().setDouble(getSlot(), value);
     }
 
-    @Specialization(replaces = { "writeInt", "writeLong", "writeFloat", "writeDouble" })
+    protected boolean isChar() {
+        return getType() instanceof CharType;
+    }
+
+    @Specialization(guards = "isChar()")
+    protected void writeChar(VirtualFrame frame, String string) {
+        getFrame().getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
+        Char value = (Char)getType().getDefaultValue();
+        value.assignString(string);
+        getFrame().setObject(getSlot(), value);
+    }
+
+    protected boolean isVarchar() {
+        return getType() instanceof VarcharType;
+    }
+
+    @Specialization(guards = "isVarchar()")
+    protected void writeVarchar(VirtualFrame frame, String string) {
+        getFrame().getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
+        Varchar value = (Varchar) getType().getDefaultValue();
+        value.assignString(string);
+        getFrame().setObject(getSlot(), value);
+    }
+
+    @Specialization(replaces = { "writeInt", "writeLong", "writeFloat", "writeDouble", "writeChar", "writeVarchar" })
     protected void write(VirtualFrame frame, Object value) {
         getFrame().getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
         getFrame().setObject(getSlot(), value);

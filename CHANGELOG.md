@@ -12,9 +12,10 @@ Version 0.3.0
 - Move all exceptions to package i4gl.exceptions
 - NumberFormatter throws exception on overflow
 - NumberFormatter uses long as integer value
-- Refactor is<Type> to returns<Type> one ExpressionNode
+- Rename is<Type> methods to returns<Type> one ExpressionNode
 - Add exception ShouldNotReachHereException
-- Reimplement RECORD using StaticObjectModel
+- Reimplement Record and RecordType using StaticObjectModel
+- Reimplement TextType, CharType and Char1Type as ArrayType descendants
 
 
 Version 0.2.0

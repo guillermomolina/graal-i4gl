@@ -34,6 +34,10 @@ public class Record implements TruffleObject {
         this.recordType = record.recordType;
     }
 
+    public RecordType getRecordType() {
+        return recordType;
+    }
+
     public boolean isSmallInt(String identifier) {
         return recordType.getFieldType(identifier) == SmallIntType.SINGLETON;
     }

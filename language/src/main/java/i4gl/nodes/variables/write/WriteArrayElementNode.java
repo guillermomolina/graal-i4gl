@@ -13,6 +13,8 @@ import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Array;
+import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Varchar;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -66,7 +68,27 @@ public abstract class WriteArrayElementNode extends StatementNode {
     }
 
     @Specialization
-    void assignArray(final Array array, int index, final Object value) {
+    void writeChar(final Char string, final int index, final char value) {
+        string.setCharAt(index - 1, value);
+    }
+  
+    @Specialization
+    void writeChar(final Char string, final int index, final String value) {
+        string.setCharAt(index - 1, value.charAt(0));
+    }
+   
+    @Specialization
+    void writeVarchar(final Varchar string, final int index, final char value) {
+        string.setCharAt(index - 1, value);
+    }
+   
+    @Specialization
+    void writeVarchar(final Varchar string, final int index, final String value) {
+        string.setCharAt(index - 1, value.charAt(0));
+    }
+
+    @Specialization
+    void writeArray(final Array array, int index, final Object value) {
         try {
             array.setValueAt(index - 1, value);
         } catch (InvalidArrayIndexException e) {
@@ -75,7 +97,7 @@ public abstract class WriteArrayElementNode extends StatementNode {
     }
 
     @Specialization
-    void assignArray(final Object array, int index, final Object value) {
+    void writeObject(final Object array, int index, final Object value) {
         throw new ShouldNotReachHereException();
     }
 

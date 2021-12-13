@@ -39,9 +39,9 @@ public class TextType extends BaseType {
 
     @Override
     public boolean convertibleTo(BaseType type) {
-        return type instanceof TextType || type == SmallIntType.SINGLETON || type == IntType.SINGLETON
-                || type == BigIntType.SINGLETON || type == SmallFloatType.SINGLETON
-                || type == FloatType.SINGLETON || type == DateType.SINGLETON;
+        return type == TextType.SINGLETON || type instanceof CharType || type instanceof VarcharType
+                || type == SmallIntType.SINGLETON || type == IntType.SINGLETON || type == BigIntType.SINGLETON
+                || type == SmallFloatType.SINGLETON || type == FloatType.SINGLETON || type == DateType.SINGLETON;
     }
 
     @Override

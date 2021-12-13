@@ -27,7 +27,7 @@ public class ArrayType extends BaseType {
      * @param dimension    universe of the indices
      * @param elementsType type descriptor of the inner values
      */
-    public ArrayType(int size, BaseType elementsType) {
+    public ArrayType(final int size, final BaseType elementsType) {
         this.size = size;
         this.elementsType = elementsType;
     }

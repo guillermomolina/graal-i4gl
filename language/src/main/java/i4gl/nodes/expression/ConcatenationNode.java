@@ -8,6 +8,11 @@ import i4gl.runtime.values.Null;
 @NodeInfo(shortName = ",")
 public abstract class ConcatenationNode extends BinaryExpressionNode {
     @Specialization
+    protected String concat(final String left, final short right) {
+        return left + String.format("%11d", right);
+    }
+
+    @Specialization
     protected String concat(final String left, final String right) {
         return left + right;
     }
