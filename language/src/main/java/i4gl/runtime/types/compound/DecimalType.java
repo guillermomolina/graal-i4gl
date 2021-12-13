@@ -1,4 +1,4 @@
-package i4gl.runtime.types.primitive;
+package i4gl.runtime.types.compound;
 
 import java.math.BigDecimal;
 
@@ -7,6 +7,8 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.SmallFloatType;
 import i4gl.runtime.values.Decimal;
 
 /**

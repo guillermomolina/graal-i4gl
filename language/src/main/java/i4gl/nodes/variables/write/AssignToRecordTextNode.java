@@ -36,7 +36,7 @@ public abstract class AssignToRecordTextNode extends StatementNode {
         Object targetObject = record.getObject(getIdentifier());
         if (!(targetObject instanceof Char)) {
             targetObject = getFieldType().getDefaultValue();
-            record.putObject(getIdentifier(), targetObject);
+            record.setObject(getIdentifier(), targetObject);
         }
 
         final Char target = (Char) targetObject;
@@ -52,7 +52,7 @@ public abstract class AssignToRecordTextNode extends StatementNode {
         Object targetObject = record.getObject(getIdentifier());
         if (!(targetObject instanceof Varchar)) {
             targetObject = getFieldType().getDefaultValue();
-            record.putObject(getIdentifier(), targetObject);
+            record.setObject(getIdentifier(), targetObject);
         }
 
         final Varchar target = (Varchar) targetObject;
@@ -71,7 +71,7 @@ public abstract class AssignToRecordTextNode extends StatementNode {
         }
         StringBuilder builder = new StringBuilder((String) targetObject);
         builder.setCharAt(index, value.charAt(0));
-        record.putObject(getIdentifier(), targetObject);
+        record.setObject(getIdentifier(), targetObject);
     }
 
     @Override

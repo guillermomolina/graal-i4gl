@@ -1,4 +1,4 @@
-package i4gl.runtime.types.primitive;
+package i4gl.runtime.types.compound;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -45,4 +45,5 @@ public class NullType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
+
 }

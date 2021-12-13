@@ -37,6 +37,11 @@ public class SmallIntType extends BaseType {
     }
 
     @Override
+    public Class<?> getPrimitiveClass() {
+        return short.class;
+    }
+
+    @Override
     public boolean convertibleTo(final BaseType type) {
         return type == IntType.SINGLETON || type == BigIntType.SINGLETON || type == SmallFloatType.SINGLETON
                 || type == FloatType.SINGLETON || type instanceof VarcharType || type instanceof CharType
@@ -52,4 +57,5 @@ public class SmallIntType extends BaseType {
     public String getNullString() {
         return " ".repeat(6);
     }
+
 }

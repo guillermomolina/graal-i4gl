@@ -95,9 +95,10 @@ import i4gl.parser.exceptions.UnknownIdentifierException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.complex.CursorType;
 import i4gl.runtime.types.complex.DatabaseType;
-import i4gl.runtime.types.compound.ArrayType;
+import i4gl.runtime.types.compound.RecordField;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.types.primitive.ArrayType;
 import i4gl.runtime.values.Database;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -286,9 +287,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
         globalsFrameDescriptor = pushNewScope(ParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
-        createSqlcaGlobalVariable(ctx);
         if (ctx.databaseDeclaration() != null) {
             visit(ctx.databaseDeclaration());
+            createSqlcaGlobalVariable(ctx);
         }
         if (ctx.globalsDeclaration() != null) {
             visit(ctx.globalsDeclaration());
@@ -579,11 +580,10 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             BaseType expressionType = variableNode.getReturnType();
             if (expressionType instanceof RecordType) {
                 RecordType recordType = (RecordType) expressionType;
-                Map<String, BaseType> variables = recordType.getVariables();
-                final Map<ReadResultsNode, StatementNode> pairs = new LinkedHashMap<>(variables.size());
-                for (Map.Entry<String, BaseType> variable : variables.entrySet()) {
-                    final String identifier = variable.getKey();
-                    final BaseType fieldType = variable.getValue();
+                final Map<ReadResultsNode, StatementNode> pairs = new LinkedHashMap<>();
+                for (RecordField field : recordType.getFields()) {
+                    final String identifier = field.getId();
+                    final BaseType fieldType = field.getType();
                     final ReadResultsNode readResultNode = new ReadResultsNode();
                     final StatementNode assignResultNode = WriteRecordFieldNodeGen.create(variableNode, readResultNode,
                             identifier, fieldType);
@@ -921,11 +921,10 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             }
             BaseType expressionType = variableNode.getReturnType();
             if (expressionType instanceof RecordType) {
-                RecordType accessedRecordType = (RecordType) expressionType;
-                Map<String, BaseType> variables = accessedRecordType.getVariables();
-                final List<ExpressionNode> readNodes = new ArrayList<>(variables.size());
-                for (Map.Entry<String, BaseType> variable : variables.entrySet()) {
-                    final String identifier = variable.getKey();
+                RecordType recordType = (RecordType) expressionType;
+                final List<ExpressionNode> readNodes = new ArrayList<>();
+                for (RecordField field : recordType.getFields()) {
+                    final String identifier = field.getId();
                     final ExpressionNode readNode = createRecordFieldNode(variableNode, identifier);
                     setSourceFromContext(readNode, ctx);
                     readNodes.add(readNode);
@@ -1123,18 +1122,18 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
 
     private ReadRecordFieldNode createRecordFieldNode(final ExpressionNode recordExpression,
             final String identifier) throws LexicalException {
-        BaseType descriptor = recordExpression.getReturnType();
+        BaseType fieldType = recordExpression.getReturnType();
         BaseType returnType = null;
 
-        if (!(descriptor instanceof RecordType)) {
-            throw new TypeMismatchException(descriptor.toString(), RECORD_STRING);
+        if (!(fieldType instanceof RecordType)) {
+            throw new TypeMismatchException(fieldType.toString(), RECORD_STRING);
         }
-        RecordType accessedRecordType = (RecordType) descriptor;
-        if (!accessedRecordType.containsIdentifier(identifier)) {
+        RecordType recordType = (RecordType) fieldType;
+        if (!recordType.containsIdentifier(identifier)) {
             throw new UnknownIdentifierException("The record does not contain this identifier");
         }
 
-        returnType = accessedRecordType.getVariableType(identifier);
+        returnType = recordType.getFieldType(identifier);
         return ReadRecordFieldNodeGen.create(recordExpression, identifier, returnType);
     }
 
@@ -1301,8 +1300,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             StatementNode node;
             if (expressionType instanceof RecordType) {
                 String identifier = variableCtx.identifier(index).getText();
-                RecordType accessedRecordType = (RecordType) expressionType;
-                BaseType fieldType = accessedRecordType.getVariableType(identifier);
+                RecordType recordType = (RecordType) expressionType;
+                BaseType fieldType = recordType.getFieldType(identifier);
                 node = WriteRecordFieldNodeGen.create(variableNode, valueNode, identifier, fieldType);
             } else {
                 throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
@@ -1406,7 +1405,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         for (I4GLParser.ExpressionContext indexCtx : indexList) {
             indexNodes.add((ExpressionNode) visit(indexCtx));
         }
-        BaseType fieldType = recordType.getVariableType(identifier);
+        BaseType fieldType = recordType.getFieldType(identifier);
         if (fieldType instanceof ArrayType) {
             if (indexList.size() > 3) {
                 throw new LexicalException(DIMENSIONS_STRING + indexList.size());

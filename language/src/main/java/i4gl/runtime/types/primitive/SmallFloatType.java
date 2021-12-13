@@ -37,6 +37,11 @@ public class SmallFloatType extends BaseType {
     }
 
     @Override
+    public Class<?> getPrimitiveClass() {
+        return float.class;
+    }
+
+    @Override
     public boolean convertibleTo(final BaseType type) {
         return type == FloatType.SINGLETON || type instanceof VarcharType || type instanceof CharType
                 || type == TextType.SINGLETON || type == DateType.SINGLETON;

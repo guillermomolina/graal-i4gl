@@ -1,47 +1,60 @@
 package i4gl.runtime.types.compound;
 
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.staticobject.StaticShape;
 
 import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.IntType;
 import i4gl.runtime.values.Record;
 
-/**
- * Type descriptor for I4GL's records types. It contains additional information about the variables it contains.
- */
 public class RecordType extends BaseType {
+    private final LinkedHashSet<RecordField> fields;
+    private final StaticShape<Factory> shape;
 
-    public static final String STRING = "RECORD";
-    public static final RecordType SQLCA = SqlcaRecordType();
-
-    private final Map<String, BaseType> variables;
-
-    private static RecordType SqlcaRecordType() {
-        Map<String, BaseType> variables = new LinkedHashMap<>();
-        variables.put("sqlcode", IntType.SINGLETON);
-        variables.put("sqlerrm", new CharType(72));
-        variables.put("sqlerrp", new CharType(8));
-        variables.put("sqlerrd", new ArrayType(6, IntType.SINGLETON));
-        variables.put("sqlawarn", new CharType(8));
-        return new RecordType(variables);
+    public RecordType(final LinkedHashSet<RecordField> fields) {
+        this(fields, Record.class);
     }
 
-    /**
-     * The default descriptor.
-     * @param innerScope lexical scope containing the identifiers of the variables this record contains
-     */
-    public RecordType(final Map<String, BaseType> variables) {
-        this.variables = variables;
+    public RecordType(final LinkedHashSet<RecordField> fields, Class<?> clazz) {
+        this.fields = fields;
+        StaticShape.Builder builder = StaticShape.newBuilder(getI4GLLanguage());
+        for (RecordField field : fields) {
+            field.addToBuilder(builder);
+        }
+        this.shape = builder.build(clazz, Factory.class);
     }
 
-    public Map<String, BaseType> getVariables() {
-        return variables;
+    public static RecordType valueOf(final Map<String, BaseType> variables) {
+        LinkedHashSet<RecordField> fields = new LinkedHashSet<>();
+        for (var variableEntry : variables.entrySet()) {
+            fields.add(new RecordField(variableEntry.getKey(), variableEntry.getValue()));
+        }
+        return new RecordType(fields);
+    }
+
+    public LinkedHashSet<RecordField> getFields() {
+        return fields;
+    }
+
+    public RecordField getField(String identifier) {
+        return fields.stream().filter(field -> identifier.equals(field.getId())).findFirst().orElse(null);
+    }
+
+    public boolean containsIdentifier(String identifier) {
+        return getField(identifier) != null;
+    }
+
+    public BaseType getFieldType(String identifier) {
+        RecordField field = getField(identifier);
+        if (field != null) {
+            return field.getType();
+        }
+        return null;
     }
 
     @Override
@@ -57,19 +70,15 @@ public class RecordType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        Map<String, Object> values = new LinkedHashMap<>();
-        for (Map.Entry<String, BaseType> entry : variables.entrySet()) {
-            values.put(entry.getKey(), entry.getValue().getDefaultValue());
+        var defaultValue = shape.getFactory().create(this);
+        for (RecordField field : fields) {
+            final BaseType fieldType = field.getType();
+            // Primitive kind already defaults correctly
+            if (fieldType.getSlotKind() == FrameSlotKind.Object) {
+                defaultValue.setObject(field.getId(), fieldType.getDefaultValue());
+            }
         }
-        return new Record(this, values);
-    }
-
-    public boolean containsIdentifier(String identifier) {
-        return variables.containsKey(identifier);
-    }
-
-    public BaseType getVariableType(String identifier) {
-        return variables.get(identifier);
+        return defaultValue;
     }
 
     @Override
@@ -79,20 +88,20 @@ public class RecordType extends BaseType {
 
     @Override
     public String toString() {
-        return STRING;
+        return "RECORD";
     }
 
     public String toString2() {
         StringBuilder builder = new StringBuilder();
         builder.append("RECORD ");
         int i = 0;
-        for (Map.Entry<String, BaseType> entry : variables.entrySet()) {
-            if (i++!=0) {
+        for (RecordField field : fields) {
+            if (i++ != 0) {
                 builder.append(", ");
             }
-            builder.append(entry.getKey());
+            builder.append(field.getId());
             builder.append(" ");
-            builder.append(entry.getValue().toString());
+            builder.append(field.getType().toString());
         }
         builder.append(" END RECORD");
         return builder.toString();
@@ -102,4 +111,9 @@ public class RecordType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
+
+    public interface Factory {
+        Record create(final RecordType recordType);
+    }
+
 }

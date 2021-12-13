@@ -6,7 +6,6 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
 
-import i4gl.exceptions.UnexpectedRuntimeException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
@@ -22,42 +21,42 @@ public abstract class WriteRecordFieldNode extends StatementNode {
 
     // TODO: Check correct type at runtime
     protected abstract BaseType getFieldType();
-
+/*
     @Specialization(guards = "record.isChar(getIdentifier())")
     protected void writeChar1(Record record, char value) {
         throw new UnexpectedRuntimeException();
-        // record.putChar(getIdentifier(), value);
+        // record.setChar(getIdentifier(), value);
     }
-
+*/
     @Specialization(guards = "record.isSmallInt(getIdentifier())")
     protected void writeSmallInt(Record record, short value) {
-        record.putSmallInt(getIdentifier(), value);
+        record.setSmallInt(getIdentifier(), value);
     }
 
     @Specialization(guards = "record.isInt(getIdentifier())")
     protected void writeInt(Record record, int value) {
-        record.putInt(getIdentifier(), value);
+        record.setInt(getIdentifier(), value);
     }
 
     @Specialization(guards = "record.isBigInt(getIdentifier())")
     protected void writeBigInt(Record record, long value) {
-        record.putBigInt(getIdentifier(), value);
+        record.setBigInt(getIdentifier(), value);
     }
 
     @Specialization(guards = "record.isSmallFloat(getIdentifier())")
     protected void writeSmallFloat(Record record, float value) {
-        record.putSmallFloat(getIdentifier(), value);
+        record.setSmallFloat(getIdentifier(), value);
     }
 
     @Specialization(guards = "record.isFloat(getIdentifier())")
     protected void writeFloat(Record record, double value) {
-        record.putFloat(getIdentifier(), value);
+        record.setFloat(getIdentifier(), value);
     }
 
-    @Specialization(replaces = { "writeChar1", "writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat",
+    @Specialization(replaces = { /*"writeChar1", */"writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat",
             "writeFloat" })
     protected void write(Record record, Object value) {
-        record.putObject(getIdentifier(), value);
+        record.setObject(getIdentifier(), value);
     }
 
     public abstract void executeWrite(Record record, Object value);

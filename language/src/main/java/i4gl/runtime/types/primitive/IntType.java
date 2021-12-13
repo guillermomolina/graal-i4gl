@@ -37,6 +37,11 @@ public class IntType extends BaseType {
     }
 
     @Override
+    public Class<?> getPrimitiveClass() {
+        return int.class;
+    }
+
+    @Override
     public boolean convertibleTo(BaseType type) {
         return type == SmallIntType.SINGLETON || type == BigIntType.SINGLETON || type == FloatType.SINGLETON
                 || type == SmallFloatType.SINGLETON || type instanceof VarcharType || type instanceof CharType

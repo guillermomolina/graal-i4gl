@@ -10,7 +10,7 @@ import com.oracle.truffle.api.utilities.TriState;
 
 import i4gl.I4GLLanguage;
 import i4gl.runtime.context.Context;
-import i4gl.runtime.types.primitive.NullType;
+import i4gl.runtime.types.compound.NullType;
 
 @ExportLibrary(InteropLibrary.class)
 public final class Null implements TruffleObject {

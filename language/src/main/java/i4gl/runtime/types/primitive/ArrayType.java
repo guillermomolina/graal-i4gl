@@ -1,4 +1,4 @@
-package i4gl.runtime.types.compound;
+package i4gl.runtime.types.primitive;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -6,11 +6,7 @@ import com.oracle.truffle.api.interop.InteropLibrary;
 
 import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.types.primitive.BigIntType;
-import i4gl.runtime.types.primitive.FloatType;
-import i4gl.runtime.types.primitive.IntType;
-import i4gl.runtime.types.primitive.SmallFloatType;
-import i4gl.runtime.types.primitive.SmallIntType;
+import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.values.Array;
 
 /**
@@ -50,19 +46,24 @@ public class ArrayType extends BaseType {
     public Object getDefaultValue() {
         if (elementsType == Char1Type.SINGLETON) {
             return new char[size];
-        } else if (elementsType == SmallIntType.SINGLETON) {
+        }
+        if (elementsType == SmallIntType.SINGLETON) {
             return new short[size];
-        } else if (elementsType == IntType.SINGLETON) {
+        }
+        if (elementsType == IntType.SINGLETON) {
             return new int[size];
-        } else if (elementsType == BigIntType.SINGLETON) {
+        }
+        if (elementsType == BigIntType.SINGLETON) {
             return new long[size];
-        } else if (elementsType == SmallFloatType.SINGLETON) {
+        }
+        if (elementsType == SmallFloatType.SINGLETON) {
             return new float[size];
-        } else if (elementsType == FloatType.SINGLETON) {
+        }
+        if (elementsType == FloatType.SINGLETON) {
             return new double[size];
-        } else {
-            return new Array(this);
-        }        
+        }
+        return new Array(this);
+
     }
 
     public int getSize() {
@@ -87,4 +88,28 @@ public class ArrayType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
+/*
+    @Override
+    public Class<?> getPrimitiveClass() {
+        if (elementsType == Char1Type.SINGLETON) {
+            return char[].class;
+        }
+        if (elementsType == SmallIntType.SINGLETON) {
+            return short[].class;
+        }
+        if (elementsType == IntType.SINGLETON) {
+            return int[].class;
+        }
+        if (elementsType == BigIntType.SINGLETON) {
+            return long[].class;
+        }
+        if (elementsType == SmallFloatType.SINGLETON) {
+            return float[].class;
+        }
+        if (elementsType == FloatType.SINGLETON) {
+            return double[].class;
+        }
+        return Object[].class;
+
+    }*/
 }

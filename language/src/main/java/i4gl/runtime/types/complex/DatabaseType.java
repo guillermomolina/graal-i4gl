@@ -49,4 +49,6 @@ public class DatabaseType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
+
+
 }

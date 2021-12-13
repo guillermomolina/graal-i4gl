@@ -38,6 +38,11 @@ public class FloatType extends BaseType {
     }
 
     @Override
+    public Class<?> getPrimitiveClass() {
+        return double.class;
+    }
+
+    @Override
     public boolean convertibleTo(final BaseType type) {
         return type == SmallFloatType.SINGLETON || type instanceof VarcharType || type instanceof CharType
                 || type == TextType.SINGLETON || type == DateType.SINGLETON;
@@ -52,4 +57,5 @@ public class FloatType extends BaseType {
     public String getNullString() {
         return " ".repeat(14);
     }
+
 }

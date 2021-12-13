@@ -13,6 +13,7 @@ import i4gl.parser.exceptions.LexicalException;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.complex.DatabaseType;
 import i4gl.runtime.types.complex.LabelType;
+import i4gl.runtime.types.complex.SqlcaType;
 import i4gl.runtime.types.compound.RecordType;
 
 /**
@@ -92,7 +93,7 @@ public class ParseScope {
     }
 
     public FrameSlot addSqlcaVariable() throws LexicalException {
-        return registerNewIdentifier(SQLCA_IDENTIFIER, RecordType.SQLCA);
+        return registerNewIdentifier(SQLCA_IDENTIFIER, SqlcaType.SINGLETON);
     }
 
     FrameSlot getLocalSlot(String identifier) {
@@ -146,7 +147,7 @@ public class ParseScope {
     }
 
     RecordType createRecordType() {
-        return new RecordType(variables);
+        return RecordType.valueOf(variables);
     }
 
     /**

@@ -35,5 +35,4 @@ public class VarcharType extends TextType {
     public String getNullString() {
         return "";
     }
-
 }

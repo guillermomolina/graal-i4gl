@@ -49,4 +49,5 @@ public class LabelType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
+
 }

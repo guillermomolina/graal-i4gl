@@ -13,7 +13,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.Context;
-import i4gl.runtime.types.primitive.DecimalType;
+import i4gl.runtime.types.compound.DecimalType;
 
 
 @ExportLibrary(InteropLibrary.class)

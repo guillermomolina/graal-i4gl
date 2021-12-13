@@ -71,4 +71,5 @@ public class ReturnType extends BaseType {
     public String getNullString() {
         throw new ShouldNotReachHereException();
     }
+
 }

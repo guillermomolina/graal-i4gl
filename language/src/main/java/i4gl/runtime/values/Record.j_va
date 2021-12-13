@@ -1,5 +1,7 @@
 package i4gl.runtime.values;
 
+import java.util.Map;
+
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -12,8 +14,9 @@ import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
 import i4gl.I4GLLanguage;
-import i4gl.exceptions.NotImplementedException;
+import i4gl.exceptions.InvalidCastException;
 import i4gl.runtime.context.Context;
+import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -25,105 +28,132 @@ import i4gl.runtime.types.primitive.SmallIntType;
 public class Record implements TruffleObject {
 
     private final RecordType recordType;
+    private final Map<String, Object> properties;
 
-    public Record(final RecordType recordType) {
+    public Record(final RecordType recordType, Map<String, Object> properties) {
         this.recordType = recordType;
+        this.properties = properties;
     }
 
-    public Record(Record record) {
-        this.recordType = record.recordType;
+    public Record(Record source) {
+        this.recordType = source.recordType;
+        this.properties = source.properties;
     }
 
-    public boolean isSmallInt(String identifier) {
-        return recordType.getFieldType(identifier) == SmallIntType.SINGLETON;
+    public boolean isChar(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Byte;
     }
 
-    public short getSmallInt(String identifier) {
-        return recordType.getField(identifier).getShort(this);
-    }
-    
-    public void setSmallInt(String identifier, short value) {
-        recordType.getField(identifier).setShort(this, value);
-    }
-
-    public boolean isInt(String identifier) {
-        return recordType.getFieldType(identifier) == IntType.SINGLETON;
+    public char getCharSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (char) value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, Char1Type.SINGLETON);
+        }
     }
 
-    public int getInt(String identifier) {
-        return recordType.getField(identifier).getInt(this);
-    }
-    
-    public void setInt(String identifier, int value) {
-        recordType.getField(identifier).setInt(this, value);
+    public void putChar(String name, char value) {
+        properties.put(name, value);
     }
 
-    public boolean isBigInt(String identifier) {
-        return recordType.getFieldType(identifier) == BigIntType.SINGLETON;
+    public boolean isSmallInt(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Short;
     }
 
-    public long getBigInt(String identifier) {
-        return recordType.getField(identifier).getLong(this);
-    }
-    
-    public void setBigInt(String identifier, long value) {
-        recordType.getField(identifier).setLong(this, value);
-    }
-
-    public boolean isSmallFloat(String identifier) {
-        return recordType.getFieldType(identifier) == SmallFloatType.SINGLETON;
+    public short getSmallIntSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (short) value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, SmallIntType.SINGLETON);
+        }
     }
 
-    public float getSmallFloat(String identifier) {
-        return recordType.getField(identifier).getFloat(this);
-    }
-    
-    public void setSmallFloat(String identifier, float value) {
-        recordType.getField(identifier).setFloat(this, value);
+    public void putSmallInt(String name, short value) {
+        properties.put(name, value);
     }
 
-    public boolean isFloat(String identifier) {
-        return recordType.getFieldType(identifier) == FloatType.SINGLETON;
+    public boolean isInt(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Integer;
     }
 
-    public double getFloat(String identifier) {
-        return recordType.getField(identifier).getDouble(this);
-    }
-    
-    public void setFloat(String identifier, double value) {
-        recordType.getField(identifier).setDouble(this, value);
-    }
-
-    public Object getObject(String identifier) {
-        return recordType.getField(identifier).getObject(this);
+    public int getIntSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (int) value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, IntType.SINGLETON);
+        }
     }
 
-    public void setObject(String identifier, Object value) {
-        recordType.getField(identifier).setObject(this, value);
+    public void putInt(String name, int value) {
+        properties.put(name, value);
     }
 
-    public void set(String identifier, short value) {        
-        setSmallInt(identifier, value);
+    public boolean isBigInt(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Long;
     }
 
-    public void set(String identifier, int value) {        
-        setInt(identifier, value);
+    public long getBigIntSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (long) value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, BigIntType.SINGLETON);
+        }
     }
 
-    public void set(String identifier, long value) {        
-        setBigInt(identifier, value);
+    public void putBigInt(String name, long value) {
+        properties.put(name, value);
     }
 
-    public void set(String identifier, float value) {        
-        setSmallFloat(identifier, value);
+    public boolean isSmallFloat(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Float;
     }
 
-    public void set(String identifier, double value) {        
-        setFloat(identifier, value);
+    public float getSmallFloatSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (float) value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, SmallFloatType.SINGLETON);
+        }
     }
-    
-    public void set(String identifier, Object value) {        
-        setObject(identifier, value);
+
+    public void putSmallFloat(String name, float value) {
+        properties.put(name, value);
+    }
+
+    public boolean isFloat(String name) {
+        final Object value = properties.get(name);
+        return value instanceof Double;
+    }
+
+    public double getFloatSafe(String name) throws InvalidCastException {
+        final Object value = properties.get(name);
+        try {
+            return (double) value;
+        } catch (ClassCastException ex) {
+            throw new InvalidCastException(value, FloatType.SINGLETON);
+        }
+    }
+
+    public void putFloat(String name, double value) {
+        properties.put(name, value);
+    }
+
+    public Object getObject(String name) {
+        return properties.get(name);
+    }
+
+    public void putObject(String name, Object value) {
+        properties.put(name, value);
     }
 
     public Object createDeepCopy() {
@@ -142,13 +172,13 @@ public class Record implements TruffleObject {
 
     @Override
     public String toString() {
-        throw new NotImplementedException();
+        return properties.toString();
     }
 
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-        throw new NotImplementedException();
+        return properties.toString();
     }
 
     public static boolean isInstance(TruffleObject obj) {
@@ -175,7 +205,7 @@ public class Record implements TruffleObject {
     @ExportMessage(name = "isMemberRemovable")
     @TruffleBoundary
     boolean hasMember(String name) {
-        return recordType.containsIdentifier(name);
+        return properties.containsKey(name);
     }
 
     @ExportMessage
@@ -186,7 +216,7 @@ public class Record implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object readMember(String name) throws UnknownIdentifierException {
-        Object value = recordType.getField(name).getObject(this);
+        Object value = properties.get(name);
         if (value == null) {
             throw UnknownIdentifierException.create(name);
         }
@@ -196,7 +226,7 @@ public class Record implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     void writeMember(String name, Object value) {
-        recordType.getField(name).setObject(this, value);
+        properties.put(name, value);
     }
 
     @TruffleBoundary
@@ -213,7 +243,7 @@ public class Record implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object getMembers(boolean includeInternal) {
-        return new RecordNamesObject(recordType.getFields().toArray());
+        return new RecordNamesObject(properties.keySet().toArray());
     }
 
     @ExportLibrary(InteropLibrary.class)
