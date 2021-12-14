@@ -17,6 +17,7 @@ Version 0.3.0
 - Reimplement Record and RecordType using StaticObjectModel
 - Reimplement TextType, CharType and Char1Type as ArrayType descendants
 - Fix CaseNode now compares with nodes
+- Reimplement ReadRecordFieldNode and WriteRecordFieldNode with InteropLibrary
 
 
 Version 0.2.0
