@@ -5,15 +5,20 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.ReadVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.UnknownIdentifierException;
+import com.oracle.truffle.api.interop.UnsupportedMessageException;
+import com.oracle.truffle.api.library.CachedLibrary;
 
+import i4gl.exceptions.UndefinedNameException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.Record;
 
 @NodeChild(value = "record", type = ExpressionNode.class)
 @NodeField(name = "identifier", type = String.class)
 @NodeField(name = "fieldType", type = BaseType.class)
 public abstract class ReadRecordFieldNode extends ExpressionNode {
+    static final int LIBRARY_LIMIT = 3;
 
     protected abstract String getIdentifier();
 
@@ -24,41 +29,15 @@ public abstract class ReadRecordFieldNode extends ExpressionNode {
     public BaseType getReturnType() {
         return getFieldType();
     }
-/*
-    @Specialization(guards = "record.isChar(getIdentifier())")
-    protected char readChar1(final Record record) {
-        throw new UnexpectedRuntimeException();
-        // return record.getChar(getIdentifier());
-    }
-*/
-    @Specialization(guards = "record.isSmallInt(getIdentifier())")
-    protected short readSmallInt(final Record record) {
-        return record.getSmallInt(getIdentifier());
-    }
 
-    @Specialization(guards = "record.isInt(getIdentifier())")
-    protected int readInt(final Record record) {
-        return record.getInt(getIdentifier());
-    }
-
-    @Specialization(guards = "record.isBigInt(getIdentifier())")
-    protected long readBigInt(final Record record) {
-        return record.getBigInt(getIdentifier());
-    }
-
-    @Specialization(guards = "record.isSmallFloat(getIdentifier())")
-    protected float readSmallFloat(final Record record) {
-        return record.getSmallFloat(getIdentifier());
-    }
-
-    @Specialization(guards = "record.isFloat(getIdentifier())")
-    protected double readFloat(final Record record) {
-        return record.getFloat(getIdentifier());
-    }
-
-    @Specialization(replaces = { /*"readChar1", */"readSmallInt", "readInt", "readBigInt", "readSmallFloat", "readFloat" })
-    protected Object readObject(final Record record) {
-        return record.getObject(getIdentifier());
+    @Specialization(guards = "objects.hasMembers(record)", limit = "LIBRARY_LIMIT")
+    protected Object readObject(Object record,
+            @CachedLibrary("record") InteropLibrary objects) {
+        try {
+            return objects.readMember(record, getIdentifier());
+        } catch (UnsupportedMessageException | UnknownIdentifierException e) {
+            throw UndefinedNameException.undefinedProperty(this, getIdentifier());
+        }
     }
 
     @Override

@@ -46,7 +46,6 @@ import i4gl.nodes.literals.IntLiteralNodeGen;
 import i4gl.nodes.literals.NullLiteralNode;
 import i4gl.nodes.literals.SmallFloatLiteralNode;
 import i4gl.nodes.literals.SmallFloatLiteralNodeGen;
-import i4gl.nodes.literals.SmallIntLiteralNodeGen;
 import i4gl.nodes.literals.TextLiteralNode;
 import i4gl.nodes.logic.AndNodeGen;
 import i4gl.nodes.logic.EqualsNodeGen;
@@ -213,8 +212,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         return doLookup(identifier, ParseScope::getIdentifierType);
     }
 
-    // private FrameSlot lookupVariableSlot(final String identifier) throws LexicalException {
-    //     return doLookup(identifier, ParseScope::getLocalSlot);
+    // private FrameSlot lookupVariableSlot(final String identifier) throws
+    // LexicalException {
+    // return doLookup(identifier, ParseScope::getLocalSlot);
     // }
 
     private void trace(final String message) {
@@ -285,9 +285,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
         globalsFrameDescriptor = pushNewScope(ParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
+        createSqlcaGlobalVariable(ctx);
         if (ctx.databaseDeclaration() != null) {
             visit(ctx.databaseDeclaration());
-            createSqlcaGlobalVariable(ctx);
         }
         if (ctx.globalsDeclaration() != null) {
             visit(ctx.globalsDeclaration());
@@ -1033,7 +1033,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
 
     @Override
     public Node visitSimpleAssignmentStatement(final I4GLParser.SimpleAssignmentStatementContext ctx) {
-        ExpressionNode valueNode = (ExpressionNode)visit(ctx.assignmentValue());
+        ExpressionNode valueNode = (ExpressionNode) visit(ctx.assignmentValue());
         return createAssignmentNode(ctx.variable(), valueNode);
     }
 
@@ -1050,9 +1050,11 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         for (int index = 0; index < indexNodes.size(); index++) {
             assert readIndexedNode != null;
             BaseType arrayType = readIndexedNode.getReturnType();
-            /*if (!(actualType instanceof ArrayType)) {
-                throw new TypeMismatchException(arrayType.toString(), ARRAY_STRING);
-            }*/
+            /*
+             * if (!(actualType instanceof ArrayType)) {
+             * throw new TypeMismatchException(arrayType.toString(), ARRAY_STRING);
+             * }
+             */
             ExpressionNode indexNode = indexNodes.get(index);
             BaseType elementType = ((ArrayType) arrayType).getElementsType();
             if (index == lastIndex) {
@@ -1234,15 +1236,15 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
     public Node visitInteger(final I4GLParser.IntegerContext ctx) {
         final String literal = ctx.getText();
         ExpressionNode node;
+        // try {
+        // node = SmallIntLiteralNodeGen.create(Short.parseShort(literal));
+        // } catch (final NumberFormatException e1) {
         try {
-            node = SmallIntLiteralNodeGen.create(Short.parseShort(literal));
-        } catch (final NumberFormatException e1) {
-            try {
-                node = IntLiteralNodeGen.create(Integer.parseInt(literal));
-            } catch (final NumberFormatException e2) {
-                node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
-            }
+            node = IntLiteralNodeGen.create(Integer.parseInt(literal));
+        } catch (final NumberFormatException e2) {
+            node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
         }
+        // }
         setSourceFromContext(node, ctx);
         node.addExpressionTag();
         return node;
@@ -1325,7 +1327,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         try {
             final String identifier = variableCtx.identifier().getText();
             final BaseType targetType = lookupVariableType(identifier);
-            //final FrameSlot targetSlot = lookupVariableSlot(identifier);
+            // final FrameSlot targetSlot = lookupVariableSlot(identifier);
             final List<I4GLParser.ExpressionContext> indexList = variableIndexCtx.expressionList().expression();
             List<ExpressionNode> indexNodes = new ArrayList<>(indexList.size());
             for (I4GLParser.ExpressionContext indexCtx : indexList) {

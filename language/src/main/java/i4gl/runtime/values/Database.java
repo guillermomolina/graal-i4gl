@@ -13,7 +13,6 @@ import i4gl.I4GLLanguage;
 import i4gl.exceptions.DatabaseConnectionException;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.database.SquirrelSession;
-import i4gl.runtime.database.SquirrelSqlcaHandler;
 import i4gl.runtime.types.complex.DatabaseType;
 
 @ExportLibrary(InteropLibrary.class)
@@ -30,12 +29,11 @@ public final class Database implements TruffleObject {
         return session;
     }
 
-    public void connect(Record sqlca) {
-        SquirrelSqlcaHandler sqlcaHandler = new SquirrelSqlcaHandler(sqlca);
+    public void connect(Sqlca sqlca) {
         if (session == null) {
             session = new SquirrelSession(alias);
-            sqlcaHandler.setSqlAWarn(1);
-            sqlcaHandler.setSqlAWarn(3);
+            sqlca.setSqlawarn(1);
+            sqlca.setSqlawarn(3);
         }
     }
 

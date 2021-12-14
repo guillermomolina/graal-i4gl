@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Database;
-import i4gl.runtime.values.Record;
+import i4gl.runtime.values.Sqlca;
 
 public class DatabaseNode extends StatementNode {
     private final FrameSlot slot;
@@ -23,7 +23,7 @@ public class DatabaseNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Record sqlca = Context.get(this).getSqlcaGlobalVariable();
+        Sqlca sqlca = Context.get(this).getSqlcaGlobalVariable();
         frame.setObject(slot, database);
         database.connect(sqlca);
     }

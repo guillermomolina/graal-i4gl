@@ -73,10 +73,7 @@ public class RecordType extends BaseType {
         var defaultValue = shape.getFactory().create(this);
         for (RecordField field : fields) {
             final BaseType fieldType = field.getType();
-            // Primitive kind already defaults correctly
-            if (fieldType.getSlotKind() == FrameSlotKind.Object) {
-                defaultValue.setObject(field.getId(), fieldType.getDefaultValue());
-            }
+            defaultValue.setObject(field.getId(), fieldType.getDefaultValue());
         }
         return defaultValue;
     }

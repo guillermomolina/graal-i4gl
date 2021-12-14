@@ -24,7 +24,7 @@ import i4gl.runtime.types.primitive.SmallIntType;
 @ExportLibrary(InteropLibrary.class)
 public class Record implements TruffleObject {
 
-    private final RecordType recordType;
+    protected final RecordType recordType;
 
     public Record(final RecordType recordType) {
         this.recordType = recordType;

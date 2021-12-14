@@ -10,7 +10,7 @@ import i4gl.nodes.variables.write.WriteResultsNode;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Database;
-import i4gl.runtime.values.Record;
+import i4gl.runtime.values.Sqlca;
 
 public class SelectNode extends StatementNode {
     private final String sql;
@@ -30,7 +30,7 @@ public class SelectNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Record sqlca = Context.get(this).getSqlcaGlobalVariable();
+        Sqlca sqlca = Context.get(this).getSqlcaGlobalVariable();
         final Database database = (Database) databaseVariableNode.executeGeneric(frame);
         final Cursor cursor = new Cursor(database, sql);
         cursor.start(sqlca);

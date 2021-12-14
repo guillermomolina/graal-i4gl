@@ -9,12 +9,11 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.oracle.truffle.api.interop.InvalidArrayIndexException;
-
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.values.Date;
 import i4gl.runtime.values.Decimal;
 import i4gl.runtime.values.Null;
+import i4gl.runtime.values.Sqlca;
 import i4gl.runtime.values.Varchar;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -247,11 +246,8 @@ public class SquirrelDataSet implements IDataSet {
       throw new DataSetException("Do not use this method");
    }
 
-   public synchronized boolean next(SquirrelSqlcaHandler sqlcaHandler) {
-      try {
-         sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
-      } catch (InvalidArrayIndexException e1) {
-      }
+   public synchronized boolean next(Sqlca sqlca) {
+      sqlca.setSqlerrd(5, _iCurrent + 1);
       if (_cancel) {
          _currentRow = null;
          return false;
@@ -260,17 +256,14 @@ public class SquirrelDataSet implements IDataSet {
          _currentRow = createRow(_dataSetDefinition.getColumnIndices(), _dataSetDefinition.getColumnDefinitions(),
                BlockMode.INDIFFERENT);
       } catch (SQLException e) {
-         sqlcaHandler.setSqlCode(e.getErrorCode());
-         sqlcaHandler.setSqlErrM(e.getMessage());
+         sqlca.setSqlcode(e.getErrorCode());
+         sqlca.setSqlerrm(e.getMessage());
       }
       if (_currentRow == null) {
          return false;
       }
       ++_iCurrent;
-      try {
-         sqlcaHandler.setSqlErrD(5, _iCurrent + 1);
-      } catch (InvalidArrayIndexException e) {
-      }
+      sqlca.setSqlerrd(5, _iCurrent + 1);
       return true;
    }
 

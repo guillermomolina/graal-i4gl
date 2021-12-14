@@ -24,6 +24,6 @@ public class RecordField extends StaticProperty {
     }
 
     public StaticShape.Builder addToBuilder(final StaticShape.Builder builder) {
-        return builder.property(this, type.getPrimitiveClass(), false);
+        return builder.property(this, Object.class /* type.getPrimitiveClass() */, false);
     }
 }

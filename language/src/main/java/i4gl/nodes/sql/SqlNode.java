@@ -9,7 +9,7 @@ import i4gl.runtime.context.Context;
 import i4gl.runtime.database.SquirrelExecuterHandler;
 import i4gl.runtime.database.SquirrelSession;
 import i4gl.runtime.values.Database;
-import i4gl.runtime.values.Record;
+import i4gl.runtime.values.Sqlca;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 
 public class SqlNode extends StatementNode {
@@ -27,7 +27,7 @@ public class SqlNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Record sqlca = Context.get(this).getSqlcaGlobalVariable();
+        Sqlca sqlca = Context.get(this).getSqlcaGlobalVariable();
         final Database database = (Database) databaseVariableNode.executeGeneric(frame);
         database.connect(sqlca);
         SquirrelSession session = database.getSession();

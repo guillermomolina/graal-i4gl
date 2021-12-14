@@ -26,6 +26,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
 
 import i4gl.I4GLLanguage;
+import i4gl.exceptions.I4GLRuntimeException;
 import i4gl.nodes.builtin.BuiltinNode;
 import i4gl.nodes.builtin.LengthBuiltinNodeFactory;
 import i4gl.nodes.builtin.fgl.FGLGetEnvBuiltinNodeFactory;
@@ -35,8 +36,11 @@ import i4gl.nodes.builtin.icgi.ICGIFreeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIGetValueBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIMimeTypeBuiltinNodeFactory;
 import i4gl.nodes.builtin.icgi.ICGIStartBuiltinNodeFactory;
+import i4gl.nodes.variables.read.ReadLocalVariableNode;
+import i4gl.nodes.variables.read.ReadLocalVariableNodeGen;
+import i4gl.runtime.types.complex.SqlcaType;
 import i4gl.runtime.values.Null;
-import i4gl.runtime.values.Record;
+import i4gl.runtime.values.Sqlca;
 
 public final class Context {
 
@@ -123,14 +127,19 @@ public final class Context {
     }
 
     @TruffleBoundary
-    public Record getSqlcaGlobalVariable() {
+    public Sqlca getSqlcaGlobalVariable() {
         VirtualFrame frame = frameRegistry.get("GLOBAL");
-        Record value = null;
+        Sqlca sqlca = null;
         if (frame != null) {
             FrameSlot slot = frame.getFrameDescriptor().findFrameSlot("sqlca");
-            value = (Record) frame.getValue(slot);
+            ReadLocalVariableNode readSqlcaNode = ReadLocalVariableNodeGen.create(slot, SqlcaType.SINGLETON);
+            Object value = readSqlcaNode.executeGeneric(frame);
+            if (value == null || value == Null.SINGLETON || !(value instanceof Sqlca)) {
+                throw new I4GLRuntimeException("sqlca not initialized");
+            }
+            sqlca = (Sqlca) value;
         }
-        return value;
+        return sqlca;
     }
 
     @TruffleBoundary
