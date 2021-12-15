@@ -23,6 +23,13 @@ public abstract class CastToCharNode extends UnaryNode {
     }
 
     @Specialization
+    Char castChar1(char argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignString(String.valueOf(argument));
+        return value;
+    }
+
+    @Specialization
     Char castText(String argument) {
         Char value = (Char) getCharType().getDefaultValue();
         value.assignString(argument);

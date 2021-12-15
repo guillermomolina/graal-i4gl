@@ -22,6 +22,7 @@ Version 0.3.0
 - Add explicit casting
 - Add SMALLINT to arithmetic nodes
 - Reimplement Array and ArrayType using StaticObjectModel
+- Reimplement ReadArrayElementNode and WriteArrayElementNode with InteropLibrary
 
 
 Version 0.2.0

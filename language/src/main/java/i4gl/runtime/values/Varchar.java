@@ -76,7 +76,7 @@ public class Varchar implements TruffleObject {
 
     private void checkArrayIndex(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(index);
         }
     }
 

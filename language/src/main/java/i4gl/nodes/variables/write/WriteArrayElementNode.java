@@ -5,16 +5,16 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.instrumentation.StandardTags.WriteVariableTag;
 import com.oracle.truffle.api.instrumentation.Tag;
+import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
+import com.oracle.truffle.api.interop.UnsupportedMessageException;
+import com.oracle.truffle.api.interop.UnsupportedTypeException;
+import com.oracle.truffle.api.library.CachedLibrary;
 
-import i4gl.exceptions.I4GLRuntimeException;
-import i4gl.exceptions.ShouldNotReachHereException;
+import i4gl.exceptions.IndexOutOfBoundsException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.runtime.types.BaseType;
-import i4gl.runtime.values.Array;
-import i4gl.runtime.values.Char;
-import i4gl.runtime.values.Varchar;
 
 /**
  * Node representing assignment to an array. Compared to
@@ -29,76 +29,20 @@ import i4gl.runtime.values.Varchar;
 @NodeField(name = "elementType", type = BaseType.class)
 public abstract class WriteArrayElementNode extends StatementNode {
 
+    static final int LIBRARY_LIMIT = 3;
+
     // TODO: Check correct type at runtime
     protected abstract BaseType getElementType();
 
-    @Specialization
-    void writeChar1(char[] array, int index, char value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void writeSmallInt(short[] array, int index, short value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void writeInt(int[] array, int index, int value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void writeBigInt(long[] array, int index, long value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void writeSmallFloat(float[] array, int index, float value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void writeFloat(double[] array, int index, double value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization(replaces = { "writeChar1", "writeSmallInt", "writeInt", "writeBigInt", "writeSmallFloat", "writeFloat" })
-    void writeObject(final Object[] array, int index, final Object value) {
-        array[index - 1] = value;
-    }
-
-    @Specialization
-    void writeChar(final Char string, final int index, final char value) {
-        string.setCharAt(index - 1, value);
-    }
-  
-    @Specialization
-    void writeChar(final Char string, final int index, final String value) {
-        string.setCharAt(index - 1, value.charAt(0));
-    }
-   
-    @Specialization
-    void writeVarchar(final Varchar string, final int index, final char value) {
-        string.setCharAt(index - 1, value);
-    }
-   
-    @Specialization
-    void writeVarchar(final Varchar string, final int index, final String value) {
-        string.setCharAt(index - 1, value.charAt(0));
-    }
-
-    @Specialization
-    void writeArray(final Array array, int index, final Object value) {
+    @Specialization(guards = "arrays.hasArrayElements(array)", limit = "LIBRARY_LIMIT")
+    protected void writeArray(Object array, Object index, Object value,
+            @CachedLibrary("array") InteropLibrary arrays,
+            @CachedLibrary("index") InteropLibrary numbers) {
         try {
-            array.setValueAt(index - 1, value);
-        } catch (InvalidArrayIndexException e) {
-            throw new I4GLRuntimeException(e.getMessage());
+            arrays.writeArrayElement(array, numbers.asLong(index) - 1, value);
+        } catch (UnsupportedMessageException | UnsupportedTypeException | InvalidArrayIndexException e) {
+            throw new IndexOutOfBoundsException(this);
         }
-    }
-
-    @Specialization
-    void writeObject(final Object array, int index, final Object value) {
-        throw new ShouldNotReachHereException();
     }
 
     @Override
