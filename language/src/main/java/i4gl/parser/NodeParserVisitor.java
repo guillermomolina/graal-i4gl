@@ -1413,16 +1413,17 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             }
             variableNode = createReadArrayElementNode(variableNode, indexNodes);
             int index = 0;
+            RecordType recordType = (RecordType)variableNode.getReturnType();
             while (index < variableCtx.identifier().size() - 1) {
-                BaseType fieldType = variableNode.getReturnType();
-                if (!(fieldType instanceof RecordType)) {
-                    throw new TypeMismatchException(fieldType.toString(), RECORD_STRING);
+                if (!(recordType instanceof RecordType)) {
+                    throw new TypeMismatchException(recordType.toString(), RECORD_STRING);
                 }
                 String identifier = variableCtx.identifier(index++).getText();
                 variableNode = createRecordFieldNode(variableNode, identifier);
+                recordType = (RecordType)variableNode.getReturnType();
             }
-            BaseType fieldType = variableNode.getReturnType();
             String identifier = variableCtx.identifier(index).getText();
+            BaseType fieldType = recordType.getFieldType(identifier);
             ExpressionNode castNode = createCastNode(valueNode, fieldType);
             StatementNode node = WriteRecordFieldNodeGen.create(variableNode, castNode, identifier, fieldType);
             node.addStatementTag();
