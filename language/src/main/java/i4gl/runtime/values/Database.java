@@ -32,8 +32,10 @@ public final class Database implements TruffleObject {
     public void connect(Sqlca sqlca) {
         if (session == null) {
             session = new SquirrelSession(alias);
-            sqlca.setSqlawarn(1);
-            sqlca.setSqlawarn(3);
+            if(sqlca != null) {
+                sqlca.setSqlawarn(1);
+                sqlca.setSqlawarn(3);    
+            }
         }
     }
 
