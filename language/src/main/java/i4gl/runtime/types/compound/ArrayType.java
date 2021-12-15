@@ -3,6 +3,7 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.staticobject.StaticShape;
 
 import i4gl.exceptions.ShouldNotReachHereException;
 import i4gl.runtime.types.BaseType;
@@ -11,11 +12,39 @@ import i4gl.runtime.values.Array;
 public class ArrayType extends BaseType {
 
     protected final int size;
-    private final BaseType elementsType;
+    private final ArrayElement element;
+    private final StaticShape<Factory> shape;
 
     public ArrayType(final int size, final BaseType elementsType) {
         this.size = size;
-        this.elementsType = elementsType;
+        this.element = new ArrayElement(elementsType);
+        StaticShape.Builder builder = StaticShape.newBuilder(getI4GLLanguage());
+        element.addToBuilder(builder);
+        this.shape = builder.build(Array.class, Factory.class);
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public ArrayElement getElement() {
+        return element;
+    }
+
+    public BaseType getElementsType() {
+        return element.getType();
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        Array defaultValue = shape.getFactory().create(this);
+        final BaseType elementType = element.getType();
+        Object[] array = new Object[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = elementType.getDefaultValue();
+        }
+        defaultValue.setArray(array);
+        return defaultValue;
     }
 
     @Override
@@ -29,37 +58,6 @@ public class ArrayType extends BaseType {
         return FrameSlotKind.Object;
     }
 
-    public Object getDefaultValue() {
-/*        if (elementsType == Char1Type.SINGLETON) {
-            return new char[size];
-        }
-        if (elementsType == SmallIntType.SINGLETON) {
-            return new short[size];
-        }
-        if (elementsType == IntType.SINGLETON) {
-            return new int[size];
-        }
-        if (elementsType == BigIntType.SINGLETON) {
-            return new long[size];
-        }
-        if (elementsType == SmallFloatType.SINGLETON) {
-            return new float[size];
-        }
-        if (elementsType == FloatType.SINGLETON) {
-            return new double[size];
-        }*/
-        return new Array(this);
-
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public BaseType getElementsType() {
-        return this.elementsType;
-    }
-
     @Override
     public boolean convertibleTo(BaseType type) {
         return false;
@@ -67,11 +65,15 @@ public class ArrayType extends BaseType {
 
     @Override
     public String toString() {
-        return "ARRAY[" + size + "] OF " + elementsType;
+        return "ARRAY[" + size + "] OF " + element.getType();
     }
 
     @Override
     public String getNullString() {
         throw new ShouldNotReachHereException();
+    }
+
+    public interface Factory {
+        Array create(final ArrayType arrayType);
     }
 }

@@ -70,7 +70,7 @@ public class RecordType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        var defaultValue = shape.getFactory().create(this);
+        Record defaultValue = shape.getFactory().create(this);
         for (RecordField field : fields) {
             final BaseType fieldType = field.getType();
             defaultValue.setObject(field.getId(), fieldType.getDefaultValue());

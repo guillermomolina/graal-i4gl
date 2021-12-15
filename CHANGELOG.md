@@ -21,6 +21,7 @@ Version 0.3.0
 - Fix sqlca not available at parse time
 - Add explicit casting
 - Add SMALLINT to arithmetic nodes
+- Reimplement Array and ArrayType using StaticObjectModel
 
 
 Version 0.2.0

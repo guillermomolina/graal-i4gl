@@ -20,33 +20,21 @@ import i4gl.runtime.types.compound.ArrayType;
 public class Array implements TruffleObject {
 
     private final ArrayType arrayType;
-    private final Object[] array;
 
     public Array(final ArrayType arrayType) {
         this.arrayType = arrayType;
-        this.array = new Object[arrayType.getSize()];
-        for (int i = 0; i < array.length; ++i) {
-            array[i] = getElementType().getDefaultValue();
-        }
-    }
-
-    public Array(final Array array) {
-        this.arrayType = array.arrayType;
-        this.array = Arrays.copyOf(array.array, array.getSize());
-    }
-
-    protected Array(ArrayType arrayType, Object[] array) {
-        this.arrayType = arrayType;
-        this.array = array;
     }
 
     public BaseType getElementType() {
         return arrayType.getElementsType();
     }
 
+    public Object[] getArray() {
+        return (Object[]) arrayType.getElement().getObject(this);
+    }
 
-    public Object createDeepCopy() {
-        return new Array(this);
+    public void setArray(Object[] value) {
+        arrayType.getElement().setObject(this, value);
     }
 
     @ExportMessage
@@ -66,7 +54,7 @@ public class Array implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return new ArrayType(getSize(), getElementType());
+        return arrayType;
     }
 
     @ExportMessage
@@ -82,7 +70,7 @@ public class Array implements TruffleObject {
     @ExportMessage(name = "isArrayElementReadable")
     @ExportMessage(name = "isArrayElementModifiable")
     boolean inBounds(long index) {
-        return 0 <= index && index < array.length;
+        return 0 <= index && index < getSize();
     }
 
     @ExportMessage
@@ -91,17 +79,13 @@ public class Array implements TruffleObject {
     }
 
     public int getSize() {
-        return array.length;
-    }
-
-    public void fill(Object value) {
-        Arrays.fill(array, value);
+        return arrayType.getSize();
     }
 
     @ExportMessage
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
-        return Arrays.toString(array);
+        return Arrays.toString(getArray());
     }
 
     @ExportMessage
@@ -118,7 +102,7 @@ public class Array implements TruffleObject {
         if (!inBounds(index)) {
             throw InvalidArrayIndexException.create(index);
         }
-        return array[(int) index];
+        return getArray()[(int) index];
     }
 
     @ExportMessage
@@ -135,7 +119,7 @@ public class Array implements TruffleObject {
         if (!inBounds(index)) {
             throw InvalidArrayIndexException.create(index);
         }
-        array[index] = value;
+        getArray()[index] = value;
     }
 
 }

@@ -5,18 +5,16 @@ import com.oracle.truffle.api.staticobject.StaticShape;
 
 import i4gl.runtime.types.BaseType;
 
-public class RecordField extends StaticProperty {
-    final String identifier;
+public class ArrayElement extends StaticProperty {
     final BaseType type;
 
-    public RecordField(String identifier, BaseType type) {
-        this.identifier = identifier;
+    public ArrayElement(BaseType type) {
         this.type = type;
     }
 
     @Override
     public String getId() {
-        return identifier;
+        return "element";
     }
 
     public BaseType getType() {
