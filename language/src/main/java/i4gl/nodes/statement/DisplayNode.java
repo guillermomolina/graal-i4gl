@@ -14,10 +14,10 @@ public abstract class DisplayNode extends StatementNode {
 
     protected abstract ExpressionNode getArgumentNode();
 
-/*    @Specialization
+   @Specialization
     protected void display(final short argument) {
         Context.get(this).getOutput().println(String.format("%11d", argument));
-    }*/
+    }
 
     @Specialization
     public void display(final String argument) {
