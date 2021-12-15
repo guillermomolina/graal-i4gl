@@ -15,6 +15,11 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 public abstract class ModuloNode extends BinaryExpressionNode {
 
     @Specialization
+    protected short mod(short left, short right) {
+        return (short) (left % right);
+    }
+
+    @Specialization
     protected int mod(int left, int right) {
         return left % right;
     }

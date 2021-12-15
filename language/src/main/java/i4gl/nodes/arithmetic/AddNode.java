@@ -17,6 +17,19 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 @NodeInfo(shortName = "+")
 public abstract class AddNode extends BinaryExpressionNode {
 
+    public static short addExact(short x, short y) {
+        short r = (short) (x + y);
+        if (((x ^ r) & (y ^ r)) < 0) {
+            throw new ArithmeticException("short overflow");
+        }
+        return r;
+    }
+
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected short add(short left, short right) {
+        return addExact(left, right);
+    }
+
     @Specialization(rewriteOn = ArithmeticException.class)
     protected int add(int left, int right) {
         return Math.addExact(left, right);

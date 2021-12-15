@@ -18,6 +18,19 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 @NodeInfo(shortName = "-")
 public abstract class SubtractNode extends BinaryExpressionNode {
 
+    public static short subtractExact(short x, short y) {
+        short r = (short) (x - y);
+        if (((x ^ r) & (y ^ r)) < 0) {
+            throw new ArithmeticException("short overflow");
+        }
+        return r;
+    }
+
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected short add(short left, short right) {
+        return subtractExact(left, right);
+    }
+
     @Specialization(rewriteOn = ArithmeticException.class)
     protected int sub(int left, int right) {
         return Math.subtractExact(left, right);

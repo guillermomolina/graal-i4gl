@@ -16,6 +16,11 @@ import i4gl.nodes.expression.UnaryNode;
 public abstract class NegationNode extends UnaryNode {
 
     @Specialization
+    short neg(short argument) {
+        return (short) -argument;
+    }
+
+    @Specialization
     int neg(int argument) {
         return -argument;
     }

@@ -18,6 +18,19 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 @NodeInfo(shortName = "*")
 public abstract class MultiplyNode extends BinaryExpressionNode {
 
+    public static short multiplyExact(short x, short y) {
+        short r = (short) (x * y);
+        if (((x ^ r) & (y ^ r)) < 0) {
+            throw new ArithmeticException("short overflow");
+        }
+        return r;
+    }
+
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected short add(short left, short right) {
+        return multiplyExact(left, right);
+    }
+
     @Specialization(rewriteOn = ArithmeticException.class)
     int mul(int left, int right) {
         return Math.multiplyExact(left, right);

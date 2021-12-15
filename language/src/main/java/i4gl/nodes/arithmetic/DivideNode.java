@@ -18,6 +18,18 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 public abstract class DivideNode extends BinaryExpressionNode {
 
     @Specialization(rewriteOn = ArithmeticException.class)
+    protected short div(short left, short right) {
+        short result = (short) (left / right);
+        /*
+         * The division overflows if left is Short.MIN_VALUE and right is -1.
+         */
+        if ((left & right & result) < 0) {
+            throw new ArithmeticException("short overflow");
+        }
+        return result;
+    }
+
+    @Specialization(rewriteOn = ArithmeticException.class)
     protected int div(int left, int right) {
         int result = left / right;
         /*

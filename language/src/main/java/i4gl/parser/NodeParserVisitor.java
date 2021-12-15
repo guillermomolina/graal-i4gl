@@ -34,6 +34,14 @@ import i4gl.nodes.arithmetic.SubtractNodeGen;
 import i4gl.nodes.call.CallNode;
 import i4gl.nodes.call.InvokeNode;
 import i4gl.nodes.call.ReturnNode;
+import i4gl.nodes.casting.CastToBigIntNodeGen;
+import i4gl.nodes.casting.CastToCharNodeGen;
+import i4gl.nodes.casting.CastToDateNodeGen;
+import i4gl.nodes.casting.CastToFloatNodeGen;
+import i4gl.nodes.casting.CastToIntNodeGen;
+import i4gl.nodes.casting.CastToSmallFloatNodeGen;
+import i4gl.nodes.casting.CastToSmallIntNodeGen;
+import i4gl.nodes.casting.CastToVarcharNodeGen;
 import i4gl.nodes.control.CaseNode;
 import i4gl.nodes.control.DebuggerNode;
 import i4gl.nodes.control.ForNode;
@@ -93,9 +101,17 @@ import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.complex.CursorType;
 import i4gl.runtime.types.complex.DatabaseType;
 import i4gl.runtime.types.compound.ArrayType;
+import i4gl.runtime.types.compound.CharType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.RecordField;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.types.compound.VarcharType;
+import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.types.primitive.FloatType;
+import i4gl.runtime.types.primitive.IntType;
+import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.types.primitive.SmallIntType;
 import i4gl.runtime.values.Database;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -272,16 +288,6 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         return new Interval(a, b);
     }
 
-    private boolean checkTypesAreCompatible(BaseType targetType, BaseType sourceType) {
-        // sourceType may be unknown at parse time, so it isn't checked
-        if (sourceType != null) {
-            if ((targetType != sourceType) && !sourceType.convertibleTo(targetType)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public Node visitModule(final I4GLParser.ModuleContext ctx) {
         globalsFrameDescriptor = pushNewScope(ParseScope.GLOBAL_TYPE, null).getFrameDescriptor();
@@ -437,14 +443,11 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         final BaseType targetType = scope.getIdentifierType(identifier);
         final boolean isLocal = scope == currentParseScope;
 
-        if (!checkTypesAreCompatible(targetType, valueNode.getReturnType())) {
-            throw new TypeMismatchException(targetType.toString(), valueNode.getReturnType().toString());
-        }
-
+        final ExpressionNode castNode = createCastNode(valueNode, targetType);
         if (isLocal) {
-            return WriteLocalVariableNodeGen.create(valueNode, variableSlot, targetType);
+            return WriteLocalVariableNodeGen.create(castNode, variableSlot, targetType);
         }
-        return WriteNonLocalVariableNodeGen.create(valueNode, scope.getName(), variableSlot, targetType);
+        return WriteNonLocalVariableNodeGen.create(castNode, scope.getName(), variableSlot, targetType);
     }
 
     @Override
@@ -583,7 +586,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                     final String identifier = field.getId();
                     final BaseType fieldType = field.getType();
                     final ReadResultsNode readResultNode = new ReadResultsNode();
-                    final StatementNode assignResultNode = WriteRecordFieldNodeGen.create(variableNode, readResultNode,
+                    final ExpressionNode castNode = createCastNode(readResultNode, fieldType);
+                    final StatementNode assignResultNode = WriteRecordFieldNodeGen.create(variableNode, castNode,
                             identifier, fieldType);
                     assignResultNode.addStatementTag();
                     setSourceFromContext(assignResultNode, ctx);
@@ -1058,7 +1062,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             ExpressionNode indexNode = indexNodes.get(index);
             BaseType elementType = ((ArrayType) arrayType).getElementsType();
             if (index == lastIndex) {
-                result = WriteArrayElementNodeGen.create(readIndexedNode, indexNode, valueNode, elementType);
+                final ExpressionNode castNode = createCastNode(valueNode, elementType);
+                result = WriteArrayElementNodeGen.create(readIndexedNode, indexNode, castNode, elementType);
             } else {
                 readIndexedNode = ReadArrayElementNodeGen.create(readIndexedNode, indexNode, elementType);
             }
@@ -1297,21 +1302,59 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                 variableNode = createRecordFieldNode(variableNode, identifier);
             }
             BaseType expressionType = variableNode.getReturnType();
-            StatementNode node;
-            if (expressionType instanceof RecordType) {
-                String identifier = variableCtx.identifier(index).getText();
-                RecordType recordType = (RecordType) expressionType;
-                BaseType fieldType = recordType.getFieldType(identifier);
-                node = WriteRecordFieldNodeGen.create(variableNode, valueNode, identifier, fieldType);
-            } else {
+
+            if (!(expressionType instanceof RecordType)) {
                 throw new TypeMismatchException(expressionType.toString(), RECORD_STRING);
             }
+            String identifier = variableCtx.identifier(index).getText();
+            RecordType recordType = (RecordType) expressionType;
+            BaseType fieldType = recordType.getFieldType(identifier);
+            ExpressionNode castNode = createCastNode(valueNode, fieldType);
+            StatementNode node = WriteRecordFieldNodeGen.create(variableNode, castNode, identifier, fieldType);
             node.addStatementTag();
             setSourceFromContext(node, variableCtx);
             return node;
         } catch (LexicalException e) {
             throw new ParseException(source, variableCtx, e.getMessage());
         }
+    }
+
+    private ExpressionNode createCastNode(final ExpressionNode valueNode, final BaseType targetType) throws TypeMismatchException {
+        final BaseType sourceType = valueNode.getReturnType();
+
+        if (sourceType == targetType) {
+            return valueNode;
+        }
+
+        if(!sourceType.convertibleTo(targetType)) {
+            throw new TypeMismatchException(targetType.toString(), sourceType.toString());
+        }
+
+        if (targetType == SmallIntType.SINGLETON) {
+            return CastToSmallIntNodeGen.create(valueNode);
+        }
+        if (targetType == IntType.SINGLETON) {
+            return CastToIntNodeGen.create(valueNode);
+        }
+        if (targetType == BigIntType.SINGLETON) {
+            return CastToBigIntNodeGen.create(valueNode);
+        }
+        if (targetType == SmallFloatType.SINGLETON) {
+            return CastToSmallFloatNodeGen.create(valueNode);
+        }
+        if (targetType == FloatType.SINGLETON) {
+            return CastToFloatNodeGen.create(valueNode);
+        }
+        if (targetType == DateType.SINGLETON) {
+            return CastToDateNodeGen.create(valueNode);
+        }
+        if (targetType instanceof CharType) {
+            return CastToCharNodeGen.create(valueNode, targetType);
+        }
+        if (targetType instanceof VarcharType) {
+            return CastToVarcharNodeGen.create(valueNode, targetType);
+        }
+        throw new TypeMismatchException(targetType.toString(), sourceType.toString());
     }
 
     private StatementNode createAssignmentToNotIndexedVariable(final I4GLParser.NotIndexedVariableContext variableCtx,
@@ -1380,7 +1423,8 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             }
             BaseType fieldType = variableNode.getReturnType();
             String identifier = variableCtx.identifier(index).getText();
-            StatementNode node = WriteRecordFieldNodeGen.create(variableNode, valueNode, identifier, fieldType);
+            ExpressionNode castNode = createCastNode(valueNode, fieldType);
+            StatementNode node = WriteRecordFieldNodeGen.create(variableNode, castNode, identifier, fieldType);
             node.addStatementTag();
             setSourceFromContext(node, variableCtx);
             return node;
