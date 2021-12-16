@@ -1321,14 +1321,15 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
     }
 
-    private ExpressionNode createCastNode(final ExpressionNode valueNode, final BaseType targetType) throws TypeMismatchException {
+    private ExpressionNode createCastNode(final ExpressionNode valueNode, final BaseType targetType)
+            throws TypeMismatchException {
         final BaseType sourceType = valueNode.getReturnType();
 
         if (sourceType == targetType) {
             return valueNode;
         }
 
-        if(!sourceType.convertibleTo(targetType)) {
+        if (sourceType != null && (!sourceType.convertibleTo(targetType))) {
             throw new TypeMismatchException(targetType.toString(), sourceType.toString());
         }
 
@@ -1418,14 +1419,14 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
             }
             variableNode = createReadArrayElementNode(variableNode, indexNodes);
             int index = 0;
-            RecordType recordType = (RecordType)variableNode.getReturnType();
+            RecordType recordType = (RecordType) variableNode.getReturnType();
             while (index < variableCtx.identifier().size() - 1) {
                 if (!(recordType instanceof RecordType)) {
                     throw new TypeMismatchException(recordType.toString(), RECORD_STRING);
                 }
                 String identifier = variableCtx.identifier(index++).getText();
                 variableNode = createRecordFieldNode(variableNode, identifier);
-                recordType = (RecordType)variableNode.getReturnType();
+                recordType = (RecordType) variableNode.getReturnType();
             }
             String identifier = variableCtx.identifier(index).getText();
             BaseType fieldType = recordType.getFieldType(identifier);
