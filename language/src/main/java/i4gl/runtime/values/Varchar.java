@@ -1,8 +1,10 @@
 package i4gl.runtime.values;
 
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
+import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
@@ -124,4 +126,52 @@ public class Varchar implements TruffleObject {
     boolean isString() {
         return true;
     }
+
+
+    @ExportMessage
+    boolean hasArrayElements() {
+        return true;
+    }
+
+    @ExportMessage
+    final boolean isArrayElementInsertable(long index) {
+        return false;
+    }
+
+    @ExportMessage(name = "isArrayElementReadable")
+    @ExportMessage(name = "isArrayElementModifiable")
+    boolean inBounds(long index) {
+        return 0 <= index && index < getSize();
+    }
+
+    @ExportMessage
+    long getArraySize() {
+        return getSize();
+    }
+
+    @ExportMessage
+    public Object readArrayElement(long index) throws InvalidArrayIndexException {
+        try {
+            return getCharAt((int) index);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            CompilerDirectives.transferToInterpreter();
+            throw InvalidArrayIndexException.create(index);
+        }
+    }
+
+    @ExportMessage
+    public void writeArrayElement(long index, Object value) throws InvalidArrayIndexException {
+        try {
+            if (value instanceof Character) {
+                Character character = (Character)value;
+                setCharAt((int) index, character.charValue());                
+            } else {
+                throw new NotImplementedException();
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            CompilerDirectives.transferToInterpreter();
+            throw InvalidArrayIndexException.create(index);
+        }
+    }
+
 }

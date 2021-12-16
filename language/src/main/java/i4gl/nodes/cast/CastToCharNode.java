@@ -29,17 +29,13 @@ public abstract class CastToCharNode extends UnaryNode {
         return value;
     }
 
-    @Specialization
-    Char castText(String argument) {
-        Char value = (Char) getCharType().getDefaultValue();
-        value.assignString(argument);
-        return value;
-    }
-
-    @Specialization(guards = "args.fitsInShort(argument)", limit = "2")
-    Char cast(Object argument, @CachedLibrary("argument") InteropLibrary args) {
+    @Specialization(guards = "inputs.isString(argument)", limit = "2")
+    Char castText(Object argument, @CachedLibrary("argument") InteropLibrary inputs)  {
         try {
-            return castText(args.asString(argument));
+            String asText = inputs.asString(argument);
+            Char value = (Char) getCharType().getDefaultValue();
+            value.assignString(asText);
+            return value;
         } catch (UnsupportedMessageException e) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, getCharType());

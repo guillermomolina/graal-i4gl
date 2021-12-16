@@ -22,17 +22,13 @@ public abstract class CastToVarcharNode extends UnaryNode {
         return getVarcharType();
     }
 
-    @Specialization
-    Varchar castText(String argument) {
-        Varchar value = (Varchar) getVarcharType().getDefaultValue();
-        value.assignString(argument);
-        return value;
-    }
-
-    @Specialization(guards = "args.fitsInShort(argument)", limit = "2")
-    Varchar cast(Object argument, @CachedLibrary("argument") InteropLibrary args) {
+    @Specialization(guards = "inputs.isString(argument)", limit = "2")
+    Varchar castText(Object argument, @CachedLibrary("argument") InteropLibrary inputs) {
         try {
-            return castText(args.asString(argument));
+            String asText = inputs.asString(argument);
+            Varchar value = (Varchar) getVarcharType().getDefaultValue();
+            value.assignString(asText);
+            return value;
         } catch (UnsupportedMessageException e) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, getVarcharType());

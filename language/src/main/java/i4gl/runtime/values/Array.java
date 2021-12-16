@@ -37,6 +37,10 @@ public class Array implements TruffleObject {
         arrayType.getElement().setObject(this, value);
     }
 
+    public int getSize() {
+        return arrayType.getSize();
+    }
+
     @ExportMessage
     boolean hasLanguage() {
         return true;
@@ -76,10 +80,6 @@ public class Array implements TruffleObject {
     @ExportMessage
     long getArraySize() {
         return getSize();
-    }
-
-    public int getSize() {
-        return arrayType.getSize();
     }
 
     @ExportMessage

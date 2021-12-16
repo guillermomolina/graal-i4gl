@@ -23,6 +23,7 @@ Version 0.3.0
 - Add SMALLINT to arithmetic nodes
 - Reimplement Array and ArrayType using StaticObjectModel
 - Reimplement ReadArrayElementNode and WriteArrayElementNode with InteropLibrary
+- Fix CHAR and VARCHAR accessed as array of CHAR(1)
 
 
 Version 0.2.0
