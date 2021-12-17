@@ -10,6 +10,7 @@ import com.oracle.truffle.api.library.CachedLibrary;
 import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Varchar;
 
 @NodeField(name = "varcharType", type = BaseType.class)
@@ -20,6 +21,11 @@ public abstract class CastToVarcharNode extends UnaryNode {
     @Override
     public BaseType getReturnType() {
         return getVarcharType();
+    }
+
+    @Specialization
+    Object castNull(Null argument) {
+        return argument;
     }
 
     @Specialization(guards = "inputs.isString(argument)", limit = "2")

@@ -13,6 +13,7 @@ import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.values.Date;
+import i4gl.runtime.values.Null;
 
 public abstract class CastToDateNode extends UnaryNode {
 
@@ -21,6 +22,10 @@ public abstract class CastToDateNode extends UnaryNode {
         return DateType.SINGLETON;
     }
 
+    @Specialization
+    Object castNull(Null argument) {
+        return argument;
+    }
 
     @Specialization
     Date castText(String argument) {

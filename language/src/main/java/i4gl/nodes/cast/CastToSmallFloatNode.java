@@ -10,6 +10,7 @@ import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.SmallFloatType;
+import i4gl.runtime.values.Null;
 
 public abstract class CastToSmallFloatNode extends UnaryNode {
     
@@ -20,6 +21,11 @@ public abstract class CastToSmallFloatNode extends UnaryNode {
 
     @Specialization
     static float castSmallFloat(float argument) {
+        return argument;
+    }
+
+    @Specialization
+    Object castNull(Null argument) {
         return argument;
     }
 

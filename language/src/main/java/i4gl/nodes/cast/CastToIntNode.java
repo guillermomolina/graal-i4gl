@@ -10,6 +10,7 @@ import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.IntType;
+import i4gl.runtime.values.Null;
 
 public abstract class CastToIntNode extends UnaryNode {
     
@@ -25,6 +26,11 @@ public abstract class CastToIntNode extends UnaryNode {
 
     @Specialization
     static int castInt(int argument) {
+        return argument;
+    }
+
+    @Specialization
+    Object castNull(Null argument) {
         return argument;
     }
 

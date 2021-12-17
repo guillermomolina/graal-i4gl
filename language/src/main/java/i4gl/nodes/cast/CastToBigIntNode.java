@@ -10,6 +10,7 @@ import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.primitive.BigIntType;
+import i4gl.runtime.values.Null;
 
 public abstract class CastToBigIntNode extends UnaryNode {
     
@@ -30,6 +31,11 @@ public abstract class CastToBigIntNode extends UnaryNode {
 
     @Specialization
     static long castBigInt(long argument) {
+        return argument;
+    }
+
+    @Specialization
+    Object castNull(Null argument) {
         return argument;
     }
 
