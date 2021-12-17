@@ -23,27 +23,31 @@ public abstract class CastToDateNode extends UnaryNode {
     }
 
     @Specialization
+    Date castInt(int argument) {
+        return Date.valueOf(argument);
+    }
+
+    @Specialization
     Object castNull(Null argument) {
         return argument;
     }
 
-    @Specialization
-    Date castText(String argument) {
+    @Specialization(guards = "args.fitsInInt(argument)", limit = "2")
+    Date castNumber(Object argument, @CachedLibrary("argument") InteropLibrary args) {
         try {
-            return Date.valueOf(argument);
-        } catch (ParseException e) {
+            return Date.valueOf(args.asInt(argument));
+        } catch (UnsupportedMessageException e) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, DateType.SINGLETON);
         }
     }
 
-    @Specialization(guards = "args.fitsInShort(argument)", limit = "2")
-    Date cast(Object argument, @CachedLibrary("argument") InteropLibrary args) {
+    @Specialization
+    Object castText(String argument) {
         try {
-            return castText(args.asString(argument));
-        } catch (UnsupportedMessageException e) {
-            CompilerDirectives.transferToInterpreterAndInvalidate();
-            throw new InvalidCastException(argument, DateType.SINGLETON);
+            return Date.valueOf(argument);
+        } catch (ParseException e) {
+            return Null.SINGLETON;
         }
     }
 }
