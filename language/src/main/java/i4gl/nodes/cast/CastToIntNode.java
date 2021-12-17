@@ -30,7 +30,7 @@ public abstract class CastToIntNode extends UnaryNode {
     }
 
     @Specialization
-    Object castNull(Null argument) {
+    static Object castNull(Null argument) {
         return argument;
     }
 

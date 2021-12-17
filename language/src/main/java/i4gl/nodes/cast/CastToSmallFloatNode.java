@@ -25,7 +25,7 @@ public abstract class CastToSmallFloatNode extends UnaryNode {
     }
 
     @Specialization
-    Object castNull(Null argument) {
+    static Object castNull(Null argument) {
         return argument;
     }
 
