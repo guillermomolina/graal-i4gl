@@ -7,10 +7,8 @@ import i4gl.exceptions.DatabaseException;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.write.WriteResultsNode;
-import i4gl.runtime.context.Context;
 import i4gl.runtime.values.Cursor;
 import i4gl.runtime.values.Database;
-import i4gl.runtime.values.Sqlca;
 
 public class SelectNode extends StatementNode {
     private final String sql;
@@ -30,17 +28,16 @@ public class SelectNode extends StatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-        Sqlca sqlca = Context.get(this).getSqlcaGlobalVariable();
         final Database database = (Database) databaseVariableNode.executeGeneric(frame);
         final Cursor cursor = new Cursor(database, sql);
-        cursor.start(sqlca);
+        cursor.start();
 
-        if (cursor.next(sqlca) && assignResultsNode != null) {
+        if (cursor.next() && assignResultsNode != null) {
             assignResultsNode.setResults(cursor.getRow());
             assignResultsNode.executeVoid(frame);
         }
 
-        if (cursor.next(sqlca)) {
+        if (cursor.next()) {
             final String query = sql.replace("\n", "").replace("\r", "").replace("\t", "");
             throw new DatabaseException("The query \"" + query + "\" has not returned exactly one row.");
         }

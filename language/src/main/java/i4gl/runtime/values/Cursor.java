@@ -36,8 +36,8 @@ public final class Cursor implements TruffleObject {
         this.columnLabels = new ArrayList<>();
     }
 
-    public void start(Sqlca sqlca) {
-        database.connect(sqlca);
+    public void start() {
+        database.connect();
 
         SquirrelSession session = database.getSession();
         SquirrelExecuterHandler sqlExecuterHandlerProxy = new SquirrelExecuterHandler(session);
@@ -48,8 +48,8 @@ public final class Cursor implements TruffleObject {
         columnLabels = dataSet.getColumnLabels();
     }
 
-    public boolean next(Sqlca sqlca) {
-        return dataSet.next(sqlca);
+    public boolean next() {
+        return dataSet.next();
     }
 
     public Object[] getRow() {

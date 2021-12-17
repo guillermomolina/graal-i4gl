@@ -28,4 +28,9 @@ public class SqlcaType extends RecordType {
     protected SqlcaType(final LinkedHashSet<RecordField> fields) {
         super(fields, Sqlca.class);
     }
+
+/*    @Override
+    public Object getDefaultValue() {
+        return Sqlca.SINGLETON;
+    }*/
 }

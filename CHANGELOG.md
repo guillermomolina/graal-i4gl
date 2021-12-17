@@ -25,6 +25,7 @@ Version 0.3.0
 - Reimplement ReadArrayElementNode and WriteArrayElementNode with InteropLibrary
 - Fix CHAR and VARCHAR accessed as array of CHAR(1)
 - Avoid casting from NULL
+- Hide Sqlca from DatabaseNodes, make it SINGLETON
 
 
 Version 0.2.0

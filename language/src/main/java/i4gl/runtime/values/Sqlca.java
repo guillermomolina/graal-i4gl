@@ -4,28 +4,16 @@ import com.oracle.truffle.api.TruffleLogger;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 
 import i4gl.I4GLLanguage;
+import i4gl.runtime.types.complex.SqlcaType;
 import i4gl.runtime.types.compound.RecordType;
 
-public abstract class Sqlca extends Record {
+public class Sqlca extends Record {
     private static final TruffleLogger LOGGER = I4GLLanguage.getLogger(Sqlca.class);
 
-    /*
-     * protected int sqlcode;
-     * protected Char sqlerrm;
-     * protected Char sqlerrp;
-     * protected int[] sqlerrd;
-     * protected Char sqlawarn;
-     */
+    public static final Sqlca SINGLETON = (Sqlca)SqlcaType.SINGLETON.getDefaultValue();
 
     public Sqlca(final RecordType recordType) {
         super(recordType);
-        /*
-         * this.sqlcode = 0;
-         * this.sqlerrm = new Char(72);
-         * this.sqlerrp = new Char(8);
-         * this.sqlerrd = new int[] { 0, 0, 0, 0, 0, 0 };
-         * this.sqlawarn = new Char(8);
-         */
     }
 
     public void setSqlcode(final int code) {
@@ -47,7 +35,8 @@ public abstract class Sqlca extends Record {
     }
 
     public void setSqlawarn(int index) {
-        Char sqlawarn = (Char) getObject("sqlawarn");
+        Object o = getObject("sqlawarn");
+        Char sqlawarn = (Char) o;
         sqlawarn.setCharAt(0, 'W');
         sqlawarn.setCharAt(index - 1, 'W');
     }

@@ -246,8 +246,8 @@ public class SquirrelDataSet implements IDataSet {
       throw new DataSetException("Do not use this method");
    }
 
-   public synchronized boolean next(Sqlca sqlca) {
-      sqlca.setSqlerrd(5, _iCurrent + 1);
+   public synchronized boolean next() {
+      Sqlca.SINGLETON.setSqlerrd(5, _iCurrent + 1);
       if (_cancel) {
          _currentRow = null;
          return false;
@@ -256,14 +256,14 @@ public class SquirrelDataSet implements IDataSet {
          _currentRow = createRow(_dataSetDefinition.getColumnIndices(), _dataSetDefinition.getColumnDefinitions(),
                BlockMode.INDIFFERENT);
       } catch (SQLException e) {
-         sqlca.setSqlcode(e.getErrorCode());
-         sqlca.setSqlerrm(e.getMessage());
+         Sqlca.SINGLETON.setSqlcode(e.getErrorCode());
+         Sqlca.SINGLETON.setSqlerrm(e.getMessage());
       }
       if (_currentRow == null) {
          return false;
       }
       ++_iCurrent;
-      sqlca.setSqlerrd(5, _iCurrent + 1);
+      Sqlca.SINGLETON.setSqlerrd(5, _iCurrent + 1);
       return true;
    }
 

@@ -153,7 +153,7 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
                 DatabaseType databaseType = (DatabaseType) lookupVariableType(
                         ParseScope.DATABASE_IDENTIFIER);
                 currentDatabase = (Database) (databaseType.getDefaultValue());
-                currentDatabase.connect(null);
+                currentDatabase.connect();
             } catch (LexicalException e) {
                 throw new ParseException(source, ctx, "No Database declared");
             }

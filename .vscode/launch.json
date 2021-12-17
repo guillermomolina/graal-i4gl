@@ -3,13 +3,13 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) Varchar.4gl",
+            "name": "Debug (Launch)",
             "request": "launch",
             "mainClass": "i4gl.Launcher",
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Varchar.4gl",
+                "${workspaceFolder}/language/tests/database/Like3.4gl",
             ],
             "vmArgs": [
                 "-ea",

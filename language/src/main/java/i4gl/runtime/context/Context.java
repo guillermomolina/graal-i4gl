@@ -18,6 +18,7 @@ import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.AllocationReporter;
 import com.oracle.truffle.api.interop.TruffleObject;
@@ -124,6 +125,12 @@ public final class Context {
 
     public VirtualFrame addModuleFrame(final String moduleName, final VirtualFrame frame) {
         return frameRegistry.put(moduleName, frame);
+    }
+
+    public void addGlobalVariables(final VirtualFrame frame) {
+        FrameSlot slot = frame.getFrameDescriptor().findFrameSlot("sqlca");
+        frame.getFrameDescriptor().setFrameSlotKind(slot, FrameSlotKind.Object);
+        frame.setObject(slot, Sqlca.SINGLETON);
     }
 
     @TruffleBoundary

@@ -64,6 +64,7 @@ public final class ModuleRootNode extends RootNode {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             Context context = Context.get(this);
             final VirtualFrame globalsFrame = Truffle.getRuntime().createVirtualFrame(new Object[0], globalsFrameDescriptor);
+            context.addGlobalVariables(globalsFrame);
             context.addModuleFrame("GLOBAL", globalsFrame);
             final VirtualFrame moduleFrame = Truffle.getRuntime().createVirtualFrame(new Object[0], moduleFrameDescriptor);
             context.addModuleFrame(moduleName, moduleFrame);
