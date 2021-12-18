@@ -33,6 +33,7 @@ Version 0.3.0
 - Fix missing CastToTextNode
 - Fix missing cast from String in string cast nodes
 - Fix DECIMAL format text
+- Fix cast from text
 
 
 Version 0.2.0

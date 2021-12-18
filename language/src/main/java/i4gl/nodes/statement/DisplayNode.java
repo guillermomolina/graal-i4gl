@@ -14,14 +14,8 @@ public abstract class DisplayNode extends StatementNode {
 
     protected abstract ExpressionNode getArgumentNode();
 
-   @Specialization
-    protected void display(final short argument) {
-        Context.get(this).getOutput().println(String.format("%11d", argument));
-    }
-
-    @Specialization
-    public void display(final String argument) {
-        Context.get(this).getOutput().println(argument);
+    private void print(final String text) {
+        Context.get(this).getOutput().println(text);
     }
 
     @Specialization
@@ -32,6 +26,6 @@ public abstract class DisplayNode extends StatementNode {
         } else {
             value = argument.toString();
         }
-        Context.get(this).getOutput().println(value);
+        print(value);
     }
 }

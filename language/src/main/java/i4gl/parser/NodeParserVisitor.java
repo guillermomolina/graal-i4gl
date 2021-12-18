@@ -991,12 +991,17 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
         ExpressionNode leftNode = null;
         for (final ExpressionNode rightNode : argumentNodeList) {
-            if (leftNode == null) {
-                leftNode = rightNode;
-            } else {
-                leftNode = ConcatenationNodeGen.create(leftNode, rightNode);
-                setSourceFromContext(leftNode, ctx);
-                leftNode.addExpressionTag();
+            try {
+                final ExpressionNode rightNodeCastedToText = createCastNode(rightNode, TextType.SINGLETON);
+                if (leftNode == null) {
+                    leftNode = rightNodeCastedToText;
+                } else {
+                    leftNode = ConcatenationNodeGen.create(leftNode, rightNodeCastedToText);
+                    setSourceFromContext(leftNode, ctx);
+                    leftNode.addExpressionTag();
+                }
+            } catch (TypeMismatchException e) {
+                throw new ParseException(source, ctx, e.getMessage());
             }
         }
         return leftNode;

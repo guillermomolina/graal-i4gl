@@ -56,7 +56,7 @@ public class DecimalType extends BaseType {
 
     @Override
     public boolean convertibleTo(final BaseType type) {
-        return type instanceof FloatType || type instanceof SmallFloatType;
+        return type == SmallFloatType.SINGLETON || type == FloatType.SINGLETON || type == TextType.SINGLETON;
     }
 
     @Override

@@ -3,6 +3,7 @@ package i4gl.runtime.types.compound;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.interop.InteropLibrary;
 
+import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Char;
 
 /**
@@ -34,5 +35,10 @@ public class CharType extends ArrayType {
     @Override
     public String getNullString() {
         return " ".repeat(size);
+    }
+
+    @Override
+    public boolean convertibleTo(final BaseType type) {
+        return type == TextType.SINGLETON;
     }
 }

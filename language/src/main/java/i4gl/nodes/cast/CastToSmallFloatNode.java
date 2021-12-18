@@ -25,6 +25,11 @@ public abstract class CastToSmallFloatNode extends UnaryNode {
     }
 
     @Specialization
+    static float castText(String argument) {
+        return Float.valueOf(argument);
+    }
+
+    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }

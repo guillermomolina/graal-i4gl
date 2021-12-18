@@ -30,6 +30,11 @@ public abstract class CastToIntNode extends UnaryNode {
     }
 
     @Specialization
+    static int castText(String argument) {
+        return Integer.valueOf(argument);
+    }
+
+    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }

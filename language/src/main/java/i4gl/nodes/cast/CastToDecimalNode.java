@@ -16,7 +16,7 @@ import i4gl.runtime.values.Null;
 
 @NodeField(name = "decimalType", type = BaseType.class)
 public abstract class CastToDecimalNode extends UnaryNode {
-    
+
     protected abstract BaseType getDecimalType();
 
     @Override
@@ -39,12 +39,19 @@ public abstract class CastToDecimalNode extends UnaryNode {
     }
 
     @Specialization
+    Decimal castText(String argument) {
+        Decimal value = (Decimal) getDecimalType().getDefaultValue();
+        value.setValue(Double.valueOf(argument));
+        return value;
+    }
+
+    @Specialization
     Object castNull(Null argument) {
         return argument;
     }
 
     @Specialization(guards = "args.fitsInLong(argument)", limit = "2")
-    Decimal castLong(Object argument, @CachedLibrary("argument") InteropLibrary args)  {
+    Decimal castLong(Object argument, @CachedLibrary("argument") InteropLibrary args) {
         try {
             return castFloat(args.asDouble(argument));
         } catch (UnsupportedMessageException e) {
@@ -54,7 +61,7 @@ public abstract class CastToDecimalNode extends UnaryNode {
     }
 
     @Specialization(guards = "args.fitsInDouble(argument)", limit = "2")
-    Decimal castDouble(Object argument, @CachedLibrary("argument") InteropLibrary args)  {
+    Decimal castDouble(Object argument, @CachedLibrary("argument") InteropLibrary args) {
         try {
             return castFloat(args.asDouble(argument));
         } catch (UnsupportedMessageException e) {

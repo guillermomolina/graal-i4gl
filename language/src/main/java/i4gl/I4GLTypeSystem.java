@@ -110,17 +110,20 @@ public class I4GLTypeSystem {
 
     @ImplicitCast
     public static String castShortToText(short value) {
-        return String.format("%6d", value);
+        return String.valueOf(value);
+        // return String.format("%6d", value);
     }
 
     @ImplicitCast
     public static String castIntToText(int value) {
-        return String.format("%11d", value);
+        return String.valueOf(value);
+        // return String.format("%11d", value);
     }
 
     @ImplicitCast
     public static String castBigIntToText(long value) {
-        return String.format("%20d", value);
+        return String.valueOf(value);
+        // return String.format("%20d", value);
     }
 
     @ImplicitCast

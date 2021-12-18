@@ -35,6 +35,11 @@ public abstract class CastToBigIntNode extends UnaryNode {
     }
 
     @Specialization
+    static long castText(String argument) {
+        return Long.valueOf(argument);
+    }
+
+    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }

@@ -10,13 +10,50 @@ import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.TextType;
+import i4gl.runtime.values.Char;
 import i4gl.runtime.values.Null;
+import i4gl.runtime.values.Varchar;
 
 public abstract class CastToTextNode extends UnaryNode {
 
     @Override
     public BaseType getReturnType() {
         return TextType.SINGLETON;
+    }
+
+    @Specialization
+    String castSmallInt(short argument) {
+        return String.valueOf(argument);
+    }
+
+    @Specialization
+    String castInt(int argument) {
+        return String.valueOf(argument);
+    }
+
+    @Specialization
+    String castBigInt(long argument) {
+        return String.valueOf(argument);
+    }
+
+    @Specialization
+    String castSmallFloat(float argument) {
+        return String.format("%14.2f", argument);
+    }
+
+    @Specialization
+    String castFloat(double argument) {
+        return String.format("%14.2f", argument);
+    }
+
+    @Specialization
+    String castChar(Char argument) {
+        return argument.toString();
+    }
+
+    @Specialization
+    String castVarchar(Varchar argument) {
+        return argument.toString();
     }
 
     @Specialization

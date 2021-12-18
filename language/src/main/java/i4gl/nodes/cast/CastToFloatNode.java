@@ -30,6 +30,11 @@ public abstract class CastToFloatNode extends UnaryNode {
     }
 
     @Specialization
+    static double castText(String argument) {
+        return Double.valueOf(argument);
+    }
+
+    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }
