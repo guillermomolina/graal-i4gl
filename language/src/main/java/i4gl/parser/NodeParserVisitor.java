@@ -43,6 +43,7 @@ import i4gl.nodes.cast.CastToFloatNodeGen;
 import i4gl.nodes.cast.CastToIntNodeGen;
 import i4gl.nodes.cast.CastToSmallFloatNodeGen;
 import i4gl.nodes.cast.CastToSmallIntNodeGen;
+import i4gl.nodes.cast.CastToTextNodeGen;
 import i4gl.nodes.cast.CastToVarcharNodeGen;
 import i4gl.nodes.control.CaseNode;
 import i4gl.nodes.control.DebuggerNode;
@@ -1364,6 +1365,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
         if (targetType instanceof VarcharType) {
             return CastToVarcharNodeGen.create(valueNode, targetType);
+        }
+        if (targetType instanceof TextType) {
+            return CastToTextNodeGen.create(valueNode);
         }
         throw new TypeMismatchException(targetType.toString(), sourceType.toString());
     }

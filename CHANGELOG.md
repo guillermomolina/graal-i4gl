@@ -26,10 +26,11 @@ Version 0.3.0
 - Fix CHAR and VARCHAR accessed as array of CHAR(1)
 - Avoid casting from NULL
 - Hide Sqlca from DatabaseNodes, make it SINGLETON
-- Fix missing CastToDecimal
+- Fix missing CastToDecimalNode
 - Fix DECIMAL declaration without scale and/or precsision
 - Fix missing convert to DECIMAL from other types
 - Fix DECIMAL automatic cast to float
+- Fix missing CastToTextNode
 
 
 Version 0.2.0
