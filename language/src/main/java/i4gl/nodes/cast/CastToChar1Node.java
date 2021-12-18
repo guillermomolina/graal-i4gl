@@ -13,7 +13,7 @@ import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.values.Null;
 
 public abstract class CastToChar1Node extends UnaryNode {
-    
+
     @Override
     public BaseType getReturnType() {
         return Char1Type.SINGLETON;
@@ -40,15 +40,19 @@ public abstract class CastToChar1Node extends UnaryNode {
         }
     }
 
+    @Specialization
+    static char castText(String argument) {
+        if (argument.isEmpty()) {
+            return 0;
+        }
+        return argument.charAt(0);
+    }
+
     @Specialization(guards = "inputs.isString(argument)", limit = "2")
-    static char castText(Object argument, @CachedLibrary("argument") InteropLibrary inputs)  {
+    static char castObject(Object argument, @CachedLibrary("argument") InteropLibrary inputs) {
         try {
             String asText = inputs.asString(argument);
-            if (asText.isEmpty()) {
-                CompilerDirectives.transferToInterpreterAndInvalidate();
-                throw UnsupportedMessageException.create();
-            }
-            return asText.charAt(0);
+            return castText(asText);
         } catch (UnsupportedMessageException e) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, Char1Type.SINGLETON);

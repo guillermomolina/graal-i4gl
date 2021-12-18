@@ -31,6 +31,7 @@ Version 0.3.0
 - Fix missing convert to DECIMAL from other types
 - Fix DECIMAL automatic cast to float
 - Fix missing CastToTextNode
+- Fix missing cast from String in string cast nodes
 
 
 Version 0.2.0

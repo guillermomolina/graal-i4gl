@@ -11,7 +11,6 @@ import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Char;
-import i4gl.runtime.values.Null;
 
 @NodeField(name = "charType", type = BaseType.class)
 public abstract class CastToCharNode extends UnaryNode {
@@ -31,17 +30,17 @@ public abstract class CastToCharNode extends UnaryNode {
     }
 
     @Specialization
-    Object castNull(Null argument) {
-        return argument;
+    Char castText(String argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignString(argument);
+        return value;
     }
 
     @Specialization(guards = "inputs.isString(argument)", limit = "2")
-    Char castText(Object argument, @CachedLibrary("argument") InteropLibrary inputs)  {
+    Char castObject(Object argument, @CachedLibrary("argument") InteropLibrary inputs)  {
         try {
             String asText = inputs.asString(argument);
-            Char value = (Char) getCharType().getDefaultValue();
-            value.assignString(asText);
-            return value;
+            return castText(asText);
         } catch (UnsupportedMessageException e) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, getCharType());

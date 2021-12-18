@@ -25,8 +25,13 @@ public abstract class CastToTextNode extends UnaryNode {
         return argument;
     }
 
+    @Specialization
+    String castText(String argument) {
+        return argument;
+    }
+
     @Specialization(guards = "inputs.isString(argument)", limit = "2")
-    String castText(Object argument, @CachedLibrary("argument") InteropLibrary inputs) {
+    String castObject(Object argument, @CachedLibrary("argument") InteropLibrary inputs) {
         try {
             return inputs.asString(argument);
         } catch (UnsupportedMessageException e) {
