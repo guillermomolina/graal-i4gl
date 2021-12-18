@@ -100,7 +100,12 @@ public class I4GLTypeSystem {
 
     @ImplicitCast
     public static float castDecimalToSmallFloat(Decimal value) {
-        return value.getValue().floatValue();
+        return value.toSmallFloat();
+    }
+
+    @ImplicitCast
+    public static double castDecimalToFloat(Decimal value) {
+        return value.toFloat();
     }
 
     @ImplicitCast

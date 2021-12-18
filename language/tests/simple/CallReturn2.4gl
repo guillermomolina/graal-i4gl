@@ -2,8 +2,8 @@ MAIN
   DEFINE result1 INT
   DEFINE result2 VARCHAR(10)
   CALL f1() RETURNING result1, result2
-  DISPLAY result1, result2
-END MAIN 
+  DISPLAY result1, "|", result2, "|"
+END MAIN
 
 FUNCTION f1()
   RETURN 102, 202

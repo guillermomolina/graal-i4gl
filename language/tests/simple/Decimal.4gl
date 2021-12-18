@@ -1,0 +1,46 @@
+MAIN
+    DEFINE a1 DECIMAL
+    DEFINE a2 DECIMAL(16)
+    DEFINE a3 DECIMAL(21,1)
+    DEFINE a4 DECIMAL(21,2)
+    DEFINE a5 DECIMAL(21,3)
+
+    DEFINE a6 DECIMAL(15)
+    DEFINE a7 DECIMAL(20,1)
+    DEFINE a8 DECIMAL(20,2)
+    DEFINE a9 DECIMAL(20,3)
+
+    DEFINE a10 DECIMAL(17)
+    DEFINE a11 DECIMAL(22,1)
+    DEFINE a12 DECIMAL(22,2)
+    DEFINE a13 DECIMAL(22,3)
+
+    DISPLAY "0        1         2         "
+    DISPLAY "12345678901234567890123456789"
+    LET a1=1/3
+    DISPLAY a1, "|"
+    LET a2=1/3
+    DISPLAY a2, "|"
+    LET a3=1/3
+    DISPLAY a3, "|"
+    LET a4=1/3
+    DISPLAY a4, "|"
+    LET a5=1/3
+    DISPLAY a5, "|"
+    LET a6=1/3
+    DISPLAY a6, "|"
+    LET a7=1/3
+    DISPLAY a7, "|"
+    LET a8=1/3
+    DISPLAY a8, "|"
+    LET a9=1/3
+    DISPLAY a9, "|"
+    LET a10=1/3
+    DISPLAY a10, "|"
+    LET a11=1/3
+    DISPLAY a11, "|"
+    LET a12=1/3
+    DISPLAY a12, "|"
+    LET a13=1/3
+    DISPLAY a13, "|"
+END MAIN

@@ -25,28 +25,17 @@ public abstract class CastToDecimalNode extends UnaryNode {
     }
 
     @Specialization
-    Decimal castSmallInt(short argument) {
-        return new Decimal(argument);
-    }
-
-    @Specialization
-    Decimal castInt(int argument) {
-        return new Decimal(argument);
-    }
-
-    @Specialization
     Decimal castBigInt(long argument) {
-        return new Decimal(argument);
-    }
-
-    @Specialization
-    Decimal castSmallFloat(float argument) {
-        return new Decimal(argument);
+        Decimal value = (Decimal) getDecimalType().getDefaultValue();
+        value.setValue(argument);
+        return value;
     }
 
     @Specialization
     Decimal castFloat(double argument) {
-        return new Decimal(argument);
+        Decimal value = (Decimal) getDecimalType().getDefaultValue();
+        value.setValue(argument);
+        return value;
     }
 
     @Specialization
@@ -54,10 +43,20 @@ public abstract class CastToDecimalNode extends UnaryNode {
         return argument;
     }
 
-    @Specialization(guards = "args.fitsInDouble(argument)", limit = "2")
-    Decimal cast(Object argument, @CachedLibrary("argument") InteropLibrary args)  {
+    @Specialization(guards = "args.fitsInLong(argument)", limit = "2")
+    Decimal castLong(Object argument, @CachedLibrary("argument") InteropLibrary args)  {
         try {
-            return new Decimal(args.asDouble(argument));
+            return castFloat(args.asDouble(argument));
+        } catch (UnsupportedMessageException e) {
+            CompilerDirectives.transferToInterpreterAndInvalidate();
+            throw new InvalidCastException(argument, FloatType.SINGLETON);
+        }
+    }
+
+    @Specialization(guards = "args.fitsInDouble(argument)", limit = "2")
+    Decimal castDouble(Object argument, @CachedLibrary("argument") InteropLibrary args)  {
+        try {
+            return castFloat(args.asDouble(argument));
         } catch (UnsupportedMessageException e) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, FloatType.SINGLETON);

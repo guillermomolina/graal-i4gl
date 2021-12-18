@@ -1,7 +1,5 @@
 package i4gl.runtime.types.compound;
 
-import java.math.BigDecimal;
-
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.interop.InteropLibrary;
@@ -20,16 +18,24 @@ public class DecimalType extends BaseType {
     private final int scale;
 
     public DecimalType() {
-        this(10);
+        this(16);
     }
 
     public DecimalType(final int precision) {
-        this(precision, 2);
+        this(precision + 5, 2);
     }
 
     public DecimalType(final int precision, final int scale) {
         this.precision = precision;
         this.scale = scale;
+    }
+
+    public int getPrecision() {
+        return precision;
+    }
+
+    public int getScale() {
+        return scale;
     }
 
     @Override
@@ -45,8 +51,7 @@ public class DecimalType extends BaseType {
 
     @Override
     public Object getDefaultValue() {
-        BigDecimal value = BigDecimal.ZERO.setScale(scale);
-        return new Decimal(value);
+        return new Decimal(this);
     }
 
     @Override

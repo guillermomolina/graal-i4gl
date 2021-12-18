@@ -1,6 +1,7 @@
 package i4gl.runtime.values;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -15,41 +16,43 @@ import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.Context;
 import i4gl.runtime.types.compound.DecimalType;
 
-
 @ExportLibrary(InteropLibrary.class)
 public final class Decimal implements TruffleObject, Comparable<Decimal> {
-    private final BigDecimal value;
+    private final DecimalType decimalType;
+    private BigDecimal value;
 
-    public Decimal(BigDecimal value) {
-        this.value = value;
+    public Decimal(final DecimalType decimalType) {
+        this(decimalType, BigDecimal.ZERO);
+    }
+
+    public Decimal(final DecimalType type, final BigDecimal value) {
+        this.decimalType = type;
+        this.value = value.setScale(type.getScale());
     }
 
     public Decimal(Decimal decimal) {
+        this.decimalType = decimal.decimalType;
         this.value = decimal.value;
     }
 
-    public Decimal(short value) {
-        this.value = BigDecimal.valueOf(value);
-    }
-
-    public Decimal(int value) {
-        this.value = BigDecimal.valueOf(value);
-    }
-
-    public Decimal(long value) {
-        this.value = BigDecimal.valueOf(value);
-    }
-
-    public Decimal(float value) {
-        this.value = BigDecimal.valueOf(value);
-    }
-
-    public Decimal(double value) {
-        this.value = BigDecimal.valueOf(value);
-    }
-
-    public BigDecimal getValue() {
+    protected BigDecimal getValue() {
         return value;
+    }
+
+    public float toSmallFloat() {
+        return value.floatValue();
+    }
+
+    public double toFloat() {
+        return value.doubleValue();
+    }
+
+    public void setValue(long aLong) {
+        value = BigDecimal.valueOf(aLong).setScale(decimalType.getScale());
+    }
+
+    public void setValue(double aDouble) {
+        value = BigDecimal.valueOf(aDouble).setScale(decimalType.getScale(), RoundingMode.HALF_DOWN);
     }
 
     public Object createDeepCopy() {
@@ -64,7 +67,9 @@ public final class Decimal implements TruffleObject, Comparable<Decimal> {
     @Override
     @TruffleBoundary
     public String toString() {
-        return value.toString();
+        int integerPart = decimalType.getPrecision() + 2;
+        String format = "%" + integerPart + "." + decimalType.getScale() + "f";
+        return String.format(format, value);
     }
 
     @Override

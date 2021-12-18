@@ -17,47 +17,30 @@ import i4gl.nodes.expression.BinaryExpressionNode;
 @NodeInfo(shortName = "/")
 public abstract class DivideNode extends BinaryExpressionNode {
 
-    @Specialization(rewriteOn = ArithmeticException.class)
-    protected short div(short left, short right) {
-        short result = (short) (left / right);
-        /*
-         * The division overflows if left is Short.MIN_VALUE and right is -1.
-         */
-        if ((left & right & result) < 0) {
-            throw new ArithmeticException("short overflow");
-        }
-        return result;
-    }
-
-    @Specialization(rewriteOn = ArithmeticException.class)
-    protected int div(int left, int right) {
-        int result = left / right;
-        /*
-         * The division overflows if left is Int.MIN_VALUE and right is -1.
-         */
-        if ((left & right & result) < 0) {
-            throw new ArithmeticException("int overflow");
-        }
-        return result;
+    @Specialization
+    @TruffleBoundary
+    protected double divideSmallInt(short left, short right) {
+        return (double) left / (double) right;
     }
 
     @Specialization
     @TruffleBoundary
-    protected long div(long left, long right) {
-        long result = left / right;
-        /*
-         * The division overflows if left is Long.MIN_VALUE and right is -1.
-         */
-        if ((left & right & result) < 0) {
-            throw new ArithmeticException("long overflow");
-        }
-        return result;
+    protected double divideInt(int left, int right) {
+        return (double) left / (double) right;
     }
 
     @Specialization
-    protected float div(float left, float right) {
-        return left / right;
+    @TruffleBoundary
+    protected double divideBigInt(long left, long right) {
+        return (double) left / (double) right;
     }
+
+    @Specialization
+    @TruffleBoundary
+    protected double divideSmallFloat(float left, float right) {
+        return (double) left / (double) right;
+    }
+
 
     @Specialization
     @TruffleBoundary

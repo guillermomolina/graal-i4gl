@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import i4gl.exceptions.NotImplementedException;
+import i4gl.runtime.types.compound.DecimalType;
 import i4gl.runtime.values.Date;
 import i4gl.runtime.values.Decimal;
 import i4gl.runtime.values.Null;
@@ -189,7 +190,8 @@ public class SquirrelDataSet implements IDataSet {
          case Types.VARCHAR:
             return new Varchar(cDefinition.getPrecision(), (String) sqlValue);
          case Types.DECIMAL:
-            return new Decimal((BigDecimal) sqlValue);
+            DecimalType type = new DecimalType(cDefinition.getPrecision(), cDefinition.getScale());
+            return new Decimal(type, (BigDecimal) sqlValue);
          case Types.DATE:
             return new Date((java.sql.Date) sqlValue);
          case Types.INTEGER:
