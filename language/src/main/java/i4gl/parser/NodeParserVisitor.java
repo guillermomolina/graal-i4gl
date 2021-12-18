@@ -38,6 +38,7 @@ import i4gl.nodes.cast.CastToBigIntNodeGen;
 import i4gl.nodes.cast.CastToChar1NodeGen;
 import i4gl.nodes.cast.CastToCharNodeGen;
 import i4gl.nodes.cast.CastToDateNodeGen;
+import i4gl.nodes.cast.CastToDecimalNodeGen;
 import i4gl.nodes.cast.CastToFloatNodeGen;
 import i4gl.nodes.cast.CastToIntNodeGen;
 import i4gl.nodes.cast.CastToSmallFloatNodeGen;
@@ -105,6 +106,7 @@ import i4gl.runtime.types.compound.ArrayType;
 import i4gl.runtime.types.compound.Char1Type;
 import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.DateType;
+import i4gl.runtime.types.compound.DecimalType;
 import i4gl.runtime.types.compound.RecordField;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.compound.TextType;
@@ -1347,6 +1349,9 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
         if (targetType == FloatType.SINGLETON) {
             return CastToFloatNodeGen.create(valueNode);
+        }
+        if (targetType instanceof DecimalType) {
+            return CastToDecimalNodeGen.create(valueNode, targetType);
         }
         if (targetType == DateType.SINGLETON) {
             return CastToDateNodeGen.create(valueNode);

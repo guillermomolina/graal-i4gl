@@ -26,6 +26,7 @@ Version 0.3.0
 - Fix CHAR and VARCHAR accessed as array of CHAR(1)
 - Avoid casting from NULL
 - Hide Sqlca from DatabaseNodes, make it SINGLETON
+- Fix missing CastToDecimal
 
 
 Version 0.2.0

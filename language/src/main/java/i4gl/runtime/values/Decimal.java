@@ -28,7 +28,23 @@ public final class Decimal implements TruffleObject, Comparable<Decimal> {
         this.value = decimal.value;
     }
 
+    public Decimal(short value) {
+        this.value = BigDecimal.valueOf(value);
+    }
+
+    public Decimal(int value) {
+        this.value = BigDecimal.valueOf(value);
+    }
+
     public Decimal(long value) {
+        this.value = BigDecimal.valueOf(value);
+    }
+
+    public Decimal(float value) {
+        this.value = BigDecimal.valueOf(value);
+    }
+
+    public Decimal(double value) {
         this.value = BigDecimal.valueOf(value);
     }
 
