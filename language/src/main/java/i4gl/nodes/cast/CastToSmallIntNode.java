@@ -25,11 +25,6 @@ public abstract class CastToSmallIntNode extends UnaryNode {
     }
 
     @Specialization
-    static short castText(String argument) {
-        return Short.valueOf(argument);
-    }
-
-    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }
@@ -42,5 +37,10 @@ public abstract class CastToSmallIntNode extends UnaryNode {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, SmallIntType.SINGLETON);
         }
+    }
+
+    @Specialization
+    static short castText(String argument) {
+        return Short.valueOf(argument);
     }
 }

@@ -950,22 +950,26 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         if (ctx.attributeList() != null) {
             throw new NotImplementedException();
         }
-        if (ctx.concatExpression() != null) {
-            ExpressionNode displayValueListNode = (ExpressionNode) visit(ctx.concatExpression());
-            if (ctx.TO() != null) {
-                throw new NotImplementedException();
-            }
-            if (ctx.AT() != null) {
-                throw new NotImplementedException();
-            }
-            DisplayNode node = DisplayNodeGen.create(displayValueListNode);
-            setSourceFromContext(node, ctx);
-            node.addStatementTag();
-            return node;
-        } else {
+        if (ctx.TO() != null) {
             throw new NotImplementedException();
         }
-    }
+        if (ctx.AT() != null) {
+            throw new NotImplementedException();
+        }
+        if (ctx.concatExpression() == null) {
+            throw new NotImplementedException();
+        }
+        try {
+            ExpressionNode displayValueListNode = (ExpressionNode) visit(ctx.concatExpression());
+            ExpressionNode castToTextNode = createCastNode(displayValueListNode, TextType.SINGLETON);
+            DisplayNode node = DisplayNodeGen.create(castToTextNode);
+            setSourceFromContext(node, ctx);
+            node.addStatementTag();
+            return node;    
+        } catch(TypeMismatchException e) {
+            throw new ParseException(source, ctx, e.getMessage());
+        }
+}
 
     @Override
     public Node visitVariableDeclaration(final I4GLParser.VariableDeclarationContext ctx) {
@@ -992,11 +996,12 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         ExpressionNode leftNode = null;
         for (final ExpressionNode rightNode : argumentNodeList) {
             try {
-                final ExpressionNode rightNodeCastedToText = createCastNode(rightNode, TextType.SINGLETON);
                 if (leftNode == null) {
-                    leftNode = rightNodeCastedToText;
+                    leftNode = rightNode;
                 } else {
-                    leftNode = ConcatenationNodeGen.create(leftNode, rightNodeCastedToText);
+                    final ExpressionNode leftNodeCastedToText = createCastNode(leftNode, TextType.SINGLETON);
+                    final ExpressionNode rightNodeCastedToText = createCastNode(rightNode, TextType.SINGLETON);
+                    leftNode = ConcatenationNodeGen.create(leftNodeCastedToText, rightNodeCastedToText);
                     setSourceFromContext(leftNode, ctx);
                     leftNode.addExpressionTag();
                 }

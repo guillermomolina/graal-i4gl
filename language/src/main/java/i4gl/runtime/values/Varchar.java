@@ -88,7 +88,7 @@ public class Varchar implements TruffleObject {
 
     @Override
     public String toString() {
-        return data;
+        return data + " ".repeat(size - data.length());
     }
 
     @ExportMessage

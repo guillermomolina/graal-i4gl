@@ -11,6 +11,7 @@ import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Decimal;
 import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Varchar;
 
@@ -23,17 +24,22 @@ public abstract class CastToTextNode extends UnaryNode {
 
     @Specialization
     String castSmallInt(short argument) {
-        return String.valueOf(argument);
+        return String.format("%6d", argument);
     }
 
     @Specialization
     String castInt(int argument) {
-        return String.valueOf(argument);
+        return String.format("%11d", argument);
     }
 
     @Specialization
     String castBigInt(long argument) {
-        return String.valueOf(argument);
+        return String.format("%20d", argument);
+    }
+
+    @Specialization
+    String castDecimal(Decimal argument) {
+        return argument.toString();
     }
 
     @Specialization
@@ -58,7 +64,7 @@ public abstract class CastToTextNode extends UnaryNode {
 
     @Specialization
     Object castNull(Null argument) {
-        // NOTE: in i4gl a TEXT can not be NULL 
+        // NOTE: in i4gl a TEXT can not be NULL
         return argument;
     }
 
