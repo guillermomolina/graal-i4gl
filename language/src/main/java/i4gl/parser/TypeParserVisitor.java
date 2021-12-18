@@ -41,7 +41,7 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
             if (!ctx.numericConstant().isEmpty()) {
                 size = Integer.parseInt(ctx.numericConstant(0).getText());
             }
-            if(size == 1) {
+            if (size == 1) {
                 return Char1Type.SINGLETON;
             }
             return new CharType(size);
@@ -50,12 +50,15 @@ public class TypeParserVisitor extends I4GLParserBaseVisitor<BaseType> {
 
     @Override
     public BaseType visitDecimalType(final I4GLParser.DecimalTypeContext ctx) {
-        int precision = Integer.parseInt(ctx.numericConstant(0).getText());
-        int scale = 0;
-        if (ctx.numericConstant().size() == 2) {
-            scale = Integer.parseInt(ctx.numericConstant(1).getText());
+        if (ctx.numericConstant().size() > 0) {
+            int precision = Integer.parseInt(ctx.numericConstant(0).getText());
+            if (ctx.numericConstant().size() == 2) {
+                int scale = Integer.parseInt(ctx.numericConstant(1).getText());
+                return new DecimalType(precision, scale);
+            }
+            return new DecimalType(precision);
         }
-        return new DecimalType(precision, scale);
+        return new DecimalType();
     }
 
     @Override

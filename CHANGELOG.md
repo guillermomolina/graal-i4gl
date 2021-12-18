@@ -27,6 +27,7 @@ Version 0.3.0
 - Avoid casting from NULL
 - Hide Sqlca from DatabaseNodes, make it SINGLETON
 - Fix missing CastToDecimal
+- Fix DECIMAL declaration without scale and/or precsision
 
 
 Version 0.2.0
