@@ -19,6 +19,14 @@ public class DecimalType extends BaseType {
     private final int precision;
     private final int scale;
 
+    public DecimalType() {
+        this(10);
+    }
+
+    public DecimalType(final int precision) {
+        this(precision, 2);
+    }
+
     public DecimalType(final int precision, final int scale) {
         this.precision = precision;
         this.scale = scale;

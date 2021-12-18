@@ -41,7 +41,8 @@ public class TextType extends BaseType {
     public boolean convertibleTo(BaseType type) {
         return type == TextType.SINGLETON || type instanceof CharType || type instanceof VarcharType
                 || type == SmallIntType.SINGLETON || type == IntType.SINGLETON || type == BigIntType.SINGLETON
-                || type == SmallFloatType.SINGLETON || type == FloatType.SINGLETON || type == DateType.SINGLETON;
+                || type == SmallFloatType.SINGLETON || type == FloatType.SINGLETON || type instanceof DecimalType
+                || type == DateType.SINGLETON;
     }
 
     @Override
