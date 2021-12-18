@@ -14,6 +14,7 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import i4gl.I4GLLanguage;
 import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.DateType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -33,7 +34,7 @@ public final class LanguageView implements TruffleObject {
     @CompilationFinal(dimensions = 1)
     protected static final BaseType[] PRECEDENCE = {
         SmallIntType.SINGLETON, IntType.SINGLETON, BigIntType.SINGLETON, SmallFloatType.SINGLETON, FloatType.SINGLETON,
-            TextType.SINGLETON };
+            DateType.SINGLETON, TextType.SINGLETON };
 
     LanguageView(Object delegate) {
         this.delegate = delegate;

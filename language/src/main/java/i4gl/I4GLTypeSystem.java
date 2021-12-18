@@ -5,6 +5,7 @@ import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
+import i4gl.runtime.values.Decimal;
 import i4gl.runtime.values.Null;
 
 /**
@@ -17,6 +18,8 @@ import i4gl.runtime.values.Null;
  * BIGINT - {@link BigIntType} - long
  * REAL, SMALLFLOAT - {@link SmallFloatType} - float
  * DOUBLE PRECISION, FLOAT - {@link FloatType} - double
+ * DECIMAL, DEC, NUMERIC - {@link DecimalType} - {@link Decimal}
+ * DATE - {@link DateType} - {@link Date}
  * TEXT - {@link TextType} - String
  * CHAR - {@link CharType}, {@link Char1Type} - {@link Char}
  * VARCHAR - {@link VarcharType} - {@link Varchar}
@@ -93,6 +96,11 @@ public class I4GLTypeSystem {
     @ImplicitCast
     public static double castSmallFloatToFloat(float value) {
         return value;
+    }
+
+    @ImplicitCast
+    public static float castDecimalToSmallFloat(Decimal value) {
+        return value.getValue().floatValue();
     }
 
     @ImplicitCast

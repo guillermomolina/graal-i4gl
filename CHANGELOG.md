@@ -28,7 +28,8 @@ Version 0.3.0
 - Hide Sqlca from DatabaseNodes, make it SINGLETON
 - Fix missing CastToDecimal
 - Fix DECIMAL declaration without scale and/or precsision
-- Fix missing convert to decimal from other types
+- Fix missing convert to DECIMAL from other types
+- Fix DECIMAL automatic cast to float
 
 
 Version 0.2.0
