@@ -61,11 +61,19 @@ public class Varchar implements TruffleObject {
     }
 
     public void assignSmallFloat(float value) {
-        assignFullString(String.format("%.4g", value));
+        String output = String.format("%.4g", value);
+        if(!output.contains("e")) {
+            output = String.valueOf(value);
+        }
+        assignFullString(output);
     }
 
     public void assignFloat(double value) {
-        assignFullString(String.format("%g", value));
+        String output = String.format("%.4g", value);
+        if(!output.contains("e")) {
+            output = String.valueOf(value);
+        }
+        assignFullString(output);
     }
 
     public int getSize() {
