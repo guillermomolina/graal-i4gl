@@ -31,6 +31,41 @@ public abstract class CastToCharNode extends UnaryNode {
     }
 
     @Specialization
+    Char castSmallInt(short argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignSmallInt(argument);
+        return value;
+    }
+
+    @Specialization
+    Char castInt(int argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignInt(argument);
+        return value;
+    }
+
+    @Specialization
+    Char castBigInt(long argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignBigInt(argument);
+        return value;
+    }
+
+    @Specialization
+    Char castFloat(float argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignSmallFloat(argument);
+        return value;
+    }
+
+    @Specialization
+    Char castFloat(double argument) {
+        Char value = (Char) getCharType().getDefaultValue();
+        value.assignFloat(argument);
+        return value;
+    }
+
+    @Specialization
     Object castNull(Null argument) {
         return argument;
     }

@@ -65,12 +65,36 @@ public class Char implements TruffleObject {
         if (value.length() > size) {
             data = value.substring(0, size);
         } else {
-            final StringBuilder str = new StringBuilder(value);
-            for (int i = value.length(); i < size; ++i) {
-                str.append(' ');
-            }
-            data = str.toString();
+            data = value + " ".repeat(charType.getSize() - value.length());
         }
+    }
+
+    public void assignSmallInt(short value) {
+        assignString(String.valueOf(value));
+    }
+
+    public void assignInt(int value) {
+        assignString(String.valueOf(value));
+    }
+
+    public void assignBigInt(long value) {
+        assignString(String.valueOf(value));
+    }
+
+    public void assignSmallFloat(float value) {
+        String output = String.format("%.4g", value);
+        if(!output.contains("e")) {
+            output = String.valueOf(value);
+        }
+        assignString(output);
+    }
+
+    public void assignFloat(double value) {
+        String output = String.format("%.4g", value);
+        if(!output.contains("e")) {
+            output = String.valueOf(value);
+        }
+        assignString(output);
     }
 
     public char getCharAt(int index) {
