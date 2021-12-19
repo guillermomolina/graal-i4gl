@@ -1,35 +1,53 @@
 package i4gl.nodes.expression;
 
-import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import i4gl.exceptions.UnexpectedRuntimeException;
+import i4gl.nodes.cast.CastToTextNodeGen;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.values.Null;
 
 @NodeInfo(shortName = ",")
-public abstract class ConcatenationNode extends BinaryExpressionNode {
-    @Specialization
-    protected String concat(final String left, final short right) {
-        return left + String.format("%11d", right);
+public class ConcatenationNode extends ExpressionNode {
+    @Child
+    private ExpressionNode leftNode;
+    @Child
+    private ExpressionNode rightNode;
+
+    public ConcatenationNode(final ExpressionNode leftNode, final ExpressionNode rightNode) {
+        this.leftNode = leftNode;
+        this.rightNode = rightNode;
     }
 
-    @Specialization
-    protected String concat(final String left, final String right) {
-        return left + right;
+    @Override
+    public BaseType getReturnType() {
+        return TextType.SINGLETON;
     }
 
-    @Specialization
-    protected String concat(final Object left, final Object right) {
-        String value;
-        if(left == Null.SINGLETON) {
-            value = getLeftNode().getReturnType().getNullString();
+    public String executeNode(final VirtualFrame frame, final ExpressionNode node) {
+        BaseType nodeType = node.getReturnType();
+        ExpressionNode valueNode;
+        if (nodeType == TextType.SINGLETON) {
+            valueNode = node;
         } else {
-            value = left.toString();
+            valueNode = CastToTextNodeGen.create(node);
         }
-        if (right == Null.SINGLETON) {
-            value += getRightNode().getReturnType().getNullString();
-        } else {
-            value += right.toString();
+        Object value = valueNode.executeGeneric(frame);
+        if (value == Null.SINGLETON) {
+            return nodeType.getNullString();
         }
-        return value;
+        if (!(value instanceof String)) {
+            throw new UnexpectedRuntimeException();
+        }
+        return (String) value;
+    }
+
+    @Override
+    public Object executeGeneric(final VirtualFrame frame) {
+        final String leftValue = executeNode(frame, leftNode);
+        final String rightValue = executeNode(frame, rightNode);
+        return leftValue + rightValue;
     }
 }

@@ -11,6 +11,7 @@ import i4gl.exceptions.InvalidCastException;
 import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Null;
 
 @NodeField(name = "charType", type = BaseType.class)
 public abstract class CastToCharNode extends UnaryNode {
@@ -27,6 +28,11 @@ public abstract class CastToCharNode extends UnaryNode {
         Char value = (Char) getCharType().getDefaultValue();
         value.assignString(String.valueOf(argument));
         return value;
+    }
+
+    @Specialization
+    Object castNull(Null argument) {
+        return argument;
     }
 
     @Specialization

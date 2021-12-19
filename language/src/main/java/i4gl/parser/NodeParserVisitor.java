@@ -50,7 +50,7 @@ import i4gl.nodes.control.DebuggerNode;
 import i4gl.nodes.control.ForNode;
 import i4gl.nodes.control.IfNode;
 import i4gl.nodes.control.WhileNode;
-import i4gl.nodes.expression.ConcatenationNodeGen;
+import i4gl.nodes.expression.ConcatenationNode;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.nodes.literals.BigIntLiteralNodeGen;
 import i4gl.nodes.literals.IntLiteralNodeGen;
@@ -81,7 +81,6 @@ import i4gl.nodes.sql.SelectNode;
 import i4gl.nodes.sql.SqlNode;
 import i4gl.nodes.statement.BlockNode;
 import i4gl.nodes.statement.DisplayNode;
-import i4gl.nodes.statement.DisplayNodeGen;
 import i4gl.nodes.statement.StatementNode;
 import i4gl.nodes.variables.read.ReadArgumentNode;
 import i4gl.nodes.variables.read.ReadArrayElementNodeGen;
@@ -959,17 +958,12 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         if (ctx.concatExpression() == null) {
             throw new NotImplementedException();
         }
-        try {
-            ExpressionNode displayValueListNode = (ExpressionNode) visit(ctx.concatExpression());
-            ExpressionNode castToTextNode = createCastNode(displayValueListNode, TextType.SINGLETON);
-            DisplayNode node = DisplayNodeGen.create(castToTextNode);
-            setSourceFromContext(node, ctx);
-            node.addStatementTag();
-            return node;    
-        } catch(TypeMismatchException e) {
-            throw new ParseException(source, ctx, e.getMessage());
-        }
-}
+        ExpressionNode displayValueListNode = (ExpressionNode) visit(ctx.concatExpression());
+        DisplayNode node = new DisplayNode(displayValueListNode);
+        setSourceFromContext(node, ctx);
+        node.addStatementTag();
+        return node;
+    }
 
     @Override
     public Node visitVariableDeclaration(final I4GLParser.VariableDeclarationContext ctx) {
@@ -995,18 +989,12 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         }
         ExpressionNode leftNode = null;
         for (final ExpressionNode rightNode : argumentNodeList) {
-            try {
-                if (leftNode == null) {
-                    leftNode = rightNode;
-                } else {
-                    final ExpressionNode leftNodeCastedToText = createCastNode(leftNode, TextType.SINGLETON);
-                    final ExpressionNode rightNodeCastedToText = createCastNode(rightNode, TextType.SINGLETON);
-                    leftNode = ConcatenationNodeGen.create(leftNodeCastedToText, rightNodeCastedToText);
-                    setSourceFromContext(leftNode, ctx);
-                    leftNode.addExpressionTag();
-                }
-            } catch (TypeMismatchException e) {
-                throw new ParseException(source, ctx, e.getMessage());
+            if (leftNode == null) {
+                leftNode = rightNode;
+            } else {
+                leftNode = new ConcatenationNode(leftNode, rightNode);
+                setSourceFromContext(leftNode, ctx);
+                leftNode.addExpressionTag();
             }
         }
         return leftNode;

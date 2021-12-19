@@ -1,31 +1,47 @@
 package i4gl.nodes.statement;
 
-import com.oracle.truffle.api.dsl.NodeChild;
-import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import i4gl.exceptions.UnexpectedRuntimeException;
+import i4gl.nodes.cast.CastToTextNodeGen;
 import i4gl.nodes.expression.ExpressionNode;
 import i4gl.runtime.context.Context;
+import i4gl.runtime.types.BaseType;
+import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.values.Null;
 
 @NodeInfo(shortName = "DISPLAY", description = "The node implementing the DISPLAY statement")
-@NodeChild(value = "argumentNode", type = ExpressionNode.class)
-public abstract class DisplayNode extends StatementNode {
+public class DisplayNode extends StatementNode {
+    @Child
+    private ExpressionNode argumentNode;
 
-    protected abstract ExpressionNode getArgumentNode();
+    public DisplayNode(final ExpressionNode argumentNode) {
+        this.argumentNode = argumentNode;
+    }
 
-    private void print(final String text) {
+    private void display(final String text) {
         Context.get(this).getOutput().println(text);
     }
 
-    @Specialization
-    public void display(final Object argument) {
-        String value;
-        if (argument == Null.SINGLETON) {
-            value = getArgumentNode().getReturnType().getNullString();
+    @Override
+    public void executeVoid(final VirtualFrame frame) {
+        BaseType argumentNodeType = argumentNode.getReturnType();
+        ExpressionNode valueNode;
+        if (argumentNodeType == TextType.SINGLETON) {
+            valueNode = argumentNode;
         } else {
-            value = argument.toString();
+            valueNode = CastToTextNodeGen.create(argumentNode);
         }
-        print(value);
+        Object value = valueNode.executeGeneric(frame);
+        if (value == Null.SINGLETON) {
+            display(argumentNodeType.getNullString());
+        } else {
+            if(!(value instanceof String)) {
+                throw new UnexpectedRuntimeException();
+            }
+            display((String)value);
+        }
     }
+
 }
