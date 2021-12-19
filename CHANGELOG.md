@@ -35,7 +35,7 @@ Version 0.3.0
 - Fix DECIMAL format text
 - Fix cast from text
 - Fix DISPLAY and concate cast to text before print
-
+- Add cast float to integer types
 
 
 Version 0.2.0

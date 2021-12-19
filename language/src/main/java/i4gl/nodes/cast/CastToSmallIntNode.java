@@ -25,6 +25,11 @@ public abstract class CastToSmallIntNode extends UnaryNode {
     }
 
     @Specialization
+    static short castFloat(double argument) {
+        return (short)argument;
+    }
+
+    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }

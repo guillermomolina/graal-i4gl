@@ -44,8 +44,10 @@ public class SmallFloatType extends BaseType {
 
     @Override
     public boolean convertibleTo(final BaseType type) {
-        return type == FloatType.SINGLETON || type instanceof DecimalType || type instanceof VarcharType
-                || type instanceof CharType || type == TextType.SINGLETON || type == DateType.SINGLETON;
+        return type == SmallIntType.SINGLETON || type == IntType.SINGLETON || type == BigIntType.SINGLETON
+                || type == SmallFloatType.SINGLETON || type == FloatType.SINGLETON || type instanceof DecimalType
+                || type instanceof VarcharType || type instanceof CharType || type == TextType.SINGLETON
+                || type == DateType.SINGLETON;
     }
 
     @Override

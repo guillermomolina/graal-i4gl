@@ -11,32 +11,32 @@ MAIN
 
     DISPLAY "0        1         2         "
     DISPLAY "12345678901234567890123456789"
-    DISPLAY 1, "|"
-    LET aSmallInt=1
+    DISPLAY 1.9, "|"
+    LET aSmallInt=1.9
     DISPLAY aSmallInt
     DISPLAY aSmallInt, "|"
-    LET anInt=1
+    LET anInt=1.9
     DISPLAY anInt
     DISPLAY anInt, "|"
-    LET aBigInt=1
+    LET aBigInt=1.9
     DISPLAY aBigInt
     DISPLAY aBigInt, "|"
-    LET aSmallFloat=1
+    LET aSmallFloat=1.9
     DISPLAY aSmallFloat
     DISPLAY aSmallFloat, "|"
-    LET aFloat=1
+    LET aFloat=1.9
     DISPLAY aFloat
     DISPLAY aFloat, "|"
-    LET aDecimal=1
+    LET aDecimal=1.9
     DISPLAY aDecimal
     DISPLAY aDecimal, "|"
-    LET aText=1
+    LET aText=1.9
     DISPLAY aText
     DISPLAY aText, "|"
-    LET aChar=1
+    LET aChar=1.9
     DISPLAY aChar
     DISPLAY aChar, "|"
-    LET aVarchar=1
+    LET aVarchar=1.9
     DISPLAY aVarchar
     DISPLAY aVarchar, "|"
 END MAIN
