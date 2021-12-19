@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import i4gl.exceptions.NotImplementedException;
+import i4gl.runtime.types.compound.CharType;
 import i4gl.runtime.types.compound.DecimalType;
+import i4gl.runtime.types.compound.VarcharType;
+import i4gl.runtime.values.Char;
 import i4gl.runtime.values.Date;
 import i4gl.runtime.values.Decimal;
 import i4gl.runtime.values.Null;
@@ -187,11 +190,15 @@ public class SquirrelDataSet implements IDataSet {
          return Null.SINGLETON;
       }
       switch (cDefinition.getSqlType()) {
+         case Types.CHAR:
+            CharType charType = new CharType(cDefinition.getPrecision());
+            return new Char(charType, (String) sqlValue);
          case Types.VARCHAR:
-            return new Varchar(cDefinition.getPrecision(), (String) sqlValue);
+            VarcharType varcharType = new VarcharType(cDefinition.getPrecision());
+            return new Varchar(varcharType, (String) sqlValue);
          case Types.DECIMAL:
-            DecimalType type = new DecimalType(cDefinition.getPrecision(), cDefinition.getScale());
-            return new Decimal(type, (BigDecimal) sqlValue);
+            DecimalType decimalType = new DecimalType(cDefinition.getPrecision(), cDefinition.getScale());
+            return new Decimal(decimalType, (BigDecimal) sqlValue);
          case Types.DATE:
             return new Date((java.sql.Date) sqlValue);
          case Types.INTEGER:

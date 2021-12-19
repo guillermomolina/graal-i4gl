@@ -1250,7 +1250,11 @@ public class NodeParserVisitor extends I4GLParserBaseVisitor<Node> {
         try {
             node = IntLiteralNodeGen.create(Integer.parseInt(literal));
         } catch (final NumberFormatException e2) {
-            node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
+            try {
+                node = BigIntLiteralNodeGen.create(Long.parseLong(literal));
+            } catch (final NumberFormatException e3) {
+                node = SmallFloatLiteralNodeGen.create(Float.parseFloat(literal));
+            }
         }
         // }
         setSourceFromContext(node, ctx);

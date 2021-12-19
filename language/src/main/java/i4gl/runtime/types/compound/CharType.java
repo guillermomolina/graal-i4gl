@@ -24,7 +24,7 @@ public class CharType extends ArrayType {
 
     @Override
     public Object getDefaultValue() {
-        return new Char(size);
+        return new Char(this);
     }
 
     @Override

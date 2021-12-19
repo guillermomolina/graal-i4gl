@@ -24,6 +24,41 @@ public abstract class CastToVarcharNode extends UnaryNode {
     }
 
     @Specialization
+    Varchar castSmallInt(short argument) {
+        Varchar value = (Varchar) getVarcharType().getDefaultValue();
+        value.assignSmallInt(argument);
+        return value;
+    }
+
+    @Specialization
+    Varchar castInt(int argument) {
+        Varchar value = (Varchar) getVarcharType().getDefaultValue();
+        value.assignInt(argument);
+        return value;
+    }
+
+    @Specialization
+    Varchar castBigInt(long argument) {
+        Varchar value = (Varchar) getVarcharType().getDefaultValue();
+        value.assignBigInt(argument);
+        return value;
+    }
+
+    @Specialization
+    Varchar castFloat(float argument) {
+        Varchar value = (Varchar) getVarcharType().getDefaultValue();
+        value.assignSmallFloat(argument);
+        return value;
+    }
+
+    @Specialization
+    Varchar castFloat(double argument) {
+        Varchar value = (Varchar) getVarcharType().getDefaultValue();
+        value.assignFloat(argument);
+        return value;
+    }
+    
+    @Specialization
     Object castNull(Null argument) {
         return argument;
     }

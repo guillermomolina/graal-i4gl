@@ -16,36 +16,56 @@ import i4gl.runtime.context.Context;
 import i4gl.runtime.types.compound.VarcharType;
 
 /**
- * Representation of variables of Varchar type. It is a slight wrapper to Java's {@link String}.
+ * Representation of variables of Varchar type. It is a slight wrapper to Java's
+ * {@link String}.
  */
 @ExportLibrary(InteropLibrary.class)
 public class Varchar implements TruffleObject {
 
+    private final VarcharType varcharType;
     private String data;
-    private final int size;
 
-    public Varchar(int size) {
-        this.size = size;
-        this.data = "";
+    public Varchar(final VarcharType varcharType) {
+        this(varcharType, "");
+    }
+
+    public Varchar(final VarcharType varcharType, String value) {
+        this.varcharType = varcharType;
+        this.data = value;
     }
 
     private Varchar(Varchar source) {
-        this.size = source.size;
+        this.varcharType = source.varcharType;
         this.data = source.data;
     }
 
-    public Varchar(String value) {
-        this.size = value.length();
-        this.data = value;
-    }
-
-    public Varchar(int size, String value) {
-        this.size = size;
-        this.data = value;
-    }
-
     public void assignString(String value) {
-        data = value.substring(0, Math.min(size, value.length()));
+        data = value.substring(0, Math.min(varcharType.getSize(), value.length()));
+    }
+
+    private void assignFullString(String value) {
+        assignString(value);
+        data = data + " ".repeat(varcharType.getSize() - data.length());
+    }
+
+    public void assignSmallInt(short value) {
+        assignFullString(String.valueOf(value));
+    }
+
+    public void assignInt(int value) {
+        assignFullString(String.valueOf(value));
+    }
+
+    public void assignBigInt(long value) {
+        assignFullString(String.valueOf(value));
+    }
+
+    public void assignSmallFloat(float value) {
+        assignFullString(String.format("%.4g", value));
+    }
+
+    public void assignFloat(double value) {
+        assignFullString(String.format("%g", value));
     }
 
     public int getSize() {
@@ -59,15 +79,14 @@ public class Varchar implements TruffleObject {
 
     public void setCharAt(int index, char value) {
         checkArrayIndex(index);
-        if(index > data.length()) {
+        if (index > data.length()) {
             final StringBuilder str = new StringBuilder(data);
             for (int i = data.length(); i < index; ++i) {
                 str.append(' ');
             }
             str.append(value);
-            data = str.toString();    
-        }
-        else {
+            data = str.toString();
+        } else {
             data = data.substring(0, index) + value + data.substring(index + 1);
         }
     }
@@ -77,7 +96,7 @@ public class Varchar implements TruffleObject {
     }
 
     private void checkArrayIndex(int index) {
-        if (index < 0 || index >= size) {
+        if (index < 0 || index >= varcharType.getSize()) {
             throw new IndexOutOfBoundsException(index);
         }
     }
@@ -88,7 +107,7 @@ public class Varchar implements TruffleObject {
 
     @Override
     public String toString() {
-        return data + " ".repeat(size - data.length());
+        return data;
     }
 
     @ExportMessage
@@ -114,7 +133,7 @@ public class Varchar implements TruffleObject {
 
     @ExportMessage
     Object getMetaObject() {
-        return new VarcharType(size);
+        return varcharType;
     }
 
     @ExportMessage
@@ -126,7 +145,6 @@ public class Varchar implements TruffleObject {
     boolean isString() {
         return true;
     }
-
 
     @ExportMessage
     boolean hasArrayElements() {
@@ -163,8 +181,8 @@ public class Varchar implements TruffleObject {
     public void writeArrayElement(long index, Object value) throws InvalidArrayIndexException {
         try {
             if (value instanceof Character) {
-                Character character = (Character)value;
-                setCharAt((int) index, character.charValue());                
+                Character character = (Character) value;
+                setCharAt((int) index, character.charValue());
             } else {
                 throw new NotImplementedException();
             }

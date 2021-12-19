@@ -9,7 +9,7 @@
             "projectName": "launcher",
             "args": [
                 "--log.i4gl.level=FINEST",
-                "${workspaceFolder}/language/tests/simple/Display2.4gl",
+                "${workspaceFolder}/language/tests/simple/Varchar.4gl",
             ],
             "vmArgs": [
                 "-ea",

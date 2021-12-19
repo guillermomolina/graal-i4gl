@@ -23,7 +23,7 @@ public class VarcharType extends ArrayType {
 
     @Override
     public Object getDefaultValue() {
-        return new Varchar(size);
+        return new Varchar(this);
     }
 
     @Override

@@ -4,13 +4,17 @@ import java.util.Arrays;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.InvalidArrayIndexException;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
 
+import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
+import i4gl.runtime.context.Context;
+import i4gl.runtime.types.compound.CharType;
 
 /**
  * Representation of variables of NChar type. It is a slight wrapper to Java's
@@ -18,33 +22,38 @@ import i4gl.exceptions.NotImplementedException;
  */
 @ExportLibrary(InteropLibrary.class)
 public class Char implements TruffleObject {
+
+    private final CharType charType;
     private String data;
 
-    public Char(int size) {
-        char[] chars = new char[size];
+    public Char(final CharType charType) {
+        this.charType = charType;
+        char[] chars = new char[charType.getSize()];
         char value = 0;
         Arrays.fill(chars, value);
         this.data = new String(chars);
     }
 
     private Char(Char source) {
+        this.charType = source.charType;
         this.data = source.data;
     }
 
-    public Char(String value) {
+    public Char(final CharType charType, String value) {
+        this(charType);
         this.data = value;
     }
 
-    public Char(Character value) {
-        this.data = value.toString();
+    public Char(final CharType charType, Character value) {
+        this(charType, value.toString());
     }
 
     public int getSize() {
-        return data.length();
+        return charType.getSize();
     }
 
     public int getLength() {
-        int i = data.length() - 1;
+        int i = charType.getSize() - 1;
         while (i >= 0 && Character.isWhitespace(data.charAt(i))) {
             i--;
         }
@@ -85,7 +94,7 @@ public class Char implements TruffleObject {
 
     public Object clipped() {
         String clipped = data.substring(0, getLength());
-        return new Char(clipped);
+        return new Char(charType, clipped);
     }
 
     private void checkArrayIndex(int index) {
@@ -107,6 +116,26 @@ public class Char implements TruffleObject {
     @TruffleBoundary
     Object toDisplayString(boolean allowSideEffects) {
         return '"' + data + '"';
+    }
+
+    @ExportMessage
+    boolean hasLanguage() {
+        return true;
+    }
+
+    @ExportMessage
+    Class<? extends TruffleLanguage<Context>> getLanguage() {
+        return I4GLLanguage.class;
+    }
+
+    @ExportMessage
+    boolean hasMetaObject() {
+        return true;
+    }
+
+    @ExportMessage
+    Object getMetaObject() {
+        return charType;
     }
 
     @ExportMessage

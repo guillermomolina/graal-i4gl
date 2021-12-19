@@ -36,6 +36,7 @@ Version 0.3.0
 - Fix cast from text
 - Fix DISPLAY and concate cast to text before print
 - Add cast float to integer types
+- Add types to CHAR and VARCHAR values
 
 
 Version 0.2.0
