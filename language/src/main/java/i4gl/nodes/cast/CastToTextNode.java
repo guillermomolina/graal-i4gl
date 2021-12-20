@@ -11,6 +11,7 @@ import i4gl.nodes.expression.UnaryNode;
 import i4gl.runtime.types.BaseType;
 import i4gl.runtime.types.compound.TextType;
 import i4gl.runtime.values.Char;
+import i4gl.runtime.values.Date;
 import i4gl.runtime.values.Decimal;
 import i4gl.runtime.values.Null;
 import i4gl.runtime.values.Varchar;
@@ -71,6 +72,11 @@ public abstract class CastToTextNode extends UnaryNode {
     @Specialization
     String castText(String argument) {
         return argument;
+    }
+
+    @Specialization
+    String castDate(Date argument) {
+        return argument.toString();
     }
 
     @Specialization(guards = "inputs.isString(argument)", limit = "2")
