@@ -26,21 +26,17 @@ public class Char implements TruffleObject {
     private final CharType charType;
     private String data;
 
-    public Char(final CharType charType) {
-        this.charType = charType;
-        char[] chars = new char[charType.getSize()];
-        char value = 0;
-        Arrays.fill(chars, value);
-        this.data = new String(chars);
-    }
-
     private Char(Char source) {
         this.charType = source.charType;
         this.data = source.data;
     }
 
+    public Char(final CharType charType) {
+        this(charType, " ".repeat(charType.getSize()));
+    }
+
     public Char(final CharType charType, String value) {
-        this(charType);
+        this.charType = charType;
         this.data = value;
     }
 
