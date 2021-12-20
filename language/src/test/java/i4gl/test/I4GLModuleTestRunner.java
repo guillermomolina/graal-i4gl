@@ -29,9 +29,6 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-import i4gl.I4GLLanguage;
-import i4gl.nodes.builtin.BuiltinNode;
-import i4gl.test.I4GLModuleTestRunner.TestCase;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.internal.TextListener;
@@ -44,6 +41,10 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+
+import i4gl.I4GLLanguage;
+import i4gl.nodes.builtin.BuiltinNode;
+import i4gl.test.I4GLModuleTestRunner.TestCase;
 
 public class I4GLModuleTestRunner extends ParentRunner<TestCase> {
     private static final String SOURCE_SUFFIX = ".4gl";
@@ -285,8 +286,16 @@ public class I4GLModuleTestRunner extends ParentRunner<TestCase> {
             run(context, testCase.sources.values(), printer);
             printer.flush();
 
-            String actualOutput = new String(out.toByteArray());
-            Assert.assertEquals(testCase.name.toString(), testCase.expectedOutput, actualOutput);
+            testCase.actualOutput = new String(out.toByteArray());
+            Assert.assertEquals(testCase.name.toString(), testCase.expectedOutput.length(), testCase.actualOutput.length());
+
+            String[] actualOutputSplitted = testCase.actualOutput.split(LF);
+            String[] expectedOutputSplitted = testCase.expectedOutput.split(LF);
+            Assert.assertEquals(testCase.name.toString(), actualOutputSplitted.length, expectedOutputSplitted.length);
+            for (int i = 0; i < actualOutputSplitted.length; i++) {
+                Assert.assertEquals(testCase.name.toString() + " line: " + (i + 1), expectedOutputSplitted[i], actualOutputSplitted[i]);
+            };
+            Assert.assertEquals(testCase.name.toString(), testCase.expectedOutput, testCase.actualOutput);
         } catch (Throwable ex) {
             notifier.fireTestFailure(new Failure(testCase.name, ex));
         } finally {

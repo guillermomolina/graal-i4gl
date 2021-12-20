@@ -34,7 +34,7 @@ public final class LanguageView implements TruffleObject {
     @CompilationFinal(dimensions = 1)
     protected static final BaseType[] PRECEDENCE = {
         SmallIntType.SINGLETON, IntType.SINGLETON, BigIntType.SINGLETON, SmallFloatType.SINGLETON, FloatType.SINGLETON,
-            DateType.SINGLETON, TextType.SINGLETON };
+            TextType.SINGLETON, DateType.SINGLETON };
 
     LanguageView(Object delegate) {
         this.delegate = delegate;

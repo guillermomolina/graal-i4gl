@@ -1,5 +1,7 @@
 package i4gl.runtime.values;
 
+import java.util.stream.Collectors;
+
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -14,6 +16,7 @@ import com.oracle.truffle.api.library.ExportMessage;
 import i4gl.I4GLLanguage;
 import i4gl.exceptions.NotImplementedException;
 import i4gl.runtime.context.Context;
+import i4gl.runtime.types.compound.RecordField;
 import i4gl.runtime.types.compound.RecordType;
 import i4gl.runtime.types.primitive.BigIntType;
 import i4gl.runtime.types.primitive.FloatType;
@@ -217,7 +220,8 @@ public class Record implements TruffleObject {
     @ExportMessage
     @TruffleBoundary
     Object getMembers(boolean includeInternal) {
-        return new RecordNamesObject(recordType.getFields().toArray());
+        Object[] names = recordType.getFields().stream().map(RecordField::getId).collect(Collectors.toList()).toArray();
+        return new RecordNamesObject(names);
     }
 
     @ExportLibrary(InteropLibrary.class)
