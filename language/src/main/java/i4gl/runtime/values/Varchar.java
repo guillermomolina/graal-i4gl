@@ -40,12 +40,12 @@ public class Varchar implements TruffleObject {
     }
 
     public void assignString(String value) {
-        data = value.substring(0, Math.min(varcharType.getSize(), value.length()));
+        data = value.substring(0, Math.min(getSize(), value.length()));
     }
 
     private void assignFullString(String value) {
         assignString(value);
-        data = data + " ".repeat(varcharType.getSize() - data.length());
+        data = data + " ".repeat(getSize() - data.length());
     }
 
     public void assignSmallInt(short value) {
@@ -77,7 +77,7 @@ public class Varchar implements TruffleObject {
     }
 
     public int getSize() {
-        return data.length();
+        return varcharType.getSize();
     }
 
     public char getCharAt(int index) {
@@ -104,7 +104,7 @@ public class Varchar implements TruffleObject {
     }
 
     private void checkArrayIndex(int index) {
-        if (index < 0 || index >= varcharType.getSize()) {
+        if (index < 0 || index >= getSize()) {
             throw new IndexOutOfBoundsException(index);
         }
     }

@@ -25,6 +25,14 @@ public abstract class CastToChar1Node extends UnaryNode {
     }
 
     @Specialization
+    static char castText(String argument) {
+        if (argument.isEmpty()) {
+            return 0;
+        }
+        return argument.charAt(0);
+    }
+
+    @Specialization
     static Object castNull(Null argument) {
         return argument;
     }
@@ -38,14 +46,6 @@ public abstract class CastToChar1Node extends UnaryNode {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             throw new InvalidCastException(argument, Char1Type.SINGLETON);
         }
-    }
-
-    @Specialization
-    static char castText(String argument) {
-        if (argument.isEmpty()) {
-            return 0;
-        }
-        return argument.charAt(0);
     }
 
     @Specialization(guards = "inputs.isString(argument)", limit = "2")
