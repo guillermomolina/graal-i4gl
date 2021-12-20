@@ -32,6 +32,7 @@ public final class Database implements TruffleObject {
     public void connect() {
         if (session == null) {
             session = new SquirrelSession(alias);
+            Sqlca.SINGLETON.reset();
             Sqlca.SINGLETON.setSqlawarn(1);
             Sqlca.SINGLETON.setSqlawarn(3);    
         }
@@ -42,6 +43,7 @@ public final class Database implements TruffleObject {
             try {
                 session.close();
                 session = null;
+                Sqlca.SINGLETON.reset();
             } catch (SQLException e) {
                 throw new DatabaseConnectionException();
             }

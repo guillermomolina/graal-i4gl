@@ -16,6 +16,16 @@ public class Sqlca extends Record {
         super(recordType);
     }
 
+    public void reset() {
+        setObject("sqlcode", 0);
+        ((Char) getObject("sqlerrm")).assignString("");
+        for(int i = 0; i < 6; i++) {
+            setSqlerrd(i, 0);
+        }
+        ((Char) getObject("sqlerrp")).assignString("");
+        ((Char) getObject("sqlawarn")).assignString("");
+    }
+
     public void setSqlcode(final int code) {
         setObject("sqlcode", code);
     }

@@ -37,6 +37,9 @@ Version 0.3.0
 - Fix DISPLAY and concate cast to text before print
 - Add cast float to integer types
 - Add types to CHAR and VARCHAR values
+- Fix Char initialization to " "
+- Make SimpleTestRunner to give error in exact line
+- Add reset() to Sqlca value, use reset before sql methods
 
 
 Version 0.2.0

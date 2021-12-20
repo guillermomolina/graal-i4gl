@@ -256,6 +256,7 @@ public class SquirrelDataSet implements IDataSet {
    }
 
    public synchronized boolean next() {
+      Sqlca.SINGLETON.reset();
       Sqlca.SINGLETON.setSqlerrd(5, _iCurrent + 1);
       if (_cancel) {
          _currentRow = null;
