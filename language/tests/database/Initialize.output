@@ -1,11 +1,11 @@
 testInteger is null
-||
+|           |
 testVarchar is null
 ||
 |default text|
 testRecord.testVarchar is null
 ||
 testRecord.testInteger is null
-||
+|           |
 |default text|
 |         12|
